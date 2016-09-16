@@ -13,17 +13,28 @@ public class Lecture {
 	
 	
 	Path file;
-	List<Integer> liste;
+	
+
+	int nbPoints;
+	String nbPointsStr;
+	int nbFaces;
+	String nbFacesStr;
+	Pattern lastIntPattern;
+	Charset charset;
+	
+	
+	List<Point> listePoints;
+	
 	
 	public Lecture (Path file) {
-		Charset charset = Charset.forName("US-ASCII");
-	    final Pattern lastIntPattern = Pattern.compile("[^0-9]+([0-9]+)$");
-		liste = new ArrayList<>();
 		this.file = file;
-		int nbPoints;
-		String nbPointsStr = "";
-		int nbFaces;
-		String nbFacesStr;
+		listePoints = new ArrayList<>();
+	    lastIntPattern = Pattern.compile("[^0-9]+([0-9]+)$");
+		
+	} 
+	
+	public void findNb() {
+		charset = Charset.forName("US-ASCII");
 				
 		try (BufferedReader reader = Files.newBufferedReader(file, charset)) {
 		    String line = null;
@@ -60,7 +71,21 @@ public class Lecture {
 		}
 	}
 	
-	public static void main(String[] args) {
+	
+	public void stockerPoints() {
+		int nbLignesLus = 0;
+	    String line = null;
+		try (BufferedReader reader = Files.newBufferedReader(file, charset)) {
+			while (nbLignesLus < nbPoints) {
+				line = reader.readLine();
+			}
+		}
+		catch (Exception e) {
+			// TODO: handle exception
+		}
+	}
+	
+	public static void main(String[] args) {	
 		Path path = Paths.get("ply/cube.ply");
 		Lecture lect = new Lecture(path);
 	}

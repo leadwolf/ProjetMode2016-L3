@@ -22,7 +22,17 @@ public class Face {
 
 	@Override
 	public String toString() {
-		return "Face [list=" + list + "]";
+		String res = "";
+		res += "Face [list=";
+		if (list.size()>1) {
+			for (Point pt : list) {
+				res += "\n\t" + pt;
+			}
+			res += "]";
+		} else {
+			return "Face [list=" + list + "]";
+		}
+		return res;
 	}
 	
 	public List<Point> getList() {

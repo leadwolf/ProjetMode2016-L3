@@ -1,7 +1,7 @@
 
 public class Point {
 	
-	int nom;
+	String nom;
 	double x,y,z;
 	private int iter;
 	
@@ -9,7 +9,7 @@ public class Point {
 		iter = 0;
 	}
 	
-	public Point(int nom,Double Coordx,Double Coordy,Double Coordz){
+	public Point(String nom,Double Coordx,Double Coordy,Double Coordz){
 		this.nom=nom;
 		iter = 0;
 		x = Coordx;
@@ -29,8 +29,9 @@ public class Point {
 		return z;
 	}
 
+	@Override
 	public String toString() {
-		return "Le point "+ nom + "est de coordonnee " + x + y + z;
+		return "Point [nom=" + nom + ", x=" + x + ", y=" + y + ", z=" + z + "]";
 	}
 	
 	public void add(Double nb) {
@@ -45,9 +46,8 @@ public class Point {
 		}
 	}
 	
-	public String toString2() {
-		return "[x = "+x+"] " + "[y = "+y+"] " + "[z = "+z+"]";
+	public void setName(String name) {
+		this.nom = name;
 	}
-	
 
 }

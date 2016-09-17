@@ -34,6 +34,10 @@ public class Point {
 		return "Point [nom=" + nom + ", x=" + x + ", y=" + y + ", z=" + z + "]";
 	}
 	
+	/**
+	 * Ajoute au fur et a mesure les coordonnes de ce point
+	 * @param nb le coordonnée a ajouter dans ce point
+	 */
 	public void add(Double nb) {
 		if (iter == 0) {
 			x = nb;

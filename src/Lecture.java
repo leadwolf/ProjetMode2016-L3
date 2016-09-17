@@ -52,6 +52,9 @@ public class Lecture {
 		}
 	}
 
+	/**
+	 * Stocke les points dans une <b>List</b> de <b>Point</b> 
+	 */
 	public void stockerPoints() {
 		int nbLignesLus = 0;
 		boolean startCount = false;
@@ -78,7 +81,10 @@ public class Lecture {
 		}
 
 	}
-
+	
+	/**
+	 * Stocke les faces dans une <b>List</b> de <b>Face</b> 
+	 */
 	public void stockerFaces() {
 		int nbLignesLus = 0;
 		int nbFromPoints = 0;
@@ -102,13 +108,19 @@ public class Lecture {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	
+
 		System.out.println("\n Liste des Faces\n");
-		for (int i=0;i<faces.size();i++) {
+		for (int i = 0; i < faces.size(); i++) {
 			System.out.println("Fn=" + i + "  " + faces.get(i));
 		}
 	}
-
+	
+	/**
+	 * Ajoute les points dans les faces
+	 * @param input la ligne des numeros des points
+	 * @param faces la liste de faces
+	 * @param points la liste de points
+	 */
 	private void getPointsDeFace(String input, List<Face> faces, List<Point> points) {
 		Matcher matcher = multipleNumberPattern.matcher(input);
 		faces.add(new Face());
@@ -118,14 +130,11 @@ public class Lecture {
 			tmpFace.addPoint(points.get(element));
 		}
 	}
-
+	
 	/**
-	 * Remplis les coordonnées des Points dans une liste
-	 * 
-	 * @param input
-	 *            le string a extraire les coordonnees
-	 * @param points
-	 *            la liste des points dont on remplit les coordonnes
+	 * Remplis les coordonnes des Points dans une liste
+	 * @param input le string a extraire les coordonnes
+	 * @param points la liste des points dont on ajoute les coordonnees
 	 */
 	private void getDoubles(String input, List<Point> points) {
 		Matcher matcher = multipleNumberPattern.matcher(input);

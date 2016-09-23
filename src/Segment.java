@@ -15,8 +15,10 @@ public class Segment {
 	public Point getPointB(){
 		return this.pointB;
 	}
-	
-	public String toString(){
-		return this.pointA + " / " + this.pointB;
+
+	@Override
+	public String toString() {
+		return "Segment [pointA=" + pointA + ", pointB=" + pointB + "]";
 	}
+	
 }

@@ -22,11 +22,13 @@ public class Lecture {
 	private int nbFaces;
 	private boolean savedPoints;
 	private boolean savedFaces;
+	private boolean savedSegments;
 	private Pattern lastIntPattern;
 	private Pattern multipleNumberPattern;
 	private Charset charset;
 	private List<Point> points;
 	private List<Face> faces;
+	private List<Segment> segments;
 	
 	/**
 	 * Retourne la <b>List&ltPoint&gt</b> de l'objet .ply. Si celle n'est pas encore faite, on éxécute {@link #stockerPoints()}
@@ -50,6 +52,14 @@ public class Lecture {
 		return faces;
 	}
 	
+	public List<Segment> getSegments() {
+		if (!savedSegments) {
+			stockerSegments();
+		}
+		return segments;
+	}
+	
+	
 	/**
 	 * Initialise variables
 	 * @param file le <b>Path</b> de l'objet .ply
@@ -60,11 +70,13 @@ public class Lecture {
 		nbFaces = -1;
 		savedPoints = false;
 		savedFaces = false;
+		savedSegments = false;
 		lastIntPattern = Pattern.compile("[^0-9]+([0-9]+)$");
 		multipleNumberPattern = Pattern.compile("[-+]?\\d*\\.?\\d+([eE][-+]?\\d+)?");
 		charset = Charset.forName("US-ASCII");
 		points = new ArrayList<>();
 		faces = new ArrayList<>();
+		segments = new ArrayList<>();
 	}
 	
 	/**
@@ -196,6 +208,20 @@ public class Lecture {
 			e.printStackTrace();
 		}
 	}
+	
+	private void stockerSegments() {
+		if (savedFaces) {
+			for (Face f : faces) {
+				List<Point> tmpPoint = f.getList();
+				for (int i=0; i<tmpPoint.size()-1;i++) {
+					Segment tmpSeg = new Segment(tmpPoint.get(i), tmpPoint.get(tmpPoint.size()-1));
+					segments.add(tmpSeg);
+				}
+			}
+			savedSegments = true;
+		}
+	}
+	
 	
 	/**
 	 * Sauvegard la <b>List&ltPoint&gt</b> pour chaque Face de <b>List&ltFace&gt</b>

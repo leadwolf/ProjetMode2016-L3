@@ -92,6 +92,19 @@ public class Lecture {
 		return false;
 	}
 	
+	/**
+	 * Verifie que tous les points ont bien des coordonnées x, y et z
+	 * @return
+	 */
+	public boolean verifieListePoints() {
+		for (Point pt : points) {
+			if (!pt.complet()) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
 	
 	/**
 	 * Trouve le nombre de <b>Points</b> et <b>Faces</b> qui composent l'objet .ply

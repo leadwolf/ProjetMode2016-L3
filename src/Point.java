@@ -36,7 +36,7 @@ public class Point {
 	
 	/**
 	 * Ajoute au fur et a mesure les coordonnes de ce point
-	 * @param nb le coordonnée a ajouter dans ce point
+	 * @param nb le coordonnï¿½e a ajouter dans ce point
 	 */
 	public void add(Double nb) {
 		if (iter == 0) {
@@ -52,6 +52,10 @@ public class Point {
 	
 	public void setName(String name) {
 		this.nom = name;
+	}
+	
+	public boolean complet() {
+		return iter == 2;
 	}
 
 }

@@ -1,4 +1,5 @@
 import java.io.BufferedReader;
+import java.io.File;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -9,8 +10,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Cette classe donne accès à la liste des Points et de Faces de l'objet .ply dont on veut modéliser
- * à travers les méthodes {@link #getPoints()} et {@link #getFaces()}
+ * Cette classe donne accï¿½s ï¿½ la liste des Points et de Faces de l'objet .ply dont on veut modï¿½liser
+ * ï¿½ travers les mï¿½thodes {@link #getPoints()} et {@link #getFaces()}
  * @author Groupe L3
  *
  */
@@ -28,7 +29,7 @@ public class Lecture {
 	private List<Face> faces;
 	
 	/**
-	 * Retourne la <b>List&ltPoint&gt</b> de l'objet .ply. Si celle n'est pas encore faite, on éxécute {@link #stockerPoints()}
+	 * Retourne la <b>List&ltPoint&gt</b> de l'objet .ply. Si celle n'est pas encore faite, on ï¿½xï¿½cute {@link #stockerPoints()}
 	 * @return la liste des points
 	 */
 	public List<Point> getPoints() {
@@ -39,7 +40,7 @@ public class Lecture {
 	}
 	
 	/**
-	 * Retourne la <b>List&ltFace&gt</b> de l'objet .ply. Si celle n'est pas encore faite, on éxécute {@link #stockerFaces()}
+	 * Retourne la <b>List&ltFace&gt</b> de l'objet .ply. Si celle n'est pas encore faite, on ï¿½xï¿½cute {@link #stockerFaces()}
 	 * @return la liste des Faces
 	 */
 	public List<Face> getFaces() {
@@ -67,10 +68,35 @@ public class Lecture {
 	}
 	
 	/**
+	 * Verifie que le fichier en parametre est un vrai fichier et que la premiere ligne
+	 * est simplement "ply"
+	 * @return
+	 */
+	public boolean verifieFichier() {
+		String filename = file.getFileName().toString();
+		String extension = filename.substring(filename.lastIndexOf(".") + 1, filename.length());
+		
+		if (new File(file.toString()).isFile() && extension.equals("ply") ) {
+			try (BufferedReader reader = Files.newBufferedReader(file, charset)) {
+				String line = null;
+				line = reader.readLine();
+				if (line.equals("ply")) {
+					return true;
+				} else {
+					return false;
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return false;
+	}
+	
+	
+	/**
 	 * Trouve le nombre de <b>Points</b> et <b>Faces</b> qui composent l'objet .ply
 	 */
 	private void findNb() {
-
 		try (BufferedReader reader = Files.newBufferedReader(file, charset)) {
 			String line = null;
 
@@ -87,6 +113,7 @@ public class Lecture {
 			System.out.println("nb faces = " + nbFaces);
 
 		} catch (Exception x) {
+			x.printStackTrace();
 		}
 	}
 
@@ -119,7 +146,7 @@ public class Lecture {
 	
 	/**
 	 * Lit le fichier .ply et sauvegarde la liste des faces dans une dans une <b>List&ltFace&gt</b>
-	 * Si la liste des points n'est pas encore faite, elle éxécute aussi {@link #stockerPoints()}
+	 * Si la liste des points n'est pas encore faite, elle ï¿½xï¿½cute aussi {@link #stockerPoints()}
 	 */
 	private void stockerFaces() {
 		if (!savedPoints) {

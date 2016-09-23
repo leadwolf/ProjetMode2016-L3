@@ -10,8 +10,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Cette classe donne acc�s � la liste des Points et de Faces de l'objet .ply dont on veut mod�liser
- * � travers les m�thodes {@link #getPoints()} et {@link #getFaces()}
+ * Cette classe donne accès à la liste des Points et de Faces de l'objet .ply dont on veut modéliser
+ * à travers les méthodes {@link #getPoints()} et {@link #getFaces()}
  * @author Groupe L3
  *
  */
@@ -29,7 +29,7 @@ public class Lecture {
 	private List<Face> faces;
 	
 	/**
-	 * Retourne la <b>List&ltPoint&gt</b> de l'objet .ply. Si celle n'est pas encore faite, on �x�cute {@link #stockerPoints()}
+	 * Retourne la <b>List&ltPoint&gt</b> de l'objet .ply. Si celle n'est pas encore faite, on éxécute {@link #stockerPoints()}
 	 * @return la liste des points
 	 */
 	public List<Point> getPoints() {
@@ -146,7 +146,7 @@ public class Lecture {
 	
 	/**
 	 * Lit le fichier .ply et sauvegarde la liste des faces dans une dans une <b>List&ltFace&gt</b>
-	 * Si la liste des points n'est pas encore faite, elle �x�cute aussi {@link #stockerPoints()}
+	 * Si la liste des points n'est pas encore faite, elle éxécute aussi {@link #stockerPoints()}
 	 */
 	private void stockerFaces() {
 		if (!savedPoints) {

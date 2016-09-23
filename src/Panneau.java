@@ -1,3 +1,4 @@
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.Ellipse2D;
@@ -17,6 +18,8 @@ public class Panneau extends JPanel {
 	  Graphics2D g = (Graphics2D) gg;
 	  g.drawLine(0, 200, 400, 200);
 	  g.drawLine(200, 0, 200, 400);
+	  
+	  g.setColor(Color.PINK);
 	  
 	  for (Point pt : pointsTransformes) {
 		  Ellipse2D.Double shape = new Ellipse2D.Double( getWidth()/2 + pt.x, getHeight()/2 + pt.y, 7, 7);

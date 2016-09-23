@@ -204,11 +204,11 @@ public class Lecture {
 	 * @param points la liste de points
 	 */
 	private void getPointsDeFace(String line, List<Face> faces, List<Point> points) {
-		Matcher matcher = multipleNumberPattern.matcher(line);
+		String[] strArray = line.split(" ");
 		faces.add(new Face());
 		Face tmpFace = faces.get(faces.size() - 1);
-		while (matcher.find()) {
-			Integer element = Integer.parseInt(matcher.group());
+		for (int i=1;i<strArray.length;i++) {
+			Integer element = Integer.parseInt(strArray[i]);
 			tmpFace.addPoint(points.get(element));
 		}
 	}

@@ -22,4 +22,12 @@ public class Fenetre extends JFrame {
 	public void setPoints(List<Point> points) {
 		panneau.setPoints(points);
 	}
+	
+	public void setSegments(List<Segment> segments) {
+		panneau.setSegments(segments);
+	}
+	
+	public void setFaces(List<Face> faces) {
+		panneau.setFaces(faces);
+	}
 }

@@ -17,6 +17,9 @@ public class Main {
 		segments = lect.getSegments();
 
 		fen.setPoints(points);
+		fen.setFaces(faces);
+		fen.setSegments(segments);
+		fen.repaint();
 
 		System.out.println("\n Liste des points\n");
 		for (Point pt : points) {

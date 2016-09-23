@@ -4,18 +4,18 @@ import java.util.List;
 public class Face {
 	
 	private int nbPoint;
-	private List<Point> list;
+	private List<Point> pointList;
 	private List<Segment> segmentList;
 	
 	
 	public Face() {
-		list = new ArrayList<>();
+		pointList = new ArrayList<>();
 		segmentList = new ArrayList<>();
 	}
 	
 	public Face(int nbPoint, List<Point> list){
 		this.nbPoint=nbPoint;
-		this.list=list;
+		this.pointList=list;
 		segmentList = new ArrayList<>();
 		for(int i=0;i<list.size()-1;i++){
 			segmentList.add(new Segment(list.get(i),list.get(i+1)));
@@ -25,15 +25,15 @@ public class Face {
 	}
 	
 	public void addPoint(Point point) {
-		list.add(point);
+		pointList.add(point);
 	}
 
 	@Override
 	public String toString() {
 		String res = "";
 		res += "Face [list=";
-		if (list.size()>1) {
-			for (Point pt : list) {
+		if (pointList.size()>1) {
+			for (Point pt : pointList) {
 				res += "\n\t" + pt;
 			}
 			res += "] ";
@@ -43,13 +43,29 @@ public class Face {
 			}
 			res += "] ";
 		} else {
-			return "Face [list=" + list + "]";
+			return "Face [list=" + pointList + "]";
 		}
 		return res;
 	}
 	
 	public List<Point> getList() {
-		return list;
+		return pointList;
+	}
+	
+	public double[] getListX() {
+		double[] listX = new double[pointList.size()-1];
+		for (int i=0;i<pointList.size()-1;i++) {
+			listX[i] = pointList.get(i).getX();
+		}
+		return listX;
+	}
+	
+	public double[] getListY() {
+		double[] listY = new double[pointList.size()-1];
+		for (int i=0;i<pointList.size()-1;i++) {
+			listY[i] = pointList.get(i).getY();
+		}
+		return listY;
 	}
 	
 }

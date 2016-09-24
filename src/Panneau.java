@@ -1,4 +1,6 @@
+import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Polygon;
@@ -9,15 +11,30 @@ import java.util.List;
 
 import javax.swing.JPanel;
 
+/**
+ * Cette classe sert à afficher l'objet ply.
+ * @author Groupe L3
+ *
+ */
 public class Panneau extends JPanel {
 
-	List<Point> points = new ArrayList<>();
-	List<Point> pointsTransformes = new ArrayList<>();
-	List<Face> faces = new ArrayList<>();
-	List<Face> facesTrans = new ArrayList<>();
-	List<Segment> segments = new ArrayList<>();
-	List<Path2D> polygones = new ArrayList<>();
-
+	private List<Point> points = new ArrayList<>();
+	private List<Point> ptsTrans = new ArrayList<>();
+	private List<Face> faces = new ArrayList<>();
+	private List<Face> facesTrans = new ArrayList<>();
+	private List<Segment> segments = new ArrayList<>();
+	private List<Path2D> polygones = new ArrayList<>();
+	private Dimension ptsDim = new Dimension(7, 7);
+	private boolean drawPoints= true;
+	private boolean drawSegments = true;
+	private boolean drawFaces = true;
+	
+	public Panneau(boolean drawPoints, boolean drawSegments, boolean drawFaces) {
+		this.drawPoints = drawPoints;
+		this.drawSegments = drawSegments;
+		this.drawFaces = drawFaces;
+	}
+	
 	public void paintComponent(Graphics gg) {
 		super.paintComponent(gg);
 
@@ -26,61 +43,106 @@ public class Panneau extends JPanel {
 		g.drawLine(200, 0, 200, 400);
 
 		g.setColor(Color.PINK);
-
-		for (Point pt : pointsTransformes) {
-			Ellipse2D.Double shape = new Ellipse2D.Double(getWidth() / 2 + pt.x, getHeight() / 2 + pt.y, 7, 7);
-			// System.out.println("drawing point =" + shape.x + " " + shape.y);
-			g.fill(shape);
+		
+		if (drawPoints) {
+			for (Point pt : ptsTrans) {
+				double x = getWidth() / 2 + pt.x - ptsDim.getWidth()/2;
+				double y = getHeight() / 2 + pt.y - ptsDim.getHeight()/2;
+				Ellipse2D.Double shape = new Ellipse2D.Double( x, y, ptsDim.getWidth(), ptsDim.getHeight());
+				//System.out.println("drawing point =" + shape.x + " " + shape.y);
+				g.fill(shape);
+			}
 		}
-
-		for (Path2D pa : polygones) {
-			g.draw(pa);
+		
+		if (drawSegments) {
+			for (Path2D pa : polygones) {
+				g.setStroke(new BasicStroke(2));
+				g.draw(pa);
+			}
+		}
+		
+		if (drawFaces) {
+			// TODO
 		}
 	}
-
+	
+	/**
+	 * Donne un transformation de x.
+	 * <br>Suite de {@link #transformePoints(List, List)}
+	 * @param pt le point à transformer
+	 * @return la coordonnée x transformée
+	 */
 	private double transformeXPoint(Point pt) {
 		return ((pt.x * 20) + (10 * pt.z));
 	}
-
+	
+	
+	/**
+	 * Donne un transformation de y.
+	 * <br>Suite de {@link #transformePoints(List, List)}
+	 * @param pt pt le point à transformer
+	 * @return la coordonnée y transformée
+	 */
 	private double transformeY(Point pt) {
 		return ((pt.y * 20) + (10 * pt.z));
 	}
-
-	private void transformePoints() {
-		for (Point pt : points) {
-			pointsTransformes.add(new Point());
-			Point tmp = pointsTransformes.get(pointsTransformes.size() - 1);
+	
+	/**
+	 * Transforme les points selon l'équation DESTx = (SRC.x * 20) + (10 * SRC.z) et DESTy = (SRC.y * 20) + (SRC * pt.z)
+	 * pour un affichage dans {@link #paintComponent(Graphics)}
+	 * @param src la source de points
+	 * @param dest la liste dans laquelle stocker les points transformés
+	 */
+	private void transformePoints(List<Point> src, List<Point> dest) {
+		for (Point pt : src) {
+			Point tmp = new Point();
 			tmp.add(transformeXPoint(pt));
 			tmp.add(transformeY(pt));
+			dest.add(tmp);
 		}
 	}
-
+	
+	
+	/**
+	 * Sauvegarde les points de l'objet et les transforme pour futur utilisation dans la modélisation, voir {@link #transformePoints(List, List)}
+	 * @param points la liste de points de l'objet récupérés par {@link Lecture}
+	 */
 	public void setPoints(List<Point> points) {
 		this.points = points;
-		transformePoints();
+		transformePoints(points, ptsTrans);
 	}
-
+	
+	
+	/**
+	 * Sauvegarde les segments dont sont composés les faces de l'objet ply
+	 * @param segments la liste des segments récupérés par {@link Lecture}
+	 */
 	public void setSegments(List<Segment> segments) {
 		this.segments = segments;
 		setPolyGones();
 	}
 
+		
+	/**
+	 * Sauvegarde les faces et les faces transformés pour notre visualisation par rapport à {@link #transformePoints(List, List)}
+	 * @param faces la liste de faces de l'objet récupérés par {@link Lecture}
+	 */
 	public void setFaces(List<Face> faces) {
 		this.faces = faces;
-		// for all existing normal faces
 		for (Face f: faces) {
 			Face fTrans = new Face();
-			facesTrans.add(fTrans); // create equivalent transformed face
-			List<Point> pt = f.getList();
-			for (int i=0; i<pt.size();i++) { // for all the points in the normal face
-				Point ptTrans = new Point();
-				ptTrans.add(transformeXPoint(pt.get(i))); // add a point in tranformedFace that is the transformation of normal point
-				ptTrans.add(transformeY(pt.get(i)));
-				fTrans.addPoint(ptTrans);
+			facesTrans.add(fTrans);
+			for (Point pt : f.getList()) {
+				fTrans.addPoint(ptsTrans.get(Integer.parseInt(pt.getNom()))); // ajoute le point transformé ayant le meme numéro que le point original
 			}
 		}
 	}
-
+	
+	/**
+	 * Sauvegarde les polygones à dessiner grâce aux points de <b>faceTrans</b>
+	 * <br>En clair, polygones contient les vrais formes que Graphics peut dessiner, voir {@link #paintComponent(Graphics)}
+	 * Les faces sont alors représentés par les polygones remplis. Les listes faces ne servent simplement qu'à contenir la liste de points.
+	 */
 	private void setPolyGones() {
 		for (int i = 0; i < facesTrans.size(); i++) {
 			Path2D path = new Path2D.Double();

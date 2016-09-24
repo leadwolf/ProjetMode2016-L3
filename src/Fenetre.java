@@ -9,7 +9,7 @@ public class Fenetre extends JFrame {
 	
 	public Fenetre() {
 		
-		panneau = new Panneau();
+		panneau = new Panneau(true, true, true);
 		
 		this.setTitle("Ma première fenêtre Java");
 		this.setSize(400, 400);

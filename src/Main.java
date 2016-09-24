@@ -21,6 +21,9 @@ public class Main {
 		fen.setSegments(segments);
 		fen.repaint();
 
+		System.out.println("Nombre de points = " + lect.getNbPoints() + "\n");
+		System.out.println("Nombre de faces = " + lect.getNbFaces() + "\n");
+		
 		System.out.println("\n Liste des points\n");
 		for (Point pt : points) {
 			System.out.println(pt.toString());

@@ -118,6 +118,14 @@ public class Lecture {
 	}
 	
 	
+	public int getNbPoints() {
+		return nbPoints;
+	}
+
+	public int getNbFaces() {
+		return nbFaces;
+	}
+
 	/**
 	 * Trouve le nombre de <b>Points</b> et <b>Faces</b> qui composent l'objet .ply
 	 */
@@ -129,13 +137,13 @@ public class Lecture {
 				line = reader.readLine();
 			} while (line != null && !line.startsWith("element vertex"));
 			nbPoints = getDernierNombre(line);
-			System.out.println("nb points = " + nbPoints);
+		//	System.out.println("nb points = " + nbPoints);
 
 			do {
 				line = reader.readLine();
 			} while (line != null && !line.startsWith("element face"));
 			nbFaces = getDernierNombre(line);
-			System.out.println("nb faces = " + nbFaces);
+		//	System.out.println("nb faces = " + nbFaces);
 
 		} catch (Exception x) {
 			x.printStackTrace();

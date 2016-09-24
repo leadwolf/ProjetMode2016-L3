@@ -21,6 +21,10 @@ public class Point {
 		return x;
 	}
 
+	public String getNom() {
+		return nom;
+	}
+
 	public double getY() {
 		return y;
 	}

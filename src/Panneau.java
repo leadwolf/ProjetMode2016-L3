@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Polygon;
+import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Path2D;
 import java.util.ArrayList;
@@ -28,6 +29,7 @@ public class Panneau extends JPanel {
 	private boolean drawPoints= true;
 	private boolean drawSegments = true;
 	private boolean drawFaces = true;
+	private int numPremFace = 0;
 	
 	public Panneau(boolean drawPoints, boolean drawSegments, boolean drawFaces) {
 		this.drawPoints = drawPoints;
@@ -52,10 +54,19 @@ public class Panneau extends JPanel {
 		}
 		
 		if (drawSegments) {
-			g.setColor(Color.BLACK);
-			for (Path2D pa : polygones) {
+			try {
+				g.setColor(Color.BLACK);
 				g.setStroke(new BasicStroke(2));
-				g.draw(pa);
+				Area front = new Area(polygones.get(numPremFace).getBounds2D());
+				for (int i=0;i<polygones.size();i++) {
+					Area current = new Area(polygones.get(i).getBounds2D());
+					if (!front.intersects(current.getBounds2D())) {
+						g.draw(polygones.get(i));
+					}
+				}
+				g.draw(polygones.get(numPremFace));
+			} catch (Exception e) {
+				// polygones n'ont pas encore été initialisés
 			}
 		}
 		
@@ -129,6 +140,7 @@ public class Panneau extends JPanel {
 	public void setSegments(List<Segment> segments) {
 		this.segments = segments;
 		setPolyGones();
+		determineFrontFace();
 	}
 
 		
@@ -162,6 +174,29 @@ public class Panneau extends JPanel {
 				path.lineTo( (getWidth()/2) + pt.get(j).getX(), (getHeight()/2) + pt.get(j).getY());
 			}
 			path.closePath();
+		}
+	}
+	
+	private void determineFrontFace() {
+		if (faces.size() > 1) {
+			int premFace = 0;
+			double sommeZPtsFace = 0.0;
+			double moyenneZPtsFace = 0.0;
+			double oldMoyenne = -1;
+			for (int i=0;i<faces.size();i++) {
+				sommeZPtsFace = 0.0;
+				moyenneZPtsFace = 0.0;
+				for (Point pt : faces.get(i).getList()) {
+					sommeZPtsFace += pt.getZ();
+				}
+				moyenneZPtsFace = sommeZPtsFace / (faces.get(i).getList().size()-1);
+				if (moyenneZPtsFace > oldMoyenne) {
+					oldMoyenne = moyenneZPtsFace;
+					premFace = i;
+				}
+			}
+			numPremFace = premFace;
+		//	System.out.println("first face = " + numPremFace + " " + faces.get(numPremFace));
 		}
 	}
 

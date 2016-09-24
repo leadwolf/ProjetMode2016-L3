@@ -16,7 +16,7 @@ public class Main {
 		faces = lect.getFaces();
 		segments = lect.getSegments();
 
-		fen.setPoints(points);
+		fen.setPoints(points, 2.5);
 		fen.setFaces(faces);
 		fen.setSegments(segments);
 		fen.repaint();

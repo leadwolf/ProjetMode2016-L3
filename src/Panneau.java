@@ -132,9 +132,13 @@ public class Panneau extends JPanel {
 	/**
 	 * Sauvegarde les points de l'objet et les transforme pour futur utilisation dans la modélisation, voir {@link #transformePoints(List, List)}
 	 * @param points la liste de points de l'objet récupérés par {@link Lecture}
+	 * @param zoomLevel le niveau de zoom à appliqer à l'objet. La valeur 1.0 ne modifie rien.
 	 */
-	public void setPoints(List<Point> points) {
+	public void setPoints(List<Point> points, double zoomLevel) {
 		this.points = points;
+		if (zoomLevel != 1.0) {
+			zoom(zoomLevel);
+		}
 		transformePoints(points, ptsTrans);
 	}
 	
@@ -203,6 +207,18 @@ public class Panneau extends JPanel {
 			}
 			numPremFace = premFace;
 		//	System.out.println("first face = " + numPremFace + " " + faces.get(numPremFace));
+		}
+	}
+	
+	/**
+	 * Applique un "zoom" en écartant les points par rapport à l'origine (0,0,0)
+	 * @param zoomLevel le niveau de zoom à appliquer
+	 */
+	private void zoom(double zoomLevel) {
+		for (Point pt : points) {
+			pt.setX(pt.getX() * zoomLevel);
+			pt.setY(pt.getY() * zoomLevel);
+			pt.setZ(pt.getZ() * zoomLevel);
 		}
 	}
 

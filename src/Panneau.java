@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Polygon;
+import java.awt.Stroke;
 import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Path2D;
@@ -30,6 +31,9 @@ public class Panneau extends JPanel {
 	private boolean drawSegments = true;
 	private boolean drawFaces = true;
 	private int numPremFace = 0;
+	private Stroke defaultStroke = new BasicStroke(2);
+	private final float dash1[] = {10.0f};
+	private final Stroke dottedStroke = new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, dash1, 0.0f);
 	
 	public Panneau(boolean drawPoints, boolean drawSegments, boolean drawFaces) {
 		this.drawPoints = drawPoints;
@@ -56,13 +60,15 @@ public class Panneau extends JPanel {
 		if (drawSegments) {
 			try {
 				g.setColor(Color.BLACK);
-				g.setStroke(new BasicStroke(2));
 				Area front = new Area(polygones.get(numPremFace).getBounds2D());
 				for (int i=0;i<polygones.size();i++) {
 					Area current = new Area(polygones.get(i).getBounds2D());
 					if (!front.intersects(current.getBounds2D())) {
-						g.draw(polygones.get(i));
+						g.setStroke(defaultStroke);
+					} else {
+						g.setStroke(dottedStroke);
 					}
+					g.draw(polygones.get(i));
 				}
 				g.draw(polygones.get(numPremFace));
 			} catch (Exception e) {

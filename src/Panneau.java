@@ -42,9 +42,25 @@ public class Panneau extends JPanel {
 		g.drawLine(0, 200, 400, 200);
 		g.drawLine(200, 0, 200, 400);
 
-		g.setColor(Color.PINK);
+		
+		if (drawFaces) {
+			g.setColor(Color.CYAN);
+			for (Path2D pa : polygones) {
+				g.setStroke(new BasicStroke(2));
+				g.fill(pa);
+			}
+		}
+		
+		if (drawSegments) {
+			g.setColor(Color.BLACK);
+			for (Path2D pa : polygones) {
+				g.setStroke(new BasicStroke(2));
+				g.draw(pa);
+			}
+		}
 		
 		if (drawPoints) {
+			g.setColor(Color.PINK);
 			for (Point pt : ptsTrans) {
 				double x = getWidth() / 2 + pt.x - ptsDim.getWidth()/2;
 				double y = getHeight() / 2 + pt.y - ptsDim.getHeight()/2;
@@ -54,16 +70,9 @@ public class Panneau extends JPanel {
 			}
 		}
 		
-		if (drawSegments) {
-			for (Path2D pa : polygones) {
-				g.setStroke(new BasicStroke(2));
-				g.draw(pa);
-			}
-		}
+
 		
-		if (drawFaces) {
-			// TODO
-		}
+
 	}
 	
 	/**

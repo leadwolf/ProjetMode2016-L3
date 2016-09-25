@@ -1,5 +1,6 @@
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -20,24 +21,19 @@ public class Lecture {
 	private Path file;
 	private int nbPoints;
 	private int nbFaces;
-	private boolean savedPoints;
-	private boolean savedFaces;
-	private boolean savedSegments;
 	private Pattern lastIntPattern;
 	private Pattern multipleNumberPattern;
 	private Charset charset;
 	private List<Point> points;
 	private List<Face> faces;
 	private List<Segment> segments;
+	private boolean erreur = false;
 	
 	/**
 	 * Retourne la <b>List&ltPoint&gt</b> de l'objet .ply. Si celle n'est pas encore faite, on éxécute {@link #stockerPoints()}
 	 * @return la liste des points
 	 */
 	public List<Point> getPoints() {
-		if (!savedPoints) {
-			stockerPoints();
-		}
 		return points;
 	}
 	
@@ -46,20 +42,18 @@ public class Lecture {
 	 * @return la liste des Faces
 	 */
 	public List<Face> getFaces() {
-		if (!savedFaces) {
-			stockerFaces();
-		}
 		return faces;
 	}
 	
 	public List<Segment> getSegments() {
-		if (!savedSegments) {
-			stockerSegments();
-		}
 		return segments;
 	}
 	
 	
+	public boolean isErreur() {
+		return erreur;
+	}
+
 	/**
 	 * Initialise variables
 	 * @param file le <b>Path</b> de l'objet .ply
@@ -68,15 +62,13 @@ public class Lecture {
 		this.file = file;
 		nbPoints = -1;
 		nbFaces = -1;
-		savedPoints = false;
-		savedFaces = false;
-		savedSegments = false;
 		lastIntPattern = Pattern.compile("[^0-9]+([0-9]+)$");
 		multipleNumberPattern = Pattern.compile("[-+]?\\d*\\.?\\d+([eE][-+]?\\d+)?");
 		charset = Charset.forName("US-ASCII");
 		points = new ArrayList<>();
 		faces = new ArrayList<>();
 		segments = new ArrayList<>();
+		getElements();
 	}
 	
 	/**
@@ -104,20 +96,6 @@ public class Lecture {
 		return false;
 	}
 	
-	/**
-	 * Verifie que tous les points ont bien des coordonnées x, y et z
-	 * @return
-	 */
-	public boolean verifieListePoints() {
-		for (Point pt : points) {
-			if (!pt.complet()) {
-				return false;
-			}
-		}
-		return true;
-	}
-	
-	
 	public int getNbPoints() {
 		return nbPoints;
 	}
@@ -125,6 +103,17 @@ public class Lecture {
 	public int getNbFaces() {
 		return nbFaces;
 	}
+	
+	
+	private void getElements() {
+		if (verifieFichier()) {
+			findNb();
+			stockerPoints();
+			stockerFaces();
+			stockerSegments();
+		}
+	}
+	
 
 	/**
 	 * Trouve le nombre de <b>Points</b> et <b>Faces</b> qui composent l'objet .ply
@@ -135,13 +124,21 @@ public class Lecture {
 
 			do {
 				line = reader.readLine();
-			} while (line != null && !line.startsWith("element vertex"));
+				if (line == null) {
+					// Fin du fichier alors que cherchait nombre de points
+					erreur = true;
+				}
+			} while (!line.startsWith("element vertex"));
 			nbPoints = getDernierNombre(line);
 		//	System.out.println("nb points = " + nbPoints);
 
 			do {
 				line = reader.readLine();
-			} while (line != null && !line.startsWith("element face"));
+				if (line == null) {
+					// Fin du fichier alors que cherchait nombre de faces
+					erreur = true;
+				}
+			} while (!line.startsWith("element face"));
 			nbFaces = getDernierNombre(line);
 		//	System.out.println("nb faces = " + nbFaces);
 
@@ -154,7 +151,6 @@ public class Lecture {
 	 * Lit le fichier .ply et sauvegarde la liste des Points dans une dans une <b>List&ltPoint&gt</b>
 	 */
 	private void stockerPoints() {
-		findNb();
 		int nbLignesLus = 0;
 		boolean startCount = false;
 		String line = null;
@@ -170,29 +166,17 @@ public class Lecture {
 					// lis encore une ligne pour commencer conversion
 					line = reader.readLine();
 				}
-			} while (nbLignesLus < nbPoints);
+			} while (nbLignesLus < nbPoints && line != null);
 		} catch (Exception e) {
+			// TODO: handle exception
 		}
-
-		savedPoints = true;
 	}
-	
+		
 	/**
 	 * Lit le fichier .ply et sauvegarde la liste des faces dans une dans une <b>List&ltFace&gt</b>
 	 * Si la liste des points n'est pas encore faite, elle éxécute aussi {@link #stockerPoints()}
 	 */
 	private void stockerFaces() {
-		if (!savedPoints) {
-			stockerPoints();
-		}
-		stockerFacesSuite();
-		savedFaces = true;
-	}
-	
-	/**
-	 * Suite de {@link #stockerFaces()
-	 */
-	private void stockerFacesSuite() {
 		int nbLignesLus = 0;
 		int nbFromPoints = 0;
 		// on commence a compter a partir de la ligne (end_header + nbPoints)
@@ -212,21 +196,27 @@ public class Lecture {
 					startCount = true;
 				}
 			} while (nbLignesLus < nbFaces && line != null);
+			if (nbLignesLus != nbFaces) {
+				// Fin du fichier alors que n'a pas lu tous les points spécifiés dans entête
+				erreur = true;
+			}
+			line = reader.readLine();
+			if (line != null && !line.startsWith("{")) {
+				// Fichier comporte plus de lignes qu'attendu
+				erreur = true;
+			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			// TODO: handle exception
 		}
 	}
 	
 	private void stockerSegments() {
-		if (savedFaces) {
-			for (Face f : faces) {
-				List<Point> tmpPoint = f.getList();
-				for (int i=0; i<tmpPoint.size()-1;i++) {
-					Segment tmpSeg = new Segment(tmpPoint.get(i), tmpPoint.get(tmpPoint.size()-1));
-					segments.add(tmpSeg);
-				}
+		for (Face f : faces) {
+			List<Point> tmpPoint = f.getList();
+			for (int i=0; i<tmpPoint.size()-1;i++) {
+				Segment tmpSeg = new Segment(tmpPoint.get(i), tmpPoint.get(tmpPoint.size()-1));
+				segments.add(tmpSeg);
 			}
-			savedSegments = true;
 		}
 	}
 	
@@ -239,11 +229,30 @@ public class Lecture {
 	 */
 	private void getPointsDeFace(String line, List<Face> faces, List<Point> points) {
 		String[] strArray = line.split(" ");
+		if (strArray.length == 3) {
+			try {
+				 // Pas assez de point dans cette face ou lu point alors qu'attend face
+				erreur = true;
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		faces.add(new Face());
 		Face tmpFace = faces.get(faces.size() - 1);
 		for (int i=1;i<strArray.length;i++) {
 			Integer element = Integer.parseInt(strArray[i]);
-			tmpFace.addPoint(points.get(element));
+			if (element < 0 || element > points.size()) {
+				try {
+					// Face comporte point n=" + element + " alors qu'il est inexistant
+					erreur = true;
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			} else {
+				tmpFace.addPoint(points.get(element));
+			}
 		}
 	}
 	
@@ -253,12 +262,31 @@ public class Lecture {
 	 * @param points la liste des points dont on ajoute les coordonnees
 	 */
 	private void getDoubles(String line, List<Point> points) {
-		Matcher matcher = multipleNumberPattern.matcher(line);
-		points.add(new Point());
-		while (matcher.find()) {
-			double element = Double.parseDouble(matcher.group());
-			points.get(points.size() - 1).add(element);
-			points.get(points.size() - 1).setName("" + (points.size() - 1));
+		String[] strArray = line.split(" ");
+		if (strArray.length > 3) {
+			try {
+				// Lu face alors qu'attend point
+				erreur = true;
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		Point tmpPoint = new Point();
+		points.add(tmpPoint);
+		for (int i=0;i<strArray.length;i++) {
+			double element = Double.parseDouble(strArray[i]);
+			tmpPoint.add(element);
+			tmpPoint.setName("" + (points.size() - 1));
+		}
+		if (!tmpPoint.complet()) {
+			try {
+				// Point n=" + (points.size() - 1) + " pas complet
+				erreur = true;
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 

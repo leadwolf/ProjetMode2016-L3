@@ -6,7 +6,7 @@ public class Point {
 	private int iter;
 	
 	public Point() {
-		iter = 0;
+		iter = -1;
 	}
 	
 	public Point(String nom,Double Coordx,Double Coordy,Double Coordz){
@@ -55,14 +55,15 @@ public class Point {
 	 * @param nb le coordonn�e a ajouter dans ce point
 	 */
 	public void add(Double nb) {
-		if (iter == 0) {
+		if (iter == -1) {
 			x = nb;
 			iter++;
-		} else if (iter == 1) {
+		} else if (iter == 0) {
 			y = nb;
 			iter++;
-		} else if (iter == 2) {
+		} else if (iter == 1) {
 			z = nb;
+			iter++;
 		}
 	}
 	

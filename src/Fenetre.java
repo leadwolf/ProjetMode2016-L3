@@ -16,7 +16,6 @@ public class Fenetre extends JFrame {
 		this.setLocationRelativeTo(null);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setContentPane(panneau);
-		this.setVisible(true);
 	}
 	
 	public void setPoints(List<Point> points, double zoomLevel) {

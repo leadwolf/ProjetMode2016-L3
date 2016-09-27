@@ -8,7 +8,7 @@ import javax.swing.JOptionPane;
 
 public class Main {
 	public static void main(String[] args) throws IOException {
-		Fenetre fen = new Fenetre();
+		Fenetre fen = new Fenetre(false, true, true);
 
 		Path path = Paths.get("ply/cube.ply");
 		Lecture lect = new Lecture(path);

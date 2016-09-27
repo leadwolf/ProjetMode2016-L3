@@ -24,7 +24,7 @@ public class Panneau extends JPanel {
 	private List<Point> ptsTrans = new ArrayList<>();
 	private List<Face> faces = new ArrayList<>();
 	private List<Face> facesTrans = new ArrayList<>();
-	private List<Segment> segments = new ArrayList<>();
+	private List<Segment> segments = new ArrayList<>(); // Inutile?
 	private List<Path2D> polygones = new ArrayList<>();
 	private Dimension ptsDim = new Dimension(7, 7);
 	private boolean drawPoints= true;
@@ -45,9 +45,9 @@ public class Panneau extends JPanel {
 		super.paintComponent(gg);
 
 		Graphics2D g = (Graphics2D) gg;
-		g.drawLine(0, 200, 400, 200);
-		g.drawLine(200, 0, 200, 400);
-
+		
+		int centerX = getWidth() / 2;
+		int centerY = getHeight() / 2;
 		
 		if (drawFaces) {
 			g.setColor(Color.CYAN);
@@ -92,8 +92,8 @@ public class Panneau extends JPanel {
 		if (drawPoints) {
 			g.setColor(Color.PINK);
 			for (Point pt : ptsTrans) {
-				double x = getWidth() / 2 + pt.x - ptsDim.getWidth()/2;
-				double y = getHeight() / 2 + pt.y - ptsDim.getHeight()/2;
+				double x = centerX + pt.x - ptsDim.getWidth()/2;
+				double y = centerY + pt.y - ptsDim.getHeight()/2;
 				Ellipse2D.Double shape = new Ellipse2D.Double( x, y, ptsDim.getWidth(), ptsDim.getHeight());
 				//System.out.println("drawing point =" + shape.x + " " + shape.y);
 				g.fill(shape);
@@ -137,8 +137,14 @@ public class Panneau extends JPanel {
 			Point tmp = new Point();
 			tmp.add(transformeXPoint(pt));
 			tmp.add(transformeY(pt));
+			System.out.println("transformed " + pt + " to " + tmp);
 			dest.add(tmp);
 		}
+	}
+	
+	private void transformePoint(Point point) {
+		point.setX(transformeXPoint(point));
+		point.setY(transformeY(point));
 	}
 	
 	

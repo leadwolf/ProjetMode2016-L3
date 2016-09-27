@@ -31,8 +31,8 @@ public class Panneau extends JPanel {
 	private boolean drawSegments = true;
 	private boolean drawFaces = true;
 	private int numPremFace = 0;
-	private Stroke defaultStroke = new BasicStroke(2);
-	private final float dash1[] = {10.0f};
+	private Stroke defaultStroke = new BasicStroke(1);
+	private final float dash1[] = {7.0f};
 	private final Stroke dottedStroke = new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, dash1, 0.0f);
 	
 	public Panneau(boolean drawPoints, boolean drawSegments, boolean drawFaces) {
@@ -58,6 +58,15 @@ public class Panneau extends JPanel {
 		}
 		
 		if (drawSegments) {
+			g.setColor(Color.BLACK);
+			g.setStroke(defaultStroke);
+			for (Path2D p : polygones) {
+				g.draw(p);
+			}
+			/*
+			 * A refaire : si une partie de face est couvert par celui de devant, et qu'une autre partie est quand meme visible, ces segments
+			 * sont toujours en pointillés. => A faire sur une base de segment caché par face au lieu de face caché par face
+			 * 
 			try {
 				g.setColor(Color.BLACK);
 				Area front = new Area(polygones.get(numPremFace).getBounds2D());
@@ -66,14 +75,18 @@ public class Panneau extends JPanel {
 					if (!front.intersects(current.getBounds2D())) {
 						g.setStroke(defaultStroke);
 					} else {
-						g.setStroke(dottedStroke);
+						if (i != numPremFace) {
+							g.setStroke(dottedStroke);
+						}
 					}
 					g.draw(polygones.get(i));
 				}
+				g.setStroke(defaultStroke);
 				g.draw(polygones.get(numPremFace));
 			} catch (Exception e) {
 				// polygones n'ont pas encore été initialisés
 			}
+			*/
 		}
 		
 		if (drawPoints) {
@@ -99,7 +112,7 @@ public class Panneau extends JPanel {
 	 * @return la coordonnée x transformée
 	 */
 	private double transformeXPoint(Point pt) {
-		return ((pt.x * 20) + (10 * pt.z));
+		return ((pt.x * 20) + (-10 * pt.z));
 	}
 	
 	
@@ -110,7 +123,7 @@ public class Panneau extends JPanel {
 	 * @return la coordonnée y transformée
 	 */
 	private double transformeY(Point pt) {
-		return ((pt.y * 20) + (10 * pt.z));
+		return ((pt.y * 20) + (10 * pt.z)) * -1;
 	}
 	
 	/**

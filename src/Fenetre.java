@@ -8,14 +8,17 @@ public class Fenetre extends JFrame {
 	Panneau panneau;
 	
 	public Fenetre() {
-		
-		panneau = new Panneau(true, true, true);
-		
+		panneau = new Panneau(false, true, true);
 		this.setTitle("Ma première fenêtre Java");
 		this.setSize(400, 400);
 		this.setLocationRelativeTo(null);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setContentPane(panneau);
+	}
+	
+	public Fenetre(boolean drawPoints, boolean drawSegments, boolean drawFaces) {
+		this();
+		panneau = new Panneau(drawPoints, drawSegments, drawFaces);
 	}
 	
 	public void setPoints(List<Point> points, double zoomLevel) {

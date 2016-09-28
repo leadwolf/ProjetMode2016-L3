@@ -318,7 +318,7 @@ public class Panneau extends JPanel {
 		double zoomLevel = 1.0;
 		if (widthFig > width || heightFig > height) {
 			// reduce
-			while (widthFig > 0.65 * width && zoomLevel > 0) {
+			while (widthFig > 0.65 * width && heightFig < 0.65 * height && zoomLevel > 0) {
 				zoomLevel -= 0.005;
 				refreshFigDims();
 				for (Point pt : ptsTrans) {
@@ -329,7 +329,7 @@ public class Panneau extends JPanel {
 			}
 		} else {
 			// enlarge
-			while (widthFig < 0.65 * width) {
+			while (widthFig < 0.65 * width && heightFig < 0.65 * height) {
 				zoomLevel += 0.005;
 				refreshFigDims();
 				for (Point pt : ptsTrans) {

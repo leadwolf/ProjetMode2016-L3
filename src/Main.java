@@ -41,10 +41,10 @@ public class Main {
 			faces = lect.getFaces();
 			segments = lect.getSegments();
 
-			fen.setVisible(true);
-			fen.setPoints(points, 2.5);
+			fen.setPoints(points, 1.0);
 			fen.setFaces(faces);
 			fen.setSegments(segments);
+			fen.setVisible(true);
 			fen.repaint();
 			
 			/*

@@ -212,6 +212,10 @@ public class Lecture {
 		}
 	}
 	
+	/**
+	 * <b>INUTILE A L'INSTANT</b>
+	 * <br> inutile car on prend les segments à partir des faces dans {@link Panneau}
+	 */
 	private void stockerSegments() {
 		for (Face f : faces) {
 			List<Point> tmpPoint = f.getList();

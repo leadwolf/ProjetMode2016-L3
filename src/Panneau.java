@@ -34,6 +34,10 @@ public class Panneau extends JPanel {
 	private Stroke defaultStroke = new BasicStroke(1);
 	private final float dash1[] = {7.0f};
 	private final Stroke dottedStroke = new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, dash1, 0.0f);
+	private int height;
+	private int width;
+	private double widthFig = 0, heightFig = 0;
+	private double left = width, right = 0, top = height, bottom = 0;
 	
 	public Panneau(boolean drawPoints, boolean drawSegments, boolean drawFaces) {
 		this.drawPoints = drawPoints;
@@ -46,9 +50,8 @@ public class Panneau extends JPanel {
 
 		Graphics2D g = (Graphics2D) gg;
 		
-		int centerX = getWidth() / 2;
-		int centerY = getHeight() / 2;
-		
+		int centerX = height / 2;
+		int centerY = width / 2;
 		if (drawFaces) {
 			g.setColor(Color.CYAN);
 			for (Path2D pa : polygones) {
@@ -105,6 +108,12 @@ public class Panneau extends JPanel {
 
 	}
 	
+	public void setDimensions(Dimension dim) {
+		height = dim.height;
+		width = dim.width;
+	}
+	
+	
 	/**
 	 * Donne un transformation de x.
 	 * <br>Suite de {@link #transformePoints(List, List)}
@@ -154,12 +163,69 @@ public class Panneau extends JPanel {
 	 */
 	public void setPoints(List<Point> points, double zoomLevel) {
 		this.points = points;
+		transformePoints(points, ptsTrans);
+		centrerFigure();
 		if (zoomLevel != 1.0) {
 			zoom(zoomLevel);
+		} else {
+			applyDefaultZoom();
 		}
-		transformePoints(points, ptsTrans);
 	}
 	
+	
+	/**
+	 * Actualise les dimensions de la figure
+	 */
+	private void refreshFigDims() {
+		widthFig = heightFig = right = bottom = 0;
+		left = width;
+		top = height;
+		bottom = 0;
+		for (Point p : ptsTrans) {
+			if (p.getX() + (width/2) < left) {
+				left = p.getX() + (width/2);
+			}  if (p.getX() + (width/2) > right) {
+				right = p.getX() + (width/2);
+			}
+			if (p.getY() + (height/2) > bottom) {
+				bottom = p.getY() + (height/2);
+			} else if (p.getY() + (height/2) < top) {
+				top = p.getY() + (height/2);
+			}
+		}
+		widthFig = right - left;
+		heightFig = bottom - top;
+	}
+	
+	
+	/**
+	 * Centre la figure si on centre dépasse la moitié d'une coté
+	 */
+	private void centrerFigure() {
+		refreshFigDims();
+		if (left+(widthFig/2) < width/2) {
+			// move right
+			for (Point p : ptsTrans) {
+				p.setX(p.getX() - left + (width/2) - (widthFig/2) );
+			}
+		} else if (right-(widthFig/2) > width/2) {
+			// move left
+			for (Point p : ptsTrans) {
+				p.setX(p.getX() - (right-width) - (width/2) + (widthFig/2));
+			}
+		}
+		if (top+(heightFig/2) < height/2) {
+			// move down
+			for (Point p : ptsTrans) {
+				p.setY(p.getY() - top + (height/2) - (heightFig/2) );
+			}
+		} else if (bottom-(heightFig/2) > height/2) {
+			// move up
+			for (Point p : ptsTrans) {
+				p.setY(p.getY() - bottom + (height/2) + (heightFig/2));
+			}
+		}
+	}
 	
 	/**
 	 * Sauvegarde les segments dont sont composés les faces de l'objet ply
@@ -197,14 +263,19 @@ public class Panneau extends JPanel {
 			Path2D path = new Path2D.Double();
 			polygones.add(path);
 			List<Point> pt = facesTrans.get(i).getList();
-			path.moveTo( (getWidth()/2) + pt.get(0).getX(), (getHeight()/2) + pt.get(0).getY());
+			path.moveTo( (width/2) + pt.get(0).getX(), (height/2) + pt.get(0).getY());
 			for (int j = 1; j < pt.size(); j++) {
-				path.lineTo( (getWidth()/2) + pt.get(j).getX(), (getHeight()/2) + pt.get(j).getY());
+				path.lineTo( (width/2) + pt.get(j).getX(), (height/2) + pt.get(j).getY());
 			}
 			path.closePath();
 		}
 	}
 	
+	/**
+	 * <b>INUTILE A L'INSTANT</b>
+	 * <br>Determine quel face est la plus en avant.
+	 * <br>Servira de comparaison pour savoir quels segments cacher.
+	 */
 	private void determineFrontFace() {
 		if (faces.size() > 1) {
 			int premFace = 0;
@@ -233,10 +304,40 @@ public class Panneau extends JPanel {
 	 * @param zoomLevel le niveau de zoom à appliquer
 	 */
 	private void zoom(double zoomLevel) {
-		for (Point pt : points) {
+		for (Point pt : ptsTrans) {
 			pt.setX(pt.getX() * zoomLevel);
 			pt.setY(pt.getY() * zoomLevel);
 			pt.setZ(pt.getZ() * zoomLevel);
+		}
+	}
+	
+	/**
+	 * Applique un zoom permettant à la figure de prendre 65% de l'écran
+	 */
+	private void applyDefaultZoom() {
+		double zoomLevel = 1.0;
+		if (widthFig > width || heightFig > height) {
+			// reduce
+			while (widthFig > 0.65 * width && zoomLevel > 0) {
+				zoomLevel -= 0.005;
+				refreshFigDims();
+				for (Point pt : ptsTrans) {
+					pt.setX(pt.getX() * zoomLevel);
+					pt.setY(pt.getY() * zoomLevel);
+					pt.setZ(pt.getZ() * zoomLevel);
+				}
+			}
+		} else {
+			// enlarge
+			while (widthFig < 0.65 * width) {
+				zoomLevel += 0.005;
+				refreshFigDims();
+				for (Point pt : ptsTrans) {
+					pt.setX(pt.getX() * zoomLevel);
+					pt.setY(pt.getY() * zoomLevel);
+					pt.setZ(pt.getZ() * zoomLevel);
+				}
+			}
 		}
 	}
 

@@ -87,12 +87,14 @@ public class Lecture {
 				if (line.equals("ply")) {
 					return true;
 				} else {
+					erreur = true;
 					return false;
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
+		erreur = true;
 		return false;
 	}
 	

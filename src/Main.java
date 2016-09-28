@@ -7,13 +7,33 @@ import java.util.List;
 import javax.swing.JOptionPane;
 
 public class Main {
-	public static void main(String[] args) throws IOException {
-		Fenetre fen = new Fenetre(false, true, true);
+	
+	private static boolean showPoints = false;
+	private static boolean showFaces= false;
+	private static boolean showSegments = false;
+	private static Lecture lect;
+	private static Fenetre fen;
+	
+	public static void main(String[] args) {
+	
+		/*
+		 * Suppose qu'option toujours en premier et que path en dernier, pas plus que de 2 arguments
+		 */
+		if (args.length == 1 || args.length == 2) {
+			if (args[0].equals("-f")) {
+				showFaces = true;
+			} else if (args[0].equals("-s")) {
+				showSegments = true;
+			} else {
+				showFaces = true;
+				showSegments = true;
+			}
 
-		Path path = Paths.get("ply/cube.ply");
-		Lecture lect = new Lecture(path);
-		
-		if (!lect.isErreur()) {
+			Path path = Paths.get(args[args.length-1]);
+			lect = new Lecture(path);
+			fen = new Fenetre(showPoints, showSegments, showFaces);
+		}
+		if (lect != null && !lect.isErreur()) {
 			List<Point> points = new ArrayList<>();
 			List<Face> faces = new ArrayList<>();
 			List<Segment> segments = new ArrayList<>();
@@ -26,7 +46,8 @@ public class Main {
 			fen.setFaces(faces);
 			fen.setSegments(segments);
 			fen.repaint();
-	
+			
+			/*
 			System.out.println("Nombre de points = " + lect.getNbPoints() + "\n");
 			System.out.println("Nombre de faces = " + lect.getNbFaces() + "\n");
 			
@@ -45,8 +66,8 @@ public class Main {
 			for (int i = 0; i < segments.size(); i++) {
 				System.out.println("Segment n=" + i + "  " + segments.get(i));
 			}
+			*/
 		} else {
-			fen.setVisible(false);
 			JOptionPane.showMessageDialog(fen, "Erreur lors de la lecture du fichier", "Erreur", JOptionPane.ERROR_MESSAGE);
 		}
 	}

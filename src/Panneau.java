@@ -137,7 +137,6 @@ public class Panneau extends JPanel {
 			Point tmp = new Point();
 			tmp.add(transformeXPoint(pt));
 			tmp.add(transformeY(pt));
-			System.out.println("transformed " + pt + " to " + tmp);
 			dest.add(tmp);
 		}
 	}

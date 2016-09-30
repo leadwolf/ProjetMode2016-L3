@@ -87,6 +87,7 @@ public class Lecture {
 				if (line.equals("ply")) {
 					return true;
 				} else {
+					System.out.println("Erreur : Fichier n'a pas l'extension .ply");
 					erreur = true;
 					return false;
 				}
@@ -128,6 +129,7 @@ public class Lecture {
 				line = reader.readLine();
 				if (line == null) {
 					// Fin du fichier alors que cherchait nombre de points
+					System.out.println("Erreur : Nombre de points non indiqué");
 					erreur = true;
 				}
 			} while (!line.startsWith("element vertex"));
@@ -138,6 +140,7 @@ public class Lecture {
 				line = reader.readLine();
 				if (line == null) {
 					// Fin du fichier alors que cherchait nombre de faces
+					System.out.println("Erreur : Nombre de faces non indiqué");
 					erreur = true;
 				}
 			} while (!line.startsWith("element face"));
@@ -200,11 +203,12 @@ public class Lecture {
 			} while (nbLignesLus < nbFaces && line != null);
 			if (nbLignesLus != nbFaces) {
 				// Fin du fichier alors que n'a pas lu tous les points spécifiés dans entête
+				System.out.println("Erreur : Face(s) non trouvé(s)");
 				erreur = true;
 			}
-			line = reader.readLine();
 			if (line != null && !line.startsWith("{")) {
 				// Fichier comporte plus de lignes qu'attendu
+				System.out.println("Erreur : Entête ne correspond pas à la description");
 				erreur = true;
 			}
 		} catch (Exception e) {
@@ -236,26 +240,18 @@ public class Lecture {
 	private void getPointsDeFace(String line, List<Face> faces, List<Point> points) {
 		String[] strArray = line.split(" ");
 		if (strArray.length == 3) {
-			try {
-				 // Pas assez de point dans cette face ou lu point alors qu'attend face
-				erreur = true;
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			// Pas assez de point dans cette face ou lu point alors qu'attend face
+			System.out.println("Erreur : Face incomplet ou a trouvé point");
+			erreur = true;
 		}
 		faces.add(new Face());
 		Face tmpFace = faces.get(faces.size() - 1);
 		for (int i=1;i<strArray.length;i++) {
 			Integer element = Integer.parseInt(strArray[i]);
 			if (element < 0 || element > points.size()) {
-				try {
-					// Face comporte point n=" + element + " alors qu'il est inexistant
-					erreur = true;
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				// Face comporte point n=" + element + " alors qu'il est inexistant
+				System.out.println("Erreur : Face fait référence à point inexistant");
+				erreur = true;
 			} else {
 				tmpFace.addPoint(points.get(element));
 			}
@@ -270,13 +266,9 @@ public class Lecture {
 	private void getDoubles(String line, List<Point> points) {
 		String[] strArray = line.split(" ");
 		if (strArray.length > 3) {
-			try {
-				// Lu face alors qu'attend point
-				erreur = true;
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			// Lu face alors qu'attend point
+			System.out.println("Erreur : Point comporte plus que 3 coordonnées");
+			erreur = true;
 		}
 		Point tmpPoint = new Point();
 		points.add(tmpPoint);
@@ -286,13 +278,9 @@ public class Lecture {
 			tmpPoint.setName("" + (points.size() - 1));
 		}
 		if (!tmpPoint.complet()) {
-			try {
-				// Point n=" + (points.size() - 1) + " pas complet
-				erreur = true;
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			// Point n=" + (points.size() - 1) + " pas complet
+			System.out.println("Erreur : Point ne comporte pas 3 coordonnées");
+			erreur = true;
 		}
 	}
 

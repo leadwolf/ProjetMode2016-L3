@@ -13,62 +13,98 @@ public class Main {
 	private static boolean showSegments = false;
 	private static Lecture lect;
 	private static Fenetre fen;
+	private static boolean displayOption = false;
+	private static boolean fileChosen = false;
+	private static boolean paramsOK = true;
+	private static Path path;
+	private static List<Point> points;
+	private static List<Face> faces;
+	private static List<Segment> segments;
 	
 	public static void main(String[] args) {
 	
-		/*
-		 * Suppose qu'option toujours en premier et que path en dernier, pas plus que de 2 arguments
-		 */
-		if (args.length == 1 || args.length == 2) {
-			if (args[0].equals("-f")) {
-				showFaces = true;
-			} else if (args[0].equals("-s")) {
-				showSegments = true;
-			} else {
-				showFaces = true;
-				showSegments = true;
-			}
+		parseArguments(args);
+		
+		if (paramsOK && !lect.isErreur()) {
+			
+			createViewer();
+			
+			//diagnose();
+		}
+	}
+	
+	private static void createViewer() {
+		points = lect.getPoints();
+		faces = lect.getFaces();
+		segments = lect.getSegments();
 
-			Path path = Paths.get(args[args.length-1]);
+		fen.setPoints(points, 1.0);
+		fen.setFaces(faces);
+		fen.setSegments(segments);
+		fen.setVisible(true);
+		fen.repaint();
+	}
+	
+	private static void parseArguments(String[] args) {
+		for (int i=0;i<args.length;i++) {
+			String extension = args[i].substring(args[i].lastIndexOf(".") + 1, args[i].length());
+			if (args[i].equals("-f")) {
+				if (!displayOption) {
+					showFaces = true;
+					displayOption = true;
+				} else {
+					paramsOK = false;
+					System.out.println("Erreur : Paramètres d'affichages contradictoires");
+				}
+			} else if (args[i].equals("-s")) {
+				if (!displayOption) {
+					showSegments = true;
+					displayOption = true;
+				} else {
+					paramsOK = false;
+					System.out.println("Erreur : Paramètres d'affichages contradictoires");
+				}
+			} else if (extension.equals("ply")) {
+				if (!fileChosen) {
+					path = Paths.get(args[i]);
+					fileChosen = true;
+				} else {
+					paramsOK = false;
+					System.out.println("Erreur : Fichiers multiples");
+				}
+			} else {
+				paramsOK = false;
+				System.out.println("Paramètre non reconnu");
+			}
+		}
+		if (!displayOption) {
+			showFaces = true;
+			showSegments = true;
+		}
+		if (paramsOK) {
 			lect = new Lecture(path);
 			fen = new Fenetre(showPoints, showSegments, showFaces);
 		}
-		if (lect != null && !lect.isErreur()) {
-			List<Point> points = new ArrayList<>();
-			List<Face> faces = new ArrayList<>();
-			List<Segment> segments = new ArrayList<>();
-			points = lect.getPoints();
-			faces = lect.getFaces();
-			segments = lect.getSegments();
-
-			fen.setPoints(points, 1.0);
-			fen.setFaces(faces);
-			fen.setSegments(segments);
-			fen.setVisible(true);
-			fen.repaint();
-			
-			/*
-			System.out.println("Nombre de points = " + lect.getNbPoints() + "\n");
-			System.out.println("Nombre de faces = " + lect.getNbFaces() + "\n");
-			
-			System.out.println("\n Liste des points\n");
-			for (Point pt : points) {
-				System.out.println(pt.toString());
-			}
+	}
 	
-			System.out.println("\n Liste des Faces\n");
-			for (int i = 0; i < faces.size(); i++) {
-				System.out.println("Face n=" + i + "  " + faces.get(i));
-			}
-			
-			
-			System.out.println("\n Liste des Segments\n");
-			for (int i = 0; i < segments.size(); i++) {
-				System.out.println("Segment n=" + i + "  " + segments.get(i));
-			}
-			*/
-		} else {
-			JOptionPane.showMessageDialog(fen, "Erreur lors de la lecture du fichier", "Erreur", JOptionPane.ERROR_MESSAGE);
+	private static void diagnose() {
+		System.out.println("Nombre de points = " + lect.getNbPoints() + "\n");
+		System.out.println("Nombre de faces = " + lect.getNbFaces() + "\n");
+		
+		System.out.println("\n Liste des points\n");
+		for (Point pt : points) {
+			System.out.println(pt.toString());
+		}
+
+		System.out.println("\n Liste des Faces\n");
+		for (int i = 0; i < faces.size(); i++) {
+			System.out.println("Face n=" + i + "  " + faces.get(i));
+		}
+		
+		
+		System.out.println("\n Liste des Segments\n");
+		for (int i = 0; i < segments.size(); i++) {
+			System.out.println("Segment n=" + i + "  " + segments.get(i));
 		}
 	}
 }

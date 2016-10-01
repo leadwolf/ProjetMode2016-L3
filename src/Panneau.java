@@ -5,6 +5,8 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Polygon;
 import java.awt.Stroke;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseWheelEvent;
 import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Path2D;
@@ -38,16 +40,20 @@ public class Panneau extends JPanel {
 	private int width;
 	private double widthFig = 0, heightFig = 0;
 	private double left = width, right = 0, top = height, bottom = 0;
+	private Mouse mouse = new Mouse();
+	private double zoom = 1.0;
 	
 	public Panneau(boolean drawPoints, boolean drawSegments, boolean drawFaces) {
 		this.drawPoints = drawPoints;
 		this.drawSegments = drawSegments;
 		this.drawFaces = drawFaces;
+		this.addMouseWheelListener(mouse);
+		this.addMouseListener(mouse);
+		this.addMouseMotionListener(mouse);
 	}
 	
 	public void paintComponent(Graphics gg) {
 		super.paintComponent(gg);
-
 		Graphics2D g = (Graphics2D) gg;
 		
 		int centerX = height / 2;
@@ -150,11 +156,6 @@ public class Panneau extends JPanel {
 		}
 	}
 	
-	private void transformePoint(Point point) {
-		point.setX(transformeXPoint(point));
-		point.setY(transformeY(point));
-	}
-	
 	
 	/**
 	 * Sauvegarde les points de l'objet et les transforme pour futur utilisation dans la modélisation, voir {@link #transformePoints(List, List)}
@@ -163,10 +164,12 @@ public class Panneau extends JPanel {
 	 */
 	public void setPoints(List<Point> points, double zoomLevel) {
 		this.points = points;
+		this.zoom = zoomLevel;
 		transformePoints(points, ptsTrans);
+		points = ptsTrans; // si jamais on a besoin de reset, on aura pas à refaire les calculs de transformePoints
 		centrerFigure();
-		if (zoomLevel != 1.0) {
-			zoom(zoomLevel);
+		if (zoom != 1.0) {
+			zoom(zoom);
 		} else {
 			applyDefaultZoom();
 		}
@@ -244,6 +247,13 @@ public class Panneau extends JPanel {
 	 */
 	public void setFaces(List<Face> faces) {
 		this.faces = faces;
+		setFacesTrans();
+	}
+	
+	/**
+	 * Sauvegarde les points transformés dans leurs faces transformés respectives.
+	 */
+	private void setFacesTrans() {
 		for (Face f: faces) {
 			Face fTrans = new Face();
 			facesTrans.add(fTrans);
@@ -300,7 +310,9 @@ public class Panneau extends JPanel {
 	}
 	
 	/**
-	 * Applique un "zoom" en écartant les points par rapport à l'origine (0,0,0)
+	 * Applique un "zoom" en écartant les points <b>ptsTrans</b> par rapport à l'origine (0,0,0)
+	 * <br>ATTENTION : si on applique des zooms en chaîne, l'effet sera de plus en plus fort car meme si le niveau
+	 * de zoom reste constant, on l'applique à un objet de plus en plus grand
 	 * @param zoomLevel le niveau de zoom à appliquer
 	 */
 	private void zoom(double zoomLevel) {
@@ -319,26 +331,55 @@ public class Panneau extends JPanel {
 		if (widthFig > width || heightFig > height) {
 			// reduce
 			while (widthFig > 0.65 * width || heightFig > 0.65 * height && zoomLevel > 0) {
-				zoomLevel -= 0.005;
+				zoomLevel = 1.005;
 				refreshFigDims();
-				for (Point pt : ptsTrans) {
-					pt.setX(pt.getX() * zoomLevel);
-					pt.setY(pt.getY() * zoomLevel);
-					pt.setZ(pt.getZ() * zoomLevel);
-				}
+				zoom(zoomLevel);
 			}
 		} else {
 			// enlarge
 			while (widthFig < 0.65 * width && heightFig < 0.65 * height) {
-				zoomLevel += 0.005;
+				zoomLevel = 1.005;
 				refreshFigDims();
-				for (Point pt : ptsTrans) {
-					pt.setX(pt.getX() * zoomLevel);
-					pt.setY(pt.getY() * zoomLevel);
-					pt.setZ(pt.getZ() * zoomLevel);
-				}
+				zoom(zoomLevel);
 			}
 		}
+	}
+	
+	private class Mouse extends MouseAdapter {
+		boolean firstTime = true;
+		int prevNotch = 0;
+		  public void mouseWheelMoved(MouseWheelEvent e) {
+		       int notches = e.getWheelRotation() * -1;
+		       if (firstTime) {
+		    	   prevNotch = notches;
+		    	   firstTime = false;
+		       } else {
+		    	   /*
+		    	    * Si on change de zoom à dézoom (ou inverse), on passe de zoom > 1 à zoom < 1 (ou inverse), or, zoom ne change que par 0.005
+		    	    * Donc on peut dézoomer et encore reseter à zoom > 1, la figure sera donc toujours agrandi
+		    	    * Il faut donc remettre zoom à 1.0 si on change, et puis zoom sera changé de 0.005 automatiquement
+		    	    */
+		    	   if (notches != prevNotch) {
+			    	   zoom = 1.0;
+		    	   }
+		       }
+		       zoom += notches * 0.005;
+	    	   zoom(zoom);
+	    	   refreshObject();
+	    	   repaint();
+	    	   prevNotch = notches;
+		  }
+	}
+	
+	/**
+	 * Vide les containers (facesTrans et polygones) pour le ré-remplir avec les nouveaux points tranformés
+	 * Sinon on afficherait encore les vieux points en plus des nouveaux points transformés
+	 */
+	private void refreshObject() {
+		facesTrans.clear();
+		polygones.clear();
+		setFacesTrans();
+		setPolyGones();
 	}
 
 }

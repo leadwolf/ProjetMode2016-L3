@@ -331,7 +331,7 @@ public class Panneau extends JPanel {
 		if (widthFig > width || heightFig > height) {
 			// reduce
 			while (widthFig > 0.65 * width || heightFig > 0.65 * height && zoomLevel > 0) {
-				zoomLevel = 1.005;
+				zoomLevel = 0.995;
 				refreshFigDims();
 				zoom(zoomLevel);
 			}

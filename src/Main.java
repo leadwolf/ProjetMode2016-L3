@@ -1,10 +1,6 @@
-import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
-
-import javax.swing.JOptionPane;
 
 public class Main {
 	
@@ -25,7 +21,7 @@ public class Main {
 	
 		parseArguments(args);
 		
-		if (paramsOK && !lect.isErreur()) {
+		if (paramsOK && lect != null && !lect.isErreur()) {
 			
 			createViewer();
 			
@@ -46,44 +42,48 @@ public class Main {
 	}
 	
 	private static void parseArguments(String[] args) {
-		for (int i=0;i<args.length;i++) {
-			String extension = args[i].substring(args[i].lastIndexOf(".") + 1, args[i].length());
-			if (args[i].equals("-f")) {
-				if (!displayOption) {
-					showFaces = true;
-					displayOption = true;
+		if (args.length > 0) {
+			for (int i=0;i<args.length;i++) {
+				String extension = args[i].substring(args[i].lastIndexOf(".") + 1, args[i].length());
+				if (args[i].equals("-f")) {
+					if (!displayOption) {
+						showFaces = true;
+						displayOption = true;
+					} else {
+						paramsOK = false;
+						System.out.println("Erreur : Paramètres d'affichages contradictoires");
+					}
+				} else if (args[i].equals("-s")) {
+					if (!displayOption) {
+						showSegments = true;
+						displayOption = true;
+					} else {
+						paramsOK = false;
+						System.out.println("Erreur : Paramètres d'affichages contradictoires");
+					}
+				} else if (extension.equals("ply")) {
+					if (!fileChosen) {
+						path = Paths.get(args[i]);
+						fileChosen = true;
+					} else {
+						paramsOK = false;
+						System.out.println("Erreur : Fichiers multiples");
+					}
 				} else {
 					paramsOK = false;
-					System.out.println("Erreur : Paramètres d'affichages contradictoires");
+					System.out.println("Paramètre non reconnu");
 				}
-			} else if (args[i].equals("-s")) {
-				if (!displayOption) {
-					showSegments = true;
-					displayOption = true;
-				} else {
-					paramsOK = false;
-					System.out.println("Erreur : Paramètres d'affichages contradictoires");
-				}
-			} else if (extension.equals("ply")) {
-				if (!fileChosen) {
-					path = Paths.get(args[i]);
-					fileChosen = true;
-				} else {
-					paramsOK = false;
-					System.out.println("Erreur : Fichiers multiples");
-				}
-			} else {
-				paramsOK = false;
-				System.out.println("Paramètre non reconnu");
 			}
-		}
-		if (!displayOption) {
-			showFaces = true;
-			showSegments = true;
-		}
-		if (paramsOK) {
-			lect = new Lecture(path);
-			fen = new Fenetre(showPoints, showSegments, showFaces);
+			if (!displayOption) {
+				showFaces = true;
+				showSegments = true;
+			}
+			if (paramsOK) {
+				lect = new Lecture(path);
+				fen = new Fenetre(showPoints, showSegments, showFaces);
+			}
+		} else {
+			System.out.println("Aucun fichier précisé");
 		}
 	}
 	

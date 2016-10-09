@@ -142,7 +142,7 @@ public class Panneau extends JPanel {
 	}
 	
 	/**
-	 * Transforme les points selon l'équation DESTx = (SRC.x * 20) + (10 * SRC.z) et DESTy = (SRC.y * 20) + (SRC * pt.z)
+	 * Transforme les points selon l'équation DESTx = (SRC.x * 20) + (10 * SRC.z) et DESTy = (SRC.y * 20) + (SRC * pt.z) * -1
 	 * pour un affichage dans {@link #paintComponent(Graphics)}
 	 * @param src la source de points
 	 * @param dest la liste dans laquelle stocker les points transformés
@@ -346,28 +346,12 @@ public class Panneau extends JPanel {
 	}
 	
 	private class Mouse extends MouseAdapter {
-		boolean firstTime = true;
-		int prevNotch = 0;
 		  public void mouseWheelMoved(MouseWheelEvent e) {
 		       int notches = e.getWheelRotation() * -1;
-		       if (firstTime) {
-		    	   prevNotch = notches;
-		    	   firstTime = false;
-		       } else {
-		    	   /*
-		    	    * Si on change de zoom à dézoom (ou inverse), on passe de zoom > 1 à zoom < 1 (ou inverse), or, zoom ne change que par 0.005
-		    	    * Donc on peut dézoomer et encore reseter à zoom > 1, la figure sera donc toujours agrandi
-		    	    * Il faut donc remettre zoom à 1.0 si on change, et puis zoom sera changé de 0.005 automatiquement
-		    	    */
-		    	   if (notches != prevNotch) {
-			    	   zoom = 1.0;
-		    	   }
-		       }
-		       zoom += notches * 0.005;
+		       zoom = 1.0 + (0.05 * notches);
 	    	   zoom(zoom);
 	    	   refreshObject();
 	    	   repaint();
-	    	   prevNotch = notches;
 		  }
 	}
 	

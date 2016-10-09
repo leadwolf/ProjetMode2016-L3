@@ -59,7 +59,7 @@ public class Panneau extends JPanel {
 		int centerX = height / 2;
 		int centerY = width / 2;
 		if (drawFaces) {
-			g.setColor(Color.CYAN);
+			g.setColor(Color.GRAY);
 			for (Path2D pa : polygones) {
 				g.setStroke(new BasicStroke(2));
 				g.fill(pa);

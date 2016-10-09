@@ -22,6 +22,7 @@ import javax.swing.JPanel;
  */
 public class Panneau extends JPanel {
 
+	private static final long serialVersionUID = 6617022758741368018L;
 	private List<Point> points = new ArrayList<>();
 	private List<Point> ptsTrans = new ArrayList<>();
 	private List<Face> faces = new ArrayList<>();
@@ -108,52 +109,11 @@ public class Panneau extends JPanel {
 				g.fill(shape);
 			}
 		}
-		
-
-		
-
 	}
 	
 	public void setDimensions(Dimension dim) {
 		height = dim.height;
 		width = dim.width;
-	}
-	
-	
-	/**
-	 * Donne un transformation de x.
-	 * <br>Suite de {@link #transformePoints(List, List)}
-	 * @param pt le point à transformer
-	 * @return la coordonnée x transformée
-	 */
-	private double transformeXPoint(Point pt) {
-		return ((pt.x * 20) + (-10 * pt.z));
-	}
-	
-	
-	/**
-	 * Donne un transformation de y.
-	 * <br>Suite de {@link #transformePoints(List, List)}
-	 * @param pt pt le point à transformer
-	 * @return la coordonnée y transformée
-	 */
-	private double transformeY(Point pt) {
-		return ((pt.y * 20) + (10 * pt.z)) * -1;
-	}
-	
-	/**
-	 * Transforme les points selon l'équation DESTx = (SRC.x * 20) + (10 * SRC.z) et DESTy = (SRC.y * 20) + (SRC * pt.z) * -1
-	 * pour un affichage dans {@link #paintComponent(Graphics)}
-	 * @param src la source de points
-	 * @param dest la liste dans laquelle stocker les points transformés
-	 */
-	private void transformePoints(List<Point> src, List<Point> dest) {
-		for (Point pt : src) {
-			Point tmp = new Point();
-			tmp.add(transformeXPoint(pt));
-			tmp.add(transformeY(pt));
-			dest.add(tmp);
-		}
 	}
 	
 	
@@ -165,7 +125,7 @@ public class Panneau extends JPanel {
 	public void setPoints(List<Point> points, double zoomLevel) {
 		this.points = points;
 		this.zoom = zoomLevel;
-		transformePoints(points, ptsTrans);
+		Calculations.transformePoints(points, ptsTrans);
 		points = ptsTrans; // si jamais on a besoin de reset, on aura pas à refaire les calculs de transformePoints
 		centrerFigure();
 		if (zoom != 1.0) {
@@ -237,7 +197,7 @@ public class Panneau extends JPanel {
 	public void setSegments(List<Segment> segments) {
 		this.segments = segments;
 		setPolyGones();
-		determineFrontFace();
+		numPremFace = Calculations.determineFrontFace(faces);
 	}
 
 		
@@ -281,33 +241,6 @@ public class Panneau extends JPanel {
 		}
 	}
 	
-	/**
-	 * <b>INUTILE A L'INSTANT</b>
-	 * <br>Determine quel face est la plus en avant.
-	 * <br>Servira de comparaison pour savoir quels segments cacher.
-	 */
-	private void determineFrontFace() {
-		if (faces.size() > 1) {
-			int premFace = 0;
-			double sommeZPtsFace = 0.0;
-			double moyenneZPtsFace = 0.0;
-			double oldMoyenne = -1;
-			for (int i=0;i<faces.size();i++) {
-				sommeZPtsFace = 0.0;
-				moyenneZPtsFace = 0.0;
-				for (Point pt : faces.get(i).getList()) {
-					sommeZPtsFace += pt.getZ();
-				}
-				moyenneZPtsFace = sommeZPtsFace / (faces.get(i).getList().size()-1);
-				if (moyenneZPtsFace > oldMoyenne) {
-					oldMoyenne = moyenneZPtsFace;
-					premFace = i;
-				}
-			}
-			numPremFace = premFace;
-		//	System.out.println("first face = " + numPremFace + " " + faces.get(numPremFace));
-		}
-	}
 	
 	/**
 	 * Applique un "zoom" en écartant les points <b>ptsTrans</b> par rapport à l'origine (0,0,0)

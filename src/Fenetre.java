@@ -11,7 +11,7 @@ public class Fenetre extends JFrame {
 	
 	public Fenetre(boolean drawPoints, boolean drawSegments, boolean drawFaces) {
 		panneau = new Panneau(drawPoints, drawSegments, drawFaces);
-		this.setTitle("Ma première fenêtre Java");
+		this.setTitle("Modelisationator");
 		this.setSize(dim);
 		panneau.setDimensions(dim);
 		this.setLocationRelativeTo(null);

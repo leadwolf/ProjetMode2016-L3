@@ -30,6 +30,7 @@ public class Main {
 	}
 	
 	private static void createViewer() {
+		fen = new Fenetre(showPoints, showSegments, showFaces);
 		points = lect.getPoints();
 		faces = lect.getFaces();
 		segments = lect.getSegments();
@@ -80,7 +81,6 @@ public class Main {
 			}
 			if (paramsOK) {
 				lect = new Lecture(path);
-				fen = new Fenetre(showPoints, showSegments, showFaces);
 			}
 		} else {
 			System.out.println("Aucun fichier précisé");

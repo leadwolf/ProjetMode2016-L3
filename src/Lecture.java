@@ -93,6 +93,7 @@ public class Lecture {
 				e.printStackTrace();
 			}
 		}
+		System.out.println("Fichier inexistant");
 		erreur = true;
 		return false;
 	}

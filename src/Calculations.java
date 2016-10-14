@@ -1,4 +1,5 @@
 import java.awt.Graphics;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Calculations {
@@ -80,19 +81,13 @@ public class Calculations {
 	}
 	
 	public static void translateFigure(List<Point> points, int x, int y) {
-		moveXAxis(points, x);
-		moveYAxis(points, y);
-	}
-
-	public static void moveXAxis(List<Point> points, int x) {
 		for (Point pt : points) {
 			pt.setX(pt.getX() + (x));
-		}
-	}
-
-	public static void moveYAxis(List<Point> points, int y) {
-		for (Point pt : points) {
 			pt.setY(pt.getY() + (y));
 		}
+	}
+	
+	public static void rotateXAxis(List<Point> points, double angle) {
+		// TODO
 	}
 }

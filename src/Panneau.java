@@ -35,10 +35,6 @@ public class Panneau extends JPanel {
 	private boolean drawSegments = true;
 	private boolean drawFaces = true;
 	private int numPremFace = 0;
-	private Stroke defaultStroke = new BasicStroke(1);
-	private final float dash1[] = { 7.0f };
-	private final Stroke dottedStroke = new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f,
-			dash1, 0.0f);
 	private int height;
 	private int width;
 	private double widthFig = 0, heightFig = 0;
@@ -56,6 +52,12 @@ public class Panneau extends JPanel {
 	}
 
 	public void paintComponent(Graphics gg) {
+
+		Stroke defaultStroke = new BasicStroke(1);
+		final float dash1[] = { 7.0f };
+		final Stroke dottedStroke = new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f,
+				dash1, 0.0f);
+		
 		super.paintComponent(gg);
 		Graphics2D g = (Graphics2D) gg;
 

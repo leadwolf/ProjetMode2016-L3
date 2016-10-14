@@ -31,17 +31,20 @@ public class BaseDeDonnees {
       
       for(int i = 0; i < items.length;i++){
     	  // insertion des ply dans la bdd
-    	  
+    	  System.out.println("toto"+ i);
     	  String nom = items[i].substring(0, items[i].lastIndexOf(".ply"));
     	  statement.executeUpdate("insert into PLY values "
-    	  		+ "('"+ nom + "', 'ply/"+ items[i] + "', '2016/10/14' , 'toto' ");
+    	  		+ "('"+ nom + "', 'ply/"+ items[i] + "','2016/10/10','toto')");
     	  
       }
       ResultSet rs = statement.executeQuery("select * from PLY");
       while(rs.next()) {
         // read the result set
-        System.out.println("prenom = " + rs.getString("prenom"));
-        System.out.println("nom = " + rs.getString("nom"));
+        System.out.println("nom = " + rs.getString("NOM"));
+        System.out.println("chemin = " + rs.getString("CHEMIN"));
+        System.out.println("date = "+ rs.getString("DATE"));
+        System.out.println("description = "+ rs.getString("DESCRIPTION"));
+        System.out.println();
         
       }
     }

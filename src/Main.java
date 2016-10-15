@@ -18,7 +18,7 @@ public class Main {
 	
 		parseArguments(args);
 		
-		if (paramsOK && !figure.getErreurLecture()) {
+		if (paramsOK && figure != null && !figure.getErreurLecture()) {
 			
 			createViewer();
 			
@@ -94,10 +94,5 @@ public class Main {
 			System.out.println("Face n=" + i + "  " + figure.getFaces().get(i));
 		}
 		
-		
-		System.out.println("\n Liste des Segments\n");
-		for (int i = 0; i < figure.getSegments().size(); i++) {
-			System.out.println("Segment n=" + i + "  " + figure.getSegments().get(i));
-		}
 	}
 }

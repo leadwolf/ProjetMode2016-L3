@@ -19,21 +19,7 @@ public class Fenetre extends JFrame {
 		this.setContentPane(panneau);
 	}
 		
-	public void setPoints(List<Point> points, double zoomLevel) {
-		panneau.setPoints(points, zoomLevel);
-	}
-	
-	public void setSegments(List<Segment> segments) {
-		panneau.setSegments(segments);
-	}
-	
-	public void setFaces(List<Face> faces) {
-		panneau.setFaces(faces);
-	}
-	
-	public void setFigure(Figure figure, double zoomLevel) {
-		panneau.setPoints(figure.getPoints(), zoomLevel);
-		panneau.setFaces(figure.getFaces());
-		panneau.setSegments(figure.getSegments());
+	public void setFigure(Figure figure, double zoom) {
+		panneau.setFigure(figure, zoom);
 	}
 }

@@ -217,7 +217,7 @@ public class Lecture {
 	
 	/**
 	 * <b>INUTILE A L'INSTANT</b>
-	 * <br> inutile car on prend les segments à partir des faces dans {@link Panneau}
+	 * <br> inutile car on prend les segments à partir des faces dans {@link PanneauOld}
 	 */
 	private void stockerSegments() {
 		for (Face f : faces) {

@@ -12,7 +12,7 @@ public class Figure {
 	private List<Point> ptsTrans;
 	private List<Face> facesTrans;
 	private List<Path2D> polygones;
-	private List<Segment> segments;
+	private Point center;
 	private Lecture lecture;
 	
 	
@@ -64,8 +64,13 @@ public class Figure {
 		ptsTrans = new ArrayList<>(points);
 		facesTrans = new ArrayList<>(faces);
 		polygones = new ArrayList<>();
+		center = new Point();
 	}
 	
+	public Point getCenter() {
+		return center;
+	}
+
 	public boolean getErreurLecture() {
 		if (lecture != null) {
 			return lecture.isErreur();

@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Stroke;
+import java.awt.event.InputEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
@@ -13,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 /**
  * Cette classe sert à afficher l'objet ply.
@@ -111,29 +113,51 @@ public class Panneau extends JPanel {
 		widthFig = heightFig = right = bottom = 0;
 		left = width;
 		top = height;
+		// w/2 or h/2 because all points are set to center when drawn, see setPolygones()
 		for (Point p : figure.getPtsTrans()) {
-			if (p.getX() < left) {
-				left = p.getX();
+			if (p.getX() + (width / 2) < left) {
+				left = p.getX() + (width / 2);
 			}
-			if (p.getX() > right) {
-				right = p.getX();
+			if (p.getX() + (width / 2) > right) {
+				right = p.getX() + (width / 2);
 			}
-			if (p.getY() > bottom) {
-				bottom = p.getY();
-			} else if (p.getY() < top) {
-				top = p.getY();
+			if (p.getY() + (height / 2) > bottom) {
+				bottom = p.getY() + (height / 2);
+			} else if (p.getY() + (height / 2) < top) {
+				top = p.getY() + (height / 2);
 			}
 		}
 		widthFig = right - left;
 		heightFig = bottom - top;
+		figure.getCenter().setCoords(left + (widthFig/2), top + (heightFig/2));
 	}
 
 	/**
-	 * Centre la figure si on centre dépasse la moitié d'une coté
+	 * Centre la figure si on centre dépasse les axes du centre
 	 */
 	private void centrerFigure() {
 		refreshFigDims();
-
+		// left of center
+		if (figure.getCenter().getX() < width/2) {
+			for (Point p : figure.getPtsTrans()) {
+				p.setX(p.getX() + ((width/2) - figure.getCenter().getX()));
+			}
+		} else {
+			for (Point p : figure.getPtsTrans()) {
+				p.setX(p.getX() - (figure.getCenter().getX() - (width/2)));
+			}
+			refreshFigDims();
+		}
+		// above center
+		if (figure.getCenter().getY() < height/2) {
+			for (Point p : figure.getPtsTrans()) {
+				p.setY(p.getY() + ((height/2) - figure.getCenter().getY()));
+			}
+		} else {
+			for (Point p : figure.getPtsTrans()) {
+				p.setY(p.getY() - (figure.getCenter().getY() - (height/2)));
+			}
+		}
 	}
 
 	/**
@@ -201,27 +225,47 @@ public class Panneau extends JPanel {
 		int prevX, prevY;
 
 		public void mouseWheelMoved(MouseWheelEvent e) {
+			/**
+			 * Zoom into mouse cursor
+			 * = moving the center nearer to the mouse cursor
+			 */
+			
+			refreshFigDims();
+			int moveX = (int) figure.getCenter().getX() - e.getX();
+			int moveY = (int) figure.getCenter().getY() - e.getY();
+			if (e.getWheelRotation() > 0) {
+				Calculations.translateFigure(figure.getPtsTrans(), -moveX/20, -moveY/20);
+			} else {
+				Calculations.translateFigure(figure.getPtsTrans(), moveX/20, moveY/20);
+			}
 			int notches = e.getWheelRotation() * -1;
 			zoom = 1.0 + (0.05 * notches);
 			zoom(zoom);
 			refreshObject();
 			repaint();
+			/* End Zoom */
 		}
 
 		public void mousePressed(MouseEvent e) {
-			prevX = e.getX();
-			prevY = e.getY();
+			if (SwingUtilities.isLeftMouseButton(e)) {
+				prevX = e.getX();
+				prevY = e.getY();
+			}
 		}
 
 		public void mouseDragged(MouseEvent e) {
-			int nextX, nextY;
-			nextX = e.getX();
-			nextY = e.getY();
-			Calculations.translateFigure(figure.getPtsTrans(), (prevX - nextX) * -1, (prevY - nextY) * -1);
-			refreshObject();
-			repaint();
-			prevX = nextX;
-			prevY = nextY;
+			/* Translate Figure */
+			if (SwingUtilities.isLeftMouseButton(e)) {
+				int nextX, nextY;
+				nextX = e.getX();
+				nextY = e.getY();
+				Calculations.translateFigure(figure.getPtsTrans(), (prevX - nextX) * -1, (prevY - nextY) * -1);
+				refreshObject();
+				repaint();
+				prevX = nextX;
+				prevY = nextY;
+			}
+			/* End Translate Figure */
 		}
 	}
 

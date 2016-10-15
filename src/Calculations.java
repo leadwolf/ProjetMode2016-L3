@@ -80,6 +80,12 @@ public class Calculations {
 		return -1;
 	}
 	
+	/**
+	 * 
+	 * @param points
+	 * @param x distance to translate
+	 * @param y distance to translate
+	 */
 	public static void translateFigure(List<Point> points, int x, int y) {
 		for (Point pt : points) {
 			pt.setX(pt.getX() + (x));

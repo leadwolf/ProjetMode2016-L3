@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Stroke;
+import java.awt.event.InputEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
@@ -13,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 /**
  * Cette classe sert à afficher l'objet ply.
@@ -223,27 +225,47 @@ public class Panneau extends JPanel {
 		int prevX, prevY;
 
 		public void mouseWheelMoved(MouseWheelEvent e) {
+			/**
+			 * Zoom into mouse cursor
+			 * = moving the center nearer to the mouse cursor
+			 */
+			
+			refreshFigDims();
+			int moveX = (int) figure.getCenter().getX() - e.getX();
+			int moveY = (int) figure.getCenter().getY() - e.getY();
+			if (e.getWheelRotation() > 0) {
+				Calculations.translateFigure(figure.getPtsTrans(), -moveX/20, -moveY/20);
+			} else {
+				Calculations.translateFigure(figure.getPtsTrans(), moveX/20, moveY/20);
+			}
 			int notches = e.getWheelRotation() * -1;
 			zoom = 1.0 + (0.05 * notches);
 			zoom(zoom);
 			refreshObject();
 			repaint();
+			/* End Zoom */
 		}
 
 		public void mousePressed(MouseEvent e) {
-			prevX = e.getX();
-			prevY = e.getY();
+			if (SwingUtilities.isLeftMouseButton(e)) {
+				prevX = e.getX();
+				prevY = e.getY();
+			}
 		}
 
 		public void mouseDragged(MouseEvent e) {
-			int nextX, nextY;
-			nextX = e.getX();
-			nextY = e.getY();
-			Calculations.translateFigure(figure.getPtsTrans(), (prevX - nextX) * -1, (prevY - nextY) * -1);
-			refreshObject();
-			repaint();
-			prevX = nextX;
-			prevY = nextY;
+			/* Translate Figure */
+			if (SwingUtilities.isLeftMouseButton(e)) {
+				int nextX, nextY;
+				nextX = e.getX();
+				nextY = e.getY();
+				Calculations.translateFigure(figure.getPtsTrans(), (prevX - nextX) * -1, (prevY - nextY) * -1);
+				refreshObject();
+				repaint();
+				prevX = nextX;
+				prevY = nextY;
+			}
+			/* End Translate Figure */
 		}
 	}
 

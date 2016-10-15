@@ -80,26 +80,24 @@ public class Main {
 		}
 	}
 	
-	/*
 	private static void diagnose() {
-		System.out.println("Nombre de points = " + lect.getNbPoints() + "\n");
-		System.out.println("Nombre de faces = " + lect.getNbFaces() + "\n");
+		System.out.println("Nombre de points = " + figure.getNbPoints() + "\n");
+		System.out.println("Nombre de faces = " + figure.getNbFaces() + "\n");
 		
 		System.out.println("\n Liste des points\n");
-		for (Point pt : points) {
+		for (Point pt : figure.getPoints()) {
 			System.out.println(pt.toString());
 		}
 
 		System.out.println("\n Liste des Faces\n");
-		for (int i = 0; i < faces.size(); i++) {
-			System.out.println("Face n=" + i + "  " + faces.get(i));
+		for (int i = 0; i < figure.getFaces().size(); i++) {
+			System.out.println("Face n=" + i + "  " + figure.getFaces().get(i));
 		}
 		
 		
 		System.out.println("\n Liste des Segments\n");
-		for (int i = 0; i < segments.size(); i++) {
-			System.out.println("Segment n=" + i + "  " + segments.get(i));
+		for (int i = 0; i < figure.getSegments().size(); i++) {
+			System.out.println("Segment n=" + i + "  " + figure.getSegments().get(i));
 		}
 	}
-	*/
 }

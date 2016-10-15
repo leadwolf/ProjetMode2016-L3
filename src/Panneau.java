@@ -111,29 +111,51 @@ public class Panneau extends JPanel {
 		widthFig = heightFig = right = bottom = 0;
 		left = width;
 		top = height;
+		// w/2 or h/2 because all points are set to center when drawn, see setPolygones()
 		for (Point p : figure.getPtsTrans()) {
-			if (p.getX() < left) {
-				left = p.getX();
+			if (p.getX() + (width / 2) < left) {
+				left = p.getX() + (width / 2);
 			}
-			if (p.getX() > right) {
-				right = p.getX();
+			if (p.getX() + (width / 2) > right) {
+				right = p.getX() + (width / 2);
 			}
-			if (p.getY() > bottom) {
-				bottom = p.getY();
-			} else if (p.getY() < top) {
-				top = p.getY();
+			if (p.getY() + (height / 2) > bottom) {
+				bottom = p.getY() + (height / 2);
+			} else if (p.getY() + (height / 2) < top) {
+				top = p.getY() + (height / 2);
 			}
 		}
 		widthFig = right - left;
 		heightFig = bottom - top;
+		figure.getCenter().setCoords(left + (widthFig/2), top + (heightFig/2));
 	}
 
 	/**
-	 * Centre la figure si on centre dépasse la moitié d'une coté
+	 * Centre la figure si on centre dépasse les axes du centre
 	 */
 	private void centrerFigure() {
 		refreshFigDims();
-
+		// left of center
+		if (figure.getCenter().getX() < width/2) {
+			for (Point p : figure.getPtsTrans()) {
+				p.setX(p.getX() + ((width/2) - figure.getCenter().getX()));
+			}
+		} else {
+			for (Point p : figure.getPtsTrans()) {
+				p.setX(p.getX() - (figure.getCenter().getX() - (width/2)));
+			}
+			refreshFigDims();
+		}
+		// above center
+		if (figure.getCenter().getY() < height/2) {
+			for (Point p : figure.getPtsTrans()) {
+				p.setY(p.getY() + ((height/2) - figure.getCenter().getY()));
+			}
+		} else {
+			for (Point p : figure.getPtsTrans()) {
+				p.setY(p.getY() - (figure.getCenter().getY() - (height/2)));
+			}
+		}
 	}
 
 	/**

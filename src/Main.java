@@ -30,9 +30,7 @@ public class Main {
 		fen = new Fenetre(showPoints, showSegments, showFaces);
 
 		
-		fen.setPoints(figure.getPoints(), 1.0);
-		fen.setFaces(figure.getFaces());
-		fen.setSegments(figure.getSegments());
+		fen.setFigure(figure, 1.0);
 		fen.setVisible(true);
 		fen.repaint();
 	}

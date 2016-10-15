@@ -33,7 +33,7 @@ public class Fenetre extends JFrame {
 	
 	public void setFigure(Figure figure, double zoomLevel) {
 		panneau.setPoints(figure.getPoints(), zoomLevel);
-		panneau.setSegments(figure.getSegments());
 		panneau.setFaces(figure.getFaces());
+		panneau.setSegments(figure.getSegments());
 	}
 }

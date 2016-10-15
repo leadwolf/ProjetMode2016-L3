@@ -24,12 +24,8 @@ import javax.swing.JPanel;
 public class Panneau extends JPanel {
 
 	private static final long serialVersionUID = 6617022758741368018L;
-	private List<Point> points = new ArrayList<>();
-	private List<Point> ptsTrans = new ArrayList<>();
-	private List<Face> faces = new ArrayList<>();
-	private List<Face> facesTrans = new ArrayList<>();
-	private List<Segment> segments = new ArrayList<>(); // Inutile?
-	private List<Path2D> polygones = new ArrayList<>();
+
+	private Figure figure = new Figure();
 	private Dimension ptsDim = new Dimension(7, 7);
 	private boolean drawPoints = true;
 	private boolean drawSegments = true;
@@ -38,7 +34,7 @@ public class Panneau extends JPanel {
 	private int height;
 	private int width;
 	private double widthFig = 0, heightFig = 0;
-	private double left = width, right = 0, top = height, bottom = 0;
+	private double left = 0, right = 0, top = 0, bottom = 0;
 	private Mouse mouse = new Mouse();
 	private double zoom = 1.0;
 
@@ -52,20 +48,19 @@ public class Panneau extends JPanel {
 	}
 
 	public void paintComponent(Graphics gg) {
-
-		Stroke defaultStroke = new BasicStroke(1);
-		final float dash1[] = { 7.0f };
-		final Stroke dottedStroke = new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f,
-				dash1, 0.0f);
-		
 		super.paintComponent(gg);
 		Graphics2D g = (Graphics2D) gg;
 
+		Stroke defaultStroke = new BasicStroke(1);
+		final float dash1[] = { 7.0f };
+		final Stroke dottedStroke = new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, dash1, 0.0f);
+
 		int centerX = height / 2;
 		int centerY = width / 2;
+		
 		if (drawFaces) {
 			g.setColor(Color.GRAY);
-			for (Path2D pa : polygones) {
+			for (Path2D pa : figure.getPolygones()) {
 				g.setStroke(new BasicStroke(2));
 				g.fill(pa);
 			}
@@ -74,36 +69,17 @@ public class Panneau extends JPanel {
 		if (drawSegments) {
 			g.setColor(Color.BLACK);
 			g.setStroke(defaultStroke);
-			for (Path2D p : polygones) {
+			for (Path2D p : figure.getPolygones()) {
 				g.draw(p);
 			}
-			/*
-			 * A refaire : si une partie de face est couvert par celui de
-			 * devant, et qu'une autre partie est quand meme visible, ces
-			 * segments sont toujours en pointillés. => A faire sur une base de
-			 * segment caché par face au lieu de face caché par face
-			 * 
-			 * try { g.setColor(Color.BLACK); Area front = new
-			 * Area(polygones.get(numPremFace).getBounds2D()); for (int
-			 * i=0;i<polygones.size();i++) { Area current = new
-			 * Area(polygones.get(i).getBounds2D()); if
-			 * (!front.intersects(current.getBounds2D())) {
-			 * g.setStroke(defaultStroke); } else { if (i != numPremFace) {
-			 * g.setStroke(dottedStroke); } } g.draw(polygones.get(i)); }
-			 * g.setStroke(defaultStroke); g.draw(polygones.get(numPremFace)); }
-			 * catch (Exception e) { // polygones n'ont pas encore été
-			 * initialisés }
-			 */
 		}
 
 		if (drawPoints) {
 			g.setColor(Color.PINK);
-			for (Point pt : ptsTrans) {
+			for (Point pt : figure.getPtsTrans()) {
 				double x = centerX + pt.x - ptsDim.getWidth() / 2;
 				double y = centerY + pt.y - ptsDim.getHeight() / 2;
 				Ellipse2D.Double shape = new Ellipse2D.Double(x, y, ptsDim.getWidth(), ptsDim.getHeight());
-				// System.out.println("drawing point =" + shape.x + " " +
-				// shape.y);
 				g.fill(shape);
 			}
 		}
@@ -114,49 +90,38 @@ public class Panneau extends JPanel {
 		width = dim.width;
 	}
 
-	/**
-	 * Sauvegarde les points de l'objet et les transforme pour futur utilisation
-	 * dans la modélisation, voir {@link #transformePoints(List, List)}
-	 * 
-	 * @param points
-	 *            la liste de points de l'objet récupérés par {@link Lecture}
-	 * @param zoomLevel
-	 *            le niveau de zoom à appliqer à l'objet. La valeur 1.0 ne
-	 *            modifie rien.
-	 */
-	public void setPoints(List<Point> points, double zoomLevel) {
-		this.points = points;
-		this.zoom = zoomLevel;
-		Calculations.transformePoints(points, ptsTrans);
-		points = ptsTrans; // si jamais on a besoin de reset, on aura pas à
-							// refaire les calculs de transformePoints
+	public void setFigure(Figure figure, double zoom) {
+		this.figure = figure;
+		this.zoom = zoom;
 		centrerFigure();
 		if (zoom != 1.0) {
 			zoom(zoom);
 		} else {
 			applyDefaultZoom();
 		}
+		setPolyGones();
+		numPremFace = Calculations.determineFrontFace(figure.getFaces());
 	}
 
 	/**
 	 * Actualise les dimensions de la figure
 	 */
 	private void refreshFigDims() {
+		// set all values to opposites of what they should be because of comparisons in if
 		widthFig = heightFig = right = bottom = 0;
 		left = width;
 		top = height;
-		bottom = 0;
-		for (Point p : ptsTrans) {
-			if (p.getX() + (width / 2) < left) {
-				left = p.getX() + (width / 2);
+		for (Point p : figure.getPtsTrans()) {
+			if (p.getX() < left) {
+				left = p.getX();
 			}
-			if (p.getX() + (width / 2) > right) {
-				right = p.getX() + (width / 2);
+			if (p.getX() > right) {
+				right = p.getX();
 			}
-			if (p.getY() + (height / 2) > bottom) {
-				bottom = p.getY() + (height / 2);
-			} else if (p.getY() + (height / 2) < top) {
-				top = p.getY() + (height / 2);
+			if (p.getY() > bottom) {
+				bottom = p.getY();
+			} else if (p.getY() < top) {
+				top = p.getY();
 			}
 		}
 		widthFig = right - left;
@@ -168,77 +133,7 @@ public class Panneau extends JPanel {
 	 */
 	private void centrerFigure() {
 		refreshFigDims();
-		if (left + (widthFig / 2) < width / 2) {
-			// move right
-			for (Point p : ptsTrans) {
-				p.setX(p.getX() - left + (width / 2) - (widthFig / 2));
-			}
-		} else if (right - (widthFig / 2) > width / 2) {
-			// move left
-			for (Point p : ptsTrans) {
-				p.setX(p.getX() - (right - width) - (width / 2) + (widthFig / 2));
-			}
-		}
-		if (top + (heightFig / 2) < height / 2) {
-			// move down
-			for (Point p : ptsTrans) {
-				p.setY(p.getY() - top + (height / 2) - (heightFig / 2));
-			}
-		} else if (bottom - (heightFig / 2) > height / 2) {
-			// move up
-			for (Point p : ptsTrans) {
-				p.setY(p.getY() - bottom + (height / 2) + (heightFig / 2));
-			}
-		}
-	}
 
-	/**
-	 * Sauvegarde les segments dont sont composés les faces de l'objet ply
-	 * 
-	 * @param segments
-	 *            la liste des segments récupérés par {@link Lecture}
-	 */
-	public void setSegments(List<Segment> segments) {
-		this.segments = segments;
-		setPolyGones();
-		numPremFace = Calculations.determineFrontFace(faces);
-	}
-
-	/**
-	 * Sauvegarde les faces et les faces transformés pour notre visualisation
-	 * par rapport à {@link #transformePoints(List, List)}
-	 * 
-	 * @param faces
-	 *            la liste de faces de l'objet récupérés par {@link Lecture}
-	 */
-	public void setFaces(List<Face> faces) {
-		this.faces = faces;
-		setFacesTrans();
-	}
-
-	/**
-	 * Sauvegarde les points transformés dans leurs faces transformés
-	 * respectives.
-	 */
-	private void setFacesTrans() {
-		for (Face f : faces) {
-			Face fTrans = new Face();
-			facesTrans.add(fTrans);
-			for (Point pt : f.getList()) {
-				fTrans.addPoint(ptsTrans.get(Integer.parseInt(pt.getNom()))); // ajoute
-																				// le
-																				// point
-																				// transformé
-																				// ayant
-																				// le
-																				// meme
-																				// numéro
-																				// que
-																				// le
-																				// point
-																				// original
-			}
-		}
 	}
 
 	/**
@@ -250,10 +145,10 @@ public class Panneau extends JPanel {
 	 * contenir la liste de points.
 	 */
 	private void setPolyGones() {
-		for (int i = 0; i < facesTrans.size(); i++) {
+		for (int i = 0; i < figure.getFacesTrans().size(); i++) {
 			Path2D path = new Path2D.Double();
-			polygones.add(path);
-			List<Point> pt = facesTrans.get(i).getList();
+			figure.getPolygones().add(path);
+			List<Point> pt = figure.getFacesTrans().get(i).getList();
 			path.moveTo((width / 2) + pt.get(0).getX(), (height / 2) + pt.get(0).getY());
 			for (int j = 1; j < pt.size(); j++) {
 				path.lineTo((width / 2) + pt.get(j).getX(), (height / 2) + pt.get(j).getY());
@@ -273,7 +168,7 @@ public class Panneau extends JPanel {
 	 *            le niveau de zoom à appliquer
 	 */
 	private void zoom(double zoomLevel) {
-		for (Point pt : ptsTrans) {
+		for (Point pt : figure.getPtsTrans()) {
 			pt.setX(pt.getX() * zoomLevel);
 			pt.setY(pt.getY() * zoomLevel);
 			pt.setZ(pt.getZ() * zoomLevel);
@@ -319,15 +214,15 @@ public class Panneau extends JPanel {
 		}
 
 		public void mouseDragged(MouseEvent e) {
-			  int nextX, nextY;
-			  nextX = e.getX();
-			  nextY = e.getY();
-			  Calculations.translateFigure(ptsTrans, (prevX-nextX) * -1, (prevY-nextY) * -1);
-	    	  refreshObject();
-	    	  repaint();
-	    	  prevX = nextX;
-	    	  prevY = nextY;
-		  }
+			int nextX, nextY;
+			nextX = e.getX();
+			nextY = e.getY();
+			Calculations.translateFigure(figure.getPtsTrans(), (prevX - nextX) * -1, (prevY - nextY) * -1);
+			refreshObject();
+			repaint();
+			prevX = nextX;
+			prevY = nextY;
+		}
 	}
 
 	/**
@@ -336,9 +231,7 @@ public class Panneau extends JPanel {
 	 * en plus des nouveaux points transformés
 	 */
 	private void refreshObject() {
-		facesTrans.clear();
-		polygones.clear();
-		setFacesTrans();
+		figure.getPolygones().clear();
 		setPolyGones();
 	}
 

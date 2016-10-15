@@ -24,6 +24,16 @@ public class Point {
 		this(Coordx, Coordy, Coordz);
 		this.nom=nom;
 	}
+	
+	public void setCoords(double x, double y) {
+		this.x = x;
+		this.y = y;
+	}
+	
+	public void setCoords(double x, double y, double z) {
+		setCoords(x, y);
+		this.z = z;
+	}
 
 	public double getX() {
 		return x;

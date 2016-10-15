@@ -29,7 +29,10 @@ public class Main {
 	private static void createViewer() {
 		fen = new Fenetre(showPoints, showSegments, showFaces);
 
-		fen.setFigure(figure, 1.0);
+		
+		fen.setPoints(figure.getPoints(), 1.0);
+		fen.setFaces(figure.getFaces());
+		fen.setSegments(figure.getSegments());
 		fen.setVisible(true);
 		fen.repaint();
 	}
@@ -79,24 +82,26 @@ public class Main {
 		}
 	}
 	
+	/*
 	private static void diagnose() {
-		System.out.println("Nombre de points = " + figure.getNbPoints() + "\n");
-		System.out.println("Nombre de faces = " + figure.getNbFaces() + "\n");
+		System.out.println("Nombre de points = " + lect.getNbPoints() + "\n");
+		System.out.println("Nombre de faces = " + lect.getNbFaces() + "\n");
 		
 		System.out.println("\n Liste des points\n");
-		for (Point pt : figure.getPoints()) {
+		for (Point pt : points) {
 			System.out.println(pt.toString());
 		}
 
 		System.out.println("\n Liste des Faces\n");
-		for (int i = 0; i < figure.getFaces().size(); i++) {
-			System.out.println("Face n=" + i + "  " + figure.getFaces().get(i));
+		for (int i = 0; i < faces.size(); i++) {
+			System.out.println("Face n=" + i + "  " + faces.get(i));
 		}
 		
 		
 		System.out.println("\n Liste des Segments\n");
-		for (int i = 0; i < figure.getSegments().size(); i++) {
-			System.out.println("Segment n=" + i + "  " + figure.getSegments().get(i));
+		for (int i = 0; i < segments.size(); i++) {
+			System.out.println("Segment n=" + i + "  " + segments.get(i));
 		}
 	}
+	*/
 }

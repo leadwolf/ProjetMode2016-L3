@@ -16,7 +16,7 @@ public class Matrice {
 		}
 	}
 
-    public static double[][] rotateAroundX(double[][] m2, double angle) {
+    private static double[][] rotateAroundX(double[][] m2, double angle) {
     	double[][] xRotation = new double[][] { { 1.0, 0.0, 0.0 }, { 0.0, Math.cos(angle), -Math.sin(angle) }, { 0.0, Math.sin(angle), Math.cos(angle) } };
         int m1ColLength = xRotation[0].length; // m1 columns length
         int m2RowLength = m2.length;    // m2 rows length
@@ -37,7 +37,7 @@ public class Matrice {
         return mResult;
     }
     
-    public static double[][] rotateAroundY(double[][] m2, double angle) {
+    private static double[][] rotateAroundY(double[][] m2, double angle) {
 		double[][] yRotation = new double[][] { { Math.cos(angle), 0.0, Math.sin(angle) }, { 0.0, 1.0, 0.0 }, { -Math.sin(angle), 0.0, Math.cos(angle) } };
         int m1ColLength = yRotation[0].length; // m1 columns length
         int m2RowLength = m2.length;    // m2 rows length
@@ -58,7 +58,7 @@ public class Matrice {
         return mResult;
     }
     
-    public static double[][] rotateAroundZ(double[][] m2, double angle) {
+    private static double[][] rotateAroundZ(double[][] m2, double angle) {
 		double[][] zRotation = new double[][] { { Math.cos(angle), -Math.sin(angle), 0.0 }, { Math.sin(angle), Math.cos(angle), 0.0 }, { 0.0, 0.0, 1.0 } };
         int m1ColLength = zRotation[0].length; // m1 columns length
         int m2RowLength = m2.length;    // m2 rows length
@@ -87,21 +87,34 @@ public class Matrice {
 		return matrix;
 	}
 
-
+	/**
+	 * Rotation autour de l'axe X
+	 * @param angle
+	 */
 	public void rotateX(double angle) {
 		this.matrix = rotateAroundX(this.matrix, angle);
 	}
 
-	
+	/**
+	 * Rotation autout de l'axe Y
+	 * @param angle
+	 */
 	public void rotateY(double angle) {
 		this.matrix = rotateAroundY(this.matrix, angle);
 	}
 
-	
+	/**
+	 * Rotation autout de l'axe Z
+	 * @param angle
+	 */
 	public void rotateZ(double angle) {
 		this.matrix = rotateAroundZ(this.matrix, angle);
 	}
 	
+	/**
+	 * Stocke des Point dans la matrice
+	 * @param points
+	 */
 	public void importPoints(List<Point> points) {
 		int aRows = this.matrix.length;
 		int aColumns = this.matrix[0].length;
@@ -119,6 +132,10 @@ public class Matrice {
 		}
 	}
 	
+	/**
+	 * Stocke la matrice dans une List de Point
+	 * @param points
+	 */
 	public void exportToPoints(List<Point> points) {
 		int aRows = this.matrix.length;
 		int aColumns = this.matrix[0].length;

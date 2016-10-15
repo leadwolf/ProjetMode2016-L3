@@ -314,5 +314,26 @@ public class Panneau extends JPanel {
 		figure.getPolygones().clear();
 		setPolyGones();
 	}
+	
+	private void rotateX(double angle) {
+		figure.setPtsMat(new Matrice(figure.getPtsTrans().size(), 3));
+		figure.getPtsMat().importPoints(figure.getPtsTrans());
+		figure.getPtsMat().rotateX(angle);
+		figure.getPtsMat().exportToPoints(figure.getPtsTrans());
+	}
+	
+	private void rotateY(double angle) {
+		figure.setPtsMat(new Matrice(figure.getPtsTrans().size(), 3));
+		figure.getPtsMat().importPoints(figure.getPtsTrans());
+		figure.getPtsMat().rotateY(angle);
+		figure.getPtsMat().exportToPoints(figure.getPtsTrans());
+	}
+	
+	private void rotateZ(double angle) {
+		figure.setPtsMat(new Matrice(figure.getPtsTrans().size(), 3));
+		figure.getPtsMat().importPoints(figure.getPtsTrans());
+		figure.getPtsMat().rotateZ(angle);
+		figure.getPtsMat().exportToPoints(figure.getPtsTrans());
+	}
 
 }

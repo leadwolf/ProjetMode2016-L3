@@ -70,7 +70,7 @@ public class Point {
 	
 	/**
 	 * Ajoute au fur et a mesure les coordonnes de ce point
-	 * @param nb le coordonn�e a ajouter dans ce point
+	 * @param nb le coordonnée a ajouter dans ce point
 	 */
 	public void add(Double nb) {
 		if (iter == -1) {
@@ -123,5 +123,22 @@ public class Point {
 		if (Double.doubleToLongBits(z) != Double.doubleToLongBits(other.z))
 			return false;
 		return true;
+	}
+	
+	public double getCoord(int coord) {
+		if (coord == 0) {
+			return this.x;
+		} else if (coord == 1) {
+			return this.y;
+		} else {
+			return this.z;
+		}
+	}
+	
+	public void resetCoords() {
+		this.x = 0.0;
+		this.y = 0.0;
+		this.z = 0.0;
+		iter = -1;
 	}
 }

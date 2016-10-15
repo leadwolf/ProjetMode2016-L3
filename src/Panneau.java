@@ -27,7 +27,7 @@ public class Panneau extends JPanel {
 
 	private static final long serialVersionUID = 6617022758741368018L;
 
-	private Figure figure = new Figure();
+	private Figure figure;
 	private Dimension ptsDim = new Dimension(7, 7);
 	private boolean drawPoints = true;
 	private boolean drawSegments = true;
@@ -101,6 +101,7 @@ public class Panneau extends JPanel {
 		} else {
 			applyDefaultZoom();
 		}
+		figure.getPtsMat().importPoints(figure.getPtsTrans());
 		setPolyGones();
 		numPremFace = Calculations.determineFrontFace(figure.getFaces());
 	}
@@ -222,7 +223,8 @@ public class Panneau extends JPanel {
 	}
 
 	private class Mouse extends MouseAdapter {
-		int prevX, prevY;
+		int transX, transY;
+		int rotX, rotY;
 
 		public void mouseWheelMoved(MouseWheelEvent e) {
 			/**
@@ -248,8 +250,12 @@ public class Panneau extends JPanel {
 
 		public void mousePressed(MouseEvent e) {
 			if (SwingUtilities.isLeftMouseButton(e)) {
-				prevX = e.getX();
-				prevY = e.getY();
+				transX = e.getX();
+				transY = e.getY();
+			}
+			if (SwingUtilities.isRightMouseButton(e)) {
+				rotX = e.getX();
+				rotY = e.getY();
 			}
 		}
 
@@ -259,13 +265,43 @@ public class Panneau extends JPanel {
 				int nextX, nextY;
 				nextX = e.getX();
 				nextY = e.getY();
-				Calculations.translateFigure(figure.getPtsTrans(), (prevX - nextX) * -1, (prevY - nextY) * -1);
+				Calculations.translateFigure(figure.getPtsTrans(), (transX - nextX) * -1, (transY - nextY) * -1);
 				refreshObject();
 				repaint();
-				prevX = nextX;
-				prevY = nextY;
+				transX = nextX;
+				transY = nextY;
 			}
 			/* End Translate Figure */
+			
+			/* Rotate Figure */
+			if (SwingUtilities.isRightMouseButton(e)) {
+				int nextX, nextY;
+				nextX = e.getX();
+				nextY = e.getY();
+				
+				figure.setPtsMat(new Matrice(figure.getPtsTrans().size(), 3));
+				figure.getPtsMat().importPoints(figure.getPtsTrans());
+				if (Math.abs(nextY - rotX) > Math.abs(nextX - rotX)) {
+					if (nextY > rotY) {
+						figure.getPtsMat().rotateX( 0.05 );
+					} else {
+						figure.getPtsMat().rotateX( -0.05 );
+					}
+				} else {
+					if (nextX > rotX) {
+						figure.getPtsMat().rotateY( 0.05 );
+					} else {
+						figure.getPtsMat().rotateY( -0.05 );
+					}
+				}
+				figure.getPtsMat().exportToPoints(figure.getPtsTrans());
+								
+				refreshObject();
+				repaint();
+			//	rotX = nextX;
+			//	rotY = nextY;
+			}
+			/* End Rotate Figure */
 		}
 	}
 

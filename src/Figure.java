@@ -14,6 +14,7 @@ public class Figure {
 	private List<Path2D> polygones;
 	private Point center;
 	private Lecture lecture;
+	private Matrice ptsMat;
 	
 	
 	public List<Point> getPtsTrans() {
@@ -23,17 +24,11 @@ public class Figure {
 	public List<Face> getFacesTrans() {
 		return facesTrans;
 	}
-
-	public Figure() {
-		nbPoints = -1;
-		nbFaces = -1;
-		points = new ArrayList<>();
-		ptsTrans = new ArrayList<>();
-		faces = new ArrayList<>();
-		facesTrans = new ArrayList<>();
-		polygones = new ArrayList<>();
-	}
 	
+	public Matrice getPtsMat() {
+		return ptsMat;
+	}
+
 	public List<Path2D> getPolygones() {
 		return polygones;
 	}
@@ -54,6 +49,10 @@ public class Figure {
 		return faces;
 	}
 
+	public void setPtsMat(Matrice ptsMat) {
+		this.ptsMat = ptsMat;
+	}
+
 	public Figure(Path file) {
 		lecture = new Lecture(file);
 		nbPoints = lecture.getNbPoints();
@@ -65,6 +64,7 @@ public class Figure {
 		facesTrans = new ArrayList<>(faces);
 		polygones = new ArrayList<>();
 		center = new Point();
+		ptsMat = new Matrice(ptsTrans.size(), 3);
 	}
 	
 	public Point getCenter() {

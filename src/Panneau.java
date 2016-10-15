@@ -341,5 +341,18 @@ public class Panneau extends JPanel {
 		setFacesTrans();
 		setPolyGones();
 	}
+	
+	public void diagnose() {
+		
+		System.out.println("\n Liste des points\n");
+		for (Point pt : points) {
+			System.out.println(pt.toString());
+		}
+
+		System.out.println("\n Liste des Faces\n");
+		for (int i = 0; i < faces.size(); i++) {
+			System.out.println("Face n=" + i + "  " + faces.get(i));
+		}
+	}
 
 }

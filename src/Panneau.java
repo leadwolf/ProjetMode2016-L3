@@ -11,10 +11,12 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Path2D;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
+
 
 /**
  * Cette classe sert à afficher l'objet ply.
@@ -27,7 +29,7 @@ public class Panneau extends JPanel {
 
 	private static final long serialVersionUID = 6617022758741368018L;
 
-	private Figure figure = new Figure();
+	private Figure figure;
 	private Dimension ptsDim = new Dimension(7, 7);
 	private boolean drawPoints = true;
 	private boolean drawSegments = true;
@@ -38,7 +40,7 @@ public class Panneau extends JPanel {
 	private double widthFig = 0, heightFig = 0;
 	private double left = 0, right = 0, top = 0, bottom = 0;
 	private Mouse mouse = new Mouse();
-	private double zoom = 1.0;
+	double sensitivity = 0.04;
 
 	public Panneau(boolean drawPoints, boolean drawSegments, boolean drawFaces) {
 		this.drawPoints = drawPoints;
@@ -53,26 +55,26 @@ public class Panneau extends JPanel {
 		super.paintComponent(gg);
 		Graphics2D g = (Graphics2D) gg;
 
-		Stroke defaultStroke = new BasicStroke(1);
+		Stroke defaultStroke = new BasicStroke(2);
 		final float dash1[] = { 7.0f };
 		final Stroke dottedStroke = new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, dash1, 0.0f);
 
 		int centerX = height / 2;
 		int centerY = width / 2;
 		
-		if (drawFaces) {
-			g.setColor(Color.GRAY);
-			for (Path2D pa : figure.getPolygones()) {
-				g.setStroke(new BasicStroke(2));
-				g.fill(pa);
-			}
-		}
-
-		if (drawSegments) {
-			g.setColor(Color.BLACK);
-			g.setStroke(defaultStroke);
-			for (Path2D p : figure.getPolygones()) {
+		/*
+		 * On met les segments et faces dans la meme boucle pour qu'on les dessine dans le meme ordre de leur moyenne de Z
+		 */
+		for (Path2D p : figure.getPolygones()) {
+			if (drawSegments) {
+				g.setStroke(defaultStroke);
+				g.setColor(Color.BLACK);
 				g.draw(p);
+			}
+			if (drawFaces) {
+				g.setColor(Color.GRAY);
+				g.fill(p);
+				
 			}
 		}
 
@@ -94,13 +96,13 @@ public class Panneau extends JPanel {
 
 	public void setFigure(Figure figure, double zoom) {
 		this.figure = figure;
-		this.zoom = zoom;
 		centrerFigure();
 		if (zoom != 1.0) {
 			zoom(zoom);
 		} else {
 			applyDefaultZoom();
 		}
+		figure.getPtsMat().importPoints(figure.getPtsTrans());
 		setPolyGones();
 		numPremFace = Calculations.determineFrontFace(figure.getFaces());
 	}
@@ -222,14 +224,15 @@ public class Panneau extends JPanel {
 	}
 
 	private class Mouse extends MouseAdapter {
-		int prevX, prevY;
+		int transX, transY;
+		int rotX, rotY;
 
 		public void mouseWheelMoved(MouseWheelEvent e) {
 			/**
 			 * Zoom into mouse cursor
 			 * = moving the center nearer to the mouse cursor
 			 */
-			
+			double zoom = 0.0;
 			refreshFigDims();
 			int moveX = (int) figure.getCenter().getX() - e.getX();
 			int moveY = (int) figure.getCenter().getY() - e.getY();
@@ -248,8 +251,12 @@ public class Panneau extends JPanel {
 
 		public void mousePressed(MouseEvent e) {
 			if (SwingUtilities.isLeftMouseButton(e)) {
-				prevX = e.getX();
-				prevY = e.getY();
+				transX = e.getX();
+				transY = e.getY();
+			}
+			if (SwingUtilities.isRightMouseButton(e)) {
+				rotX = e.getX();
+				rotY = e.getY();
 			}
 		}
 
@@ -259,13 +266,43 @@ public class Panneau extends JPanel {
 				int nextX, nextY;
 				nextX = e.getX();
 				nextY = e.getY();
-				Calculations.translateFigure(figure.getPtsTrans(), (prevX - nextX) * -1, (prevY - nextY) * -1);
+				Calculations.translateFigure(figure.getPtsTrans(), (transX - nextX) * -1, (transY - nextY) * -1);
 				refreshObject();
 				repaint();
-				prevX = nextX;
-				prevY = nextY;
+				transX = nextX;
+				transY = nextY;
 			}
 			/* End Translate Figure */
+			
+			/* Rotate Figure */
+			if (SwingUtilities.isRightMouseButton(e)) {
+				int nextX, nextY;
+				nextX = e.getX();
+				nextY = e.getY();
+				
+				figure.setPtsMat(new Matrice(figure.getPtsTrans().size(), 3));
+				figure.getPtsMat().importPoints(figure.getPtsTrans());
+				if (Math.abs(nextY - rotY) > Math.abs(nextX - rotX)) {
+					if (nextY > rotY) {
+						figure.getPtsMat().rotateX( sensitivity );
+					} else {
+						figure.getPtsMat().rotateX( -sensitivity );
+					}
+				} else {
+					if (nextX > rotX) {
+						figure.getPtsMat().rotateY( sensitivity );
+					} else {
+						figure.getPtsMat().rotateY( -sensitivity );
+					}
+				}
+				figure.getPtsMat().exportToPoints(figure.getPtsTrans());
+								
+				refreshObject();
+				repaint();
+				rotX = nextX;
+				rotY = nextY;
+			}
+			/* End Rotate Figure */
 		}
 	}
 
@@ -276,7 +313,29 @@ public class Panneau extends JPanel {
 	 */
 	private void refreshObject() {
 		figure.getPolygones().clear();
+		Collections.sort(figure.getFacesTrans());
 		setPolyGones();
+	}
+	
+	private void rotateX(double angle) {
+		figure.setPtsMat(new Matrice(figure.getPtsTrans().size(), 3));
+		figure.getPtsMat().importPoints(figure.getPtsTrans());
+		figure.getPtsMat().rotateX(angle);
+		figure.getPtsMat().exportToPoints(figure.getPtsTrans());
+	}
+	
+	private void rotateY(double angle) {
+		figure.setPtsMat(new Matrice(figure.getPtsTrans().size(), 3));
+		figure.getPtsMat().importPoints(figure.getPtsTrans());
+		figure.getPtsMat().rotateY(angle);
+		figure.getPtsMat().exportToPoints(figure.getPtsTrans());
+	}
+	
+	private void rotateZ(double angle) {
+		figure.setPtsMat(new Matrice(figure.getPtsTrans().size(), 3));
+		figure.getPtsMat().importPoints(figure.getPtsTrans());
+		figure.getPtsMat().rotateZ(angle);
+		figure.getPtsMat().exportToPoints(figure.getPtsTrans());
 	}
 
 }

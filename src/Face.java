@@ -1,7 +1,8 @@
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
-public class Face {
+public class Face implements Comparable<Face>{
 	
 	private int nbPoint;
 	private List<Point> pointList;
@@ -66,6 +67,31 @@ public class Face {
 			listY[i] = pointList.get(i).getY();
 		}
 		return listY;
+	}
+
+	/**
+	 * Compare by average Z
+	 */
+	@Override
+	public int compareTo(Face o) {
+		double zO1 = 0.0, zO2 = 0.0;
+		for (Point pt : this.getList()) {
+			zO1 += pt.getZ();
+		}
+		zO1 /= this.getList().size();
+
+		for (Point pt : o.getList()) {
+			zO2 += pt.getZ();
+		}
+		zO2 /= o.getList().size();
+		
+		if (zO1 > zO2) {
+			return 1;
+		} else if (zO1 < zO2) {
+			return -1;
+		} else {
+			return 0;
+		}
 	}
 	
 }

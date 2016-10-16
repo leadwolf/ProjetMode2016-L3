@@ -49,10 +49,6 @@ public class Figure {
 		return faces;
 	}
 
-	public void setPtsMat(Matrice ptsMat) {
-		this.ptsMat = ptsMat;
-	}
-
 	public Figure(Path file) {
 		lecture = new Lecture(file);
 		nbPoints = lecture.getNbPoints();
@@ -64,7 +60,8 @@ public class Figure {
 		facesTrans = new ArrayList<>(faces);
 		polygones = new ArrayList<>();
 		center = new Point();
-		ptsMat = new Matrice(ptsTrans.size(), 3);
+		ptsMat = new Matrice(ptsTrans.size(), 4);
+		ptsMat.setHomogeneousCoords();
 	}
 	
 	public Point getCenter() {

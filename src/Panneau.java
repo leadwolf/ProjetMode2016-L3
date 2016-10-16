@@ -37,10 +37,11 @@ public class Panneau extends JPanel {
 	private int numPremFace = 0;
 	private int height;
 	private int width;
-	private double widthFig = 0, heightFig = 0;
-	private double left = 0, right = 0, top = 0, bottom = 0;
+	private double widthFig = 0, heightFig = 0, depthFig = 0;
+	private double left = 0, right = 0, top = 0, bottom = 0, front = 0, back = 0;
 	private Mouse mouse = new Mouse();
-	double sensitivity = 0.04;
+	private double rotationSens = 5;
+	private double zoomSens = 0.1;
 
 	public Panneau(boolean drawPoints, boolean drawSegments, boolean drawFaces) {
 		this.drawPoints = drawPoints;
@@ -58,9 +59,6 @@ public class Panneau extends JPanel {
 		Stroke defaultStroke = new BasicStroke(2);
 		final float dash1[] = { 7.0f };
 		final Stroke dottedStroke = new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, dash1, 0.0f);
-
-		int centerX = height / 2;
-		int centerY = width / 2;
 		
 		/*
 		 * On met les segments et faces dans la meme boucle pour qu'on les dessine dans le meme ordre de leur moyenne de Z
@@ -81,14 +79,18 @@ public class Panneau extends JPanel {
 		if (drawPoints) {
 			g.setColor(Color.PINK);
 			for (Point pt : figure.getPtsTrans()) {
-				double x = centerX + pt.x - ptsDim.getWidth() / 2;
-				double y = centerY + pt.y - ptsDim.getHeight() / 2;
+				double x = pt.x - ptsDim.getWidth() / 2;
+				double y = pt.y - ptsDim.getHeight() / 2;
 				Ellipse2D.Double shape = new Ellipse2D.Double(x, y, ptsDim.getWidth(), ptsDim.getHeight());
 				g.fill(shape);
 			}
 		}
 	}
 
+	/**
+	 * Applique les dimensions du JPanel pour les calculs
+	 * @param dim
+	 */
 	public void setDimensions(Dimension dim) {
 		height = dim.height;
 		width = dim.width;
@@ -100,11 +102,10 @@ public class Panneau extends JPanel {
 		if (zoom != 1.0) {
 			zoom(zoom);
 		} else {
-			applyDefaultZoom();
+		//	applyDefaultZoom();
 		}
 		figure.getPtsMat().importPoints(figure.getPtsTrans());
 		setPolyGones();
-		numPremFace = Calculations.determineFrontFace(figure.getFaces());
 	}
 
 	/**
@@ -117,21 +118,27 @@ public class Panneau extends JPanel {
 		top = height;
 		// w/2 or h/2 because all points are set to center when drawn, see setPolygones()
 		for (Point p : figure.getPtsTrans()) {
-			if (p.getX() + (width / 2) < left) {
-				left = p.getX() + (width / 2);
+			if (p.getX() < left) {
+				left = p.getX();
 			}
-			if (p.getX() + (width / 2) > right) {
-				right = p.getX() + (width / 2);
+			if (p.getX() > right) {
+				right = p.getX();
 			}
-			if (p.getY() + (height / 2) > bottom) {
-				bottom = p.getY() + (height / 2);
-			} else if (p.getY() + (height / 2) < top) {
-				top = p.getY() + (height / 2);
+			if (p.getY() > bottom) {
+				bottom = p.getY();
+			} else if (p.getY() < top) {
+				top = p.getY();
+			}
+			if (p.getZ() > front) {
+				front = p.getZ();
+			} else if (p.getZ() < back) {
+				back = p.getZ();
 			}
 		}
 		widthFig = right - left;
 		heightFig = bottom - top;
-		figure.getCenter().setCoords(left + (widthFig/2), top + (heightFig/2));
+		depthFig = front - back;
+		figure.getCenter().setCoords(left + (widthFig/2), top + (heightFig/2), back + (depthFig/2)); // ajout pour donner vrai coord dessiné
 	}
 
 	/**
@@ -141,14 +148,19 @@ public class Panneau extends JPanel {
 		refreshFigDims();
 		// left of center
 		if (figure.getCenter().getX() < width/2) {
-			for (Point p : figure.getPtsTrans()) {
-				p.setX(p.getX() + ((width/2) - figure.getCenter().getX()));
+			if (figure.getCenter().getX() < 0) {
+				for (Point p : figure.getPtsTrans()) {
+					p.setX(p.getX() + Math.abs(figure.getCenter().getX()) + (width/2));
+				}
+			} else {
+				for (Point p : figure.getPtsTrans()) {
+					p.setX(p.getX() + ((width/2) - Math.abs(figure.getCenter().getX())));
+				}
 			}
 		} else {
 			for (Point p : figure.getPtsTrans()) {
 				p.setX(p.getX() - (figure.getCenter().getX() - (width/2)));
 			}
-			refreshFigDims();
 		}
 		// above center
 		if (figure.getCenter().getY() < height/2) {
@@ -175,9 +187,9 @@ public class Panneau extends JPanel {
 			Path2D path = new Path2D.Double();
 			figure.getPolygones().add(path);
 			List<Point> pt = figure.getFacesTrans().get(i).getList();
-			path.moveTo((width / 2) + pt.get(0).getX(), (height / 2) + pt.get(0).getY());
+			path.moveTo(pt.get(0).getX(), pt.get(0).getY());
 			for (int j = 1; j < pt.size(); j++) {
-				path.lineTo((width / 2) + pt.get(j).getX(), (height / 2) + pt.get(j).getY());
+				path.lineTo(pt.get(j).getX(),pt.get(j).getY());
 			}
 			path.closePath();
 		}
@@ -226,23 +238,26 @@ public class Panneau extends JPanel {
 	private class Mouse extends MouseAdapter {
 		int transX, transY;
 		int rotX, rotY;
-
+		double zoom = 0.0;
+		int zoomTransSens = 20; // sensitivity of translation to mousepoint when zooming
+		int notches;
+		int nextX, nextY;
+		double totalY = 0.0;
 		public void mouseWheelMoved(MouseWheelEvent e) {
 			/**
 			 * Zoom into mouse cursor
-			 * = moving the center nearer to the mouse cursor
+			 * = moving the center of figure nearer to the mouse cursor
 			 */
-			double zoom = 0.0;
 			refreshFigDims();
-			int moveX = (int) figure.getCenter().getX() - e.getX();
-			int moveY = (int) figure.getCenter().getY() - e.getY();
+			int moveX = (width/2) - e.getX();
+			int moveY = (height/2) - e.getY();
 			if (e.getWheelRotation() > 0) {
-				Calculations.translateFigure(figure.getPtsTrans(), -moveX/20, -moveY/20);
+				Calculations.translatePoints(figure.getPtsTrans(), -moveX/zoomTransSens, -moveY/zoomTransSens);
 			} else {
-				Calculations.translateFigure(figure.getPtsTrans(), moveX/20, moveY/20);
+				Calculations.translatePoints(figure.getPtsTrans(), moveX/zoomTransSens, moveY/zoomTransSens);
 			}
-			int notches = e.getWheelRotation() * -1;
-			zoom = 1.0 + (0.05 * notches);
+			notches = e.getWheelRotation() * -1;
+			zoom = 1.0 + (zoomSens * notches);
 			zoom(zoom);
 			refreshObject();
 			repaint();
@@ -258,15 +273,15 @@ public class Panneau extends JPanel {
 				rotX = e.getX();
 				rotY = e.getY();
 			}
+			refreshFigDims();
 		}
-
+				
 		public void mouseDragged(MouseEvent e) {
 			/* Translate Figure */
 			if (SwingUtilities.isLeftMouseButton(e)) {
-				int nextX, nextY;
 				nextX = e.getX();
 				nextY = e.getY();
-				Calculations.translateFigure(figure.getPtsTrans(), (transX - nextX) * -1, (transY - nextY) * -1);
+				Calculations.translatePoints(figure.getPtsTrans(), (transX - nextX) * -1, (transY - nextY) * -1);
 				refreshObject();
 				repaint();
 				transX = nextX;
@@ -276,26 +291,30 @@ public class Panneau extends JPanel {
 			
 			/* Rotate Figure */
 			if (SwingUtilities.isRightMouseButton(e)) {
-				int nextX, nextY;
 				nextX = e.getX();
 				nextY = e.getY();
-				
-				figure.setPtsMat(new Matrice(figure.getPtsTrans().size(), 3));
-				figure.getPtsMat().importPoints(figure.getPtsTrans());
 				if (Math.abs(nextY - rotY) > Math.abs(nextX - rotX)) {
+					// rotation autour de l'axe X entend un mouvement haut/bas donc Y
 					if (nextY > rotY) {
-						figure.getPtsMat().rotateX( sensitivity );
+						Calculations.translatePoints(figure.getPtsTrans(), -figure.getCenter().getX(), -figure.getCenter().getY());
+						Calculations.rotateX(figure, rotationSens);
+						Calculations.translatePoints(figure.getPtsTrans(), figure.getCenter().getX(), figure.getCenter().getY());
 					} else {
-						figure.getPtsMat().rotateX( -sensitivity );
+						Calculations.translatePoints(figure.getPtsTrans(), -figure.getCenter().getX(), -figure.getCenter().getY());
+						Calculations.rotateX(figure, -rotationSens);
+						Calculations.translatePoints(figure.getPtsTrans(), figure.getCenter().getX(), figure.getCenter().getY());
 					}
 				} else {
 					if (nextX > rotX) {
-						figure.getPtsMat().rotateY( sensitivity );
+						Calculations.translatePoints(figure.getPtsTrans(), -figure.getCenter().getX(), -figure.getCenter().getY());
+						Calculations.rotateY(figure, rotationSens);
+						Calculations.translatePoints(figure.getPtsTrans(), figure.getCenter().getX(), figure.getCenter().getY());
 					} else {
-						figure.getPtsMat().rotateY( -sensitivity );
+						Calculations.translatePoints(figure.getPtsTrans(), -figure.getCenter().getX(), -figure.getCenter().getY());
+						Calculations.rotateY(figure, -rotationSens);
+						Calculations.translatePoints(figure.getPtsTrans(), figure.getCenter().getX(), figure.getCenter().getY());
 					}
 				}
-				figure.getPtsMat().exportToPoints(figure.getPtsTrans());
 								
 				refreshObject();
 				repaint();
@@ -307,7 +326,7 @@ public class Panneau extends JPanel {
 	}
 
 	/**
-	 * Vide les containers (facesTrans et polygones) pour le ré-remplir avec les
+	 * Vide le container Path2D de polygone pour le ré-remplir avec les
 	 * nouveaux points tranformés Sinon on afficherait encore les vieux points
 	 * en plus des nouveaux points transformés
 	 */
@@ -316,26 +335,6 @@ public class Panneau extends JPanel {
 		Collections.sort(figure.getFacesTrans());
 		setPolyGones();
 	}
-	
-	private void rotateX(double angle) {
-		figure.setPtsMat(new Matrice(figure.getPtsTrans().size(), 3));
-		figure.getPtsMat().importPoints(figure.getPtsTrans());
-		figure.getPtsMat().rotateX(angle);
-		figure.getPtsMat().exportToPoints(figure.getPtsTrans());
-	}
-	
-	private void rotateY(double angle) {
-		figure.setPtsMat(new Matrice(figure.getPtsTrans().size(), 3));
-		figure.getPtsMat().importPoints(figure.getPtsTrans());
-		figure.getPtsMat().rotateY(angle);
-		figure.getPtsMat().exportToPoints(figure.getPtsTrans());
-	}
-	
-	private void rotateZ(double angle) {
-		figure.setPtsMat(new Matrice(figure.getPtsTrans().size(), 3));
-		figure.getPtsMat().importPoints(figure.getPtsTrans());
-		figure.getPtsMat().rotateZ(angle);
-		figure.getPtsMat().exportToPoints(figure.getPtsTrans());
-	}
+
 
 }

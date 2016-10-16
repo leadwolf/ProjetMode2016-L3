@@ -5,6 +5,7 @@ import java.util.List;
 public class Calculations {
 
 	/**
+	 * <b>VIEUX A NE PAS UTILISER</b><br>
 	 * Donne un transformation de x. <br>
 	 * Suite de {@link #transformePoints(List, List)}
 	 * 
@@ -17,6 +18,7 @@ public class Calculations {
 	}
 
 	/**
+	 * <b>VIEUX A NE PAS UTILISER</b><br>
 	 * Donne un transformation de y. <br>
 	 * Suite de {@link #transformePoints(List, List)}
 	 * 
@@ -29,6 +31,7 @@ public class Calculations {
 	}
 
 	/**
+	 * <b>VIEUX A NE PAS UTILISER</b><br>
 	 * Transforme les points selon l'équation DESTx = (SRC.x * 20) + (10 *
 	 * SRC.z) et DESTy = (SRC.y * 20) + (SRC * pt.z) * -1 pour un affichage dans
 	 * {@link #paintComponent(Graphics)}
@@ -47,37 +50,14 @@ public class Calculations {
 		}
 	}
 
+	/**
+	 * <b>VIEUX A NE PAS UTILISER</b><br>
+	 * @param src
+	 * @param dest
+	 */
 	public static void transformePoint(Point src, Point dest) {
 		dest.add(transformeX(src));
 		dest.add(transformeY(src));
-	}
-
-	/**
-	 * <b>INUTILE A L'INSTANT</b> <br>
-	 * Determine quel face est la plus en avant. <br>
-	 * Servira de comparaison pour savoir quels segments cacher.
-	 */
-	public static int determineFrontFace(List<Face> faces) {
-		if (faces.size() > 1) {
-			int premFace = 0;
-			double sommeZPtsFace = 0.0;
-			double moyenneZPtsFace = 0.0;
-			double oldMoyenne = -1;
-			for (int i = 0; i < faces.size(); i++) {
-				sommeZPtsFace = 0.0;
-				moyenneZPtsFace = 0.0;
-				for (Point pt : faces.get(i).getList()) {
-					sommeZPtsFace += pt.getZ();
-				}
-				moyenneZPtsFace = sommeZPtsFace / (faces.get(i).getList().size() - 1);
-				if (moyenneZPtsFace > oldMoyenne) {
-					oldMoyenne = moyenneZPtsFace;
-					premFace = i;
-				}
-			}
-			return premFace;
-		}
-		return -1;
 	}
 	
 	/**
@@ -86,14 +66,78 @@ public class Calculations {
 	 * @param x distance to translate
 	 * @param y distance to translate
 	 */
-	public static void translateFigure(List<Point> points, int x, int y) {
+	public static void translatePoints(List<Point> points, double x, double y) {
 		for (Point pt : points) {
 			pt.setX(pt.getX() + (x));
 			pt.setY(pt.getY() + (y));
 		}
 	}
 	
-	public static void rotateXAxis(List<Point> points, double angle) {
-		// TODO
+	/**
+	 * 
+	 * @param points
+	 * @param x distance to translate
+	 * @param y distance to translate
+	 */
+	public static void translatePoints(List<Point> points, int x, int y, int z) {
+		for (Point pt : points) {
+			pt.setX(pt.getX() + (x));
+			pt.setY(pt.getY() + (y));
+			pt.setZ(pt.getY() + (z));
+		}
+	}
+	
+    
+	/**
+	 * Prend un List de Point pour appliquer une rotation par X selon l'origine.
+	 * <br>Les stocke dans la Matrice donnée  pour le calcul.
+	 * @param points
+	 * @param mat
+	 * @param angle
+	 */
+	public static void rotateX(Figure fig, double angle) {
+		fig.getPtsMat().importPoints(fig.getPtsTrans());
+		fig.getPtsMat().rotateX(angle);
+		fig.getPtsMat().exportToPoints(fig.getPtsTrans());
+	}
+	
+	/**
+	 * Prend un List de Point pour appliquer une rotation par Y selon l'origine.
+	 * <br>Les stocke dans la Matrice donnée pour le calcul.
+	 * @param points
+	 * @param mat
+	 * @param angle
+	 */
+	public static void rotateY(Figure fig, double angle) {
+		fig.getPtsMat().importPoints(fig.getPtsTrans());
+		fig.getPtsMat().rotateY(angle);
+		fig.getPtsMat().exportToPoints(fig.getPtsTrans());
+	}
+	
+	/**
+	 * Prend un List de Point pour appliquer une rotation par Z selon l'origine.
+	 * <br>Les stocke dans la Matrice donnée pour le calcul.
+	 * @param points
+	 * @param mat
+	 * @param angle
+	 */
+	public static void rotateZ(Figure fig, double angle) {
+		fig.getPtsMat().importPoints(fig.getPtsTrans());
+		fig.getPtsMat().rotateZ(angle);
+		fig.getPtsMat().exportToPoints(fig.getPtsTrans());
+	}
+	
+	
+	/**
+	 * Prend une List de Point et applique une rotation par X selon l'origine.
+	 * <br>Prend plus de mémoire car crée une nouvelle matrice.
+	 * @param points
+	 * @param nBCoords
+	 * @param angle
+	 */
+	public static void rotateXByPoint(Figure fig, double angle) {
+		fig.getPtsMat().importPoints(fig.getPtsTrans());
+		fig.getPtsMat().rotateXByPoint(fig.getCenter(), angle);
+		fig.getPtsMat().exportToPoints(fig.getPtsTrans());
 	}
 }

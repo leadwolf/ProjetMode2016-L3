@@ -53,7 +53,7 @@ public class CalculationsTest {
 		int moveX = 10;
 		int moveY = 10;
 		
-		Calculations.translateFigure(points, moveX, moveX);
+		Calculations.translatePoints(points, moveX, moveX);
 		
 		for (int i=0;i<points.size();i++) {
 			assertEquals(points.get(i), expected.get(i));

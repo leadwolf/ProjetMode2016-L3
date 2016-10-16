@@ -21,6 +21,7 @@ public class Matrice {
         int m1ColLength = xRotation[0].length; // m1 columns length
         int m2RowLength = m2.length;    // m2 rows length
         if(m1ColLength != m2RowLength) {
+        	System.out.println("m1 cols=" +m1ColLength + " m2row = " + m2RowLength);
         	return null; // matrix multiplication is not possible
         }
         int mRRowLength = xRotation.length;    // m result rows length
@@ -86,6 +87,16 @@ public class Matrice {
 	public double[][] getMatrix() {
 		return matrix;
 	}
+	
+	public void emptyMatrix(Matrice mat) {
+		int aRows = this.matrix.length;
+		int aColumns = this.matrix[0].length;
+		for (int i=0;i<aRows;i++) {
+			for (int j=0;j<aColumns;j++) {
+				mat.getMatrix()[i][j] = 0.0;
+			}
+		}
+	}
 
 	/**
 	 * Rotation autour de l'axe X
@@ -112,7 +123,8 @@ public class Matrice {
 	}
 	
 	/**
-	 * Stocke des Point dans la matrice
+	 * Remplit la matrice de 0.0 et puis stocke des Point dans la matrice.
+	 * <br>Assume que la matrice a autant de lignes que les points ont de coordonnées.
 	 * @param points
 	 */
 	public void importPoints(List<Point> points) {
@@ -133,7 +145,8 @@ public class Matrice {
 	}
 	
 	/**
-	 * Stocke la matrice dans une List de Point
+	 * Stocke la matrice dans une List de Point.
+	 * <br>Stocke autant de coordonnées dans le Point que la matrice a de lignes.
 	 * @param points
 	 */
 	public void exportToPoints(List<Point> points) {

@@ -40,7 +40,8 @@ public class Panneau extends JPanel {
 	private double widthFig = 0, heightFig = 0;
 	private double left = 0, right = 0, top = 0, bottom = 0;
 	private Mouse mouse = new Mouse();
-	double sensitivity = 0.04;
+	private double rotationSens = 0.05;
+	private double zoomSens = 0.1;
 
 	public Panneau(boolean drawPoints, boolean drawSegments, boolean drawFaces) {
 		this.drawPoints = drawPoints;
@@ -89,6 +90,10 @@ public class Panneau extends JPanel {
 		}
 	}
 
+	/**
+	 * Applique les dimensions du JPanel pour les calculs
+	 * @param dim
+	 */
 	public void setDimensions(Dimension dim) {
 		height = dim.height;
 		width = dim.width;
@@ -104,7 +109,6 @@ public class Panneau extends JPanel {
 		}
 		figure.getPtsMat().importPoints(figure.getPtsTrans());
 		setPolyGones();
-		numPremFace = Calculations.determineFrontFace(figure.getFaces());
 	}
 
 	/**
@@ -226,23 +230,26 @@ public class Panneau extends JPanel {
 	private class Mouse extends MouseAdapter {
 		int transX, transY;
 		int rotX, rotY;
-
+		double zoom = 0.0;
+		int zoomTransSens = 20; // sensitivity of translation to mousepoint when zooming
+		int notches;
+		int nextX, nextY;
+		double totalY = 0.0;
 		public void mouseWheelMoved(MouseWheelEvent e) {
 			/**
 			 * Zoom into mouse cursor
-			 * = moving the center nearer to the mouse cursor
+			 * = moving the center of figure nearer to the mouse cursor
 			 */
-			double zoom = 0.0;
 			refreshFigDims();
-			int moveX = (int) figure.getCenter().getX() - e.getX();
-			int moveY = (int) figure.getCenter().getY() - e.getY();
+			int moveX = (width/2) - e.getX();
+			int moveY = (height/2) - e.getY();
 			if (e.getWheelRotation() > 0) {
-				Calculations.translateFigure(figure.getPtsTrans(), -moveX/20, -moveY/20);
+				Calculations.translateFigure(figure.getPtsTrans(), -moveX/zoomTransSens, -moveY/zoomTransSens);
 			} else {
-				Calculations.translateFigure(figure.getPtsTrans(), moveX/20, moveY/20);
+				Calculations.translateFigure(figure.getPtsTrans(), moveX/zoomTransSens, moveY/zoomTransSens);
 			}
-			int notches = e.getWheelRotation() * -1;
-			zoom = 1.0 + (0.05 * notches);
+			notches = e.getWheelRotation() * -1;
+			zoom = 1.0 + (zoomSens * notches);
 			zoom(zoom);
 			refreshObject();
 			repaint();
@@ -259,11 +266,10 @@ public class Panneau extends JPanel {
 				rotY = e.getY();
 			}
 		}
-
+		
 		public void mouseDragged(MouseEvent e) {
 			/* Translate Figure */
 			if (SwingUtilities.isLeftMouseButton(e)) {
-				int nextX, nextY;
 				nextX = e.getX();
 				nextY = e.getY();
 				Calculations.translateFigure(figure.getPtsTrans(), (transX - nextX) * -1, (transY - nextY) * -1);
@@ -276,26 +282,22 @@ public class Panneau extends JPanel {
 			
 			/* Rotate Figure */
 			if (SwingUtilities.isRightMouseButton(e)) {
-				int nextX, nextY;
 				nextX = e.getX();
 				nextY = e.getY();
 				
-				figure.setPtsMat(new Matrice(figure.getPtsTrans().size(), 3));
-				figure.getPtsMat().importPoints(figure.getPtsTrans());
 				if (Math.abs(nextY - rotY) > Math.abs(nextX - rotX)) {
 					if (nextY > rotY) {
-						figure.getPtsMat().rotateX( sensitivity );
+						Calculations.rotateX(figure.getPtsTrans(), figure.getPtsMat(), rotationSens);
 					} else {
-						figure.getPtsMat().rotateX( -sensitivity );
+						Calculations.rotateX(figure.getPtsTrans(), figure.getPtsMat(), -rotationSens);
 					}
 				} else {
 					if (nextX > rotX) {
-						figure.getPtsMat().rotateY( sensitivity );
+						Calculations.rotateY(figure.getPtsTrans(), figure.getPtsMat(), rotationSens);
 					} else {
-						figure.getPtsMat().rotateY( -sensitivity );
+						Calculations.rotateY(figure.getPtsTrans(), figure.getPtsMat(), -rotationSens);
 					}
 				}
-				figure.getPtsMat().exportToPoints(figure.getPtsTrans());
 								
 				refreshObject();
 				repaint();
@@ -307,7 +309,7 @@ public class Panneau extends JPanel {
 	}
 
 	/**
-	 * Vide les containers (facesTrans et polygones) pour le ré-remplir avec les
+	 * Vide le container Path2D de polygone pour le ré-remplir avec les
 	 * nouveaux points tranformés Sinon on afficherait encore les vieux points
 	 * en plus des nouveaux points transformés
 	 */
@@ -316,26 +318,6 @@ public class Panneau extends JPanel {
 		Collections.sort(figure.getFacesTrans());
 		setPolyGones();
 	}
-	
-	private void rotateX(double angle) {
-		figure.setPtsMat(new Matrice(figure.getPtsTrans().size(), 3));
-		figure.getPtsMat().importPoints(figure.getPtsTrans());
-		figure.getPtsMat().rotateX(angle);
-		figure.getPtsMat().exportToPoints(figure.getPtsTrans());
-	}
-	
-	private void rotateY(double angle) {
-		figure.setPtsMat(new Matrice(figure.getPtsTrans().size(), 3));
-		figure.getPtsMat().importPoints(figure.getPtsTrans());
-		figure.getPtsMat().rotateY(angle);
-		figure.getPtsMat().exportToPoints(figure.getPtsTrans());
-	}
-	
-	private void rotateZ(double angle) {
-		figure.setPtsMat(new Matrice(figure.getPtsTrans().size(), 3));
-		figure.getPtsMat().importPoints(figure.getPtsTrans());
-		figure.getPtsMat().rotateZ(angle);
-		figure.getPtsMat().exportToPoints(figure.getPtsTrans());
-	}
+
 
 }

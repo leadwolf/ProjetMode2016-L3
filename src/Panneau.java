@@ -205,7 +205,29 @@ public class Panneau extends JPanel {
 	 * @param zoomLevel
 	 *            le niveau de zoom à appliquer
 	 */
+	private void zoomFrom0(double zoomLevel) {
+		refreshFigDims();
+		Calculations.translatePoints(figure.getPtsTrans(), -figure.getCenter().getX(), -figure.getCenter().getY());
+		for (Point pt : figure.getPtsTrans()) {
+			pt.setX(pt.getX() * zoomLevel);
+			pt.setY(pt.getY() * zoomLevel);
+			pt.setZ(pt.getZ() * zoomLevel);
+		}
+		Calculations.translatePoints(figure.getPtsTrans(), figure.getCenter().getX(), figure.getCenter().getY());
+	}
+	
+	/**
+	 * Applique un "zoom" en écartant les points <b>ptsTrans</b> par rapport à
+	 * l'origine (0,0,0) <br>
+	 * ATTENTION : si on applique des zooms en chaîne, l'effet sera de plus en
+	 * plus fort car meme si le niveau de zoom reste constant, on l'applique à
+	 * un objet de plus en plus grand
+	 * 
+	 * @param zoomLevel
+	 *            le niveau de zoom à appliquer
+	 */
 	private void zoom(double zoomLevel) {
+		refreshFigDims();
 		for (Point pt : figure.getPtsTrans()) {
 			pt.setX(pt.getX() * zoomLevel);
 			pt.setY(pt.getY() * zoomLevel);
@@ -239,7 +261,7 @@ public class Panneau extends JPanel {
 		int transX, transY;
 		int rotX, rotY;
 		double zoom = 0.0;
-		int zoomTransSens = 20; // sensitivity of translation to mousepoint when zooming
+		double zoomTransSens = 10.0; // sensitivity of translation to mousepoint when zooming
 		int notches;
 		int nextX, nextY;
 		double totalY = 0.0;
@@ -248,17 +270,25 @@ public class Panneau extends JPanel {
 			 * Zoom into mouse cursor
 			 * = moving the center of figure nearer to the mouse cursor
 			 */
+			int moveX, moveY;
 			refreshFigDims();
-			int moveX = (width/2) - e.getX();
-			int moveY = (height/2) - e.getY();
-			if (e.getWheelRotation() > 0) {
-				Calculations.translatePoints(figure.getPtsTrans(), -moveX/zoomTransSens, -moveY/zoomTransSens);
-			} else {
-				Calculations.translatePoints(figure.getPtsTrans(), moveX/zoomTransSens, moveY/zoomTransSens);
-			}
+			moveX = (width/2) - e.getX();
+			moveY = (height/2) - e.getY();
+			Point tempCenter = new Point(figure.getCenter().getX(), figure.getCenter().getY(), figure.getCenter().getZ());
+			
+			Calculations.translatePoints(figure.getPtsTrans(), -tempCenter.getX(), -tempCenter.getY());
+			
 			notches = e.getWheelRotation() * -1;
 			zoom = 1.0 + (zoomSens * notches);
 			zoom(zoom);
+
+			if (e.getWheelRotation() > 0) {
+				Calculations.translatePoints(figure.getPtsTrans(), (-moveX/zoomTransSens) * zoom, (-moveY/zoomTransSens) * zoom);
+			} else {
+				// zoom in
+				Calculations.translatePoints(figure.getPtsTrans(), (moveX/zoomTransSens) * zoom, (moveY/zoomTransSens) * zoom);
+			}
+			Calculations.translatePoints(figure.getPtsTrans(), tempCenter.getX(), tempCenter.getY());
 			refreshObject();
 			repaint();
 			/* End Zoom */

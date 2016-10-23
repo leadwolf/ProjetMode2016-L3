@@ -1,3 +1,4 @@
+
 import java.util.List;
 
 public class Matrice {
@@ -53,7 +54,6 @@ public class Matrice {
 		}
 	}
 
-	
 	/**
 	 * Rotation autour de l'axe X
 	 * @param angle

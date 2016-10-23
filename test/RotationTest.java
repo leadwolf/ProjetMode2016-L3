@@ -24,7 +24,11 @@ public class RotationTest {
 		shapeL.add(midRight);
 		shapeL.add(midMid);
 		/*
+<<<<<<< HEAD
 		Calculations.rotateX(shapeL, 90); // 1 = 90°
+=======
+		Calculations.rotateX(shapeL, 1.5); // 1 = 90°
+>>>>>>> 9a12a0e659142a31caaa45e1c4284417d6918c6a
 		
 
 		Point ExtopLeft = new Point(0.0, 0.0);

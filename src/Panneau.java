@@ -163,6 +163,7 @@ public class Panneau extends JPanel {
 			for (Point p : figure.getPtsTrans()) {
 				p.setX(p.getX() - (figure.getCenter().getX() - (width/2)));
 			}
+			refreshFigDims();
 		}
 		// above center
 		if (figure.getCenter().getY() < height/2) {
@@ -307,7 +308,6 @@ public class Panneau extends JPanel {
 			}
 			refreshFigDims();
 		}
-				
 		public void mouseDragged(MouseEvent e) {
 			/* Translate Figure */
 			if (SwingUtilities.isLeftMouseButton(e)) {

@@ -116,6 +116,8 @@ public class Panneau extends JPanel {
 		widthFig = heightFig = right = bottom = 0;
 		left = width;
 		top = height;
+		back = width;
+		front = -width;
 		// w/2 or h/2 because all points are set to center when drawn, see setPolygones()
 		for (Point p : figure.getPtsTrans()) {
 			if (p.getX() < left) {
@@ -326,23 +328,15 @@ public class Panneau extends JPanel {
 				if (Math.abs(nextY - rotY) > Math.abs(nextX - rotX)) {
 					// rotation autour de l'axe X entend un mouvement haut/bas donc Y
 					if (nextY > rotY) {
-						Calculations.translatePoints(figure.getPtsTrans(), -figure.getCenter().getX(), -figure.getCenter().getY());
-						Calculations.rotateX(figure, rotationSens);
-						Calculations.translatePoints(figure.getPtsTrans(), figure.getCenter().getX(), figure.getCenter().getY());
+						Calculations.rotateXByPoint(figure, rotationSens);
 					} else {
-						Calculations.translatePoints(figure.getPtsTrans(), -figure.getCenter().getX(), -figure.getCenter().getY());
-						Calculations.rotateX(figure, -rotationSens);
-						Calculations.translatePoints(figure.getPtsTrans(), figure.getCenter().getX(), figure.getCenter().getY());
+						Calculations.rotateXByPoint(figure, -rotationSens);
 					}
 				} else {
 					if (nextX > rotX) {
-						Calculations.translatePoints(figure.getPtsTrans(), -figure.getCenter().getX(), -figure.getCenter().getY());
-						Calculations.rotateY(figure, rotationSens);
-						Calculations.translatePoints(figure.getPtsTrans(), figure.getCenter().getX(), figure.getCenter().getY());
+						Calculations.rotateYByPoint(figure, rotationSens);
 					} else {
-						Calculations.translatePoints(figure.getPtsTrans(), -figure.getCenter().getX(), -figure.getCenter().getY());
-						Calculations.rotateY(figure, -rotationSens);
-						Calculations.translatePoints(figure.getPtsTrans(), figure.getCenter().getX(), figure.getCenter().getY());
+						Calculations.rotateYByPoint(figure, -rotationSens);
 					}
 				}
 								

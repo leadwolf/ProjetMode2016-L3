@@ -98,12 +98,12 @@ public class Panneau extends JPanel {
 
 	public void setFigure(Figure figure, double zoom) {
 		this.figure = figure;
-		centrerFigure();
 		if (zoom != 1.0) {
 			zoom(zoom);
 		} else {
-		//	applyDefaultZoom();
+			fitZoomToWindow();
 		}
+		centrerFigure();
 		figure.getPtsMat().importPoints(figure.getPtsTrans());
 		setPolyGones();
 	}
@@ -241,8 +241,9 @@ public class Panneau extends JPanel {
 	/**
 	 * Applique un zoom permettant à la figure de prendre 65% de l'écran
 	 */
-	private void applyDefaultZoom() {
+	private void fitZoomToWindow() {
 		double zoomLevel = 1.0;
+		refreshFigDims();
 		if (widthFig > width || heightFig > height) {
 			// reduce
 			while (widthFig > 0.65 * width || heightFig > 0.65 * height && zoomLevel > 0) {

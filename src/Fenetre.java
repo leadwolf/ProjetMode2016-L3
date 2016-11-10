@@ -12,10 +12,12 @@ import javax.swing.JPanel;
 public class Fenetre extends JFrame {
 	
 	private static final long serialVersionUID = 2549833609496985257L;
-	Panneau panneau;
+	VisualationPanel panneau;
 	JPanel mainPanel;
-	JPanel buttonPanel;
 	JPanel bottomPanel;
+	ButtonPanel buttonPanel;
+	
+	JPanel oldButtonPanel;
 	JButton center;
 	JButton left;
 	JButton right;
@@ -28,16 +30,18 @@ public class Fenetre extends JFrame {
 	public Fenetre(boolean drawPoints, boolean drawSegments, boolean drawFaces) {
 		
 		/* PANNEAU AFFICHAGE */
-		panneau = new Panneau(drawPoints, drawSegments, drawFaces);
+		panneau = new VisualationPanel(drawPoints, drawSegments, drawFaces);
 		this.setTitle("Modelisationator");
 		this.setSize(dim);
 		panneau.setDimensions(new Dimension(dim.width, dim.height-buttonPanelDim.height));
 		panneau.setPreferredSize(new Dimension(dim.width, dim.height-buttonPanelDim.height));
 		
 		/* PANNEAU BOUTONS */
-		buttonPanel = new JPanel();
-		buttonPanel.setLayout(new GridLayout(3, 3));
-		buttonPanel.setPreferredSize(buttonPanelDim);
+		oldButtonPanel = new JPanel();
+		oldButtonPanel.setLayout(new GridLayout(3, 3));
+		oldButtonPanel.setPreferredSize(buttonPanelDim);
+		buttonPanel = new ButtonPanel(buttonPanelDim, buttonDim);
+		
 		center = new JButton("center");
 		left = new JButton("left");
 		right = new JButton("right");
@@ -50,20 +54,21 @@ public class Fenetre extends JFrame {
 		up.setPreferredSize(buttonDim);
 		down.setPreferredSize(buttonDim);
 		
-		buttonPanel.add(Box.createRigidArea(buttonDim));
-		buttonPanel.add(up);
-		buttonPanel.add(Box.createRigidArea(buttonDim));
-		buttonPanel.add(left);
-		buttonPanel.add(center);
-		buttonPanel.add(right);
-		buttonPanel.add(Box.createRigidArea(buttonDim));
-		buttonPanel.add(down);
-		buttonPanel.add(Box.createRigidArea(buttonDim));
-		buttonPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		oldButtonPanel.add(Box.createRigidArea(buttonDim));
+		oldButtonPanel.add(up);
+		oldButtonPanel.add(Box.createRigidArea(buttonDim));
+		oldButtonPanel.add(left);
+		oldButtonPanel.add(center);
+		oldButtonPanel.add(right);
+		oldButtonPanel.add(Box.createRigidArea(buttonDim));
+		oldButtonPanel.add(down);
+		oldButtonPanel.add(Box.createRigidArea(buttonDim));
+		oldButtonPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		
 		/* PANNEAU DU BAS */
 		bottomPanel = new JPanel();
 		bottomPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
+	//	bottomPanel.add(oldButtonPanel);
 		bottomPanel.add(buttonPanel);
 		bottomPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		bottomPanel.setBackground(Color.WHITE);

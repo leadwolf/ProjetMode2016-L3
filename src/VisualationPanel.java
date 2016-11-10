@@ -25,7 +25,7 @@ import javax.swing.SwingUtilities;
  *
  */
 @SuppressWarnings("unused")
-public class Panneau extends JPanel {
+public class VisualationPanel extends JPanel {
 
 	private static final long serialVersionUID = 6617022758741368018L;
 
@@ -39,17 +39,19 @@ public class Panneau extends JPanel {
 	private int width;
 	private double widthFig = 0, heightFig = 0, depthFig = 0;
 	private double left = 0, right = 0, top = 0, bottom = 0, front = 0, back = 0;
-	private Mouse mouse = new Mouse();
+	private MouseControler mouseControler;
 	private double rotationSens = 5;
 	private double zoomSens = 0.1;
 
-	public Panneau(boolean drawPoints, boolean drawSegments, boolean drawFaces) {
+	public VisualationPanel(boolean drawPoints, boolean drawSegments, boolean drawFaces) {
 		this.drawPoints = drawPoints;
 		this.drawSegments = drawSegments;
 		this.drawFaces = drawFaces;
-		this.addMouseWheelListener(mouse);
-		this.addMouseListener(mouse);
-		this.addMouseMotionListener(mouse);
+		
+		mouseControler = new MouseControler(this);
+		this.addMouseWheelListener(mouseControler);
+		this.addMouseListener(mouseControler);
+		this.addMouseMotionListener(mouseControler);
 	}
 
 	public void paintComponent(Graphics gg) {
@@ -111,7 +113,7 @@ public class Panneau extends JPanel {
 	/**
 	 * Actualise les dimensions de la figure
 	 */
-	private void refreshFigDims() {
+	public void refreshFigDims() {
 		// set all values to opposites of what they should be because of comparisons in if
 		widthFig = heightFig = right = bottom = 0;
 		left = width;
@@ -143,10 +145,22 @@ public class Panneau extends JPanel {
 		figure.getCenter().setCoords(left + (widthFig/2), top + (heightFig/2), back + (depthFig/2)); // ajout pour donner vrai coord dessiné
 	}
 
+	public int getHeight() {
+		return height;
+	}
+
+	public int getWidth() {
+		return width;
+	}
+
+	public Figure getFigure() {
+		return figure;
+	}
+
 	/**
 	 * Centre la figure si on centre dépasse les axes du centre
 	 */
-	private void centrerFigure() {
+	public void centrerFigure() {
 		refreshFigDims();
 		// left of center
 		if (figure.getCenter().getX() < width/2) {
@@ -229,7 +243,7 @@ public class Panneau extends JPanel {
 	 * @param zoomLevel
 	 *            le niveau de zoom à appliquer
 	 */
-	private void zoom(double zoomLevel) {
+	public void zoom(double zoomLevel) {
 		refreshFigDims();
 		for (Point pt : figure.getPtsTrans()) {
 			pt.setX(pt.getX() * zoomLevel);
@@ -261,101 +275,12 @@ public class Panneau extends JPanel {
 		}
 	}
 
-	private class Mouse extends MouseAdapter {
-		int transX, transY;
-		int rotX, rotY;
-		double zoom = 0.0;
-		double zoomTransSens = 10.0; // sensitivity of translation to mousepoint when zooming
-		int notches;
-		int nextX, nextY;
-		double totalY = 0.0;
-		public void mouseWheelMoved(MouseWheelEvent e) {
-			/**
-			 * Zoom into mouse cursor
-			 * = moving the center of figure nearer to the mouse cursor
-			 */
-			int moveX, moveY;
-			refreshFigDims();
-			moveX = (width/2) - e.getX();
-			moveY = (height/2) - e.getY();
-			Point tempCenter = new Point(figure.getCenter().getX(), figure.getCenter().getY(), figure.getCenter().getZ());
-			
-			Calculations.translatePoints(figure.getPtsTrans(), -tempCenter.getX(), -tempCenter.getY());
-			
-			notches = e.getWheelRotation() * -1;
-			zoom = 1.0 + (zoomSens * notches);
-			zoom(zoom);
-
-			if (e.getWheelRotation() > 0) {
-				Calculations.translatePoints(figure.getPtsTrans(), (-moveX/zoomTransSens) * zoom, (-moveY/zoomTransSens) * zoom);
-			} else {
-				// zoom in
-				Calculations.translatePoints(figure.getPtsTrans(), (moveX/zoomTransSens) * zoom, (moveY/zoomTransSens) * zoom);
-			}
-			Calculations.translatePoints(figure.getPtsTrans(), tempCenter.getX(), tempCenter.getY());
-			refreshObject();
-			repaint();
-			/* End Zoom */
-		}
-
-		public void mousePressed(MouseEvent e) {
-			if (SwingUtilities.isLeftMouseButton(e)) {
-				transX = e.getX();
-				transY = e.getY();
-			}
-			if (SwingUtilities.isRightMouseButton(e)) {
-				rotX = e.getX();
-				rotY = e.getY();
-			}
-			refreshFigDims();
-		}
-		public void mouseDragged(MouseEvent e) {
-			/* Translate Figure */
-			if (SwingUtilities.isLeftMouseButton(e)) {
-				nextX = e.getX();
-				nextY = e.getY();
-				Calculations.translatePoints(figure.getPtsTrans(), (transX - nextX) * -1, (transY - nextY) * -1);
-				refreshObject();
-				repaint();
-				transX = nextX;
-				transY = nextY;
-			}
-			/* End Translate Figure */
-			
-			/* Rotate Figure */
-			if (SwingUtilities.isRightMouseButton(e)) {
-				nextX = e.getX();
-				nextY = e.getY();
-				if (Math.abs(nextY - rotY) > Math.abs(nextX - rotX)) {
-					// rotation autour de l'axe X entend un mouvement haut/bas donc Y
-					if (nextY > rotY) {
-						Calculations.rotateXByPoint(figure, rotationSens);
-					} else {
-						Calculations.rotateXByPoint(figure, -rotationSens);
-					}
-				} else {
-					if (nextX > rotX) {
-						Calculations.rotateYByPoint(figure, rotationSens);
-					} else {
-						Calculations.rotateYByPoint(figure, -rotationSens);
-					}
-				}
-								
-				refreshObject();
-				repaint();
-				rotX = nextX;
-				rotY = nextY;
-			}
-			/* End Rotate Figure */
-		}
-	}
-
 	/**
 	 * Vide le container Path2D de polygone pour le ré-remplir avec les
 	 * nouveaux points tranformés Sinon on afficherait encore les vieux points
 	 * en plus des nouveaux points transformés
 	 */
-	private void refreshObject() {
+	public void refreshObject() {
 		figure.getPolygones().clear();
 		Collections.sort(figure.getFacesTrans());
 		setPolyGones();

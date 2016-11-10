@@ -115,7 +115,6 @@ public class Matrice {
 	 * @param points
 	 */
 	public void exportToPoints(List<Point> points) {
-		int aRows = this.matrice.length;
 		int aColumns = this.matrice[0].length;
 		
 		for (int i=0;i<aColumns;i++) {

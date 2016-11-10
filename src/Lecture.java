@@ -20,7 +20,6 @@ public class Lecture {
 	private int nbPoints;
 	private int nbFaces;
 	private Pattern lastIntPattern;
-	private Pattern multipleNumberPattern;
 	private Charset charset;
 	private List<Point> points;
 	private List<Face> faces;
@@ -61,7 +60,7 @@ public class Lecture {
 		nbPoints = -1;
 		nbFaces = -1;
 		lastIntPattern = Pattern.compile("[^0-9]+([0-9]+)$");
-		multipleNumberPattern = Pattern.compile("[-+]?\\d*\\.?\\d+([eE][-+]?\\d+)?");
+		Pattern.compile("[-+]?\\d*\\.?\\d+([eE][-+]?\\d+)?");
 		charset = Charset.forName("US-ASCII");
 		points = new ArrayList<>();
 		faces = new ArrayList<>();

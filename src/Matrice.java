@@ -15,6 +15,16 @@ public class Matrice {
 			}
 		}
 	}
+	
+	public Matrice(double[][] matrix) {
+		int aRows = matrix.length;
+		int aColumns = matrix[0].length;
+		for (int i = 0; i < aRows; i++) {
+			for (int j = 0; j < aColumns; j++) {
+				this.matrice[i][j] = matrix[i][j];
+			}
+		}
+	}
 
 	public static double[][] multiply(double[][] A, double[][] B) {
 
@@ -87,40 +97,7 @@ public class Matrice {
 	 * 
 	 * @param angle
 	 */
-	public void rotateX(double angle) {
-		double rad = Math.toRadians(angle);
-		double[][] xRotation = new double[][] { { 1.0, 0.0, 0.0, 0.0 }, { 0.0, Math.cos(rad), -Math.sin(rad), 0.0 }, { 0.0, Math.sin(rad), Math.cos(rad), 0.0 }, { 0.0, 0.0, 0.0, 1.0 } };
-		this.matrice = multiply(xRotation, this.matrice);
-	}
-
-	/**
-	 * Rotation autout de l'axe Y
-	 * 
-	 * @param angle
-	 */
-	public void rotateY(double angle) {
-		double rad = Math.toRadians(angle);
-		double[][] yRotation = new double[][] { { Math.cos(rad), 0.0, Math.sin(rad), 0.0 }, { 0.0, 1.0, 0.0, 0.0 }, { -Math.sin(rad), 0.0, Math.cos(rad), 0.0 }, { 0.0, 0.0, 0.0, 1.0 } };
-		this.matrice = multiply(yRotation, this.matrice);
-	}
-
-	/**
-	 * Rotation autout de l'axe Z
-	 * 
-	 * @param angle
-	 */
-	public void rotateZ(double angle) {
-		double rad = Math.toRadians(angle);
-		double[][] zRotation = new double[][] { { Math.cos(rad), -Math.sin(rad), 0.0, 0.0 }, { Math.sin(rad), Math.cos(rad), 0.0, 0.0 }, { 0.0, 0.0, 1.0, 0.0 }, { 0.0, 0.0, 0.0, 1.0 } };
-		this.matrice = multiply(zRotation, this.matrice);
-	}
-
-	/**
-	 * Rotation autour de l'axe X
-	 * 
-	 * @param angle
-	 */
-	public void rotateXNew(Figure fig, double angle) {
+	public void rotateX(Figure fig, double angle) {
 		double rad = Math.toRadians(angle);
 
 		//	@formatter:off
@@ -141,7 +118,7 @@ public class Matrice {
 	 * 
 	 * @param angle
 	 */
-	public void rotateYNew(Figure fig, double angle) {
+	public void rotateY(Figure fig, double angle) {
 		double rad = Math.toRadians(angle);
 
 		//	@formatter:off
@@ -162,7 +139,7 @@ public class Matrice {
 	 * 
 	 * @param angle
 	 */
-	public void rotateZNew(Figure fig, double angle) {
+	public void rotateZ(Figure fig, double angle) {
 		double rad = Math.toRadians(angle);
 
 		//	@formatter:off
@@ -176,6 +153,17 @@ public class Matrice {
 		translateMatrix(-fig.getCenter().getX(), -fig.getCenter().getY(), -fig.getCenter().getZ());
 		this.matrice = multiply(zRotation, this.matrice);
 		translateMatrix(fig.getCenter().getX(), fig.getCenter().getY(), fig.getCenter().getZ());
+	}
+	
+	public void zoom(double zoomLevel) {
+	//	@formatter:off
+		double[][] zoom = new double[][] { 
+			{ zoomLevel, 0.0, 0.0, 0.0}, 
+			{ 0.0, zoomLevel, 0.0, 0.0},
+			{ 0.0, 0.0, zoomLevel, 0.0}, 
+			{ 0.0, 0.0, 0.0, 1.0 } };
+		this.matrice = multiply(zoom, this.matrice);
+	// 	@formatter:on
 	}
 	
 	public void translateMatrix(double x, double y, double z) {
@@ -223,11 +211,6 @@ public class Matrice {
 	public void importPoints(List<Point> points) {
 		int aRows = this.matrice.length;
 		int aColumns = this.matrice[0].length;
-		for (int i = 0; i < aRows; i++) {
-			for (int j = 0; j < aColumns-1; j++) {
-				this.matrice[i][j] = 0.0;
-			}
-		}
 
 		for (int i = 0; i < aColumns; i++) {
 			for (int j = 0; j < 3; j++) {

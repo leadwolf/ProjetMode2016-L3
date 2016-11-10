@@ -103,7 +103,7 @@ public class VisualisationPanel extends JPanel {
 		if (zoom != 1.0) {
 			zoom(zoom);
 		} else {
-			fitZoomToWindow();
+			fitFigureToWindow(0.65);
 		}
 		centrerFigure();
 		figure.getPtsMat().importPoints(figure.getPtsTrans());
@@ -162,33 +162,9 @@ public class VisualisationPanel extends JPanel {
 	 */
 	public void centrerFigure() {
 		refreshFigDims();
-		// left of center
-		if (figure.getCenter().getX() < width/2) {
-			if (figure.getCenter().getX() < 0) {
-				for (Point p : figure.getPtsTrans()) {
-					p.setX(p.getX() + Math.abs(figure.getCenter().getX()) + (width/2));
-				}
-			} else {
-				for (Point p : figure.getPtsTrans()) {
-					p.setX(p.getX() + ((width/2) - Math.abs(figure.getCenter().getX())));
-				}
-			}
-		} else {
-			for (Point p : figure.getPtsTrans()) {
-				p.setX(p.getX() - (figure.getCenter().getX() - (width/2)));
-			}
-			refreshFigDims();
-		}
-		// above center
-		if (figure.getCenter().getY() < height/2) {
-			for (Point p : figure.getPtsTrans()) {
-				p.setY(p.getY() + ((height/2) - figure.getCenter().getY()));
-			}
-		} else {
-			for (Point p : figure.getPtsTrans()) {
-				p.setY(p.getY() - (figure.getCenter().getY() - (height/2)));
-			}
-		}
+		double moveX = figure.getCenter().getX()-(width/2);
+		double moveY = figure.getCenter().getY()-(height/2);
+		Calculations.translatePoints(figure, -moveX, -moveY, 0);
 	}
 
 	/**
@@ -214,45 +190,29 @@ public class VisualisationPanel extends JPanel {
 
 	
 	/**
-	 * Applique un "zoom" en écartant les points <b>ptsTrans</b> par rapport à
-	 * l'origine (0,0,0) <br>
-	 * ATTENTION : si on applique des zooms en chaîne, l'effet sera de plus en
-	 * plus fort car meme si le niveau de zoom reste constant, on l'applique à
-	 * un objet de plus en plus grand
+	 * Applique un zoom en utilisant une matrice
 	 * 
-	 * @param zoomLevel
-	 *            le niveau de zoom à appliquer
+	 * @param scaleFactor le niveau de zoom à appliquer
 	 */
-	public void zoom(double zoomLevel) {
-		refreshFigDims();
-		for (Point pt : figure.getPtsTrans()) {
-			pt.setX(pt.getX() * zoomLevel);
-			pt.setY(pt.getY() * zoomLevel);
-			pt.setZ(pt.getZ() * zoomLevel);
-		}
+	public void zoom(double scaleFactor) {
+		Calculations.scale(figure, scaleFactor);
 	}
 
 	/**
-	 * Applique un zoom permettant à la figure de prendre 65% de l'écran
+	 * Applique une homothétie pour que la plus grande dimensions
+	 * (largeur ou longueur) de la figure prend <b>maxSize</b> de l'écran
+	 * @param maxSize
 	 */
-	private void fitZoomToWindow() {
-		double zoomLevel = 1.0;
+	private void fitFigureToWindow(double maxSize) {
+		// scale by height
 		refreshFigDims();
-		if (widthFig > width || heightFig > height) {
-			// reduce
-			while (widthFig > 0.65 * width || heightFig > 0.65 * height && zoomLevel > 0) {
-				zoomLevel = 0.995;
-				refreshFigDims();
-				zoom(zoomLevel);
-			}
-		} else {
-			// enlarge
-			while (widthFig < 0.65 * width && heightFig < 0.65 * height) {
-				zoomLevel = 1.005;
-				refreshFigDims();
-				zoom(zoomLevel);
-			}
+		double scale = 1.0;
+		if (heightFig > widthFig) {
+			scale = (height * maxSize) / heightFig;
+		} else { // scale by width
+			scale = (width * maxSize) / widthFig;
 		}
+		Calculations.scale(figure, scale);
 	}
 
 	/**

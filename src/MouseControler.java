@@ -6,7 +6,7 @@ import javax.swing.SwingUtilities;
 
 public class MouseControler extends MouseAdapter {
 	
-	private VisualationPanel visPanel;
+	private VisualisationPanel visPanel;
 	
 	private int transX, transY;
 	private int rotX, rotY;
@@ -17,7 +17,7 @@ public class MouseControler extends MouseAdapter {
 	private int notches;
 	private int nextX, nextY;
 	
-	public MouseControler(VisualationPanel visualisationPanel) {
+	public MouseControler(VisualisationPanel visualisationPanel) {
 		super();
 		
 		visPanel = visualisationPanel;
@@ -34,19 +34,19 @@ public class MouseControler extends MouseAdapter {
 		moveY = (visPanel.getHeight() / 2) - e.getY();
 		Point tempCenter = new Point(visPanel.getFigure().getCenter().getX(), visPanel.getFigure().getCenter().getY(), visPanel.getFigure().getCenter().getZ());
 
-		Calculations.translatePoints(visPanel.getFigure().getPtsTrans(), -tempCenter.getX(), -tempCenter.getY());
+		Calculations.translatePoints(visPanel.getFigure().getPtsTrans(), -tempCenter.getX(), -tempCenter.getY(), 0);
 
 		notches = e.getWheelRotation() * -1;
 		zoom = 1.0 + (zoomSens * notches);
 		visPanel.zoom(zoom);
 
 		if (e.getWheelRotation() > 0) {
-			Calculations.translatePoints(visPanel.getFigure().getPtsTrans(), (-moveX / zoomTransSens) * zoom, (-moveY / zoomTransSens) * zoom);
+			Calculations.translatePoints(visPanel.getFigure().getPtsTrans(), (-moveX / zoomTransSens) * zoom, (-moveY / zoomTransSens) * zoom, 0);
 		} else {
 			// zoom in
-			Calculations.translatePoints(visPanel.getFigure().getPtsTrans(), (moveX / zoomTransSens) * zoom, (moveY / zoomTransSens) * zoom);
+			Calculations.translatePoints(visPanel.getFigure().getPtsTrans(), (moveX / zoomTransSens) * zoom, (moveY / zoomTransSens) * zoom, 0);
 		}
-		Calculations.translatePoints(visPanel.getFigure().getPtsTrans(), tempCenter.getX(), tempCenter.getY());
+		Calculations.translatePoints(visPanel.getFigure().getPtsTrans(), tempCenter.getX(), tempCenter.getY(), 0);
 		visPanel.refreshObject();
 		visPanel.repaint();
 		/* End Zoom */
@@ -69,7 +69,9 @@ public class MouseControler extends MouseAdapter {
 		if (SwingUtilities.isLeftMouseButton(e)) {
 			nextX = e.getX();
 			nextY = e.getY();
-			Calculations.translatePoints(visPanel.getFigure().getPtsTrans(), (transX - nextX) * -1, (transY - nextY) * -1);
+			double moveX = (transX - nextX) * -1;
+			double moveY = (transY - nextY) * -1;
+			Calculations.translatePoints(visPanel.getFigure().getPtsTrans(), moveX, moveY, 0);
 			visPanel.refreshObject();
 			visPanel.repaint();
 			transX = nextX;
@@ -85,15 +87,15 @@ public class MouseControler extends MouseAdapter {
 				// rotation autour de l'axe X entend un mouvement haut/bas donc
 				// Y
 				if (nextY > rotY) {
-					Calculations.rotateXByPoint(visPanel.getFigure(), rotationSens);
+					Calculations.rotateXByPointNew(visPanel.getFigure(), rotationSens);
 				} else {
-					Calculations.rotateXByPoint(visPanel.getFigure(), -rotationSens);
+					Calculations.rotateXByPointNew(visPanel.getFigure(), -rotationSens);
 				}
 			} else {
 				if (nextX > rotX) {
-					Calculations.rotateYByPoint(visPanel.getFigure(), rotationSens);
+					Calculations.rotateYByPointNew(visPanel.getFigure(), rotationSens);
 				} else {
-					Calculations.rotateYByPoint(visPanel.getFigure(), -rotationSens);
+					Calculations.rotateYByPointNew(visPanel.getFigure(), -rotationSens);
 				}
 			}
 

@@ -4,18 +4,12 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Stroke;
-import java.awt.event.InputEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseWheelEvent;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Path2D;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 
 
 /**
@@ -24,8 +18,7 @@ import javax.swing.SwingUtilities;
  * @author Groupe L3
  *
  */
-@SuppressWarnings("unused")
-public class VisualationPanel extends JPanel {
+public class VisualisationPanel extends JPanel {
 
 	private static final long serialVersionUID = 6617022758741368018L;
 
@@ -40,10 +33,10 @@ public class VisualationPanel extends JPanel {
 	private double widthFig = 0, heightFig = 0, depthFig = 0;
 	private double left = 0, right = 0, top = 0, bottom = 0, front = 0, back = 0;
 	private MouseControler mouseControler;
-	private double rotationSens = 5;
-	private double zoomSens = 0.1;
 
-	public VisualationPanel(boolean drawPoints, boolean drawSegments, boolean drawFaces) {
+	public VisualisationPanel(boolean drawPoints, boolean drawSegments, boolean drawFaces) {
+		super();
+		
 		this.drawPoints = drawPoints;
 		this.drawSegments = drawSegments;
 		this.drawFaces = drawFaces;
@@ -77,12 +70,19 @@ public class VisualationPanel extends JPanel {
 				
 			}
 		}
+		
+//		g.setColor(Color.RED);
+//		double xCenter = figure.getCenter().getX() - (ptsDim.getWidth() / 2);
+//		double yCenter = figure.getCenter().getY() - (ptsDim.getHeight() / 2);
+//		Ellipse2D.Double shapeCenter = new Ellipse2D.Double(xCenter, yCenter, ptsDim.getWidth(), ptsDim.getHeight());
+//		g.fill(shapeCenter);
+		
 
 		if (drawPoints) {
 			g.setColor(Color.PINK);
 			for (Point pt : figure.getPtsTrans()) {
-				double x = pt.x - ptsDim.getWidth() / 2;
-				double y = pt.y - ptsDim.getHeight() / 2;
+				double x = pt.x - (ptsDim.getWidth() / 2);
+				double y = pt.y - (ptsDim.getHeight() / 2);
 				Ellipse2D.Double shape = new Ellipse2D.Double(x, y, ptsDim.getWidth(), ptsDim.getHeight());
 				g.fill(shape);
 			}
@@ -107,7 +107,7 @@ public class VisualationPanel extends JPanel {
 		}
 		centrerFigure();
 		figure.getPtsMat().importPoints(figure.getPtsTrans());
-		setPolyGones();
+		refreshObject();
 	}
 
 	/**
@@ -212,26 +212,6 @@ public class VisualationPanel extends JPanel {
 		}
 	}
 
-	/**
-	 * Applique un "zoom" en écartant les points <b>ptsTrans</b> par rapport à
-	 * l'origine (0,0,0) <br>
-	 * ATTENTION : si on applique des zooms en chaîne, l'effet sera de plus en
-	 * plus fort car meme si le niveau de zoom reste constant, on l'applique à
-	 * un objet de plus en plus grand
-	 * 
-	 * @param zoomLevel
-	 *            le niveau de zoom à appliquer
-	 */
-	private void zoomFrom0(double zoomLevel) {
-		refreshFigDims();
-		Calculations.translatePoints(figure.getPtsTrans(), -figure.getCenter().getX(), -figure.getCenter().getY());
-		for (Point pt : figure.getPtsTrans()) {
-			pt.setX(pt.getX() * zoomLevel);
-			pt.setY(pt.getY() * zoomLevel);
-			pt.setZ(pt.getZ() * zoomLevel);
-		}
-		Calculations.translatePoints(figure.getPtsTrans(), figure.getCenter().getX(), figure.getCenter().getY());
-	}
 	
 	/**
 	 * Applique un "zoom" en écartant les points <b>ptsTrans</b> par rapport à

@@ -59,45 +59,19 @@ public class Calculations {
 		dest.add(transformeY(src));
 	}
 	
-	/**
-	 * 
-	 * @param points
-	 * @param x distance to translate
-	 * @param y distance to translate
-	 */
 	public static void translatePoints(List<Point> points, double x, double y) {
 		for (Point pt : points) {
-			pt.setX(pt.getX() + (x));
-			pt.setY(pt.getY() + (y));
+			pt.setX(pt.getX() + x);
+			pt.setY(pt.getY() + y);
 		}
 	}
 	
-	/**
-	 * 
-	 * @param points
-	 * @param x distance to translate
-	 * @param y distance to translate
-	 */
 	public static void translatePoints(List<Point> points, double x, double y, double z) {
-		for (Point pt : points) {
-			pt.setX(pt.getX() + (x));
-			pt.setY(pt.getY() + (y));
-			pt.setY(pt.getZ() + (z));
-		}
-	}
-	
-	/**
-	 * 
-	 * @param points
-	 * @param x distance to translate
-	 * @param y distance to translate
-	 */
-	public static void translatePoints(List<Point> points, int x, int y, int z) {
-		for (Point pt : points) {
-			pt.setX(pt.getX() + (x));
-			pt.setY(pt.getY() + (y));
-			pt.setZ(pt.getY() + (z));
-		}
+		Matrice matrix = new Matrice(points.size(), 4);
+		matrix.importPoints(points);
+		matrix.setHomogeneousCoords();
+		matrix.translateMatrix(x, y, z);
+		matrix.exportToPoints(points);
 	}
 	
 	/**
@@ -107,54 +81,10 @@ public class Calculations {
 	 * @param mat
 	 * @param angle
 	 */
-	public static void rotateXByPoint(Figure fig, double angle) {
-		Calculations.translatePoints(fig.getPtsTrans(), -fig.getCenter().getX(), -fig.getCenter().getY());
+	public static void rotateXByPointNew(Figure fig, double angle) {
 		fig.getPtsMat().importPoints(fig.getPtsTrans());
-		fig.getPtsMat().rotateX(angle);
-		fig.getPtsMat().exportToPoints(fig.getPtsTrans());
-		Calculations.translatePoints(fig.getPtsTrans(), fig.getCenter().getX(), fig.getCenter().getY());
-	}
-	
-	/**
-	 * Prend un List de Point pour appliquer une rotation par Y selon l'origine.
-	 * <br>Les stocke dans la Matrice donnée pour le calcul.
-	 * @param points
-	 * @param mat
-	 * @param angle
-	 */
-	public static void rotateYByPoint(Figure fig, double angle) {
-		Calculations.translatePoints(fig.getPtsTrans(), -fig.getCenter().getX(), -fig.getCenter().getY());
-		fig.getPtsMat().importPoints(fig.getPtsTrans());
-		fig.getPtsMat().rotateY(angle);
-		fig.getPtsMat().exportToPoints(fig.getPtsTrans());
-		Calculations.translatePoints(fig.getPtsTrans(), fig.getCenter().getX(), fig.getCenter().getY());
-	}
-	
-	/**
-	 * Prend un List de Point pour appliquer une rotation par Z selon l'origine.
-	 * <br>Les stocke dans la Matrice donnée pour le calcul.
-	 * @param points
-	 * @param mat
-	 * @param angle
-	 */
-	public static void rotateZByPoint(Figure fig, double angle) {
-		Calculations.translatePoints(fig.getPtsTrans(), -fig.getCenter().getX(), -fig.getCenter().getY());
-		fig.getPtsMat().importPoints(fig.getPtsTrans());
-		fig.getPtsMat().rotateZ(angle);
-		fig.getPtsMat().exportToPoints(fig.getPtsTrans());
-		Calculations.translatePoints(fig.getPtsTrans(), fig.getCenter().getX(), fig.getCenter().getY());
-	}
-    
-	/**
-	 * Prend un List de Point pour appliquer une rotation par X selon l'origine.
-	 * <br>Les stocke dans la Matrice donnée  pour le calcul.
-	 * @param points
-	 * @param mat
-	 * @param angle
-	 */
-	public static void rotateX(Figure fig, double angle) {
-		fig.getPtsMat().importPoints(fig.getPtsTrans());
-		fig.getPtsMat().rotateX(angle);
+		fig.getPtsMat().setHomogeneousCoords();
+		fig.getPtsMat().rotateXNew(fig, angle);
 		fig.getPtsMat().exportToPoints(fig.getPtsTrans());
 	}
 	
@@ -165,9 +95,10 @@ public class Calculations {
 	 * @param mat
 	 * @param angle
 	 */
-	public static void rotateY(Figure fig, double angle) {
+	public static void rotateYByPointNew(Figure fig, double angle) {
 		fig.getPtsMat().importPoints(fig.getPtsTrans());
-		fig.getPtsMat().rotateY(angle);
+		fig.getPtsMat().setHomogeneousCoords();
+		fig.getPtsMat().rotateYNew(fig, angle);
 		fig.getPtsMat().exportToPoints(fig.getPtsTrans());
 	}
 	
@@ -178,9 +109,10 @@ public class Calculations {
 	 * @param mat
 	 * @param angle
 	 */
-	public static void rotateZ(Figure fig, double angle) {
+	public static void rotateZByPointNew(Figure fig, double angle) {
 		fig.getPtsMat().importPoints(fig.getPtsTrans());
-		fig.getPtsMat().rotateZ(angle);
+		fig.getPtsMat().setHomogeneousCoords();
+		fig.getPtsMat().rotateZNew(fig, angle);
 		fig.getPtsMat().exportToPoints(fig.getPtsTrans());
 	}
 	

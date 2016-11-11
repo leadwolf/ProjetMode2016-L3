@@ -1,7 +1,11 @@
+package modele;
 import java.awt.geom.Path2D;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+
+import math.Matrice;
+import reader.Lecture;
 
 public class Figure {
 

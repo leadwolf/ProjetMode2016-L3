@@ -1,8 +1,11 @@
+package _interface;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 
 import javax.swing.SwingUtilities;
+
+import math.Calculations;
 
 public class MouseControler extends MouseAdapter {
 	

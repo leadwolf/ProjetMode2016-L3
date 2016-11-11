@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.junit.Test;
 
+import modele.Point;
+
 public class RotationTest {
 
 	@Test

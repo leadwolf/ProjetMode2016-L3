@@ -1,4 +1,4 @@
-
+package modele;
 public class Segment {
 	Point pointA;
 	Point pointB;

@@ -1,3 +1,4 @@
+package _interface;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -10,6 +11,10 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.swing.JPanel;
+
+import math.Calculations;
+import modele.Figure;
+import modele.Point;
 
 
 /**
@@ -81,8 +86,8 @@ public class VisualisationPanel extends JPanel {
 		if (drawPoints) {
 			g.setColor(Color.PINK);
 			for (Point pt : figure.getPtsTrans()) {
-				double x = pt.x - (ptsDim.getWidth() / 2);
-				double y = pt.y - (ptsDim.getHeight() / 2);
+				double x = pt.getX() - (ptsDim.getWidth() / 2);
+				double y = pt.getY() - (ptsDim.getHeight() / 2);
 				Ellipse2D.Double shape = new Ellipse2D.Double(x, y, ptsDim.getWidth(), ptsDim.getHeight());
 				g.fill(shape);
 			}

@@ -1,3 +1,4 @@
+package _interface;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
@@ -7,7 +8,7 @@ import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
-public class ButtonPanel extends JPanel {
+public class TranslationPanel extends JPanel {
 
 	private static final long serialVersionUID = 8757878476291206876L;
 	
@@ -17,7 +18,7 @@ public class ButtonPanel extends JPanel {
 	JButton up;
 	JButton down;
 	
-	public ButtonPanel(Dimension buttonPanelDim, Dimension buttonDim) {
+	public TranslationPanel(Dimension buttonPanelDim, Dimension buttonDim) {
 		super();
 		
 		setLayout(new GridLayout(3, 3));

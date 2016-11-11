@@ -1,3 +1,4 @@
+package reader;
 import java.io.BufferedReader;
 import java.io.File;
 import java.nio.charset.Charset;
@@ -7,6 +8,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import modele.Face;
+import modele.Point;
+import modele.Segment;
 
 /**
  * Cette classe donne accès à la liste des Points et de Faces de l'objet .ply dont on veut modéliser

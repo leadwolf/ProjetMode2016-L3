@@ -1,3 +1,4 @@
+package _interface;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -6,13 +7,16 @@ import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import modele.Figure;
+
 public class Fenetre extends JFrame {
 	
 	private static final long serialVersionUID = 2549833609496985257L;
 	VisualisationPanel visPanel;
 	JPanel mainPanel;
 	JPanel bottomPanel;
-	ButtonPanel buttonPanel;
+	TranslationPanel translationPanel;
+	RotationPanel rotationPanel;
 	
 	public Fenetre(boolean drawPoints, boolean drawSegments, boolean drawFaces) {
 		super();
@@ -27,14 +31,16 @@ public class Fenetre extends JFrame {
 		visPanel.setDimensions(new Dimension(dim.width, dim.height-buttonPanelDim.height-borderHeight));
 		visPanel.setPreferredSize(new Dimension(dim.width, dim.height-buttonPanelDim.height-borderHeight));
 		
-		/* PANNEAU BOUTONS */
-		buttonPanel = new ButtonPanel(buttonPanelDim, buttonDim);
+		/* PANNEAUX BOUTONS */
+		translationPanel = new TranslationPanel(buttonPanelDim, buttonDim);
+		rotationPanel = new RotationPanel(buttonPanelDim, buttonDim);
 		
 		/* PANNEAU DU BAS */
 		bottomPanel = new JPanel();
 		bottomPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
 		bottomPanel.setPreferredSize(new Dimension(dim.width, buttonPanelDim.height+30));
-		bottomPanel.add(buttonPanel);
+		bottomPanel.add(translationPanel);
+		bottomPanel.add(rotationPanel);
 		bottomPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		bottomPanel.setBackground(Color.WHITE);
 		

@@ -1,6 +1,10 @@
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import _interface.Fenetre;
+import modele.Figure;
+import modele.Point;
+
 public class Main {
 	
 	private static boolean showPoints = false;

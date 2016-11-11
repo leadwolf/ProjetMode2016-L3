@@ -1,5 +1,9 @@
+package math;
 import java.awt.Graphics;
 import java.util.List;
+
+import modele.Figure;
+import modele.Point;
 
 public class Calculations {
 

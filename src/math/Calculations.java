@@ -1,5 +1,4 @@
 package math;
-import java.awt.Graphics;
 import java.util.List;
 
 import modele.Face;
@@ -14,14 +13,14 @@ public class Calculations {
 	 * @param scaleFactor
 	 */
 	public static void scale(Figure fig, double scaleFactor) {
-		fig.getPtsMat().importPoints(fig.getPtsTrans());
+		fig.getPtsMat().importPoints(fig.getPtsTrans(), 3);
 		fig.getPtsMat().setHomogeneousCoords();
 		fig.getPtsMat().zoom(scaleFactor);
 		fig.getPtsMat().exportToPoints(fig.getPtsTrans());
 	}
 	
 	/**
-	 * Multiuplie la figure par une matrice translation
+	 * Multiplie la figure par une matrice translation
 	 * @param points
 	 * @param x
 	 * @param y
@@ -29,7 +28,7 @@ public class Calculations {
 	 */
 	public static void translatePoints(List<Point> points, double x, double y, double z) {
 		Matrice matrix = new Matrice(points.size(), 4);
-		matrix.importPoints(points);
+		matrix.importPoints(points, 3);
 		matrix.setHomogeneousCoords();
 		matrix.translateMatrix(x, y, z);
 		matrix.exportToPoints(points);
@@ -43,17 +42,17 @@ public class Calculations {
 	 * @param z
 	 */
 	public static void translatePoints(Figure fig, double x, double y, double z) {
-		fig.getPtsMat().importPoints(fig.getPtsTrans());
+		fig.getPtsMat().importPoints(fig.getPtsTrans(), 3);
 		fig.getPtsMat().translateMatrix(x, y, z);
 		fig.getPtsMat().exportToPoints(fig.getPtsTrans());
 	}
 	
 	/**
-	 * Done la valeur absolue du cosinus de la norme d'une face et le vecteur directeur de la lumière
+	 * Donne la valeur absolue du cosinus de la norme d'une face et le vecteur directeur de la lumière tel que cos(N,L)
 	 * @param fig
 	 * @param face
 	 * @param lightVector
-	 * @return
+	 * @return un double entre 0.0 et 1.0
 	 */
 	public static double getGreyScale(Figure fig, Face face, Vecteur lightVector) {
 		Point firstPoint = face.getList().get(0);
@@ -74,7 +73,7 @@ public class Calculations {
 	 * @param angle
 	 */
 	public static void rotateXByPoint(Figure fig, double angle) {
-		fig.getPtsMat().importPoints(fig.getPtsTrans());
+		fig.getPtsMat().importPoints(fig.getPtsTrans(), 3);
 		fig.getPtsMat().setHomogeneousCoords();
 		fig.getPtsMat().rotateX(fig, angle);
 		fig.getPtsMat().exportToPoints(fig.getPtsTrans());
@@ -87,7 +86,7 @@ public class Calculations {
 	 * @param angle
 	 */
 	public static void rotateYByPoint(Figure fig, double angle) {
-		fig.getPtsMat().importPoints(fig.getPtsTrans());
+		fig.getPtsMat().importPoints(fig.getPtsTrans(), 3);
 		fig.getPtsMat().setHomogeneousCoords();
 		fig.getPtsMat().rotateY(fig, angle);
 		fig.getPtsMat().exportToPoints(fig.getPtsTrans());
@@ -100,7 +99,7 @@ public class Calculations {
 	 * @param angle
 	 */
 	public static void rotateZByPoint(Figure fig, double angle) {
-		fig.getPtsMat().importPoints(fig.getPtsTrans());
+		fig.getPtsMat().importPoints(fig.getPtsTrans(), 3);
 		fig.getPtsMat().setHomogeneousCoords();
 		fig.getPtsMat().rotateZ(fig, angle);
 		fig.getPtsMat().exportToPoints(fig.getPtsTrans());

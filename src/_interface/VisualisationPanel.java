@@ -33,7 +33,6 @@ public class VisualisationPanel extends JPanel {
 	private boolean drawPoints = true;
 	private boolean drawSegments = true;
 	private boolean drawFaces = true;
-	private int numPremFace = 0;
 	private int height;
 	private int width;
 	private double widthFig = 0, heightFig = 0, depthFig = 0;
@@ -116,13 +115,14 @@ public class VisualisationPanel extends JPanel {
 			fitFigureToWindow(0.65);
 		}
 		centrerFigure();
-		figure.getPtsMat().importPoints(figure.getPtsTrans());
+		figure.getPtsMat().importPoints(figure.getPtsTrans(), 3);
 		refreshObject();
 	}
 
+
 	/**
-	 * Actualise les dimensions de la figure
-	 */
+	 ** Actualise <b>widthFig</b>, <b>heightFig</b>, <b>depthFig</b> ainsi que {@link Figure#getCenter()}
+	 **/
 	public void refreshFigDims() {
 		// set all values to opposites of what they should be because of comparisons in if
 		widthFig = heightFig = right = bottom = 0;
@@ -168,7 +168,7 @@ public class VisualisationPanel extends JPanel {
 	}
 
 	/**
-	 * Centre la figure si on centre dépasse les axes du centre
+	 * Centre la figure par rapport au centre de ce Panel
 	 */
 	public void centrerFigure() {
 		refreshFigDims();
@@ -178,12 +178,8 @@ public class VisualisationPanel extends JPanel {
 	}
 
 	/**
-	 * Sauvegarde les polygones à dessiner grâce aux points de <b>faceTrans</b>
-	 * <br>
-	 * En clair, polygones contient les vrais formes que Graphics peut dessiner,
-	 * voir {@link #paintComponent(Graphics)} Les faces sont alors représentés
-	 * par les polygones remplis. Les listes faces ne servent simplement qu'à
-	 * contenir la liste de points.
+	 * Sauvegarde les polygones à dessiner grâce aux points de {@link Figure#getFacesTrans()}
+	 * <br>En clair, {@link Figure#getPolygones()} contient les vrais formes que Graphics peut dessiner.
 	 */
 	private void setPolyGones() {
 		for (int i = 0; i < figure.getFacesTrans().size(); i++) {
@@ -210,7 +206,7 @@ public class VisualisationPanel extends JPanel {
 
 	/**
 	 * Applique une homothétie pour que la plus grande dimensions
-	 * (largeur ou longueur) de la figure prend <b>maxSize</b> de l'écran
+	 * (largeur ou longueur) de la figure prenne <b>maxSize</b> de l'écran
 	 * @param maxSize
 	 */
 	private void fitFigureToWindow(double maxSize) {
@@ -226,9 +222,10 @@ public class VisualisationPanel extends JPanel {
 	}
 
 	/**
-	 * Vide le container Path2D de polygone pour le ré-remplir avec les
+	 * Vide le container Path2D de {@link Figure#getPolygones()} pour le ré-remplir avec les
 	 * nouveaux points tranformés Sinon on afficherait encore les vieux points
-	 * en plus des nouveaux points transformés
+	 * en plus des nouveaux points transformés.
+	 * <br>Tri aussi les faces dans l'ordre d'appartition (arrière -> devant)
 	 */
 	public void refreshObject() {
 		figure.getPolygones().clear();

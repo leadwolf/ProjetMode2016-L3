@@ -42,7 +42,7 @@ public class Vecteur {
 	/**
 	 * Set la norme du vecteur
 	 */
-	public void setNorme() {
+	private void setNorme() {
 		double sum = 0;
 		for (int i=0;i<vecteur.length;i++) {
 			sum += Math.pow(vecteur[i], 2);

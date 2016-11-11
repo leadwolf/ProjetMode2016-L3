@@ -90,6 +90,10 @@ public class Point {
 		this.nom = name;
 	}
 	
+	/**
+	 * Si ce points comporte 3 coordonnées
+	 * @return
+	 */
 	public boolean complet() {
 		return iter == 2;
 	}
@@ -126,6 +130,12 @@ public class Point {
 		return true;
 	}
 	
+	/**
+	 * Donne la coordonnée correspondante.<br>
+	 * 0 = x, 1 = y, 2 = z
+	 * @param coord
+	 * @return
+	 */
 	public double getCoord(int coord) {
 		if (coord == 0) {
 			return this.x;
@@ -136,6 +146,9 @@ public class Point {
 		}
 	}
 	
+	/**
+	 * Set les coordonnées de ce points à 0
+	 */
 	public void resetCoords() {
 		this.x = 0.0;
 		this.y = 0.0;

@@ -21,15 +21,36 @@ public class Matrice {
 	}
 	
 	public Matrice(double[][] matrix) {
-		int aRows = matrix.length;
-		int aColumns = matrix[0].length;
-		for (int i = 0; i < aRows; i++) {
-			for (int j = 0; j < aColumns; j++) {
-				this.matrice[i][j] = matrix[i][j];
+		copyFromMatrix(matrix);
+	}
+
+	/**
+	 * Copie la matrice donnée dans cette matrice.<br>
+	 * donne null si les colonnes de celle la et les lignes de la source ne correspondent pas
+	 * @param matrixSource
+	 */
+	private void copyFromMatrix(double[][] matrixSource) {
+		int aRows = this.matrice.length;
+		int aColumns = this.matrice[0].length;
+		int bRows = matrixSource.length;
+
+		if (aColumns != bRows) {
+			this.matrice = null;
+		} else {
+			for (int i = 0; i < aRows; i++) {
+				for (int j = 0; j < aColumns; j++) {
+					this.matrice[i][j] = matrixSource[i][j];
+				}
 			}
 		}
 	}
-
+	
+	/**
+	 * Multiplie la matrice de manière à avoir A.B
+	 * @param A
+	 * @param B
+	 * @return la matrice multipliée
+	 */
 	public static double[][] multiply(double[][] A, double[][] B) {
 
 		int aRows = A.length;
@@ -60,6 +81,42 @@ public class Matrice {
 
 		return C;
 	}
+	
+	/**
+	 * Multiplie cette matrice de manière à avoir A.this.matrice
+	 * @param A
+	 * @param B
+	 * @return la matrice multipliée
+	 */
+	public void multiply(double[][] A) {
+
+		int aRows = A.length;
+		int aColumns = A[0].length;
+		int bRows = this.matrice.length;
+		int bColumns = this.matrice[0].length;
+
+		if (aColumns != bRows) {
+			this.matrice =  null;
+		} else {
+			double[][] C = new double[aRows][bColumns];
+			for (int i = 0; i < 2; i++) {
+				for (int j = 0; j < 2; j++) {
+					C[i][j] = 0.00000;
+				}
+			}
+
+			for (int i = 0; i < aRows; i++) { // aRow
+				for (int j = 0; j < bColumns; j++) { // bColumn
+					for (int k = 0; k < aColumns; k++) { // aColumn
+						if (j == 0) {
+						}
+						C[i][j] += A[i][k] * this.matrice[k][j];
+					}
+				}
+			}
+			copyFromMatrix(C);
+		}
+	}
 
 	double[][] addMatrices(double[][] matrixA, double[][] matrixB) {
 		
@@ -76,10 +133,6 @@ public class Matrice {
 		}
 		System.out.println("");
 		return sum;
-	}
-
-	public void setMatrice(double[][] matrice) {
-		this.matrice = matrice;
 	}
 
 	public double[][] getMatrice() {
@@ -159,6 +212,10 @@ public class Matrice {
 		translateMatrix(fig.getCenter().getX(), fig.getCenter().getY(), fig.getCenter().getZ());
 	}
 	
+	/**
+	 * Applique une homothétie à cette matrice selon le rapport donné
+	 * @param zoomLevel
+	 */
 	public void zoom(double zoomLevel) {
 	//	@formatter:off
 		double[][] zoom = new double[][] { 
@@ -169,7 +226,13 @@ public class Matrice {
 		this.matrice = multiply(zoom, this.matrice);
 	// 	@formatter:on
 	}
-	
+		
+	/**
+	 * Applique une translation à cette matrice selon les paramètres données.
+	 * @param x
+	 * @param y
+	 * @param z
+	 */
 	public void translateMatrix(double x, double y, double z) {
 	//	@formatter:off
 		double[][] translate = new double[][] { 
@@ -180,39 +243,14 @@ public class Matrice {
 	// 	@formatter:on
 		this.matrice = multiply(translate, this.matrice);
 	}
-
-	public static void translateMatrix(Matrice matrice, double x, double y, double z) {
-	//	@formatter:off
-		double[][] translate = new double[][] { 
-			{ 1, 0.0, 0.0, x}, 
-			{ 0.0, 1, 0.0, y},
-			{ 0.0, 0.0, 1, z}, 
-			{ 0.0, 0.0, 0.0, 1.0 } };
-	//	@formatter:on
-		matrice.matrice = multiply(translate, matrice.matrice);
-	}
-	
-	public static void translateMatrix(Figure fig, double x, double y, double z) {
-	//	@formatter:off
-		fig.getPtsMat().importPoints(fig.getPtsTrans());
-		double[][] translate = new double[][] { 
-			{ 1, 0.0, 0.0, x}, 
-			{ 0.0, 1, 0.0, y},
-			{ 0.0, 0.0, 1, z}, 
-			{ 0.0, 0.0, 0.0, 1.0 } };
-	//	@formatter:on
-		fig.getPtsMat().matrice = multiply(translate, fig.getPtsMat().matrice);
-		fig.getPtsMat().exportToPoints(fig.getPtsTrans());
-	}
 	
 	/**
-	 * Remplit la matrice de 0.0 et puis stocke des Point dans la matrice. <br>
-	 * Stocke jusqu'a 3 coordonnées par point
-	 * <br><b>ATTENTION</b> a toujours appliquer {@link #setHomogeneousCoords()} après
-	 * 
+	 * Stocke des Point dans la matrice. <br>
+	 * <br><b>ATTENTION</b> a toujours appliquer {@link #setHomogeneousCoords()} après.
 	 * @param points
+	 * @param nbCoords nombre de coordonnées à stocker
 	 */
-	public void importPoints(List<Point> points) {
+	public void importPoints(List<Point> points, int nbCoords) {
 		int aRows = this.matrice.length;
 		int aColumns = this.matrice[0].length;
 
@@ -226,7 +264,7 @@ public class Matrice {
 
 	/**
 	 * Stocke la matrice dans une List de Point. <br>
-	 * Stocke autant de coordonnées dans le Point que la matrice a de lignes.
+	 * Stocke autant de coordonnées dans le Point que la matrice a de lignes jusqu'à 3 maximum.
 	 * 
 	 * @param points
 	 */
@@ -242,6 +280,18 @@ public class Matrice {
 		}
 	}
 
+	public String toStringMatrice() {
+		String result = "";
+		for (int i = 0; i < this.matrice.length; i++) {
+			// for(int j = 0; j < m[i].length; j++) {
+			for (int j = 0; j < 3; j++) {
+				result += String.format("%11.2f", this.matrice[i][j]);
+			}
+			result += "\n";
+		}
+		return "\nMatrice =\n" + result;
+	}
+	
 	public static String toStringMatrice(double[][] m) {
 		String result = "";
 		for (int i = 0; i < m.length; i++) {
@@ -254,18 +304,27 @@ public class Matrice {
 		return "\nMatrice =\n" + result;
 	}
 	
-	public static String toStringMatrice(double[][] m, int length) {
+	/**
+	 * Donne une visualisation de la matrice
+	 * @param m
+	 * @param length le nombre de colonnes à afficher
+	 * @return
+	 */
+	public String toStringMatrice(int length) {
 		String result = "";
-		for (int row = 0; row < m.length; row++) {
+		for (int row = 0; row < this.matrice.length; row++) {
 			// for(int j = 0; j < m[i].length; j++) {
-			for (int j = 0; j < m[row].length && j < length; j++) {
-				result += String.format("%11.2f", m[row][j]);
+			for (int j = 0; j < this.matrice[row].length && j < length; j++) {
+				result += String.format("%11.2f", this.matrice[row][j]);
 			}
 			result += "\n";
 		}
 		return "\nMatrice =\n" + result;
 	}
 
+	/**
+	 * Met la dernière ligne de la matrice à 1 pour avoir des coordonnées homogènes
+	 */
 	public void setHomogeneousCoords() {
 		int lastRow = this.matrice.length - 1;
 		int aColumns = this.matrice[0].length;

@@ -80,6 +80,9 @@ public class Figure {
 		}
 	}
 	
+	/**
+	 * Inverse la figure par rapport à l'axe X car on dessine du haut en bas
+	 */
 	public void invertPoints() {
 		for (Point pt : points) {
 			pt.setY(pt.getY() * -1);

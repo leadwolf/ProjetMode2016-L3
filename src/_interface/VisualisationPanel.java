@@ -13,6 +13,7 @@ import java.util.List;
 import javax.swing.JPanel;
 
 import math.Calculations;
+import math.Vecteur;
 import modele.Figure;
 import modele.Point;
 
@@ -56,24 +57,28 @@ public class VisualisationPanel extends JPanel {
 		super.paintComponent(gg);
 		Graphics2D g = (Graphics2D) gg;
 
-		Stroke defaultStroke = new BasicStroke(2);
+		Stroke defaultStroke2 =  new BasicStroke(1.5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
 		final float dash1[] = { 7.0f };
 		final Stroke dottedStroke = new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, dash1, 0.0f);
 		
 		/*
 		 * On met les segments et faces dans la meme boucle pour qu'on les dessine dans le meme ordre de leur moyenne de Z
 		 */
+		int i=0;
 		for (Path2D p : figure.getPolygones()) {
 			if (drawSegments) {
-				g.setStroke(defaultStroke);
+				g.setStroke(defaultStroke2);
 				g.setColor(Color.BLACK);
 				g.draw(p);
 			}
 			if (drawFaces) {
-				g.setColor(Color.GRAY);
+				Vecteur lightVector = new Vecteur(new double[]{0, 0, -1});
+				double greyScale = Calculations.getGreyScale(figure, figure.getFacesTrans().get(i), lightVector);
+				g.setColor(new Color((float) greyScale, (float) greyScale, (float) greyScale));
 				g.fill(p);
 				
 			}
+			i++;
 		}
 		
 //		g.setColor(Color.RED);

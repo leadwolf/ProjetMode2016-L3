@@ -2,6 +2,7 @@ package math;
 import java.awt.Graphics;
 import java.util.List;
 
+import modele.Face;
 import modele.Figure;
 import modele.Point;
 
@@ -45,6 +46,25 @@ public class Calculations {
 		fig.getPtsMat().importPoints(fig.getPtsTrans());
 		fig.getPtsMat().translateMatrix(x, y, z);
 		fig.getPtsMat().exportToPoints(fig.getPtsTrans());
+	}
+	
+	/**
+	 * Done la valeur absolue du cosinus de la norme d'une face et le vecteur directeur de la lumière
+	 * @param fig
+	 * @param face
+	 * @param lightVector
+	 * @return
+	 */
+	public static double getGreyScale(Figure fig, Face face, Vecteur lightVector) {
+		Point firstPoint = face.getList().get(0);
+		Point secondPoint = face.getList().get(1);
+		Point thirdPoint = face.getList().get(2);
+		Vecteur firstVector = new Vecteur(firstPoint, secondPoint);
+		Vecteur secondVector = new Vecteur(firstPoint, thirdPoint);
+		Vecteur normale = Vecteur.prodVectoriel(firstVector, secondVector); // normale = produit de 2 vec du plan
+		
+//		abs(cos(L, N) = abs(prodScal(L,N)/norme(L) * norme(N)) 
+		return Math.abs( (Vecteur.prodScalaire(lightVector, normale)) / (lightVector.getNorme()*normale.getNorme()) );
 	}
 	
 	/**

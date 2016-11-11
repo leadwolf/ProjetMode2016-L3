@@ -33,8 +33,8 @@ public class VisualisationPanel extends JPanel {
 	private boolean drawPoints = true;
 	private boolean drawSegments = true;
 	private boolean drawFaces = true;
-	private int height;
-	private int width;
+	private int heightWindow;
+	private int widthWindow;
 	private double widthFig = 0, heightFig = 0, depthFig = 0;
 	private double left = 0, right = 0, top = 0, bottom = 0, front = 0, back = 0;
 	private MouseControler mouseControler;
@@ -102,9 +102,9 @@ public class VisualisationPanel extends JPanel {
 	 * Applique les dimensions du JPanel pour les calculs
 	 * @param dim
 	 */
-	public void setDimensions(Dimension dim) {
-		height = dim.height;
-		width = dim.width;
+	public void setTempDimensions(Dimension dim) {
+		heightWindow = dim.height;
+		widthWindow = dim.width;
 	}
 
 	public void setFigure(Figure figure, double zoom) {
@@ -125,11 +125,19 @@ public class VisualisationPanel extends JPanel {
 	 **/
 	public void refreshFigDims() {
 		// set all values to opposites of what they should be because of comparisons in if
-		widthFig = heightFig = right = bottom = 0;
-		left = width;
-		top = height;
-		back = width;
-		front = -width;
+		if (getHeight() == 0 || getWidth() == 0) {
+			widthFig = heightFig = right = bottom = 0;
+			left = widthWindow;
+			top = heightWindow;
+			back = widthWindow;
+			front = -widthWindow;
+		} else {
+			widthFig = heightFig = right = bottom = 0;
+			left = getWidth();
+			top = getHeight();
+			back = getWidth();
+			front = -getWidth();
+		}
 		// w/2 or h/2 because all points are set to center when drawn, see setPolygones()
 		for (Point p : figure.getPtsTrans()) {
 			if (p.getX() < left) {
@@ -155,14 +163,6 @@ public class VisualisationPanel extends JPanel {
 		figure.getCenter().setCoords(left + (widthFig/2), top + (heightFig/2), back + (depthFig/2)); // ajout pour donner vrai coord dessiné
 	}
 
-	public int getHeight() {
-		return height;
-	}
-
-	public int getWidth() {
-		return width;
-	}
-
 	public Figure getFigure() {
 		return figure;
 	}
@@ -172,8 +172,14 @@ public class VisualisationPanel extends JPanel {
 	 */
 	public void centrerFigure() {
 		refreshFigDims();
-		double moveX = figure.getCenter().getX()-(width/2);
-		double moveY = figure.getCenter().getY()-(height/2);
+		double moveX, moveY;
+		if (getHeight() == 0 || getWidth() == 0) {
+			moveX = figure.getCenter().getX()-(widthWindow/2);
+			moveY = figure.getCenter().getY()-(heightWindow/2);
+		} else {
+			moveX = figure.getCenter().getX()-(getWidth()/2);
+			moveY = figure.getCenter().getY()-(getHeight()/2);
+		}
 		Calculations.translatePoints(figure, -moveX, -moveY, 0);
 	}
 
@@ -213,10 +219,18 @@ public class VisualisationPanel extends JPanel {
 		// scale by height
 		refreshFigDims();
 		double scale = 1.0;
-		if (heightFig > widthFig) {
-			scale = (height * maxSize) / heightFig;
-		} else { // scale by width
-			scale = (width * maxSize) / widthFig;
+		if (getHeight() == 0 || getWidth() == 0) {
+			if (heightFig > widthFig) {
+				scale = (heightWindow * maxSize) / heightFig;
+			} else { // scale by width
+				scale = (widthWindow * maxSize) / widthFig;
+			}
+		} else {
+			if (heightFig > widthFig) {
+				scale = (getHeight() * maxSize) / heightFig;
+			} else { // scale by width
+				scale = (getWidth() * maxSize) / widthFig;
+			}
 		}
 		Calculations.scale(figure, scale);
 	}

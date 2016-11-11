@@ -1,7 +1,10 @@
 package _interface;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
@@ -28,7 +31,7 @@ public class Fenetre extends JFrame {
 		
 		/* PANNEAU AFFICHAGE */
 		visPanel = new VisualisationPanel(drawPoints, drawSegments, drawFaces);
-		visPanel.setDimensions(new Dimension(dim.width, dim.height-buttonPanelDim.height-borderHeight));
+		visPanel.setTempDimensions(new Dimension(dim.width, dim.height-buttonPanelDim.height-borderHeight));
 		visPanel.setPreferredSize(new Dimension(dim.width, dim.height-buttonPanelDim.height-borderHeight));
 		
 		/* PANNEAUX BOUTONS */
@@ -37,10 +40,12 @@ public class Fenetre extends JFrame {
 		
 		/* PANNEAU DU BAS */
 		bottomPanel = new JPanel();
-		bottomPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
+		bottomPanel.setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
 		bottomPanel.setPreferredSize(new Dimension(dim.width, buttonPanelDim.height+30));
-		bottomPanel.add(translationPanel);
-		bottomPanel.add(rotationPanel);
+		gbc.insets = new Insets(10, 10, 10, 10);
+		bottomPanel.add(translationPanel, gbc);
+		bottomPanel.add(rotationPanel, gbc);
 		bottomPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		bottomPanel.setBackground(Color.WHITE);
 		
@@ -64,4 +69,5 @@ public class Fenetre extends JFrame {
 	public void setFigure(Figure figure, double zoom) {
 		visPanel.setFigure(figure, zoom);
 	}
+	
 }

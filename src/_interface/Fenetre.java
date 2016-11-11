@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Toolkit;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -48,6 +49,8 @@ public class Fenetre extends JFrame {
 		bottomPanel.add(rotationPanel, gbc);
 		bottomPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		bottomPanel.setBackground(Color.WHITE);
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		bottomPanel.setMaximumSize(new Dimension((int) screenSize.getWidth(), buttonPanelDim.height+30));
 		
 		/* PANNEAU PRINCIPAL */
 		mainPanel = new JPanel();

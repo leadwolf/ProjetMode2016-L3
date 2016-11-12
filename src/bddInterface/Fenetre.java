@@ -18,7 +18,7 @@ public class Fenetre extends JFrame {
 	
 	private Dimension dim = new Dimension(600, 300);
 
-	public Fenetre(String name, ResultSet rs, ResultSet rs2) {
+	public Fenetre(String title, ResultSet rs, ResultSet rs2) {
 		super();
 		
 		/* DESCRIPTION PANEL */
@@ -30,12 +30,13 @@ public class Fenetre extends JFrame {
 		mainPanel = new JPanel();
 		mainPanel.setPreferredSize(dim);
 		mainPanel.setLayout(new BorderLayout());
-		mainPanel.setBorder(BorderFactory.createTitledBorder(name));
+		mainPanel.setBorder(BorderFactory.createTitledBorder(title));
 //		mainPanel.add(descPanel);
 		mainPanel.add(descPanelTable);
 		
 		/* FENETRE */
-		setTitle(name);
+		String output = title.substring(0, 1).toUpperCase() + title.substring(1);
+		setTitle(output);
 		setLayout(new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS));
 		setSize(dim);
 		add(mainPanel);
@@ -43,6 +44,10 @@ public class Fenetre extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		pack();
 		setVisible(true);
+	}
+	
+	public void setBorderTitle(String title) {
+		mainPanel.setBorder(BorderFactory.createTitledBorder(title));
 	}
 
 }

@@ -14,6 +14,12 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
+/**
+ * Peut implémenter soir une JTable ou JList<br>
+ * La JList aura des données alignés
+ * @author Master
+ *
+ */
 public class DescriptionPanel extends JPanel{
 
 	private static final long serialVersionUID = 6086405568083027160L;

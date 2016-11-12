@@ -5,61 +5,51 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
 import javax.swing.BoxLayout;
+import javax.swing.DefaultListModel;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTable;
 
 /**
- * Donne une JTable d'une ResultSet
+ * Donne une JList non alignée
  * @author Master
  *
  */
-public class DescriptionPanelTable extends JPanel {
+public class DescriptionPanelList extends JPanel {
 
 	private static final long serialVersionUID = 6086405568083027160L;
 
-	private JTable table;
-	private String[][] dataArray;
+	private JList<String> list;
+	private DefaultListModel<String> listModel;
 	private JScrollPane scrollPane;
 	String[] columnNames = { "Nom", "Chemin", "Date", "Description" };
 
 	int totalLines = 0;
 	ResultSetMetaData rsmd = null;
 
-	public DescriptionPanelTable(ResultSet rs, ResultSet rs2) {
+	public DescriptionPanelList(ResultSet rs) {
 		super();
 
+		listModel = new DefaultListModel<>();
+		list = new JList<String>(listModel);
+		
+		listModel.addElement("Nom                                 Chemin                                Date                                   Mot Clés");
+		
 		try {
 			ResultSetMetaData rsmd = rs.getMetaData();
 			int cols = rsmd.getColumnCount();
 			while (rs.next()) {
-				totalLines++;
-			}
-
-			dataArray = new String[totalLines][4];
-			for (int i = 0; i < totalLines; i++) {
-				for (int j = 0; j < cols; j++) {
-					dataArray[i][j] = "";
-				}
-			}
-
-			int rows = 0;
-			while (rs2.next()) {
+				String data = "";
 				for (int i = 1; i <= cols; i++) {
-					dataArray[rows][i - 1] = rs2.getString(i);
+					data += rs.getString(i) + "              ";
 				}
-				rows++;
+				listModel.addElement(data);
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 
-		DataTableModel dataTableModel = new DataTableModel(columnNames, dataArray);
-		table = new JTable(dataTableModel);
-//		table.setPreferredScrollableViewportSize(table.getPreferredSize());
-		dataTableModel.setEditable(false);
-
-		scrollPane = new JScrollPane(table);
+		scrollPane = new JScrollPane(list);
 //		scrollPane.setPreferredSize(new Dimension(550, 100));
 //		scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 //		scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);

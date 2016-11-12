@@ -9,20 +9,20 @@ import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-public class Fenetre extends JFrame {
+public class FenetreView extends JFrame {
 
 	private static final long serialVersionUID = 3259687165838481557L;
 	private JPanel mainPanel;
-	private DescriptionPanel descPanel;
+	private DescriptionPanelList descPanelList;
 	private DescriptionPanelTable descPanelTable;
 	
 	private Dimension dim = new Dimension(600, 300);
 
-	public Fenetre(String title, ResultSet rs, ResultSet rs2) {
+	public FenetreView(String title, ResultSet rs, ResultSet rs2) {
 		super();
 		
 		/* DESCRIPTION PANEL */
-//		descPanel = new DescriptionPanel(rs);
+//		descPanelList = new DescriptionPanelList(rs);
 		descPanelTable = new DescriptionPanelTable(rs, rs2);
 		
 		
@@ -31,7 +31,7 @@ public class Fenetre extends JFrame {
 		mainPanel.setPreferredSize(dim);
 		mainPanel.setLayout(new BorderLayout());
 		mainPanel.setBorder(BorderFactory.createTitledBorder(title));
-//		mainPanel.add(descPanel);
+//		mainPanel.add(descPanelList);
 		mainPanel.add(descPanelTable);
 		
 		/* FENETRE */

@@ -14,7 +14,8 @@ import java.util.GregorianCalendar;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
-import bddInterface.Fenetre;
+import bddInterface.FenetreEdit;
+import bddInterface.FenetreView;
 
 public class BaseDeDonnees {
 
@@ -87,7 +88,7 @@ public class BaseDeDonnees {
 							PreparedStatement statement2 = connection.prepareStatement("select * from PLY where NOM = ?");
 							statement2.setString(1, firstFile);
 							rs2 = statement.executeQuery();
-							Fenetre fen = new Fenetre(firstFile, rs, rs2);
+							FenetreView fen = new FenetreView(firstFile, rs, rs2);
 						} else if (args.length - 1 == i){
 							String message = "Vous n'avez pas spécifié de nom\nUtilisation: basededonneés --name <name>";
 							JOptionPane.showMessageDialog(null, message, "Mauvais arguments", JOptionPane.ERROR_MESSAGE);
@@ -102,7 +103,7 @@ public class BaseDeDonnees {
 							rs = statement.executeQuery();
 							PreparedStatement statement2 = connection.prepareStatement("select * from PLY");
 							rs2 = statement2.executeQuery();
-							Fenetre fen = new Fenetre("Tous les modèles", rs, rs2);
+							FenetreView fen = new FenetreView("Tous les modèles", rs, rs2);
 						} else {
 							String message = "Trop d'arguments\nUtilisation: basededonneés --all";
 							JOptionPane.showMessageDialog(null, message, "Mauvais arguments", JOptionPane.ERROR_MESSAGE);
@@ -133,7 +134,7 @@ public class BaseDeDonnees {
 							}
 							rs = statement.executeQuery();
 							rs2 = statement.executeQuery();
-							Fenetre fen = new Fenetre("Find models", rs, rs2);
+							FenetreView fen = new FenetreView("Find models", rs, rs2);
 							fen.setBorderTitle("Models with keywords matching one of: " + matching);
 						} else {
 							String message = "Pas de mots clés spécifiés\nUtilisation: basededonneés --find <mots clés>..";
@@ -141,13 +142,7 @@ public class BaseDeDonnees {
 						}
 					}
 					if (args[i].equals("--add")) {
-						String firstFile = args[i + 1];
-						PreparedStatement statement = connection.prepareStatement("insert into PLY values ? ? ? ?");
-						statement.setString(1, firstFile);
-						statement.setString(2, "ply/" + firstFile + ".ply");
-						statement.setString(3, toDay());
-						statement.setString(4, args[i + 2]);
-						statement.executeUpdate();
+						FenetreEdit fen = new FenetreEdit("Insert");
 					}
 					if (args[i].equals("--delete")) {
 						String firstFile = args[i + 1];

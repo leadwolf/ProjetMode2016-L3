@@ -3,6 +3,7 @@ package bdd;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -32,19 +33,13 @@ public class BaseDeDonnees {
 		Calendar dat = new GregorianCalendar();
 		return dat.get(Calendar.YEAR) + "/" + dat.get(Calendar.MONTH) + "/" + dat.get(Calendar.DAY_OF_MONTH);
 	}
-
-	public static String insert(String nom, String motcles) {
-		return "insert into PLY values " + "('" + nom + "', 'ply/" + nom + ".ply', '" + toDay() + "' ,'" + motcles
-				+ "')";
-
-	}
-	
 	
 
 	public static void main(String[] args) throws ClassNotFoundException {
-		System.out.println(33 / 2);
 		// load the sqlite-JDBC driver using the current class loader
-		Class.forName("org.sqlite.JDBC");
+//		Class.forName("org.sqlite.JDBC");
+		// ucanacces for Java 8, to replace when using Java 7
+		Class.forName("net.ucanaccess.jdbc.UcanaccessDriver");
 		Connection connection = null;
 
 		try {
@@ -52,17 +47,24 @@ public class BaseDeDonnees {
 			new BaseDeDonnees();
 
 			// creation de la table
-			connection = DriverManager.getConnection("jdbc:sqlite:test.sqlite");
-			Statement statement = connection.createStatement();
-			statement.setQueryTimeout(30);
-			statement.executeUpdate("drop table PLY");
-			statement.executeUpdate("create table PLY(NOM text, CHEMIN text, DATE text, DESCRIPTION text)");
+//			connection = DriverManager.getConnection("jdbc:sqlite:test.sqlite");
+			// replace by line above when using Java 7
+			connection = DriverManager.getConnection("jdbc:ucanaccess://C:/Users/Master/git/test.accdb");
 
-			// insertion des donnees dans la bdd
-			for (int i = 0; i < items.length; i++) {
-				String nom = items[i].substring(0, items[i].lastIndexOf(".ply"));
-				statement.executeUpdate("insert into PLY values " + "('" + nom + "', 'ply/" + items[i] + "', '"
-						+ toDay() + "' ,'mes mots clés')");
+			boolean restart = false;
+			
+			if (restart) {
+				Statement firstStatement = connection.createStatement();
+				firstStatement.setQueryTimeout(30);
+				firstStatement.executeUpdate("drop table PLY");
+				firstStatement.executeUpdate("create table PLY(NOM text, CHEMIN text, DATE text, DESCRIPTION text)");
+
+				// insertion des donnees dans la bdd
+				for (int i = 0; i < items.length; i++) {
+					String nom = items[i].substring(0, items[i].lastIndexOf(".ply"));
+					firstStatement.executeUpdate("insert into PLY values " + "('" + nom + "', 'ply/" + items[i] + "', '"
+							+ toDay() + "' ,'mes mots clés')");
+				}
 			}
 			
 			// declaration de rs pour les affichages
@@ -71,18 +73,35 @@ public class BaseDeDonnees {
 			if (args.length > 0) {
 				for (int i = 0; i < args.length; i++) {
 					if (args[i].equals("--name")) {
-						rs = statement.executeQuery("select * from PLY where NOM = '" + args[i + 1] + "'");
+						PreparedStatement statement = connection.prepareStatement("select * from PLY where NOM = ?");
+						statement.setString(1, args[i + 1]);
+						rs = statement.executeQuery();
 						affichageTable(rs);
 					}if (args[i].equals("--all")) {
-						rs = statement.executeQuery("select * from PLY");
+						PreparedStatement statement = connection.prepareStatement("select * from PLY");
+						rs = statement.executeQuery();
 						affichageTable(rs);
 					}if (args[i].equals("--find")) {
-						rs = statement.executeQuery("select * from PLY where DESCRIPTION like '%" + args[i + 1] + "%'");
+						PreparedStatement statement = connection.prepareStatement("select * from PLY where DESCRIPTION like ?");
+						statement.setString(1, "%" + args[i + 1] + "%");
+						rs = statement.executeQuery();
 						affichageTable(rs);
 					}if(args[i].equals("--add")){
-						statement.executeQuery(insert(args[i+1], args[i+2]));
+						PreparedStatement statement = connection.prepareStatement("insert into PLY values ? ? ? ?");
+						statement.setString(1, args[i + 1]);
+						statement.setString(2, "ply/" + args[i + 1] + ".ply");
+						statement.setString(3, toDay());
+						statement.setString(4, args[i + 2]);
+						statement.executeUpdate();
 					}if(args[i].equals("--delete")){
-						statement.executeQuery("Delete * from PLY where NOM = '" + args[i+1] +"'");
+						PreparedStatement statement = connection.prepareStatement("delete * from PLY where NOM = ?");
+						statement.setString(1, args[i + 1]);
+						int result = statement.executeUpdate();
+						if (result == 0) {
+							System.out.println("successfully deleted " + args[i + 1]);
+						} else {
+							System.out.println("did not delete " + args[i + 1]);
+						}
 					}if(args[i].equals("--edit")){
 						// ouverture formulaire
 					}
@@ -94,8 +113,7 @@ public class BaseDeDonnees {
 			System.err.println(e.getMessage());
 		} finally {
 			try {
-				if (connection != null)
-					connection.close();
+				connection.close();
 			} catch (SQLException e) {
 				System.err.println(e);
 			}

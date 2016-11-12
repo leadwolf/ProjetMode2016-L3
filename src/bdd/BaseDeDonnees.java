@@ -10,6 +10,8 @@ import java.sql.Statement;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
+import bddInterface.Fenetre;
+
 public class BaseDeDonnees {
 
 	static String[] items;
@@ -80,7 +82,9 @@ public class BaseDeDonnees {
 					}if (args[i].equals("--all")) {
 						PreparedStatement statement = connection.prepareStatement("select * from PLY");
 						rs = statement.executeQuery();
-						affichageTable(rs);
+						PreparedStatement statement2 = connection.prepareStatement("select * from PLY");
+						ResultSet rs2 = statement2.executeQuery();
+						Fenetre fen = new Fenetre("Tous les modèles", rs, rs2);
 					}if (args[i].equals("--find")) {
 						PreparedStatement statement = connection.prepareStatement("select * from PLY where DESCRIPTION like ?");
 						statement.setString(1, "%" + args[i + 1] + "%");

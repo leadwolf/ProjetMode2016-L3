@@ -21,13 +21,12 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 /**
- * Sert à présenter les informations à éditer ou un formulaire vide pour
- * l'insertion
+ * Sert à présenter les informations à éditer, visualiser ou à insérer.
  * 
  * @author L3
  *
  */
-public class FenetreEdit extends JFrame {
+public class FenetreTable extends JFrame {
 
 	private static final long serialVersionUID = 3259687165838481557L;
 	private JPanel mainPanel;
@@ -36,27 +35,23 @@ public class FenetreEdit extends JFrame {
 	private JPanel buttonPanel;
 
 	String[] orignalFields;
-	
-	Dimension dimWithButtons;
+
+	Dimension dim;
 
 	/**
-	 * 
-	 * @param title
-	 * @param rows
-	 *            le nombre de lignes du tableau d'insertion
-	 * @param colNames
-	 *            les noms des colonnes, donne aussi le nombre de colonnes du
-	 *            tableau d'insertion
-	 * @param noModifyColumns
-	 *            les nombres réels des champs à ne pas être modifiés par
-	 *            l'utilisateur
+	 * Crée une fenetre avec un TablePanel avec des boutons mais champs vides
+	 * @param title le titre de ce fenetre
+	 * @param rows le nombre de lignes vides à avoir
+	 * @param buttonNames les noms des boutons à avoir, laisser null si pas de boutons
+	 * @param colNames les noms des colonnes
+	 * @param noModifyColumns les colonnes qui ne seront pas possibles de modifier
 	 */
-	public FenetreEdit(String title, int rows, int columns, String[] colNames, int[] noModifyColumns) {
+	public FenetreTable(String title, int rows, String[] buttonNames, String[] colNames, int[] noModifyColumns) {
 		super();
 
-		tablePanel = new TablePanel(rows, columns, colNames);
-		orignalFields = new String[columns];
-		DataTableModel dataTableModel = tablePanel.getDataTableModel();
+		tablePanel = new TablePanel(rows, colNames.length, colNames);
+		orignalFields = new String[colNames.length];
+		TableModel dataTableModel = tablePanel.getTableModel();
 		for (int i = 0; i < rows; i++) {
 			for (int j = 0; j < noModifyColumns.length; j++) {
 				dataTableModel.setValueAt(today(), i, noModifyColumns[j] - 1);
@@ -64,16 +59,30 @@ public class FenetreEdit extends JFrame {
 			}
 		}
 
-		String[] buttonNames = new String[] { "Insert", "Reset" };
-		SetupPanelWithButtons(title, rows, buttonNames);
+		if (buttonNames != null && buttonNames.length > 0) {
+			setDims(true, rows);
+			SetupPanelWithButtons(title, rows, buttonNames);
+		} else {
+			setDims(false, rows);
+			SetupPanelWithOutButtons(title, rows);
+		}
 	}
 
-	public FenetreEdit(String title, int rows, int columns, ResultSet rs, String[] colNames, int[] noModifyColumns) {
+	/**
+	 * Crée une fenetre avec un TabelPanel, des boutons et des champs remplis
+	 * @param title le titre de ce fenetre
+	 * @param rows le nombre de lignes que la table comportera
+	 * @param buttonNames les noms des boutons à avoir, laisser null si pas de boutons
+	 * @param rs un ResultSet qui comporte les valeurs avec lesquelles remplir la table
+	 * @param colNames les noms des colonnes
+	 * @param noModifyColumns les colonnes qui ne seront pas possibles à modifier
+	 */
+	public FenetreTable(String title, int rows, String[] buttonNames, ResultSet rs, String[] colNames, int[] noModifyColumns) {
 		super();
 
-		tablePanel = new TablePanel(rows, columns, colNames);
-		orignalFields = new String[columns];
-		DataTableModel dataTableModel = tablePanel.getDataTableModel();
+		tablePanel = new TablePanel(rows, colNames.length, colNames);
+		orignalFields = new String[colNames.length];
+		TableModel dataTableModel = tablePanel.getTableModel();
 		for (int i = 0; i < rows; i++) {
 			for (int j = 0; j < noModifyColumns.length; j++) {
 				dataTableModel.setCellEditable(i, noModifyColumns[j] - 1, false);
@@ -86,39 +95,59 @@ public class FenetreEdit extends JFrame {
 				for (int j = 1; j <= colCount; j++) {
 					String data = rs.getString(j);
 					if (currentRow == 0) {
-						orignalFields[j-1] = data;
+						orignalFields[j - 1] = data;
 					}
 					dataTableModel.setValueAt(data, currentRow, j - 1);
 				}
 				currentRow++;
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
-		String[] buttonNames = new String[] { "Confirmer", "Reset" };
-		SetupPanelWithButtons(title, rows, buttonNames);
+		if (buttonNames != null && buttonNames.length > 0) {
+			setDims(true, rows);
+			SetupPanelWithButtons(title, rows, buttonNames);
+		} else {
+			setDims(false, rows);
+			SetupPanelWithOutButtons(title, rows);
+		}
 	}
-
+	
+	/**
+	 * Crée les dimensions du fenetre en fonction du nombre de lignes dans la table
+	 * @param buttons
+	 * @param rows
+	 */
+	private void setDims(boolean buttons, int rows) {
+		dim = new Dimension(600, 250);
+		if (buttons) {
+			if (rows <= 10) {
+				dim = new Dimension(600, 125 + (16 * rows));
+			}
+		} else {
+			if (rows <= 10) {
+				dim = new Dimension(600, 100 + (16 * rows));
+			}
+		}
+	}
+	
+	/**
+	 * Crée mainPanel
+	 * @param title
+	 * @param rows
+	 */
 	private void setUpMainPanel(String title, int rows) {
 
 		/* PANNEAU PRINCIPAL */
-		if (rows <= 10) {
-			dimWithButtons = new Dimension(600, 125 + (16 * rows));
-		} else {
-			dimWithButtons = new Dimension(600, 250);
-		}
 		mainPanel = new JPanel();
-		mainPanel.setPreferredSize(dimWithButtons);
+		mainPanel.setPreferredSize(new Dimension((int) dim.getWidth(), (int) dim.getHeight()) );
 		mainPanel.setLayout(new BorderLayout());
-		mainPanel.setBorder(BorderFactory.createTitledBorder("Insert model data"));
 		mainPanel.add(tablePanel, BorderLayout.CENTER);
 	}
 
 	/**
-	 * Ajoute mainPanel au fenetre et la mise en page
-	 * 
+	 * Crée le reste du fenetre et ajoute mainPanel
 	 * @param title
 	 */
 	private void setupFenetre(String title) {
@@ -134,7 +163,7 @@ public class FenetreEdit extends JFrame {
 	}
 
 	/**
-	 * Crée mainPanel et fenetre
+	 * Crée mainPanel et fenetre sans boutons
 	 * 
 	 * @param title
 	 * @param rows
@@ -145,10 +174,12 @@ public class FenetreEdit extends JFrame {
 
 		/* FENETRE */
 		setupFenetre(title);
+		
+		setSize(dim);
 	}
 
 	/**
-	 * Crée mainPanel, fenetre et ajoute boutons
+	 * Crée mainPanel, fenetre et ajoute des boutons
 	 * 
 	 * @param title
 	 * @param rows
@@ -177,13 +208,20 @@ public class FenetreEdit extends JFrame {
 		SetupPanelWithOutButtons(title, rows);
 		mainPanel.add(buttonPanel, BorderLayout.SOUTH);
 
-		setSize(dimWithButtons);
+		setSize(dim);
 	}
 
-	public void setBorderTitle(String title) {
+	/**
+	 * Crée un border défaut pour le panneau qui comporte la table
+	 * @param title
+	 */
+	public void setPanelBorderTitle(String title) {
 		mainPanel.setBorder(BorderFactory.createTitledBorder(title));
 	}
 
+	/**
+	 * Exécute la requète qui met à jour la ligne de la table
+	 */
 	public void modifyFields() {
 
 		String name = "";
@@ -229,7 +267,10 @@ public class FenetreEdit extends JFrame {
 		}
 	}
 
-	public void Insert() {
+	/**
+	 * Exécute la requète qui va insérer les données de la ligne de la table
+	 */
+	public void insert() {
 
 		String name = "";
 		String chemin = "";
@@ -289,22 +330,35 @@ public class FenetreEdit extends JFrame {
 
 	}
 
+	/**
+	 * Vide les champs modifiables
+	 */
 	public void resetFields() {
-		DataTableModel dataTableModel = tablePanel.getDataTableModel();
+		TableModel dataTableModel = tablePanel.getTableModel();
 		for (int i = 0; i < dataTableModel.getRowCount(); i++) {
 			for (int j = 0; j < dataTableModel.getColumnCount(); j++) {
-				if (j != 2) {
+				if (dataTableModel.isCellEditable(i, j)) {
 					dataTableModel.setValueAt("", i, j);
 				}
 			}
 		}
 	}
-
+	
+	/**
+	 * Donne la date d'aujourd'hui
+	 * @return
+	 */
 	public String today() {
 		Calendar dat = new GregorianCalendar();
 		return dat.get(Calendar.YEAR) + "/" + (dat.get(Calendar.MONTH) + 1) + "/" + dat.get(Calendar.DAY_OF_MONTH);
 	}
 
+	/**
+	 * Crée un JOptionPane d'erreur en fonction de la validité du nom, chemin et keywords
+	 * @param name
+	 * @param chemin
+	 * @param keywords
+	 */
 	public void showFieldErrorMessage(String name, String chemin, String keywords) {
 
 		String message = "";

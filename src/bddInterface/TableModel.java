@@ -2,7 +2,12 @@ package bddInterface;
 
 import javax.swing.table.AbstractTableModel;
 
-public class DataTableModel extends AbstractTableModel {
+/**
+ * Cette clase permet d'avoir des cellules modifiables ou non
+ * @author L3
+ *
+ */
+public class TableModel extends AbstractTableModel {
 
 	private Object[] columnNames;
 	private Object[][] data;
@@ -10,7 +15,7 @@ public class DataTableModel extends AbstractTableModel {
 
 	private static final long serialVersionUID = 2590977835553440556L;
 
-	private DataTableModel(Object[] columnData) {
+	private TableModel(Object[] columnData) {
 		super();
 
 		this.columnNames = new Object[columnData.length];
@@ -19,8 +24,14 @@ public class DataTableModel extends AbstractTableModel {
 		}
 
 	}
-
-	public DataTableModel(Object[] columnData, int dataRows, int dataColumns) {
+	
+	/**
+	 * Crée un tableau dont les noms des colonnes sont connus mais pas les champs
+	 * @param columnData
+	 * @param dataRows le nombre de lignes vides à avoir dans le tableau
+	 * @param dataColumns le nombre de colonnes vides à avoir dans le tableau
+	 */
+	public TableModel(Object[] columnData, int dataRows, int dataColumns) {
 		this(columnData);
 		if (dataRows > 0 && dataColumns > 0) {
 			initData(dataRows, dataColumns);
@@ -36,15 +47,19 @@ public class DataTableModel extends AbstractTableModel {
 			}
 		}
 	}
-
-	public DataTableModel(Object[] columnData, Object[][] data) {
+	
+	/**
+	 * Crée un tableau avec les noms des colonnes et remplit le tableau avec l'array donné
+	 * @param columnData
+	 * @param data
+	 */
+	public TableModel(Object[] columnData, Object[][] data) {
 		this(columnData);
 		setData(data);
 	}
 
 	/**
-	 * Needs this.data to have been initialized
-	 * 
+	 * Modifie la possibilité d'éditer la totalité du tableau
 	 * @param isEditable
 	 */
 	public void setEditable(boolean isEditable) {
@@ -91,10 +106,21 @@ public class DataTableModel extends AbstractTableModel {
 		return (String) columnNames[column];
 	}
 
+	/**
+	 * Modifie la possibilité d'éditer une seule cellule en particulier
+	 * @param row
+	 * @param column
+	 * @param editable
+	 */
 	public void setCellEditable(int row, int column, boolean editable) {
 		this.editable[row][column] = editable;
 	}
-
+	
+	/**
+	 * Crée le tableau de valeurs nulles
+	 * @param rows
+	 * @param columns
+	 */
 	private void initData(int rows, int columns) {
 		this.editable = new boolean[rows][columns];
 		this.data = new Object[rows][columns];
@@ -105,7 +131,11 @@ public class DataTableModel extends AbstractTableModel {
 			}
 		}
 	}
-
+	
+	/**
+	 * Remplace las valeurs du tableau avec celui donné
+	 * @param data
+	 */
 	private void setData(Object[][] data) {
 		this.editable = new boolean[data.length][data[0].length];
 		this.data = new Object[data.length][data[0].length];

@@ -1,4 +1,4 @@
-package bddInterface;
+package bddInterfaceList;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;

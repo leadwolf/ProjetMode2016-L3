@@ -1,4 +1,4 @@
-package bddInterface;
+package bddInterfaceList;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -8,6 +8,8 @@ import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+
+import bddInterface.TableModel;
 
 /**
  * Donne une JTable d'une ResultSet
@@ -50,7 +52,7 @@ public class DescriptionPanelTable extends JPanel {
 			e.printStackTrace();
 		}
 
-		DataTableModel dataTableModel = new DataTableModel(columnNames, dataArray);
+		TableModel dataTableModel = new TableModel(columnNames, dataArray);
 		table = new JTable(dataTableModel);
 //		table.setPreferredScrollableViewportSize(table.getPreferredSize());
 		dataTableModel.setEditable(false);

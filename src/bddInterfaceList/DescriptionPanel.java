@@ -1,4 +1,4 @@
-package bddInterface;
+package bddInterfaceList;
 
 import java.awt.Dimension;
 import java.awt.Font;

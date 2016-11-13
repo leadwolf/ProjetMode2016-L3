@@ -9,21 +9,25 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
 /**
- * Cette classe permet d'implémenter une JTable à remplir
+ * Cette classe permet d'implémenter une JTable soit à remplir soit avec des valeurs données
  * 
- * @author Master
+ * @author L3
  *
  */
 public class TablePanel extends JPanel {
 
 	private static final long serialVersionUID = -2526625545035179794L;
 	private JTable table;
-	private DataTableModel dataTableModel;
+	private TableModel tableModel;
 	private String[][] dataArray;
 	private JScrollPane scrollPane;
 	private String[] columnNames;
 
-	
+	/**
+	 * Crée un tableau avec les noms et valeurs des colonnes et champs donnés
+	 * @param columnNames
+	 * @param dataArray
+	 */
 	public TablePanel(String[] columnNames, String[][] dataArray) {
 		super();
 
@@ -39,10 +43,10 @@ public class TablePanel extends JPanel {
 		}
 
 		
-		dataTableModel = new DataTableModel(this.columnNames, this.dataArray);
-		table = new JTable(dataTableModel);
+		tableModel = new TableModel(this.columnNames, this.dataArray);
+		table = new JTable(tableModel);
 		table.putClientProperty("terminateEditOnFocusLost", true);
-		dataTableModel.setEditable(true);
+		tableModel.setEditable(true);
 		
 		scrollPane = new JScrollPane(table);
 
@@ -50,6 +54,12 @@ public class TablePanel extends JPanel {
 		add(scrollPane);
 	}
 
+	/**
+	 * Crée un tableau vide mais avec des noms de colonnes donnés
+	 * @param dataRows
+	 * @param dataColumns
+	 * @param columnNames
+	 */
 	public TablePanel(int dataRows, int dataColumns, String[] columnNames) {
 		super();
 
@@ -64,10 +74,10 @@ public class TablePanel extends JPanel {
 			}
 		}
 		
-		dataTableModel = new DataTableModel(this.columnNames, this.dataArray);
-		table = new JTable(dataTableModel);
+		tableModel = new TableModel(this.columnNames, this.dataArray);
+		table = new JTable(tableModel);
 		table.putClientProperty("terminateEditOnFocusLost", true);
-		dataTableModel.setEditable(true);
+		tableModel.setEditable(true);
 
 		scrollPane = new JScrollPane(table);
 
@@ -79,7 +89,7 @@ public class TablePanel extends JPanel {
 		return this.table;
 	}
 	
-	public DataTableModel getDataTableModel() {
-		return this.dataTableModel;
+	public TableModel getTableModel() {
+		return this.tableModel;
 	}
 }

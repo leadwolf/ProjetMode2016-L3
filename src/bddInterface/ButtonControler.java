@@ -3,11 +3,16 @@ package bddInterface;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+/**
+ * Cette classe permet de réagir aux actions des boutons
+ * @author L3
+ *
+ */
 public class ButtonControler implements ActionListener{
 
-	private FenetreEdit frame;
+	private FenetreTable frame;
 	
-	public ButtonControler(FenetreEdit frame) {
+	public ButtonControler(FenetreTable frame) {
 		this.frame = frame;
 	}
 
@@ -15,7 +20,7 @@ public class ButtonControler implements ActionListener{
 	public void actionPerformed(ActionEvent e) {
 		switch (e.getActionCommand().toLowerCase()) {
 		case "insert":
-			frame.Insert();
+			frame.insert();
 			break;
 		case "reset":
 			frame.resetFields();

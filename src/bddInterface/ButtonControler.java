@@ -13,12 +13,15 @@ public class ButtonControler implements ActionListener{
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		switch (e.getActionCommand()) {
+		switch (e.getActionCommand().toLowerCase()) {
 		case "insert":
 			frame.Insert();
 			break;
 		case "reset":
 			frame.resetFields();
+			break;
+		case "confirmer":
+			frame.modifyFields();
 			break;
 		default:
 			break;

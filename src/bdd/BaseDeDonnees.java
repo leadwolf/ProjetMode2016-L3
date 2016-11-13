@@ -6,6 +6,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Calendar;
@@ -47,7 +48,7 @@ public class BaseDeDonnees {
 
 			// load the sqlite-JDBC driver using the current class loader
 			// Class.forName("org.sqlite.JDBC");
-			
+
 			// ucanacces for Java 8, to replace when using Java 7
 			Class.forName("net.ucanaccess.jdbc.UcanaccessDriver");
 
@@ -55,8 +56,9 @@ public class BaseDeDonnees {
 			new BaseDeDonnees();
 
 			// creation de la table
-			// connection = DriverManager.getConnection("jdbc:sqlite:test.sqlite");
-			
+			// connection =
+			// DriverManager.getConnection("jdbc:sqlite:test.sqlite");
+
 			// replace by line above when using Java 7
 			connection = DriverManager.getConnection("jdbc:ucanaccess://C:/Users/Master/git/test.accdb");
 
@@ -88,7 +90,7 @@ public class BaseDeDonnees {
 					}
 					if (args[i].equals("--add")) {
 						String[] columnNames = { "Nom", "Chemin", "Date", "Description" };
-						FenetreEdit fen = new FenetreEdit("Insert", 1, 4, columnNames,  new int[]{3});
+						FenetreEdit fen = new FenetreEdit("Insert", 1, 4, columnNames, new int[] { 3 });
 					}
 					if (args[i].equals("--delete")) {
 						String firstFile = args[i + 1];
@@ -102,7 +104,7 @@ public class BaseDeDonnees {
 						}
 					}
 					if (args[i].equals("--edit")) {
-						// ouverture formulaire
+						edit(i, args, connection);
 					}
 				}
 			}
@@ -110,7 +112,7 @@ public class BaseDeDonnees {
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} catch (SQLException e) {
-			System.err.println(e.getMessage());
+			e.printStackTrace();
 		} finally {
 			try {
 				connection.close();
@@ -221,6 +223,37 @@ public class BaseDeDonnees {
 			}
 		} else {
 			String message = "Pas de mots clés spécifiés\nUtilisation: basededonneés --find <mots clés>..";
+			JOptionPane.showMessageDialog(null, message, "Mauvais arguments", JOptionPane.ERROR_MESSAGE);
+			System.exit(1);
+		}
+	}
+	
+	private static void edit(int i, String[] args, Connection connection) throws SQLException {
+		if (args.length - 1 == i + 1) {
+			String firstFile = args[i + 1];
+			PreparedStatement statement = connection.prepareStatement("select COUNT(*) from PLY where NOM = ?");
+			statement.setString(1, firstFile);
+			ResultSet rs = statement.executeQuery();
+			if (rs.next()) {
+				int totalLines = rs.getInt(1);
+				if (totalLines > 0) {
+					String[] columnNames = new String[]{"Nom", "Chemin", "Date", "Mot Clés"};
+					PreparedStatement st = connection.prepareStatement("select * from ply where nom = ?");
+					st.setString(1, firstFile);
+					ResultSet rs2 = st.executeQuery();
+					FenetreEdit fen = new FenetreEdit("Insert", 1, 4, rs2, columnNames, new int[] { 3 });
+				} else {
+					String message = "Le modèle " + firstFile + " n'existe pas";
+					JOptionPane.showMessageDialog(null, message, "Mauvais arguments", JOptionPane.ERROR_MESSAGE);
+					System.exit(1);
+				}
+			}
+		} else if (args.length > i + 1) {
+			String message = "Trop d'arguments\nUtilisation: basededonneés --name <name>";
+			JOptionPane.showMessageDialog(null, message, "Mauvais arguments", JOptionPane.ERROR_MESSAGE);
+			System.exit(1);
+		} else {
+			String message = "Pas de nom précisé\nUtilisation: basededonneés --name <name>";
 			JOptionPane.showMessageDialog(null, message, "Mauvais arguments", JOptionPane.ERROR_MESSAGE);
 			System.exit(1);
 		}

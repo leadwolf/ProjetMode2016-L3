@@ -18,12 +18,12 @@ public class FenetreView extends JFrame {
 	
 	private Dimension dim = new Dimension(600, 300);
 
-	public FenetreView(String title, ResultSet rs, ResultSet rs2) {
+	public FenetreView(String title, int totalLines, ResultSet rs2) {
 		super();
 		
 		/* DESCRIPTION PANEL */
 //		descPanelList = new DescriptionPanelList(rs);
-		descPanelTable = new DescriptionPanelTable(rs, rs2);
+		descPanelTable = new DescriptionPanelTable(totalLines, rs2);
 		
 		
 		/* PANNEAU PRINCIPAL */
@@ -46,7 +46,7 @@ public class FenetreView extends JFrame {
 		setVisible(true);
 	}
 	
-	public void setBorderTitle(String title) {
+	public void setPanelBorderTitle(String title) {
 		mainPanel.setBorder(BorderFactory.createTitledBorder(title));
 	}
 

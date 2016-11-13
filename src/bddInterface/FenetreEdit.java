@@ -6,6 +6,7 @@ import java.awt.FlowLayout;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -17,6 +18,11 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+/**
+ * Sert à présenter les informations à éditer ou un formulaire vide pour l'insertion
+ * @author L3
+ *
+ */
 public class FenetreEdit extends JFrame {
 
 	private static final long serialVersionUID = 3259687165838481557L;
@@ -26,10 +32,14 @@ public class FenetreEdit extends JFrame {
 	private JButton resetButton;
 	private JPanel buttonPanel;
 
-	String[] columnNames = { "Nom", "Chemin", "Date", "Description", "" };
-	private Dimension dim = new Dimension(600, 100);
-
-	public FenetreEdit(String title) {
+	/**
+	 * 
+	 * @param title
+	 * @param rows le nombre de lignes du tableau d'insertion
+	 * @param colNames les noms des colonnes, donne aussi le nombre de colonnes du tableau d'insertion
+	 * @param noModifyColumns les nombres réels des champs à ne pas être modifiés par l'utilisateur
+	 */
+	public FenetreEdit(String title, int rows, int columns, String[] colNames, int[] noModifyColumns) {
 		super();
 
 		insertButton = new JButton("Insert");
@@ -40,10 +50,14 @@ public class FenetreEdit extends JFrame {
 		insertButton.addActionListener(buttonControler);
 		resetButton.addActionListener(buttonControler);
 
-		insertPanel = new TablePanel(columnNames, 1, 4);
+		insertPanel = new TablePanel(rows, columns, colNames);
 		DataTableModel dataTableModel = insertPanel.getDataTableModel();
-		dataTableModel.setValueAt(today(), 0, 2);
-		dataTableModel.setCellEditable(0, 2, false);
+		for (int i=0;i<rows;i++) {
+			for (int j=0;j<noModifyColumns.length;j++) {
+				dataTableModel.setValueAt(today(), i, noModifyColumns[j]-1);
+				dataTableModel.setCellEditable(i, noModifyColumns[j]-1, false);
+			}
+		}
 
 		/* PANNEAU BOUTONS */
 		buttonPanel = new JPanel();
@@ -52,6 +66,13 @@ public class FenetreEdit extends JFrame {
 		buttonPanel.add(resetButton);
 
 		/* PANNEAU PRINCIPAL */
+
+		Dimension dim;
+		if (rows <= 10) { 
+			dim = new Dimension(600, 90 + (16*rows));
+		} else {
+			dim = new Dimension(600, 250);
+		}
 		mainPanel = new JPanel();
 		mainPanel.setPreferredSize(dim);
 		mainPanel.setLayout(new BorderLayout());
@@ -99,24 +120,33 @@ public class FenetreEdit extends JFrame {
 				// replace by line above when using Java 7
 				con = DriverManager.getConnection("jdbc:ucanaccess://C:/Users/Master/git/test.accdb");
 
-				PreparedStatement statement;
-				statement = con.prepareStatement("insert into PLY values ?, ?, ?, ?");
-				statement.setString(1, name);
-				statement.setString(2, "ply/" + name + ".ply");
-				statement.setString(3, today());
-				statement.setString(4, keywords);
-				super.dispose();
-				statement.executeUpdate();
-				String message = "L'insertion du modèle & été réalisé avec succès!";
-				JOptionPane.showMessageDialog(null, message);
-				System.exit(0);
+				PreparedStatement statementFind;
+				statementFind = con.prepareStatement("select * from PLY where nom = ?");
+				statementFind.setString(1, name);
+				ResultSet found = statementFind.executeQuery();
+				
+				if (!found.next()) {
+					PreparedStatement statement;
+					statement = con.prepareStatement("insert into PLY values ?, ?, ?, ?");
+					statement.setString(1, name);
+					statement.setString(2, "ply/" + name + ".ply");
+					statement.setString(3, today());
+					statement.setString(4, keywords);
+					super.dispose();
+					statement.executeUpdate();
+					String message = "L'insertion du modèle " + name + " été réalisé avec succès!";
+					JOptionPane.showMessageDialog(null, message);
+					System.exit(0);
+				} else {
+					String message = "Le modèle " + name + " existe déja";
+					JOptionPane.showMessageDialog(null, message, "Mauvais arguments", JOptionPane.ERROR_MESSAGE);
+				}
+				
 			} catch (ClassNotFoundException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 
-			} catch (
-
-			SQLException e) {
+			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}

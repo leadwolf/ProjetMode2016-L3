@@ -26,16 +26,12 @@ public class DescriptionPanelTable extends JPanel {
 	int totalLines = 0;
 	ResultSetMetaData rsmd = null;
 
-	public DescriptionPanelTable(ResultSet rs, ResultSet rs2) {
+	public DescriptionPanelTable(int totalLines, ResultSet rs2) {
 		super();
 
 		try {
-			ResultSetMetaData rsmd = rs.getMetaData();
+			ResultSetMetaData rsmd = rs2.getMetaData();
 			int cols = rsmd.getColumnCount();
-			while (rs.next()) {
-				totalLines++;
-			}
-
 			dataArray = new String[totalLines][4];
 			for (int i = 0; i < totalLines; i++) {
 				for (int j = 0; j < cols; j++) {

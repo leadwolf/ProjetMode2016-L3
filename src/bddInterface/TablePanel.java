@@ -50,7 +50,7 @@ public class TablePanel extends JPanel {
 		add(scrollPane);
 	}
 
-	public TablePanel(String[] columnNames, int dataRows, int dataColumns) {
+	public TablePanel(int dataRows, int dataColumns, String[] columnNames) {
 		super();
 
 		this.columnNames = new String[columnNames.length];
@@ -59,7 +59,6 @@ public class TablePanel extends JPanel {
 		}
 		this.dataArray = new String[dataRows][dataColumns];
 		for (int i = 0; i < dataRows; i++) {
-			this.columnNames[i] = columnNames[i];
 			for (int j = 0; j < dataColumns; j++) {
 				this.dataArray[i][j] = "";
 			}

@@ -21,20 +21,11 @@ import bddInterface.FenetreTable;
 public class BaseDeDonnees {
 
 	static String[] items;
+	private static Connection connection;
 
 	public BaseDeDonnees() {
 		File path = new File("ply/");
 		items = path.list();
-	}
-
-	public static void affichageTable(ResultSet rs) throws SQLException {
-		while (rs.next()) {
-			System.out.println("nom = " + rs.getString("NOM"));
-			System.out.println("chemin = " + rs.getString("CHEMIN"));
-			System.out.println("date = " + rs.getString("DATE"));
-			System.out.println("description = " + rs.getString("DESCRIPTION"));
-			System.out.println();
-		}
 	}
 
 	public static String toDay() {
@@ -45,9 +36,11 @@ public class BaseDeDonnees {
 	public static void main(String[] args) {
 		parseArgs(args, false);
 	}
-	
+
 	/**
-	 * Verifie seuelement si la syntaxte des arguments sont corrects, pas si la commande a pu être éxecutée
+	 * Verifie seuelement si la syntaxte des arguments sont corrects, pas si la
+	 * commande a pu être éxecutée
+	 * 
 	 * @param args
 	 * @return
 	 */
@@ -92,143 +85,203 @@ public class BaseDeDonnees {
 
 	/**
 	 * Vérifie les arguments et éxecute l'interface pertinente
+	 * 
 	 * @param args
 	 * @param debug
-	 * @return si la requête était correcte et que l'interface, si besoin, a été éxecutée
+	 * @return si la requête était correcte et que l'interface, si besoin, a été
+	 *         éxecutée
 	 */
 	public static boolean parseArgs(String[] args, boolean debug) {
-		
+
 		if (!verifArgs(args)) {
 			return false;
 		} // else continue program
-		
-		Connection connection = null;
+
+		connection = null;
+		boolean success = false;
 		try {
 
 			// load the sqlite-JDBC driver using the current class loader
 			Class.forName("org.sqlite.JDBC");
 
 			connection = DriverManager.getConnection("jdbc:sqlite:data/test.sqlite");
-	
-			boolean restart = false;
+
+			boolean restart = true;
 			if (restart) {
 				resetTable(connection);
 				fillTable(connection);
 			}
-			
+
 			if (args.length > 0) {
 				for (int i = 0; i < args.length; i++) {
 					if (args[i].equals("--name")) {
+						success = true;
 						return showName(i, args, connection, debug);
 					}
 					if (args[i].equals("--all")) {
+						success = true;
 						return showAll(i, args, connection, debug);
 					}
 					if (args[i].equals("--find")) {
+						success = true;
 						return find(i, args, connection, debug);
 					}
 					if (args[i].equals("--add")) {
-						String[] columnNames = { "Nom", "Chemin", "Date", "Description" };
-						String[] buttonNames = new String[] { "Confirmer", "Reset" };
-						FenetreTable fen = new FenetreTable("Add a model", 1, buttonNames, columnNames, new int[] { 3 });
-						fen.setPanelBorderTitle("Set model information: ");
-						return true;
+						success = true;
+						return add(connection);
 					}
 					if (args[i].equals("--delete")) {
-						return delete(i, args, connection, false);
+						success = true;
+						return delete(i, args, connection, debug);
 					}
 					if (args[i].equals("--edit")) {
-						return edit(i, args, connection, false);
+						success = true;
+						return edit(i, args, connection);
 					}
 				}
 			}
-
+			success = true;
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
-			try {
-				connection.close();
-			} catch (SQLException e) {
-				System.err.println(e);
+			if (!success) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					System.err.println(e);
+				}
 			}
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Drop la table PLY et la recrée
+	 * 
 	 * @param connection
 	 */
 	public static void resetTable(Connection connection) {
+		boolean success = false;
 		try {
+			
 			Statement firstStatement;
 			firstStatement = connection.createStatement();
 			firstStatement.setQueryTimeout(30);
 			firstStatement.executeUpdate("drop table PLY");
 			firstStatement.executeUpdate("create table PLY(NOM text, CHEMIN text, DATE text, DESCRIPTION text)");
+			success = true;
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			if (!success) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					System.err.println(e);
+				}
+			}
 		}
 
 	}
-	
+
 	/**
 	 * Remplit la table PLY avec les fichiers dans le dossier ply/
+	 * 
 	 * @param connection
 	 */
 	public static void fillTable(Connection connection) {
+		boolean success = false;
 		new BaseDeDonnees();
 		try {
+			
 			Statement firstStatement;
 			firstStatement = connection.createStatement();
 			for (int i = 0; i < items.length; i++) {
 				String nom = items[i].substring(0, items[i].lastIndexOf(".ply"));
 				firstStatement.executeUpdate("insert into PLY values " + "('" + nom + "', 'ply/" + items[i] + "', '" + toDay() + "' ,'mes mots clés')");
 			}
+			success = true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (!success) {
+				try {
+					
+					connection.close();
+				} catch (SQLException e) {
+					System.err.println(e);
+				}
+			}
+		}
+	}
+
+	public static void closeConnection() {
+		try {
+			if (connection != null) {
+				connection.close();
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
-
+	
 	/**
 	 * Vérifie et crée la fenetre d'informations sur le modèle précisé
 	 * 
 	 * @param i
 	 * @param args
 	 * @param connection
-	 * @param debug 
+	 * @param debug
 	 * @return si le modele existe et qu'il a pu créer la fenêtre
-	 * @throws SQLException
 	 */
-	public static boolean showName(int i, String[] args, Connection connection, boolean debug) throws SQLException {
+	public static boolean showName(int i, String[] args, Connection connection, boolean debug) {
 		ResultSet rs;
 		ResultSet rs2;
 		if (args.length - 1 == i + 1) {
-			String firstFile = args[i + 1];
-			PreparedStatement statement = connection.prepareStatement("select COUNT(*) from PLY where NOM = ?");
-			statement.setString(1, firstFile);
-			rs = statement.executeQuery();
-			if (rs.next()) {
-				int totalLines = rs.getInt(1);
-				if (totalLines > 0) {
-					if (!debug) {
-						PreparedStatement statement2 = connection.prepareStatement("select * from PLY where NOM = ?");
-						statement2.setString(1, firstFile);
-						rs2 = statement2.executeQuery();
-						String[] columnNames = new String[] { "Nom", "Chemin", "Date", "Mot Clés" };
-						FenetreTable fen = new FenetreTable(firstFile, totalLines, null, rs2, columnNames, new int[] { 1, 2, 3, 4 });
-						fen.setPanelBorderTitle("");
+			boolean success = false;
+			try {
+				String firstFile = args[i + 1];
+				PreparedStatement statement = connection.prepareStatement("select COUNT(*) from PLY where NOM = ?");
+				statement.setString(1, firstFile);
+				rs = statement.executeQuery();
+				if (rs.next()) {
+					int totalLines = rs.getInt(1);
+					if (totalLines > 0) {
+						if (!debug) {
+							PreparedStatement statement2 = connection.prepareStatement("select * from PLY where NOM = ?");
+							statement2.setString(1, firstFile);
+							rs2 = statement2.executeQuery();
+							String[] columnNames = new String[] { "Nom", "Chemin", "Date", "Mot Clés" };
+							FenetreTable fen = new FenetreTable(firstFile, totalLines, null, rs2, columnNames, new int[] { 1, 2, 3, 4 }, connection);
+							fen.setPanelBorderTitle("");
+						}
+						success = true;
+						return true;
+					} else {
+						if (!debug) {
+							String message = "Le modèle " + firstFile + " n'existe pas\nUtilisation: basededonneés --name <name>";
+							JOptionPane.showMessageDialog(null, message, "Mauvais arguments", JOptionPane.ERROR_MESSAGE);
+						}
+						// System.exit(1);
+						success = true;
+						return false;
 					}
-					return true;
-				} else {
-					if (!debug) {
-						String message = "Le modèle " + firstFile + " n'existe pas\nUtilisation: basededonneés --name <name>";
-						JOptionPane.showMessageDialog(null, message, "Mauvais arguments", JOptionPane.ERROR_MESSAGE);
+				}
+
+				success = true;
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} finally {
+				if (!success) {
+					try {
+						
+						connection.close();
+					} catch (SQLException e) {
+						System.err.println(e);
 					}
-					//System.exit(1);
-					return false;
 				}
 			}
 		} else if (args.length - 1 == i) {
@@ -236,14 +289,14 @@ public class BaseDeDonnees {
 				String message = "Vous n'avez pas spécifié de nom\nUtilisation: basededonneés --name <name>";
 				JOptionPane.showMessageDialog(null, message, "Mauvais arguments", JOptionPane.ERROR_MESSAGE);
 			}
-			//System.exit(1);
+			// System.exit(1);
 			return false;
 		} else {
 			if (!debug) {
 				String message = "Trop d'arguments\nUtilisation: basededonneés --name <name>";
 				JOptionPane.showMessageDialog(null, message, "Mauvais arguments", JOptionPane.ERROR_MESSAGE);
 			}
-			//System.exit(1);
+			// System.exit(1);
 			return false;
 		}
 		return false;
@@ -255,34 +308,51 @@ public class BaseDeDonnees {
 	 * @param i
 	 * @param args
 	 * @param connection
-	 * @param debug 
+	 * @param debug
 	 * @return s'il a pu créer la fenêtre
-	 * @throws SQLException
 	 */
-	public static boolean showAll(int i, String[] args, Connection connection, boolean debug) throws SQLException {
+	public static boolean showAll(int i, String[] args, Connection connection, boolean debug) {
 		ResultSet rs;
 		ResultSet rs2;
 		if (args.length - 1 == i) {
-			PreparedStatement statement = connection.prepareStatement("select COUNT(*) from PLY");
-			rs = statement.executeQuery();
-			if (rs.next()) {
-				int totalLines = rs.getInt(1);
-				if (totalLines > 0) {
-					if (!debug) {
-						PreparedStatement statement2 = connection.prepareStatement("select * from PLY");
-						rs2 = statement2.executeQuery();
-						String[] columnNames = new String[] { "Nom", "Chemin", "Date", "Mot Clés" };
-						FenetreTable fen = new FenetreTable("All models", totalLines, null, rs2, columnNames, new int[] { 1, 2, 3, 4 });
-						fen.setPanelBorderTitle("");
+			boolean success = false;
+			try {
+				PreparedStatement statement = connection.prepareStatement("select COUNT(*) from PLY");
+				rs = statement.executeQuery();
+				if (rs.next()) {
+					int totalLines = rs.getInt(1);
+					if (totalLines > 0) {
+						if (!debug) {
+							PreparedStatement statement2 = connection.prepareStatement("select * from PLY");
+							rs2 = statement2.executeQuery();
+							String[] columnNames = new String[] { "Nom", "Chemin", "Date", "Mot Clés" };
+							FenetreTable fen = new FenetreTable("All models", totalLines, null, rs2, columnNames, new int[] { 1, 2, 3, 4 }, connection);
+							fen.setPanelBorderTitle("");
+						}
+						success = true;
+						return true;
+					} else {
+						if (!debug) {
+							String message = "Il n'y a pas de modèles enregistré";
+							JOptionPane.showMessageDialog(null, message, "Base de données vide", JOptionPane.ERROR_MESSAGE);
+						}
+						// System.exit(1);
+						success = true;
+						return false;
 					}
-					return true;
-				} else {
-					if (!debug) {
-						String message = "Il n'y a pas de modèles enregistré";
-						JOptionPane.showMessageDialog(null, message, "Base de données vide", JOptionPane.ERROR_MESSAGE);
+				}
+				
+				success = true;
+				
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} finally {
+				if (!success) {
+					try {
+						connection.close();
+					} catch (SQLException e) {
+						System.err.println(e);
 					}
-					//System.exit(1);
-					return false;
 				}
 			}
 		} else {
@@ -290,7 +360,7 @@ public class BaseDeDonnees {
 				String message = "Trop d'arguments\nUtilisation: basededonneés --all";
 				JOptionPane.showMessageDialog(null, message, "Mauvais arguments", JOptionPane.ERROR_MESSAGE);
 			}
-			//System.exit(1);
+			// System.exit(1);
 			return false;
 		}
 		return false;
@@ -303,15 +373,16 @@ public class BaseDeDonnees {
 	 * @param i
 	 * @param args
 	 * @param connection
-	 * @param debug 
+	 * @param debug
 	 * @return s'il a trouvé des modèles et a pu affiché la fenêtre
-	 * @throws SQLException
 	 */
-	public static boolean find(int i, String[] args, Connection connection, boolean debug) throws SQLException {
+	public static boolean find(int i, String[] args, Connection connection, boolean debug) {
 		ResultSet rs;
 		ResultSet rs2;
 		String matching = "";
 		if (args.length - 1 > i) {
+			boolean success = false;
+			try {
 			String queryCount = "select COUNT(*) from PLY where DESCRIPTION like";
 			String queryString = "select * from PLY where DESCRIPTION like";
 			for (int j = i + 1; j < args.length; j++) {
@@ -343,17 +414,34 @@ public class BaseDeDonnees {
 					if (!debug) {
 						rs2 = statement2.executeQuery();
 						String[] columnNames = new String[] { "Nom", "Chemin", "Date", "Mot Clés" };
-						FenetreTable fen = new FenetreTable("Find models", totalLines, null, rs2, columnNames, new int[] { 1, 2, 3, 4 });
+						FenetreTable fen = new FenetreTable("Find models", totalLines, null, rs2, columnNames, new int[] { 1, 2, 3, 4 }, connection);
 						fen.setPanelBorderTitle("Models with keywords matching one of: " + matching);
 					}
+					success = true;
 					return true;
 				} else {
 					if (!debug) {
 						String message = "Aucun modèle trouvé comportant ces mot clés";
 						JOptionPane.showMessageDialog(null, message, "Mauvais arguments", JOptionPane.ERROR_MESSAGE);
 					}
-					//System.exit(1);
+					// System.exit(1);
+					success = true;
 					return false;
+				}
+			}
+			
+			success = true;
+			
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} finally {
+				if (!success) {
+					try {
+						
+						connection.close();
+					} catch (SQLException e) {
+						System.err.println(e);
+					}
 				}
 			}
 		} else {
@@ -361,10 +449,25 @@ public class BaseDeDonnees {
 				String message = "Pas de mots clés spécifiés\nUtilisation: basededonneés --find <mots clés>..";
 				JOptionPane.showMessageDialog(null, message, "Mauvais arguments", JOptionPane.ERROR_MESSAGE);
 			}
-			//System.exit(1);
+			// System.exit(1);
 			return false;
 		}
 		return false;
+	}
+
+	/**
+	 * Crée la fenêtre d'insertion de modèle
+	 * 
+	 * @param connection
+	 * @return si fenêtre crée. Pour savoir si requête sql éxecutée, voir
+	 *         {@link FenetreTable}
+	 */
+	public static boolean add(Connection connection) {
+		String[] columnNames = { "Nom", "Chemin", "Date", "Description" };
+		String[] buttonNames = new String[] { "Confirmer", "Reset" };
+		FenetreTable fen = new FenetreTable("Add a model", 1, buttonNames, columnNames, new int[] { 3 }, connection);
+		fen.setPanelBorderTitle("Set model information: ");
+		return true;
 	}
 
 	/**
@@ -374,43 +477,60 @@ public class BaseDeDonnees {
 	 * @param i
 	 * @param args
 	 * @param connection
-	 * @param debug 
-	 * @return <b>A L'INSTANT RETOURNE SEULEMENT SI FENETRE CREE</b><br>si l'update sql à bien été éxecuté
-	 * @throws SQLException
+	 * @return si fenêtre bien crée. Pour savoir si requête sql éxecutée, voir
+	 *         {@link FenetreTable}
 	 */
-	private static boolean edit(int i, String[] args, Connection connection, boolean debug) throws SQLException {
+	private static boolean edit(int i, String[] args, Connection connection) {
+		
+		boolean success = false;
 		if (args.length - 1 == i + 1) {
-			String firstFile = args[i + 1];
-			PreparedStatement statement = connection.prepareStatement("select COUNT(*) from PLY where NOM = ?");
-			statement.setString(1, firstFile);
-			ResultSet rs = statement.executeQuery();
-			if (rs.next()) {
-				int totalLines = rs.getInt(1);
-				if (totalLines == 1) {
-					String[] buttonNames = new String[] { "Confirmer", "Reset" };
-					String[] columnNames = new String[] { "Nom", "Chemin", "Date", "Mot Clés" };
-					PreparedStatement st = connection.prepareStatement("select * from ply where nom = ?");
-					st.setString(1, firstFile);
-					ResultSet rs2 = st.executeQuery();
-					FenetreTable fen = new FenetreTable("Insert", totalLines, buttonNames, rs2, columnNames, new int[] { 3 });
-					// ICI REMPLACER PAR RESULTAT DE L'INSERTION
-					return true;
-				} else {
-					String message = "Le modèle " + firstFile + " n'existe pas";
-					JOptionPane.showMessageDialog(null, message, "Mauvais arguments", JOptionPane.ERROR_MESSAGE);
-					//System.exit(1);
-					return false;
+			try {
+				String firstFile = args[i + 1];
+				PreparedStatement statement = connection.prepareStatement("select COUNT(*) from PLY where NOM = ?");
+				statement.setString(1, firstFile);
+				ResultSet rs = statement.executeQuery();
+				if (rs.next()) {
+					int totalLines = rs.getInt(1);
+					if (totalLines == 1) {
+						String[] buttonNames = new String[] { "Confirmer", "Reset" };
+						String[] columnNames = new String[] { "Nom", "Chemin", "Date", "Mot Clés" };
+						PreparedStatement st = connection.prepareStatement("select * from ply where nom = ?");
+						st.setString(1, firstFile);
+						ResultSet rs2 = st.executeQuery();
+						FenetreTable fen = new FenetreTable("Insert", totalLines, buttonNames, rs2, columnNames, new int[] { 3 }, connection);
+						success = true;
+						return true;
+					} else {
+						String message = "Le modèle " + firstFile + " n'existe pas";
+						JOptionPane.showMessageDialog(null, message, "Mauvais arguments", JOptionPane.ERROR_MESSAGE);
+						// System.exit(1);
+						success = true;
+						return false;
+					}
+				}
+				success = true;
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} finally {
+				if (!success) {
+					
+					try {
+						
+						connection.close();
+					} catch (SQLException e) {
+						System.err.println(e);
+					}
 				}
 			}
 		} else if (args.length > i + 1) {
 			String message = "Trop d'arguments\nUtilisation: basededonneés --name <name>";
 			JOptionPane.showMessageDialog(null, message, "Mauvais arguments", JOptionPane.ERROR_MESSAGE);
-			//System.exit(1);
+			// System.exit(1);
 			return false;
 		} else {
 			String message = "Pas de nom précisé\nUtilisation: basededonneés --name <name>";
 			JOptionPane.showMessageDialog(null, message, "Mauvais arguments", JOptionPane.ERROR_MESSAGE);
-			//System.exit(1);
+			// System.exit(1);
 			return false;
 		}
 		return false;
@@ -420,37 +540,64 @@ public class BaseDeDonnees {
 	 * @param i
 	 * @param args
 	 * @param connection
-	 * @param debug
-	 * @return<b>A L'INSTANT RETOURNE SEULEMENT SI FENETRE CREE</b><br>si le delete sql à bien été éxecuté
-	 * @throws SQLException
+	 * @return si modèle bien supprimée
 	 */
-	private static boolean delete(int i, String[] args, Connection connection, boolean debug) throws SQLException {
-		String firstFile = args[i + 1];
-		PreparedStatement stExists = connection.prepareStatement("select COUNT(*) from PLY where NOM = ?");
-		stExists.setString(1, firstFile);
-		ResultSet rs = stExists.executeQuery();
-		if (rs.next()) {
-			int totalLines = rs.getInt(1);
-			if (totalLines == 1) {
-				PreparedStatement stDelete = connection.prepareStatement("delete * from PLY where NOM = ?");
-				stDelete.setString(1, firstFile);
-				int result = stDelete.executeUpdate();
-				String message = "Le modèle " + firstFile + " a été supprimé avec succès!";
-				JOptionPane.showMessageDialog(null, message);
-				//System.exit(0);
-				// ICI REMPLACER PAR LE RESULTAT DU DELETE
-				return true;
+	private static boolean delete(int i, String[] args, Connection connection, boolean debug) {
+		boolean success = false;
+		try {
+			String firstFile = args[i + 1];
+			PreparedStatement stExists = connection.prepareStatement("select COUNT(*) from PLY where NOM = ?");
+			stExists.setString(1, firstFile);
+			ResultSet rs = stExists.executeQuery();
+			if (rs.next()) {
+				int totalLines = rs.getInt(1);
+				if (totalLines == 1) {
+					PreparedStatement stDelete = connection.prepareStatement("delete from PLY where NOM = ?");
+					stDelete.setString(1, firstFile);
+					int result = stDelete.executeUpdate(); // result = nombre de
+															// lignes affectés
+															// par
+															// le delete
+					if (!debug && result > 0) {
+						String message = "Le modèle " + firstFile + " a été supprimé avec succès!";
+						JOptionPane.showMessageDialog(null, message);
+					} else if (!debug && result <= 0) {
+						String message = "Le modèle " + firstFile + " n'a pas pu être supprimé!";
+						JOptionPane.showMessageDialog(null, message);
+					}
+					// System.exit(0);
+					// ICI REMPLACER PAR LE RESULTAT DU DELETE
+					success = true;
+					return result > 0;
+				} else {
+					if (!debug) {
+						String message = "Le modèle " + firstFile + " n'existe pas";
+						JOptionPane.showMessageDialog(null, message, "Erreur", JOptionPane.ERROR_MESSAGE);
+					}
+					// System.exit(1);
+					success = true;
+					return false;
+				}
 			} else {
-				String message = "Le modèle " + firstFile + " n'existe pas";
-				JOptionPane.showMessageDialog(null, message, "Erreur", JOptionPane.ERROR_MESSAGE);
-				//System.exit(1);
+				if (!debug) {
+					String message = "Le modèle " + firstFile + " n'existe pas";
+					JOptionPane.showMessageDialog(null, message, "Erreur", JOptionPane.ERROR_MESSAGE);
+				}
+				// System.exit(1);
+				success = true;
 				return false;
 			}
-		} else {
-			String message = "Le modèle " + firstFile + " n'existe pas";
-			JOptionPane.showMessageDialog(null, message, "Erreur", JOptionPane.ERROR_MESSAGE);
-			//System.exit(1);
-			return false;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (!success) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					System.err.println(e);
+				}
+			}
 		}
+		return false;
 	}
 }

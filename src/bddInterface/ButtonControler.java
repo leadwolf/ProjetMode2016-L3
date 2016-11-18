@@ -20,13 +20,13 @@ public class ButtonControler implements ActionListener{
 	public void actionPerformed(ActionEvent e) {
 		switch (e.getActionCommand().toLowerCase()) {
 		case "insert":
-			frame.insert();
+			frame.insertTable();
 			break;
 		case "reset":
 			frame.resetFields();
 			break;
 		case "confirmer":
-			frame.modifyFields();
+			frame.updateTableAmorce(false);
 			break;
 		default:
 			break;

@@ -89,20 +89,23 @@ public class BaseDeDonneesTest {
 		BaseDeDonnees.resetTable(connection);
 		assertFalse(BaseDeDonnees.parseArgs(args3, true));
 	}
-	
-	@Test
-	public void testAdd() {
-		// TODO
-	}
-	
+		
+	/**
+	 * Vérifie que la commande --delete répond correctement
+	 */
 	@Test
 	public void testdelete() {
-		// TODO
-	}
-	
-	@Test
-	public void testEdit() {
-		// TODO
+		BaseDeDonnees.resetTable(connection);
+
+		String[] args = new String[]{("--delete"), ("weathervane")};
+		assertFalse(BaseDeDonnees.parseArgs(args, true));
+		
+		BaseDeDonnees.fillTable(connection);
+		
+		assertTrue(BaseDeDonnees.parseArgs(args, true));
+		
+		assertFalse(BaseDeDonnees.parseArgs(args, true));
+		
 	}
 
 }

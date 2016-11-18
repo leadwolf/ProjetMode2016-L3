@@ -1,6 +1,7 @@
 package math;
 import java.util.List;
 
+import _interface.VisualisationPanel;
 import modele.Face;
 import modele.Figure;
 import modele.Point;
@@ -45,6 +46,70 @@ public class Calculations {
 		fig.getPtsMat().importPoints(fig.getPtsTrans(), 3);
 		fig.getPtsMat().translateMatrix(x, y, z);
 		fig.getPtsMat().exportToPoints(fig.getPtsTrans());
+	}
+	
+
+	/**
+	 ** Actualise <b>widthFig</b>, <b>heightFig</b>, <b>depthFig</b> ainsi que {@link Figure#getCenter()}
+	 **/
+	public static void refreshFigDims(VisualisationPanel panel) {
+		double widthFig = 0, heightFig = 0, depthFig = 0;
+		double left = 0, right = 0, top = 0, bottom = 0, front = 0, back = 0;
+		// set all values to opposites of what they should be because of comparisons in if
+		if (panel.getHeight() == 0 || panel.getWidth() == 0) {
+			widthFig = heightFig = right = bottom = 0;
+			left = panel.getWidthWindow();
+			top = panel.getHeightWindow();
+			back = panel.getWidthWindow();
+			front = -panel.getWidthWindow();
+		} else {
+			widthFig = heightFig = right = bottom = 0;
+			left = panel.getWidth();
+			top = panel.getHeight();
+			back = panel.getWidth();
+			front = -panel.getWidth();
+		}
+		// w/2 or h/2 because all points are set to center when drawn, see setPolygones()
+		for (Point p : panel.getFigure().getPtsTrans()) {
+			if (p.getX() < left) {
+				left = p.getX();
+			}
+			if (p.getX() > right) {
+				right = p.getX();
+			}
+			if (p.getY() > bottom) {
+				bottom = p.getY();
+			} else if (p.getY() < top) {
+				top = p.getY();
+			}
+			if (p.getZ() > front) {
+				front = p.getZ();
+			} else if (p.getZ() < back) {
+				back = p.getZ();
+			}
+		}
+		widthFig = right - left;
+		heightFig = bottom - top;
+		depthFig = front - back;
+		panel.getFigure().setWidthFig(widthFig);
+		panel.getFigure().setHeightFig(heightFig);
+		panel.getFigure().getCenter().setCoords(left + (widthFig/2), top + (heightFig/2), back + (depthFig/2)); // ajout pour donner vrai coord dessiné
+	}
+
+	/**
+	 * Centre la figure par rapport au centre de ce Panel
+	 */
+	public static void centrerFigure(VisualisationPanel panel) {
+		refreshFigDims(panel);
+		double moveX, moveY;
+		if (panel.getHeight() == 0 || panel.getWidth() == 0) {
+			moveX = panel.getFigure().getCenter().getX()-(panel.getWidthWindow()/2);
+			moveY = panel.getFigure().getCenter().getY()-(panel.getHeightWindow()/2);
+		} else {
+			moveX = panel.getFigure().getCenter().getX()-(panel.getWidth()/2);
+			moveY = panel.getFigure().getCenter().getY()-(panel.getHeight()/2);
+		}
+		Calculations.translatePoints(panel.getFigure(), -moveX, -moveY, 0);
 	}
 	
 	/**

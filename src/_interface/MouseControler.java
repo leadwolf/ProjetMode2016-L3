@@ -33,7 +33,7 @@ public class MouseControler extends MouseAdapter {
 		int distToMouseX = (visPanel.getWidth() / 2) - e.getX(); // distance from center of panel to mouse x
 		int distToMouseY = (visPanel.getHeight() / 2) - e.getY(); // distance from center of panel to mouse y
 
-		visPanel.refreshFigDims();
+		Calculations.refreshFigDims(visPanel);
 		notches = e.getWheelRotation() * -1;
 		
 		double zoom = 1.0 + (zoomSens * notches);
@@ -60,7 +60,7 @@ public class MouseControler extends MouseAdapter {
 			rotX = e.getX();
 			rotY = e.getY();
 		}
-		visPanel.refreshFigDims();
+		Calculations.refreshFigDims(visPanel);
 	}
 
 	public void mouseDragged(MouseEvent e) {

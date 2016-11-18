@@ -19,6 +19,7 @@ public class Figure {
 	private Point center;
 	private Lecture lecture;
 	private Matrice ptsMat;
+	private double heightFig, widthFig;
 	
 	
 	public List<Point> getPtsTrans() {
@@ -51,6 +52,23 @@ public class Figure {
 
 	public List<Face> getFaces() {
 		return faces;
+	}
+
+		
+	public double getHeightFig() {
+		return heightFig;
+	}
+
+	public void setHeightFig(double heightFig) {
+		this.heightFig = heightFig;
+	}
+
+	public double getWidthFig() {
+		return widthFig;
+	}
+
+	public void setWidthFig(double widthFig) {
+		this.widthFig = widthFig;
 	}
 
 	public Figure(Path file) {

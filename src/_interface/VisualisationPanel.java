@@ -35,8 +35,6 @@ public class VisualisationPanel extends JPanel {
 	private boolean drawFaces = true;
 	private int heightWindow;
 	private int widthWindow;
-	private double widthFig = 0, heightFig = 0, depthFig = 0;
-	private double left = 0, right = 0, top = 0, bottom = 0, front = 0, back = 0;
 	private MouseControler mouseControler;
 
 	public VisualisationPanel(boolean drawPoints, boolean drawSegments, boolean drawFaces) {
@@ -114,73 +112,22 @@ public class VisualisationPanel extends JPanel {
 		} else {
 			fitFigureToWindow(0.65);
 		}
-		centrerFigure();
+		Calculations.centrerFigure(this);
 		figure.getPtsMat().importPoints(figure.getPtsTrans(), 3);
 		refreshObject();
-	}
-
-
-	/**
-	 ** Actualise <b>widthFig</b>, <b>heightFig</b>, <b>depthFig</b> ainsi que {@link Figure#getCenter()}
-	 **/
-	public void refreshFigDims() {
-		// set all values to opposites of what they should be because of comparisons in if
-		if (getHeight() == 0 || getWidth() == 0) {
-			widthFig = heightFig = right = bottom = 0;
-			left = widthWindow;
-			top = heightWindow;
-			back = widthWindow;
-			front = -widthWindow;
-		} else {
-			widthFig = heightFig = right = bottom = 0;
-			left = getWidth();
-			top = getHeight();
-			back = getWidth();
-			front = -getWidth();
-		}
-		// w/2 or h/2 because all points are set to center when drawn, see setPolygones()
-		for (Point p : figure.getPtsTrans()) {
-			if (p.getX() < left) {
-				left = p.getX();
-			}
-			if (p.getX() > right) {
-				right = p.getX();
-			}
-			if (p.getY() > bottom) {
-				bottom = p.getY();
-			} else if (p.getY() < top) {
-				top = p.getY();
-			}
-			if (p.getZ() > front) {
-				front = p.getZ();
-			} else if (p.getZ() < back) {
-				back = p.getZ();
-			}
-		}
-		widthFig = right - left;
-		heightFig = bottom - top;
-		depthFig = front - back;
-		figure.getCenter().setCoords(left + (widthFig/2), top + (heightFig/2), back + (depthFig/2)); // ajout pour donner vrai coord dessiné
 	}
 
 	public Figure getFigure() {
 		return figure;
 	}
+	
 
-	/**
-	 * Centre la figure par rapport au centre de ce Panel
-	 */
-	public void centrerFigure() {
-		refreshFigDims();
-		double moveX, moveY;
-		if (getHeight() == 0 || getWidth() == 0) {
-			moveX = figure.getCenter().getX()-(widthWindow/2);
-			moveY = figure.getCenter().getY()-(heightWindow/2);
-		} else {
-			moveX = figure.getCenter().getX()-(getWidth()/2);
-			moveY = figure.getCenter().getY()-(getHeight()/2);
-		}
-		Calculations.translatePoints(figure, -moveX, -moveY, 0);
+	public int getHeightWindow() {
+		return heightWindow;
+	}
+
+	public int getWidthWindow() {
+		return widthWindow;
 	}
 
 	/**
@@ -217,19 +164,19 @@ public class VisualisationPanel extends JPanel {
 	 */
 	private void fitFigureToWindow(double maxSize) {
 		// scale by height
-		refreshFigDims();
+		Calculations.refreshFigDims(this);
 		double scale = 1.0;
 		if (getHeight() == 0 || getWidth() == 0) {
-			if (heightFig > widthFig) {
-				scale = (heightWindow * maxSize) / heightFig;
+			if (figure.getHeightFig() > figure.getWidthFig()) {
+				scale = (heightWindow * maxSize) / figure.getHeightFig();
 			} else { // scale by width
-				scale = (widthWindow * maxSize) / widthFig;
+				scale = (widthWindow * maxSize) / figure.getWidthFig();
 			}
 		} else {
-			if (heightFig > widthFig) {
-				scale = (getHeight() * maxSize) / heightFig;
+			if (figure.getHeightFig() > figure.getWidthFig()) {
+				scale = (getHeight() * maxSize) / figure.getHeightFig();
 			} else { // scale by width
-				scale = (getWidth() * maxSize) / widthFig;
+				scale = (getWidth() * maxSize) / figure.getWidthFig();
 			}
 		}
 		Calculations.scale(figure, scale);

@@ -46,23 +46,15 @@ public class BaseDeDonnees {
 		try {
 
 			// load the sqlite-JDBC driver using the current class loader
-			// Class.forName("org.sqlite.JDBC");
-
-			// ucanacces for Java 8, to replace when using Java 7
-			Class.forName("net.ucanaccess.jdbc.UcanaccessDriver");
-
+			 Class.forName("org.sqlite.JDBC");
 			// mise des noms du dossier ply dans un tableau de string
 			new BaseDeDonnees();
 
-			// creation de la table
-			// connection =
-			// DriverManager.getConnection("jdbc:sqlite:test.sqlite");
-
-			// replace by line above when using Java 7
-			connection = DriverManager.getConnection("jdbc:ucanaccess://C:/Users/Master/git/test.accdb");
+			connection = DriverManager.getConnection("jdbc:sqlite:test.sqlite");
 
 			boolean restart = false;
 
+//			 creation de la table
 			if (restart) {
 				Statement firstStatement = connection.createStatement();
 				firstStatement.setQueryTimeout(30);

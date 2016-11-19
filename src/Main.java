@@ -76,7 +76,7 @@ public class Main {
 				showSegments = true;
 			}
 			if (paramsOK) {
-				figure = new Figure(path);
+				figure = new Figure(path, false);
 			}
 		} else {
 			System.out.println("Aucun fichier précisé");

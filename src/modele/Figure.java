@@ -71,8 +71,8 @@ public class Figure {
 		this.widthFig = widthFig;
 	}
 
-	public Figure(Path file) {
-		lecture = new Lecture(file);
+	public Figure(Path file, boolean noPrint) {
+		lecture = new Lecture(file, noPrint);
 		nbPoints = lecture.getNbPoints();
 		nbFaces = lecture.getNbFaces();
 		points = lecture.getPoints();

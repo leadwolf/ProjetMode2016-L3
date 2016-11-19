@@ -157,7 +157,6 @@ public class VisualisationPanel extends JPanel {
 		Calculations.scale(figure, scaleFactor);
 	}
 
-
 	/**
 	 * Vide le container Path2D de {@link Figure#getPolygones()} pour le ré-remplir avec les
 	 * nouveaux points tranformés Sinon on afficherait encore les vieux points

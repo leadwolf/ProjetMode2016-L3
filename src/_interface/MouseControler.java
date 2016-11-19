@@ -28,22 +28,29 @@ public class MouseControler extends MouseAdapter {
 		 * Zoom into mouse cursor = moving the center of figure nearer to the
 		 * mouse cursor
 		 */
-		double zoomSens = 0.1;
-		double zoomTransSens = 10.0; // sensitivity of translation to mousepoint when zooming
-		int distToMouseX = (visPanel.getWidth() / 2) - e.getX(); // distance from center of panel to mouse x
-		int distToMouseY = (visPanel.getHeight() / 2) - e.getY(); // distance from center of panel to mouse y
-
+		double zoomSens = 0.06;
+		double zoomTransSens = 5.0; // sensitivity of translation to mousepoint when zooming
+		
 		Calculations.refreshFigDims(visPanel);
+		
+		double figXToMouseX = visPanel.getWidth()/2 - e.getX(); // distance from center of panel to mouse x
+		double figYToMouseY = visPanel.getHeight()/2 - e.getY(); // distance from center of panel to mouse y
+
 		notches = e.getWheelRotation() * -1;
 		
 		double zoom = 1.0 + (zoomSens * notches);
-		visPanel.zoom(zoom);
+		
+		double movingX = 0, movingY = 0;
+		movingX = (figXToMouseX / zoomTransSens) * zoom;
+		movingY = (figYToMouseY / zoomTransSens) * zoom;
 
+		visPanel.zoom(zoom);
 		if (e.getWheelRotation() > 0) {
-			Calculations.translatePoints(visPanel.getFigure(), (-distToMouseX / zoomTransSens) * zoom, (-distToMouseY / zoomTransSens) * zoom, 0);
+			// zooming out
+			Calculations.translatePoints(visPanel.getFigure(), -movingX, -movingY, 0);
 		} else {
 			// zoom in
-			Calculations.translatePoints(visPanel.getFigure(), (distToMouseX / zoomTransSens) * zoom, (distToMouseY / zoomTransSens) * zoom, 0);
+			Calculations.translatePoints(visPanel.getFigure(), movingX, movingY, 0);
 		}
 		
 		visPanel.refreshObject();

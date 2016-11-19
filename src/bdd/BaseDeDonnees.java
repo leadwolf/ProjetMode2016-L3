@@ -34,7 +34,7 @@ public class BaseDeDonnees {
 	}
 
 	public static void main(String[] args) {
-		parseArgs(args, false);
+		parseArgs(args, false, false, false);
 	}
 
 	/**
@@ -91,7 +91,7 @@ public class BaseDeDonnees {
 	 * @return si la requête était correcte et que l'interface, si besoin, a été
 	 *         éxecutée
 	 */
-	public static boolean parseArgs(String[] args, boolean debug) {
+	public static boolean parseArgs(String[] args, boolean reset, boolean fill, boolean debug) {
 
 		if (!verifArgs(args)) {
 			return false;
@@ -105,10 +105,11 @@ public class BaseDeDonnees {
 			Class.forName("org.sqlite.JDBC");
 
 			connection = DriverManager.getConnection("jdbc:sqlite:data/test.sqlite");
-
-			boolean restart = true;
-			if (restart) {
+			
+			if (reset) {
 				resetTable(connection);
+			}
+			if (fill) {
 				fillTable(connection);
 			}
 
@@ -166,11 +167,10 @@ public class BaseDeDonnees {
 		boolean success = false;
 		try {
 			
-			Statement firstStatement;
-			firstStatement = connection.createStatement();
-			firstStatement.setQueryTimeout(30);
-			firstStatement.executeUpdate("drop table PLY");
-			firstStatement.executeUpdate("create table PLY(NOM text, CHEMIN text, DATE text, DESCRIPTION text)");
+			PreparedStatement firstStatement = connection.prepareStatement("drop table PLY");
+			firstStatement.executeUpdate();
+			PreparedStatement secondStatement = connection.prepareStatement("create table PLY(NOM text, CHEMIN text, DATE text, DESCRIPTION text)");
+			secondStatement.executeUpdate();
 			success = true;
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -268,10 +268,15 @@ public class BaseDeDonnees {
 						success = true;
 						return false;
 					}
+				} else {
+					if (!debug) {
+						String message = "Le modèle " + firstFile + " n'existe pas\nUtilisation: basededonneés --name <name>";
+						JOptionPane.showMessageDialog(null, message, "Mauvais arguments", JOptionPane.ERROR_MESSAGE);
+					}
+					// System.exit(1);
+					success = true;
+					return false;
 				}
-
-				success = true;
-
 			} catch (SQLException e) {
 				e.printStackTrace();
 			} finally {
@@ -554,10 +559,7 @@ public class BaseDeDonnees {
 				if (totalLines == 1) {
 					PreparedStatement stDelete = connection.prepareStatement("delete from PLY where NOM = ?");
 					stDelete.setString(1, firstFile);
-					int result = stDelete.executeUpdate(); // result = nombre de
-															// lignes affectés
-															// par
-															// le delete
+					int result = stDelete.executeUpdate(); // result = nombre de lignes affectés par le delete
 					if (!debug && result > 0) {
 						String message = "Le modèle " + firstFile + " a été supprimé avec succès!";
 						JOptionPane.showMessageDialog(null, message);

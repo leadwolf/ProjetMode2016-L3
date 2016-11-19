@@ -15,8 +15,7 @@ import bdd.BaseDeDonnees;
 import bddInterface.FenetreTable;
 
 /**
- * Classe de test de fonctionnement de la classe {@link FenetreTable},
- * spécifiquement de l'insertion et update
+ * Classe de test de fonctionnement de la classe {@link FenetreTable}, spécifiquement de l'insertion et update
  * 
  * @author Master
  *
@@ -35,9 +34,9 @@ public class FenetreTableTest {
 		boolean success = false;
 		try {
 			Class.forName("org.sqlite.JDBC");
-		connection = DriverManager.getConnection("jdbc:sqlite:data/test.sqlite");
-		
-		success = true;
+			connection = DriverManager.getConnection("jdbc:sqlite:data/test.sqlite");
+
+			success = true;
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} catch (SQLException e) {
@@ -55,19 +54,65 @@ public class FenetreTableTest {
 
 	/**
 	 * Initialise une {@link FenetreTable} avec les données correspondantes au nom du model fourni
+	 * 
 	 * @param model
 	 */
-	public void initFenetreTable(String model) {
+	public void initFenetreTableEdit(String model) {
 		boolean success = false;
-		try {
-		PreparedStatement st;
-			st = connection.prepareStatement("select * from ply where nom = ?");
-		st.setString(1, model);
-		ResultSet rs = st.executeQuery();
+		if (model != null) {
+			try {
+				PreparedStatement st;
+				st = connection.prepareStatement("select * from ply where nom = ?");
+				st.setString(1, model);
+				ResultSet rs = st.executeQuery();
 
-		fen = new FenetreTable(1, 4, rs, connection);
-		
-		success = true;
+				fen = new FenetreTable(1, 4, rs, connection);
+
+				success = true;
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} finally {
+				if (!success) {
+					try {
+						connection.close();
+					} catch (SQLException e) {
+						System.err.println(e);
+					}
+				}
+			}
+		} else {
+			fen = new FenetreTable(1, 4, null, connection);
+		}
+	}
+
+	/**
+	 * Vérifie que la commande --edit permet d'éxecuter une requête SQL correctement avec des paramètres totalement inxestants, à moitié renseignés ou complets
+	 */
+	@Test
+	public void testUpdate() {
+		boolean success = false;
+		BaseDeDonnees.resetTable(connection);
+		BaseDeDonnees.fillTable(connection);
+		BaseDeDonnees.closeConnection();
+
+		try {
+			// False car aucun champ valide
+			initFenetreTableEdit("weathervane");
+			assertFalse(fen.updateTableAmorce("", "", "", true));
+
+			// true car au moins un champ valide
+			assertTrue(fen.updateTableAmorce("weathervane2", "", "", true));
+
+			// true car champs valides
+			initFenetreTableEdit("weathervane2"); // il faut à chaque fois créer une nouvelle fenêtre car on a changé de nom de modèle
+			assertTrue(fen.updateTableAmorce("weathervane3", "weathervane3", "weathervane3", true));
+
+			initFenetreTableEdit("weathervane3");
+			assertTrue(fen.updateTableAmorce("", "", "allo", true));
+
+			connection.close();
+
+			success = true;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
@@ -82,33 +127,36 @@ public class FenetreTableTest {
 	}
 
 	/**
-	 * Vérifie que la commande --edit permet d'éxecuter une requête SQL correctement avec des paramètres totalement inxestants, à moitié renseignés ou complets
+	 * Vérifie que la commande --add permet d'éxecuter une requête SQL correctement avec des paramètres totalement inxestants, à moitié renseignés ou avec
+	 * un nom qui existe déja
 	 */
 	@Test
-	public void testUpdate() {
+	public void testInsert() {
 		boolean success = false;
 		BaseDeDonnees.resetTable(connection);
 		BaseDeDonnees.fillTable(connection);
 		BaseDeDonnees.closeConnection();
-		
+
 		try {
-		// False car aucun champ valide
-		initFenetreTable("weathervane");
-		assertFalse(fen.updateTableAmorce("", "", "", true));
+			// false car nom pas renseigné
+			initFenetreTableEdit(null);
+			assertFalse(fen.insertTableAmorce("", "", "", true));
+			
+			// false car nom existe déja
+			initFenetreTableEdit(null);
+			assertFalse(fen.insertTableAmorce("weathervane", "", "", true));
+			
+			// true car nom renseigné et n'existe pas
+			initFenetreTableEdit(null);
+			assertTrue(fen.insertTableAmorce("weathervane2", "", "", true));
 
-		// true car au moins un champ valide
-		assertTrue(fen.updateTableAmorce("weathervane2", "", "", true));
-
-		// true car champs valides
-		initFenetreTable("weathervane2"); // il faut à chaque fois créer une nouvelle fenêtre car on a changé de nom de modèle
-		assertTrue(fen.updateTableAmorce("weathervane3", "weathervane3", "weathervane3", true));
-
-		initFenetreTable("weathervane3");
-		assertTrue(fen.updateTableAmorce("", "", "allo", true));
-		
-		connection.close();
-		
-		success = true;
+			// true car valeurs renseignés avec nom inexistant dans la base
+			initFenetreTableEdit(null);
+			assertTrue(fen.insertTableAmorce("weathervane3", "allo", "allo", true));
+			
+			connection.close();
+			
+			success = true;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
@@ -120,11 +168,6 @@ public class FenetreTableTest {
 				}
 			}
 		}
-	}
-	
-	@Test
-	public void testAdd() {
-		// TODO
 	}
 
 }

@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -36,36 +35,44 @@ public class FenetreTable extends JFrame {
 	private Connection con;
 
 	/**
-	 * Sauvegarde des données initiales de la ligne lors du chargement de la
-	 * base
+	 * Sauvegarde des données initiales de la ligne lors du chargement de la base
 	 */
 	String[] orignalFields;
 
 	Dimension dim;
 
+	/**
+	 * Crée une FenetreTable soit avec des données existantes pour --edit ou vide si rs == null pour --add
+	 * 
+	 * @param rows
+	 * @param cols
+	 * @param rs
+	 * @param connection
+	 */
 	public FenetreTable(int rows, int cols, ResultSet rs, Connection connection) {
 		boolean success = false;
 		if (rows > 0 && cols > 0) {
 			this.con = connection;
 
-			orignalFields = new String[cols];
-
-			try {
-				if (rs.next()) {
-					int colCount = rs.getMetaData().getColumnCount();
-					for (int j = 1; j <= colCount; j++) {
-						orignalFields[j - 1] = rs.getString(j);
+			if (rs != null) {
+				orignalFields = new String[cols];
+				try {
+					if (rs.next()) {
+						int colCount = rs.getMetaData().getColumnCount();
+						for (int j = 1; j <= colCount; j++) {
+							orignalFields[j - 1] = rs.getString(j);
+						}
 					}
-				}
-				success = true;
-			} catch (SQLException e) {
-				e.printStackTrace();
-			} finally {
-				if (!success) {
-					try {
-						con.close();
-					} catch (SQLException e) {
-						System.err.println(e);
+					success = true;
+				} catch (SQLException e) {
+					e.printStackTrace();
+				} finally {
+					if (!success) {
+						try {
+							con.close();
+						} catch (SQLException e) {
+							System.err.println(e);
+						}
 					}
 				}
 			}
@@ -122,8 +129,7 @@ public class FenetreTable extends JFrame {
 	 * @param buttonNames
 	 *            les noms des boutons à avoir, laisser null si pas de boutons
 	 * @param rs
-	 *            un ResultSet qui comporte les valeurs avec lesquelles remplir
-	 *            la table
+	 *            un ResultSet qui comporte les valeurs avec lesquelles remplir la table
 	 * @param colNames
 	 *            les noms des colonnes
 	 * @param noModifyColumns
@@ -144,7 +150,7 @@ public class FenetreTable extends JFrame {
 		}
 		boolean success = false;
 		try {
-			
+
 			int currentRow = 0;
 			while (rs.next()) {
 				int colCount = rs.getMetaData().getColumnCount();
@@ -180,8 +186,7 @@ public class FenetreTable extends JFrame {
 	}
 
 	/**
-	 * Crée les dimensions du fenetre en fonction du nombre de lignes dans la
-	 * table
+	 * Crée les dimensions du fenetre en fonction du nombre de lignes dans la table
 	 * 
 	 * @param buttons
 	 * @param rows
@@ -252,6 +257,7 @@ public class FenetreTable extends JFrame {
 	 * 
 	 * @param title
 	 * @param rows
+	 * @param buttonNames 
 	 */
 	private void SetupPanelWithButtons(String title, int rows, String[] buttonNames) {
 
@@ -290,11 +296,10 @@ public class FenetreTable extends JFrame {
 	}
 
 	/**
-	 * Exécute la requète qui met à jour la ligne de la table avec les données
-	 * insérées dans la fenêtre si au moins une d'entre elle est valide
+	 * Prend les valeurs à update du JTable, vérifie qu'elles sont différentes que les originales et exécute {@link #updateTable(String, String, String, boolean)}
 	 * 
-	 * @param debug
-	 * @return
+	 * @param debug afficher ou non les JOptionPane d'erreur/succès
+	 * @return si le modèle a bien été mis à jour
 	 */
 	public boolean updateTableAmorce(boolean debug) {
 
@@ -306,7 +311,8 @@ public class FenetreTable extends JFrame {
 		chemin = (String) tablePanel.getTable().getModel().getValueAt(0, 1);
 		keywords = (String) tablePanel.getTable().getModel().getValueAt(0, 3);
 
-		if ((name != null && !name.equals("")) || (chemin != null && !chemin.equals("")) || (keywords != null && !keywords.equals(""))) {
+		if ((name != null && !name.equals("") && name != orignalFields[0]) || (chemin != null && !chemin.equals("") && chemin != orignalFields[1])
+				|| (keywords != null && !keywords.equals("") && keywords != orignalFields[3])) {
 			return updateTable(name, chemin, keywords, debug);
 		} else {
 			if (!debug) {
@@ -318,17 +324,17 @@ public class FenetreTable extends JFrame {
 	}
 
 	/**
-	 * Exécute la requète qui met à jour la ligne de la table avec les données
-	 * fournies si au moins une d'entre elle est valide fournies
+	 * Prend les valeurs à update en paramètre, vérifie qu'elles sont différentes que les originales et exécute {@link #updateTable(String, String, String, boolean)}
 	 * 
 	 * @param name
 	 * @param chemin
 	 * @param keywords
-	 * @param debug
-	 * @return
+	 * @param debug afficher ou non les JOptionPane d'erreur/succès
+	 * @return si le modèle a bien été mis à jour
 	 */
 	public boolean updateTableAmorce(String name, String chemin, String keywords, boolean debug) {
-		if ((name != null && !name.equals("")) || (chemin != null && !chemin.equals("")) || (keywords != null && !keywords.equals(""))) {
+		if ((name != null && !name.equals("") && name != orignalFields[0]) || (chemin != null && !chemin.equals("") && chemin != orignalFields[1])
+				|| (keywords != null && !keywords.equals("") && keywords != orignalFields[3])) {
 			return updateTable(name, chemin, keywords, debug);
 		} else {
 			if (!debug) {
@@ -348,7 +354,7 @@ public class FenetreTable extends JFrame {
 	 * @param debug
 	 * @return si l'update a bien modifié plus d'une ligne
 	 */
-	public boolean updateTable(String name, String chemin, String keywords, boolean debug) {
+	private boolean updateTable(String name, String chemin, String keywords, boolean debug) {
 		boolean success = false;
 		try {
 			Class.forName("org.sqlite.JDBC");
@@ -381,7 +387,7 @@ public class FenetreTable extends JFrame {
 				updateCpt++;
 			}
 			updateString += " where nom = ?";
-			
+
 			statement = con.prepareStatement(updateString);
 			if (updateNom) {
 				statement.setString(1, name);
@@ -417,7 +423,7 @@ public class FenetreTable extends JFrame {
 		} finally {
 			if (!success) {
 				try {
-					
+
 					con.close();
 				} catch (SQLException e) {
 					System.err.println(e);
@@ -432,9 +438,12 @@ public class FenetreTable extends JFrame {
 	}
 
 	/**
-	 * Exécute la requète qui va insérer les données de la ligne de la table
+	 * Prend les valeurs à insérer du JTable, vérifie si le nom du modèle à insérer n'existe pas et éxecute {@link #insertTable(String, String, String, boolean)}
+	 * 
+	 * @param debug
+	 * @return si l'insertion du modèle a pu être réalisée
 	 */
-	public void insertTable() {
+	public boolean insertTableAmorce(boolean debug) {
 
 		String name = "";
 		String chemin = "";
@@ -444,41 +453,32 @@ public class FenetreTable extends JFrame {
 		chemin = (String) tablePanel.getTable().getModel().getValueAt(0, 1);
 		keywords = (String) tablePanel.getTable().getModel().getValueAt(0, 3);
 
-		if (name != null && !name.equals("") && chemin != null && !chemin.equals("") && keywords != null && !keywords.equals("")) {
+		// il faut qu'au moins le nom du modèle soit renseigné
+		if ((name != null && !name.equals("")) || ((chemin != null && !chemin.equals("")) || (keywords != null && !keywords.equals("")))) {
 			boolean success = false;
 			try {
 				Class.forName("org.sqlite.JDBC");
-
-				PreparedStatement statementFind;
-				statementFind = con.prepareStatement("select * from PLY where nom = ?");
-				statementFind.setString(1, name);
-				ResultSet found = statementFind.executeQuery();
-
-				if (!found.next()) {
-					PreparedStatement statement;
-					statement = con.prepareStatement("insert into PLY values ?, ?, ?, ?");
-					statement.setString(1, name);
-					statement.setString(2, chemin);
-					statement.setString(3, today());
-					statement.setString(4, keywords);
-					super.dispose();
-					statement.executeUpdate();
-					String message = "L'insertion du modèle " + name + " été réalisé avec succès!";
-					JOptionPane.showMessageDialog(null, message);
-					System.exit(0);
+				PreparedStatement statement = con.prepareStatement("select * from PLY where nom = ?");
+				statement.setString(1, name);
+				ResultSet rs = statement.executeQuery();
+				if (rs.next()) {
+					if (!debug) {
+						String message = "Le modèle " + name + " existe déja.";
+						JOptionPane.showMessageDialog(null, message);
+					}
+					success = true;
+					return false;
 				} else {
-					String message = "Le modèle " + name + " existe déja";
-					JOptionPane.showMessageDialog(null, message, "Mauvais arguments", JOptionPane.ERROR_MESSAGE);
+					success = true;
+					return insertTable(name, chemin, keywords, debug);
 				}
-				success = true;
-			} catch (ClassNotFoundException e1) {
-				e1.printStackTrace();
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
 			} catch (SQLException e) {
 				e.printStackTrace();
 			} finally {
 				if (!success) {
 					try {
-						
 						con.close();
 					} catch (SQLException e) {
 						System.err.println(e);
@@ -486,9 +486,128 @@ public class FenetreTable extends JFrame {
 				}
 			}
 		} else {
-			showFieldErrorMessage(name, chemin, keywords);
+			if (!debug) {
+				showFieldErrorMessage(name, chemin, keywords);
+				return false;
+			}
 		}
+		return false;
+	}
 
+	/**
+	 * Prend les valeurs à insérer en paramètre, vérifie si le nom du modèle à insérer n'existe pas et éxecute {@link #insertTable(String, String, String, boolean)}
+	 * 
+	 * @param name
+	 * @param chemin
+	 * @param keywords
+	 * @param debug
+	 * @return si l'insertion du modèle a pu être réalisée
+	 */
+	public boolean insertTableAmorce(String name, String chemin, String keywords, boolean debug) {// il faut qu'au moins le nom du modèle soit renseigné
+		if ((name != null && !name.equals("")) || ((chemin != null && !chemin.equals("")) || (keywords != null && !keywords.equals("")))) {
+			boolean success = false;
+			try {
+				Class.forName("org.sqlite.JDBC");
+				PreparedStatement statement = con.prepareStatement("select * from PLY where nom = ?");
+				statement.setString(1, name);
+				ResultSet rs = statement.executeQuery();
+				if (rs.next()) {
+					if (!debug) {
+						String message = "Le modèle " + name + " existe déja.";
+						JOptionPane.showMessageDialog(null, message);
+					}
+					success = true;
+					return false;
+				} else {
+					success = true;
+					return insertTable(name, chemin, keywords, debug);
+				}
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} finally {
+				if (!success) {
+					try {
+						con.close();
+					} catch (SQLException e) {
+						System.err.println(e);
+					}
+				}
+			}
+		} else {
+			if (!debug) {
+				showFieldErrorMessage(name, chemin, keywords);
+				return false;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Crée une requête SQL en fonction de la validité des paramètres fournis et l'éxecute
+	 * 
+	 * @param name
+	 * @param chemin
+	 * @param keywords
+	 * @param debug
+	 * @return si l'insertion du modèle a pu être réalisée
+	 */
+	private boolean insertTable(String name, String chemin, String keywords, boolean debug) {
+		boolean success = false;
+		try {
+			Class.forName("org.sqlite.JDBC");
+			PreparedStatement statement;
+
+			statement = con.prepareStatement("insert into PLY values(?, ?, ?, ?);");
+
+			if (name != null && !name.equals("")) {
+				statement.setString(1, name);
+			} else {
+				statement.setString(1, "");
+			}
+			if (chemin != null && !chemin.equals("")) {
+				statement.setString(2, chemin);
+			} else {
+				statement.setString(2, "");
+			}
+			statement.setString(3, today());
+			if (keywords != null && !keywords.equals("")) {
+				statement.setString(4, keywords);
+			} else {
+				statement.setString(4, "");
+			}
+
+			super.dispose();
+			int result = statement.executeUpdate();
+			if (!debug && result > 0) {
+				String message = "L'insertion du modèle " + name + " a été réalisée avec succès!";
+				JOptionPane.showMessageDialog(null, message);
+			} else if (!debug && result <= 0) {
+				String message = "L'insertion du modèle " + name + " n'a pas pu être réalisée";
+				JOptionPane.showMessageDialog(null, message);
+			}
+			// System.exit(0);
+			success = true;
+			return result > 0;
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (!success) {
+				try {
+					con.close();
+				} catch (SQLException e) {
+					System.err.println(e);
+				}
+			}
+		}
+		if (!debug) {
+			String message = "Le modèle " + name + " n'a pas pu être insérée";
+			JOptionPane.showMessageDialog(null, message, "Mauvais arguments", JOptionPane.ERROR_MESSAGE);
+		}
+		return false;
 	}
 
 	/**
@@ -508,7 +627,7 @@ public class FenetreTable extends JFrame {
 	/**
 	 * Donne la date d'aujourd'hui
 	 * 
-	 * @return
+	 * @return un String de la date en YYYY/MM/DD
 	 */
 	public String today() {
 		Calendar dat = new GregorianCalendar();
@@ -516,8 +635,7 @@ public class FenetreTable extends JFrame {
 	}
 
 	/**
-	 * Crée un JOptionPane d'erreur en fonction de la validité du nom, chemin et
-	 * keywords
+	 * Crée un JOptionPane d'erreur en fonction de la validité du nom, chemin et keywords
 	 * 
 	 * @param name
 	 * @param chemin

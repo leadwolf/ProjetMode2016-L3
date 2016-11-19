@@ -15,7 +15,7 @@ import javax.swing.JOptionPane;
 import bddInterface.FenetreTable;
 
 /**
- * @author Master
+ * @author L3
  *
  */
 public class BaseDeDonnees {

@@ -16,17 +16,34 @@ import javax.swing.JTable;
  */
 public class TablePanel extends JPanel {
 
+	@SuppressWarnings("javadoc")
 	private static final long serialVersionUID = -2526625545035179794L;
+	/**
+	 * La table qui sera affichée
+	 */
 	private JTable table;
+	/**
+	 * Le modèle du table utilisée
+	 */
 	private TableModel tableModel;
-	private String[][] dataArray;
-	private JScrollPane scrollPane;
+	/**
+	 * Les noms des colonnes, sert à inialiser les dimensions ou valeurs
+	 */
 	private String[] columnNames;
+	/**
+	 * Array 2D des données, sert à initialiser les dimensions ou valeurs
+	 */
+	private String[][] dataArray;
+	/**
+	 * ScrollPane qui contiendra la table
+	 */
+	private JScrollPane scrollPane;
 
 	/**
 	 * Crée un tableau avec les noms et valeurs des colonnes et champs donnés
-	 * @param columnNames
-	 * @param dataArray
+	 * 
+	 * @param columnNames les noms de colonnes à utiliser
+	 * @param dataArray les données à utliser pour remplir la table
 	 */
 	public TablePanel(String[] columnNames, String[][] dataArray) {
 		super();
@@ -42,12 +59,11 @@ public class TablePanel extends JPanel {
 			}
 		}
 
-		
 		tableModel = new TableModel(this.columnNames, this.dataArray);
 		table = new JTable(tableModel);
 		table.putClientProperty("terminateEditOnFocusLost", true);
 		tableModel.setEditable(true);
-		
+
 		scrollPane = new JScrollPane(table);
 
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -56,9 +72,10 @@ public class TablePanel extends JPanel {
 
 	/**
 	 * Crée un tableau vide mais avec des noms de colonnes donnés
-	 * @param dataRows
-	 * @param dataColumns
-	 * @param columnNames
+	 * 
+	 * @param dataRows le nombre de lignes de la table des données
+	 * @param dataColumns le nombre de colonnes de la table des données
+	 * @param columnNames les noms de colonnes à utliser
 	 */
 	public TablePanel(int dataRows, int dataColumns, String[] columnNames) {
 		super();
@@ -73,7 +90,7 @@ public class TablePanel extends JPanel {
 				this.dataArray[i][j] = "";
 			}
 		}
-		
+
 		tableModel = new TableModel(this.columnNames, this.dataArray);
 		table = new JTable(tableModel);
 		table.putClientProperty("terminateEditOnFocusLost", true);
@@ -85,10 +102,16 @@ public class TablePanel extends JPanel {
 		add(scrollPane);
 	}
 
+	/**
+	 * @return le JTable utilisée
+	 */
 	public JTable getTable() {
 		return this.table;
 	}
-	
+
+	/**
+	 * @return le TableModel du JTable utilisée
+	 */
 	public TableModel getTableModel() {
 		return this.tableModel;
 	}

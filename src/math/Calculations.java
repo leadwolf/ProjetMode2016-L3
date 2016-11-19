@@ -112,6 +112,32 @@ public class Calculations {
 		Calculations.translatePoints(panel.getFigure(), -moveX, -moveY, 0);
 	}
 	
+	
+	/**
+	 * Applique une homothétie pour que la plus grande dimensions
+	 * (largeur ou longueur) de la figure prenne <b>maxSize</b> de l'écran
+	 * @param maxSize
+	 */
+	public static void fitFigureToWindow(VisualisationPanel panel, double maxSize) {
+		// scale by height
+		refreshFigDims(panel);
+		double scale = 1.0;
+		if (panel.getHeight() == 0 || panel.getWidth() == 0) {
+			if (panel.getFigure().getHeightFig() > panel.getFigure().getWidthFig()) {
+				scale = (panel.getHeightWindow() * maxSize) / panel.getFigure().getHeightFig();
+			} else { // scale by width
+				scale = (panel.getHeightWindow() * maxSize) / panel.getFigure().getWidthFig();
+			}
+		} else {
+			if (panel.getFigure().getHeightFig() > panel.getFigure().getWidthFig()) {
+				scale = (panel.getHeight() * maxSize) / panel.getFigure().getHeightFig();
+			} else { // scale by width
+				scale = (panel.getWidth() * maxSize) / panel.getFigure().getWidthFig();
+			}
+		}
+		Calculations.scale(panel.getFigure(), scale);
+	}
+	
 	/**
 	 * Donne la valeur absolue du cosinus de la norme d'une face et le vecteur directeur de la lumière tel que cos(N,L)
 	 * @param fig

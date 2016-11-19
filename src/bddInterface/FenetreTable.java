@@ -42,12 +42,12 @@ public class FenetreTable extends JFrame {
 	Dimension dim;
 
 	/**
-	 * Crée une FenetreTable soit avec des données existantes pour --edit ou vide si rs == null pour --add
+	 * Crée une FenetreTable soit avec des données existantes pour --edit ou vide si rs est null pour --add
 	 * 
-	 * @param rows
-	 * @param cols
-	 * @param rs
-	 * @param connection
+	 * @param rows le nombre de lignes de la table
+	 * @param cols le nombre de colonnes de la table
+	 * @param rs ResultSet des données à utliser dans la table, null si veut laisser vide
+	 * @param connection la connection utilisée pour les requêtes update/edit
 	 */
 	public FenetreTable(int rows, int cols, ResultSet rs, Connection connection) {
 		boolean success = false;
@@ -84,16 +84,11 @@ public class FenetreTable extends JFrame {
 	/**
 	 * Crée une fenetre avec un TablePanel avec des boutons mais champs vides
 	 * 
-	 * @param title
-	 *            le titre de ce fenetre
-	 * @param rows
-	 *            le nombre de lignes vides à avoir
-	 * @param buttonNames
-	 *            les noms des boutons à avoir, laisser null si pas de boutons
-	 * @param colNames
-	 *            les noms des colonnes
-	 * @param noModifyColumns
-	 *            les colonnes qui ne seront pas possibles de modifier
+	 * @param title le titre de ce fenetre
+	 * @param rows le nombre de lignes vides à avoir
+	 * @param buttonNames les noms des boutons à avoir, laisser null si pas de boutons
+	 * @param colNames les noms des colonnes
+	 * @param noModifyColumns les colonnes qui ne seront pas possibles de modifier
 	 * @param connection
 	 */
 	public FenetreTable(String title, int rows, String[] buttonNames, String[] colNames, int[] noModifyColumns, Connection connection) {
@@ -122,18 +117,12 @@ public class FenetreTable extends JFrame {
 	/**
 	 * Crée une fenetre avec un TabelPanel, des boutons et des champs remplis
 	 * 
-	 * @param title
-	 *            le titre de ce fenetre
-	 * @param rows
-	 *            le nombre de lignes que la table comportera
-	 * @param buttonNames
-	 *            les noms des boutons à avoir, laisser null si pas de boutons
-	 * @param rs
-	 *            un ResultSet qui comporte les valeurs avec lesquelles remplir la table
-	 * @param colNames
-	 *            les noms des colonnes
-	 * @param noModifyColumns
-	 *            les colonnes qui ne seront pas possibles à modifier
+	 * @param title le titre de ce fenetre
+	 * @param rows le nombre de lignes que la table comportera
+	 * @param buttonNames les noms des boutons à avoir, laisser null si pas de boutons
+	 * @param rs un ResultSet qui comporte les valeurs avec lesquelles remplir la table
+	 * @param colNames les noms des colonnes
+	 * @param noModifyColumns les colonnes qui ne seront pas possibles à modifier
 	 * @param connection
 	 */
 	public FenetreTable(String title, int rows, String[] buttonNames, ResultSet rs, String[] colNames, int[] noModifyColumns, Connection connection) {
@@ -256,8 +245,8 @@ public class FenetreTable extends JFrame {
 	 * Crée mainPanel, fenetre et ajoute des boutons
 	 * 
 	 * @param title
-	 * @param rows
-	 * @param buttonNames 
+	 * @param rows le nombre de lignes que comportera la table
+	 * @param buttonNames les noms des boutons
 	 */
 	private void SetupPanelWithButtons(String title, int rows, String[] buttonNames) {
 

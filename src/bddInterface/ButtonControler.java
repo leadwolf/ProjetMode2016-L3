@@ -4,14 +4,24 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 /**
- * Cette classe permet de réagir aux actions des boutons
+ * Cette classe permet d'exécuter les requêtes SQL correspondants aux boutons concernés
+ * 
  * @author L3
  *
  */
-public class ButtonControler implements ActionListener{
+public class ButtonControler implements ActionListener {
 
+	/**
+	 * le {@link FenetreTable} à qui ce contrôleur est lié
+	 */
 	private FenetreTable frame;
-	
+
+	/**
+	 * Constructeur principale
+	 * 
+	 * @param frame
+	 *            le {@link FenetreTable} à qui ce contrôleur est lié
+	 */
 	public ButtonControler(FenetreTable frame) {
 		this.frame = frame;
 	}
@@ -31,7 +41,7 @@ public class ButtonControler implements ActionListener{
 		default:
 			break;
 		}
-		
+
 	}
 
 }

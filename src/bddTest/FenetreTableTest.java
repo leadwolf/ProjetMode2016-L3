@@ -18,7 +18,7 @@ import bddInterface.FenetreTable;
 /**
  * Classe de test de fonctionnement de la classe {@link FenetreTable}, spécifiquement de l'insertion et update
  * 
- * @author Master
+ * @author L3
  *
  */
 public class FenetreTableTest {
@@ -76,7 +76,7 @@ public class FenetreTableTest {
 	/**
 	 * Initialise une {@link FenetreTable} avec les données correspondantes au nom du model fourni
 	 * 
-	 * @param model
+	 * @param model le modèle concerné par la Fenêtre d'édition, null si veut champs vides
 	 */
 	public void initFenetreTableEdit(String model) {
 		boolean success = false;

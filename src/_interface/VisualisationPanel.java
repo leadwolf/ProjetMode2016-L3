@@ -110,7 +110,7 @@ public class VisualisationPanel extends JPanel {
 		if (zoom != 1.0) {
 			zoom(zoom);
 		} else {
-			fitFigureToWindow(0.65);
+			Calculations.fitFigureToWindow(this, 0.65);
 		}
 		Calculations.centrerFigure(this);
 		figure.getPtsMat().importPoints(figure.getPtsTrans(), 3);
@@ -157,30 +157,6 @@ public class VisualisationPanel extends JPanel {
 		Calculations.scale(figure, scaleFactor);
 	}
 
-	/**
-	 * Applique une homothétie pour que la plus grande dimensions
-	 * (largeur ou longueur) de la figure prenne <b>maxSize</b> de l'écran
-	 * @param maxSize
-	 */
-	private void fitFigureToWindow(double maxSize) {
-		// scale by height
-		Calculations.refreshFigDims(this);
-		double scale = 1.0;
-		if (getHeight() == 0 || getWidth() == 0) {
-			if (figure.getHeightFig() > figure.getWidthFig()) {
-				scale = (heightWindow * maxSize) / figure.getHeightFig();
-			} else { // scale by width
-				scale = (widthWindow * maxSize) / figure.getWidthFig();
-			}
-		} else {
-			if (figure.getHeightFig() > figure.getWidthFig()) {
-				scale = (getHeight() * maxSize) / figure.getHeightFig();
-			} else { // scale by width
-				scale = (getWidth() * maxSize) / figure.getWidthFig();
-			}
-		}
-		Calculations.scale(figure, scale);
-	}
 
 	/**
 	 * Vide le container Path2D de {@link Figure#getPolygones()} pour le ré-remplir avec les

@@ -15,34 +15,47 @@ import javax.swing.JOptionPane;
 import bddInterface.FenetreTable;
 
 /**
+ * Cette classe permet d'exécuter toutes les requêtes vers la base de données des modèles
  * @author L3
  *
  */
 public class BaseDeDonnees {
 
+	/**
+	 * La liste de modèles
+	 */
 	static String[] items;
+	/**
+	 * La connection utilisée par cette classe
+	 */
 	private static Connection connection;
 
+	/**
+	 * Constructeur par défaut, initalise la liste des modèles à utilser dans le remplissage de la table
+	 */
 	public BaseDeDonnees() {
 		File path = new File("ply/");
 		items = path.list();
 	}
 
+	/**
+	 * @return la date d'aujourd'hui sous forme YYYY/MM/DD
+	 */
 	public static String toDay() {
 		Calendar dat = new GregorianCalendar();
 		return dat.get(Calendar.YEAR) + "/" + dat.get(Calendar.MONTH) + "/" + dat.get(Calendar.DAY_OF_MONTH);
 	}
 
+	@SuppressWarnings("javadoc")
 	public static void main(String[] args) {
 		parseArgs(args, false, false, false);
 	}
 
 	/**
-	 * Verifie seuelement si la syntaxte des arguments sont corrects, pas si la
-	 * commande a pu être éxecutée
+	 * Verifie seuelement si la syntaxte des arguments sont corrects, pas si la commande a pu être éxecutée
 	 * 
 	 * @param args
-	 * @return
+	 * @return si les arguments sont corrects
 	 */
 	public static boolean verifArgs(String[] args) {
 		if (args[0].equals("--name")) {
@@ -86,10 +99,11 @@ public class BaseDeDonnees {
 	/**
 	 * Vérifie les arguments et éxecute l'interface pertinente
 	 * 
-	 * @param args
-	 * @param debug
-	 * @return si la requête était correcte et que l'interface, si besoin, a été
-	 *         éxecutée
+	 * @param args les arguments à vérifier
+	 * @param reset réinitialisation ou non de la table
+	 * @param fill ré-remplissage de la table
+	 * @param debug afficher ou non les fenêtres
+	 * @return si la requête était correcte et que l'interface, si besoin, a été éxecutée
 	 */
 	public static boolean parseArgs(String[] args, boolean reset, boolean fill, boolean debug) {
 
@@ -105,7 +119,7 @@ public class BaseDeDonnees {
 			Class.forName("org.sqlite.JDBC");
 
 			connection = DriverManager.getConnection("jdbc:sqlite:data/test.sqlite");
-			
+
 			if (reset) {
 				resetTable(connection);
 			}
@@ -161,12 +175,12 @@ public class BaseDeDonnees {
 	/**
 	 * Drop la table PLY et la recrée
 	 * 
-	 * @param connection
+	 * @param connection la conenction utilisée pour supprimer la table
 	 */
 	public static void resetTable(Connection connection) {
 		boolean success = false;
 		try {
-			
+
 			PreparedStatement firstStatement = connection.prepareStatement("drop table PLY");
 			firstStatement.executeUpdate();
 			PreparedStatement secondStatement = connection.prepareStatement("create table PLY(NOM text, CHEMIN text, DATE text, DESCRIPTION text)");
@@ -189,18 +203,19 @@ public class BaseDeDonnees {
 	/**
 	 * Remplit la table PLY avec les fichiers dans le dossier ply/
 	 * 
-	 * @param connection
+	 * @param connection la connection utilisée pour remplir la table
 	 */
 	public static void fillTable(Connection connection) {
 		boolean success = false;
 		new BaseDeDonnees();
 		try {
-			
+
 			Statement firstStatement;
 			firstStatement = connection.createStatement();
 			for (int i = 0; i < items.length; i++) {
 				String nom = items[i].substring(0, items[i].lastIndexOf(".ply"));
-				firstStatement.executeUpdate("insert into PLY values " + "('" + nom + "', 'ply/" + items[i] + "', '" + toDay() + "' ,'mes mots clés')");
+				firstStatement
+						.executeUpdate("insert into PLY values " + "('" + nom + "', 'ply/" + items[i] + "', '" + toDay() + "' ,'mes mots clés')");
 			}
 			success = true;
 		} catch (SQLException e) {
@@ -208,7 +223,7 @@ public class BaseDeDonnees {
 		} finally {
 			if (!success) {
 				try {
-					
+
 					connection.close();
 				} catch (SQLException e) {
 					System.err.println(e);
@@ -217,6 +232,9 @@ public class BaseDeDonnees {
 		}
 	}
 
+	/**
+	 * Ferme la connection utilisée par cette classe
+	 */
 	public static void closeConnection() {
 		try {
 			if (connection != null) {
@@ -226,14 +244,14 @@ public class BaseDeDonnees {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * Vérifie et crée la fenetre d'informations sur le modèle précisé
 	 * 
-	 * @param i
-	 * @param args
-	 * @param connection
-	 * @param debug
+	 * @param i la place de "--name" dans les arguments. Servira à parcourir la liste si on aura besoin d'afficher de multiples modèles
+	 * @param args le modèle à afficher
+	 * @param connection la connection utilsée pour les requêtes
+	 * @param debug afficher ou non les fenêtres
 	 * @return si le modele existe et qu'il a pu créer la fenêtre
 	 */
 	public static boolean showName(int i, String[] args, Connection connection, boolean debug) {
@@ -282,7 +300,7 @@ public class BaseDeDonnees {
 			} finally {
 				if (!success) {
 					try {
-						
+
 						connection.close();
 					} catch (SQLException e) {
 						System.err.println(e);
@@ -310,10 +328,10 @@ public class BaseDeDonnees {
 	/**
 	 * Vérifie les arguments et crée la fenetre listant toute la base
 	 * 
-	 * @param i
-	 * @param args
-	 * @param connection
-	 * @param debug
+	 * @param i la place de "--all" dans les arguments
+	 * @param args les arguments, sert à vérifier aucun paramètres inutiles
+	 * @param connection la connection utilsée pour les requêtes
+	 * @param debug afficher ou non les requêtes
 	 * @return s'il a pu créer la fenêtre
 	 */
 	public static boolean showAll(int i, String[] args, Connection connection, boolean debug) {
@@ -331,7 +349,8 @@ public class BaseDeDonnees {
 							PreparedStatement statement2 = connection.prepareStatement("select * from PLY");
 							rs2 = statement2.executeQuery();
 							String[] columnNames = new String[] { "Nom", "Chemin", "Date", "Mot Clés" };
-							FenetreTable fen = new FenetreTable("All models", totalLines, null, rs2, columnNames, new int[] { 1, 2, 3, 4 }, connection);
+							FenetreTable fen = new FenetreTable("All models", totalLines, null, rs2, columnNames, new int[] { 1, 2, 3, 4 },
+									connection);
 							fen.setPanelBorderTitle("");
 						}
 						success = true;
@@ -346,9 +365,9 @@ public class BaseDeDonnees {
 						return false;
 					}
 				}
-				
+
 				success = true;
-				
+
 			} catch (SQLException e) {
 				e.printStackTrace();
 			} finally {
@@ -372,13 +391,12 @@ public class BaseDeDonnees {
 	}
 
 	/**
-	 * Vérifie les arguments et puis crée la fenetre listant les informations
-	 * des modèles correspondants aux keywords
+	 * Vérifie les arguments et puis crée la fenetre listant les informations des modèles correspondants aux keywords
 	 * 
-	 * @param i
-	 * @param args
-	 * @param connection
-	 * @param debug
+	 * @param i la place de "--find" dans les arguments
+	 * @param args les mots clés à rechercher
+	 * @param connection la connection utilsée pour les requêtes
+	 * @param debug afficher ou non les fenêtres
 	 * @return s'il a trouvé des modèles et a pu affiché la fenêtre
 	 */
 	public static boolean find(int i, String[] args, Connection connection, boolean debug) {
@@ -388,61 +406,62 @@ public class BaseDeDonnees {
 		if (args.length - 1 > i) {
 			boolean success = false;
 			try {
-			String queryCount = "select COUNT(*) from PLY where DESCRIPTION like";
-			String queryString = "select * from PLY where DESCRIPTION like";
-			for (int j = i + 1; j < args.length; j++) {
-				if (j == i + 1) {
-					queryString += " ?";
-					queryCount += " ?";
-				} else {
-					queryString += " union select * from PLY where DESCRIPTION LIKE ?";
-					queryCount += " ?";
-				}
-			}
-			queryString += ";";
-			queryCount += ";";
-			PreparedStatement statement = connection.prepareStatement(queryCount);
-			PreparedStatement statement2 = connection.prepareStatement(queryString);
-			for (int j = i + 1; j < args.length; j++) {
-				statement.setString(j, "%" + args[j] + "%");
-				statement2.setString(j, "%" + args[j] + "%");
-				if (j < args.length - 1) {
-					matching += "\"" + args[j] + "\", ";
-				} else {
-					matching += "\"" + args[j] + "\"";
-				}
-			}
-			rs = statement.executeQuery();
-			if (rs.next()) {
-				int totalLines = Integer.parseInt(rs.getString(1));
-				if (totalLines > 0) {
-					if (!debug) {
-						rs2 = statement2.executeQuery();
-						String[] columnNames = new String[] { "Nom", "Chemin", "Date", "Mot Clés" };
-						FenetreTable fen = new FenetreTable("Find models", totalLines, null, rs2, columnNames, new int[] { 1, 2, 3, 4 }, connection);
-						fen.setPanelBorderTitle("Models with keywords matching one of: " + matching);
+				String queryCount = "select COUNT(*) from PLY where DESCRIPTION like";
+				String queryString = "select * from PLY where DESCRIPTION like";
+				for (int j = i + 1; j < args.length; j++) {
+					if (j == i + 1) {
+						queryString += " ?";
+						queryCount += " ?";
+					} else {
+						queryString += " union select * from PLY where DESCRIPTION LIKE ?";
+						queryCount += " ?";
 					}
-					success = true;
-					return true;
-				} else {
-					if (!debug) {
-						String message = "Aucun modèle trouvé comportant ces mot clés";
-						JOptionPane.showMessageDialog(null, message, "Mauvais arguments", JOptionPane.ERROR_MESSAGE);
-					}
-					// System.exit(1);
-					success = true;
-					return false;
 				}
-			}
-			
-			success = true;
-			
+				queryString += ";";
+				queryCount += ";";
+				PreparedStatement statement = connection.prepareStatement(queryCount);
+				PreparedStatement statement2 = connection.prepareStatement(queryString);
+				for (int j = i + 1; j < args.length; j++) {
+					statement.setString(j, "%" + args[j] + "%");
+					statement2.setString(j, "%" + args[j] + "%");
+					if (j < args.length - 1) {
+						matching += "\"" + args[j] + "\", ";
+					} else {
+						matching += "\"" + args[j] + "\"";
+					}
+				}
+				rs = statement.executeQuery();
+				if (rs.next()) {
+					int totalLines = Integer.parseInt(rs.getString(1));
+					if (totalLines > 0) {
+						if (!debug) {
+							rs2 = statement2.executeQuery();
+							String[] columnNames = new String[] { "Nom", "Chemin", "Date", "Mot Clés" };
+							FenetreTable fen = new FenetreTable("Find models", totalLines, null, rs2, columnNames, new int[] { 1, 2, 3, 4 },
+									connection);
+							fen.setPanelBorderTitle("Models with keywords matching one of: " + matching);
+						}
+						success = true;
+						return true;
+					} else {
+						if (!debug) {
+							String message = "Aucun modèle trouvé comportant ces mot clés";
+							JOptionPane.showMessageDialog(null, message, "Mauvais arguments", JOptionPane.ERROR_MESSAGE);
+						}
+						// System.exit(1);
+						success = true;
+						return false;
+					}
+				}
+
+				success = true;
+
 			} catch (SQLException e) {
 				e.printStackTrace();
 			} finally {
 				if (!success) {
 					try {
-						
+
 						connection.close();
 					} catch (SQLException e) {
 						System.err.println(e);
@@ -463,9 +482,8 @@ public class BaseDeDonnees {
 	/**
 	 * Crée la fenêtre d'insertion de modèle
 	 * 
-	 * @param connection
-	 * @return si fenêtre crée. Pour savoir si requête sql éxecutée, voir
-	 *         {@link FenetreTable}
+	 * @param connection la connection utilsée pour les requêtes
+	 * @return si fenêtre crée. Pour savoir si requête sql éxecutée, voir {@link FenetreTable}
 	 */
 	public static boolean add(Connection connection) {
 		String[] columnNames = { "Nom", "Chemin", "Date", "Description" };
@@ -476,17 +494,15 @@ public class BaseDeDonnees {
 	}
 
 	/**
-	 * Vérifie les argumuments et puis crée la fenetre de modification du modèle
-	 * précisé s'ils sont valides
+	 * Vérifie les argumuments et puis crée la fenetre de modification du modèle précisé s'ils sont valides
 	 * 
-	 * @param i
-	 * @param args
-	 * @param connection
-	 * @return si fenêtre bien crée. Pour savoir si requête sql éxecutée, voir
-	 *         {@link FenetreTable}
+	 * @param i la place de "--edit" dans les arguments. Servira à parcourir la liste si on aura besoin de modifier de multiples modèles
+	 * @param args le modèle à supprimer
+	 * @param connection la connection utilsée pour les requêtes
+	 * @return si fenêtre bien crée. Pour savoir si requête sql éxecutée, voir {@link FenetreTable}
 	 */
 	private static boolean edit(int i, String[] args, Connection connection) {
-		
+
 		boolean success = false;
 		if (args.length - 1 == i + 1) {
 			try {
@@ -518,9 +534,9 @@ public class BaseDeDonnees {
 				e.printStackTrace();
 			} finally {
 				if (!success) {
-					
+
 					try {
-						
+
 						connection.close();
 					} catch (SQLException e) {
 						System.err.println(e);
@@ -542,10 +558,11 @@ public class BaseDeDonnees {
 	}
 
 	/**
-	 * @param i
-	 * @param args
-	 * @param connection
-	 * @return si modèle bien supprimée
+	 * @param i la place de "--delete" dans les arguments. Servira à parcourir la liste si on aura besoin de supprimer de multiples modèles
+	 * @param args le modèle à supprimer
+	 * @param connection la connection utilsée pour les requêtes
+	 * @param debug afficher ou non les fenêtres
+	 * @return si modèle a bien été supprimé
 	 */
 	private static boolean delete(int i, String[] args, Connection connection, boolean debug) {
 		boolean success = false;

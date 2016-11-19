@@ -3,30 +3,47 @@ package bddInterface;
 import javax.swing.table.AbstractTableModel;
 
 /**
- * Cette clase permet d'avoir des cellules modifiables ou non
+ * Cette clase est un modèle de JTable. Elle permet de customiser son comportment. Ici nous l'utilisons principalement pour modifier les permissions
+ * d'édition des cellules
+ * 
  * @author L3
  *
  */
 public class TableModel extends AbstractTableModel {
 
+	/**
+	 * Array de noms de colonnes que comportera la JTable
+	 */
 	private Object[] columnNames;
+	/**
+	 * Array 2D de données que comportera la JTable
+	 */
 	private Object[][] data;
+	/**
+	 * Array 2D qui permet de sauvegarder les permissions d'édition des cellules
+	 */
 	private boolean[][] editable;
 
-	private static final long serialVersionUID = 2590977835553440556L;
+	@SuppressWarnings("javadoc")
+	static final long serialVersionUID = 2590977835553440556L;
 
-	private TableModel(Object[] columnData) {
+	/**
+	 * Constructeur qui exécute super() et met en place les noms de colonnes.
+	 * @param columnNames les noms de colonnes à appliquer
+	 */
+	private TableModel(Object[] columnNames) {
 		super();
 
-		this.columnNames = new Object[columnData.length];
-		for (int i = 0; i < columnData.length; i++) {
-			this.columnNames[i] = columnData[i];
+		this.columnNames = new Object[columnNames.length];
+		for (int i = 0; i < columnNames.length; i++) {
+			this.columnNames[i] = columnNames[i];
 		}
 
 	}
-	
+
 	/**
-	 * Crée un tableau dont les noms des colonnes sont connus mais pas les champs
+	 * Crée un tableau dont les noms des colonnes sont connus mais pas les données
+	 * 
 	 * @param columnData
 	 * @param dataRows le nombre de lignes vides à avoir dans le tableau
 	 * @param dataColumns le nombre de colonnes vides à avoir dans le tableau
@@ -47,11 +64,12 @@ public class TableModel extends AbstractTableModel {
 			}
 		}
 	}
-	
+
 	/**
 	 * Crée un tableau avec les noms des colonnes et remplit le tableau avec l'array donné
-	 * @param columnData
-	 * @param data
+	 * 
+	 * @param columnData les noms de colonnes  à appliquer
+	 * @param data les données à placer dans la table
 	 */
 	public TableModel(Object[] columnData, Object[][] data) {
 		this(columnData);
@@ -60,7 +78,8 @@ public class TableModel extends AbstractTableModel {
 
 	/**
 	 * Modifie la possibilité d'éditer la totalité du tableau
-	 * @param isEditable
+	 * 
+	 * @param isEditable permission d'édition de la table entière
 	 */
 	public void setEditable(boolean isEditable) {
 		if (editable != null) {
@@ -108,18 +127,20 @@ public class TableModel extends AbstractTableModel {
 
 	/**
 	 * Modifie la possibilité d'éditer une seule cellule en particulier
-	 * @param row
-	 * @param column
-	 * @param editable
+	 * 
+	 * @param row la ligne de la cellule concernée
+	 * @param column la colonne de la cellule concernée
+	 * @param editable la permission à appliquer
 	 */
 	public void setCellEditable(int row, int column, boolean editable) {
 		this.editable[row][column] = editable;
 	}
-	
+
 	/**
 	 * Crée le tableau de valeurs nulles
-	 * @param rows
-	 * @param columns
+	 * 
+	 * @param rows le nombre de lignes que comportera la table
+	 * @param columns le nombre de colonnes que compertera la table
 	 */
 	private void initData(int rows, int columns) {
 		this.editable = new boolean[rows][columns];
@@ -131,10 +152,11 @@ public class TableModel extends AbstractTableModel {
 			}
 		}
 	}
-	
+
 	/**
 	 * Remplace las valeurs du tableau avec celui donné
-	 * @param data
+	 * 
+	 * @param data les donneés à utiliser
 	 */
 	private void setData(Object[][] data) {
 		this.editable = new boolean[data.length][data[0].length];

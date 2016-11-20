@@ -2,11 +2,12 @@ package bddTest;
 
 import static org.junit.Assert.*;
 
+import java.nio.file.Paths;
+
 import org.junit.Test;
 
 import bdd.BaseDeDonnees;
 import erreur.BDDResultEnum;
-import erreur.BasicResultEnum;
 
 /**
  * Classe de test de fonctionnement de la classe BaseDeDonnees
@@ -24,11 +25,11 @@ public class BaseDeDonneesTest {
 
 		// on vient de reinitialiser et remplir la base (true, true)
 		String[] args = new String[] { "--all" };
-		assertEquals(BDDResultEnum.SHOW_ALL_SUCCESSFUL, BaseDeDonnees.parseArgs(args, true, true, true).getCode());
+		assertEquals(BDDResultEnum.SHOW_ALL_SUCCESSFUL, BaseDeDonnees.parseArgs(args, true, true, true, Paths.get("test-data/test.sqlite")).getCode());
 		BaseDeDonnees.closeConnection();
 
 		// on a reinitialisé la base mais pas rempli
-		assertEquals(BDDResultEnum.EMPTY_DB, BaseDeDonnees.parseArgs(args, true, false, true).getCode());
+		assertEquals(BDDResultEnum.EMPTY_DB, BaseDeDonnees.parseArgs(args, true, false, true, Paths.get("test-data/test.sqlite")).getCode());
 		BaseDeDonnees.closeConnection();
 	}
 
@@ -40,16 +41,16 @@ public class BaseDeDonneesTest {
 		
 		// on vient de reinitialiser et remplir la base
 		String[] args = new String[] { ("--name"), ("weathervane") };
-		assertEquals(BDDResultEnum.SHOW_NAME_SUCCESSFUL, BaseDeDonnees.parseArgs(args, true, true, true).getCode());
+		assertEquals(BDDResultEnum.SHOW_NAME_SUCCESSFUL, BaseDeDonnees.parseArgs(args, true, true, true, Paths.get("test-data/test.sqlite")).getCode());
 		BaseDeDonnees.closeConnection();
 
 		// on a reinitialise mais pas rempli la base
-		assertEquals(BDDResultEnum.EMPTY_DB, BaseDeDonnees.parseArgs(args, true, false, true).getCode());
+		assertEquals(BDDResultEnum.EMPTY_DB, BaseDeDonnees.parseArgs(args, true, false, true, Paths.get("test-data/test.sqlite")).getCode());
 		BaseDeDonnees.closeConnection();
 
 		// le modèle hello n'existe pas
 		String[] args2 = new String[] { ("--name"), ("hello") };
-		assertEquals(BDDResultEnum.MODEL_NOT_FOUND, BaseDeDonnees.parseArgs(args2, false, true, true).getCode());
+		assertEquals(BDDResultEnum.MODEL_NOT_FOUND, BaseDeDonnees.parseArgs(args2, false, true, true, Paths.get("test-data/test.sqlite")).getCode());
 		BaseDeDonnees.closeConnection();
 	}
 
@@ -61,21 +62,21 @@ public class BaseDeDonneesTest {
 		
 		// aucun modèle comporte le mot cle hello
 		String[] args = new String[] { ("--find"), ("hello") };
-		assertEquals(BDDResultEnum.MODEL_NOT_FOUND, BaseDeDonnees.parseArgs(args, true, true, true).getCode());
+		assertEquals(BDDResultEnum.MODEL_NOT_FOUND, BaseDeDonnees.parseArgs(args, true, true, true, Paths.get("test-data/test.sqlite")).getCode());
 		BaseDeDonnees.closeConnection();
 
 		// la base est vide
 		String[] args2 = new String[] { ("--find"), ("mot") };
-		assertEquals(BDDResultEnum.EMPTY_DB, BaseDeDonnees.parseArgs(args2, true, false, true).getCode());
+		assertEquals(BDDResultEnum.EMPTY_DB, BaseDeDonnees.parseArgs(args2, true, false, true, Paths.get("test-data/test.sqlite")).getCode());
 		BaseDeDonnees.closeConnection();
 		
 		// tous les modèles comportent celui ci
-		assertEquals(BDDResultEnum.FIND_SUCCESSFUL, BaseDeDonnees.parseArgs(args2, true, true, true).getCode());
+		assertEquals(BDDResultEnum.FIND_SUCCESSFUL, BaseDeDonnees.parseArgs(args2, true, true, true, Paths.get("test-data/test.sqlite")).getCode());
 		BaseDeDonnees.closeConnection();
 
 		// la base est rempli et "mes mots" existent dans les mots cles
 		String[] args3 = new String[] { ("--find"), ("mes mots") };
-		assertEquals(BDDResultEnum.FIND_SUCCESSFUL, BaseDeDonnees.parseArgs(args3, false, false, true).getCode());
+		assertEquals(BDDResultEnum.FIND_SUCCESSFUL, BaseDeDonnees.parseArgs(args3, false, false, true, Paths.get("test-data/test.sqlite")).getCode());
 		BaseDeDonnees.closeConnection();
 	}
 
@@ -87,15 +88,15 @@ public class BaseDeDonneesTest {
 
 		// la base est vide
 		String[] args = new String[] { ("--delete"), ("weathervane") };
-		assertEquals(BDDResultEnum.EMPTY_DB, BaseDeDonnees.parseArgs(args, true, false, true).getCode());
+		assertEquals(BDDResultEnum.EMPTY_DB, BaseDeDonnees.parseArgs(args, true, false, true, Paths.get("test-data/test.sqlite")).getCode());
 		BaseDeDonnees.closeConnection();
 
 		// la base vient d'être remplie
-		assertEquals(BDDResultEnum.DELTE_SUCCESSFUL, BaseDeDonnees.parseArgs(args, true, true, true).getCode());
+		assertEquals(BDDResultEnum.DELTE_SUCCESSFUL, BaseDeDonnees.parseArgs(args, true, true, true, Paths.get("test-data/test.sqlite")).getCode());
 		BaseDeDonnees.closeConnection();
 
 		// on vient de la supprimer
-		assertEquals(BDDResultEnum.MODEL_NOT_FOUND, BaseDeDonnees.parseArgs(args, false, false, true).getCode());
+		assertEquals(BDDResultEnum.MODEL_NOT_FOUND, BaseDeDonnees.parseArgs(args, false, false, true, Paths.get("test-data/test.sqlite")).getCode());
 		BaseDeDonnees.closeConnection();
 
 	}

@@ -1,6 +1,7 @@
 package bdd;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -54,7 +55,7 @@ public class BaseDeDonnees {
 
 	@SuppressWarnings("javadoc")
 	public static void main(String[] args) {
-		parseArgs(args, false, false, false);
+		parseArgs(args, false, false, false, null);
 	}
 
 	/**
@@ -102,6 +103,54 @@ public class BaseDeDonnees {
 		return false;
 	}
 
+	public static MethodResult parseArgs(String[] args, boolean reset, boolean fill, boolean debug, Path dbPath) {
+
+		if (dbPath == null) {
+			boolean success = false;
+			try {
+				// load the sqlite-JDBC driver using the current class loader
+				Class.forName("org.sqlite.JDBC");
+
+				connection = DriverManager.getConnection("jdbc:sqlite:data/test.sqlite");
+				success = true;
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} finally {
+				if (!success) {
+					try {
+						connection.close();
+					} catch (SQLException e) {
+						System.err.println(e);
+					}
+				}
+			}
+		} else {
+			boolean success = false;
+			try {
+				// load the sqlite-JDBC driver using the current class loader
+				Class.forName("org.sqlite.JDBC");
+				connection = DriverManager.getConnection("jdbc:sqlite:" + dbPath.getParent() + "/" + dbPath.getFileName());
+				success = true;
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} finally {
+				if (!success) {
+					try {
+						connection.close();
+					} catch (SQLException e) {
+						System.err.println(e);
+					}
+				}
+			}
+
+		}
+		return parseArgs(args, reset, fill, debug);
+	}
+
 	/**
 	 * Vérifie les arguments et éxecute l'interface pertinente
 	 * 
@@ -117,81 +166,52 @@ public class BaseDeDonnees {
 			return new BasicResult(BasicResultEnum.BAD_ARGUMENTS);
 		} // else continue program
 
-		connection = null;
-		boolean success = false;
-		try {
+		if (reset) {
+			resetTable(connection);
+		}
+		if (fill) {
+			fillTable(connection);
+		}
 
-			// load the sqlite-JDBC driver using the current class loader
-			Class.forName("org.sqlite.JDBC");
-
-			connection = DriverManager.getConnection("jdbc:sqlite:data/test.sqlite");
-
-			if (reset) {
-				resetTable(connection);
-			}
-			if (fill) {
-				fillTable(connection);
-			}
-
-			if (args.length > 0) {
-				for (int i = 0; i < args.length; i++) {
-					if (args[i].equals("--name")) {
-						success = true;
-						if (checkTable(connection).getCode().equals(BasicResultEnum.ALL_OK)) {
-							return showName(i, args, connection, debug);
-						} else {
-							return new BDDResult(BDDResultEnum.EMPTY_DB);
-						}
-					}
-					if (args[i].equals("--all")) {
-						success = true;
-						if (checkTable(connection).getCode().equals(BasicResultEnum.ALL_OK)) {
-							return showAll(i, args, connection, debug);
-						} else {
-							return new BDDResult(BDDResultEnum.EMPTY_DB);
-						}
-					}
-					if (args[i].equals("--find")) {
-						success = true;
-						if (checkTable(connection).getCode().equals(BasicResultEnum.ALL_OK)) {
-							return find(i, args, connection, debug);
-						} else {
-							return new BDDResult(BDDResultEnum.EMPTY_DB);
-						}
-					}
-					if (args[i].equals("--add")) {
-						success = true;
-						return add(connection);
-					}
-					if (args[i].equals("--delete")) {
-						success = true;
-						if (checkTable(connection).getCode().equals(BasicResultEnum.ALL_OK)) {
-							return delete(i, args, connection, debug);
-						} else {
-							return new BDDResult(BDDResultEnum.EMPTY_DB);
-						}
-					}
-					if (args[i].equals("--edit")) {
-						success = true;
-						if (checkTable(connection).getCode().equals(BasicResultEnum.ALL_OK)) {
-							return edit(i, args, connection);
-						} else {
-							return new BDDResult(BDDResultEnum.EMPTY_DB);
-						}
+		if (args.length > 0) {
+			for (int i = 0; i < args.length; i++) {
+				if (args[i].equals("--name")) {
+					if (checkTable(connection).getCode().equals(BasicResultEnum.ALL_OK)) {
+						return showName(i, args, connection, debug);
+					} else {
+						return new BDDResult(BDDResultEnum.EMPTY_DB);
 					}
 				}
-			}
-			success = true;
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			if (!success) {
-				try {
-					connection.close();
-				} catch (SQLException e) {
-					System.err.println(e);
+				if (args[i].equals("--all")) {
+					if (checkTable(connection).getCode().equals(BasicResultEnum.ALL_OK)) {
+						return showAll(i, args, connection, debug);
+					} else {
+						return new BDDResult(BDDResultEnum.EMPTY_DB);
+					}
+				}
+				if (args[i].equals("--find")) {
+					if (checkTable(connection).getCode().equals(BasicResultEnum.ALL_OK)) {
+						return find(i, args, connection, debug);
+					} else {
+						return new BDDResult(BDDResultEnum.EMPTY_DB);
+					}
+				}
+				if (args[i].equals("--add")) {
+					return add(connection);
+				}
+				if (args[i].equals("--delete")) {
+					if (checkTable(connection).getCode().equals(BasicResultEnum.ALL_OK)) {
+						return delete(i, args, connection, debug);
+					} else {
+						return new BDDResult(BDDResultEnum.EMPTY_DB);
+					}
+				}
+				if (args[i].equals("--edit")) {
+					if (checkTable(connection).getCode().equals(BasicResultEnum.ALL_OK)) {
+						return edit(i, args, connection);
+					} else {
+						return new BDDResult(BDDResultEnum.EMPTY_DB);
+					}
 				}
 			}
 		}
@@ -650,6 +670,7 @@ public class BaseDeDonnees {
 
 	/**
 	 * Vérifie si la table est vide
+	 * 
 	 * @param connection
 	 * @return
 	 */

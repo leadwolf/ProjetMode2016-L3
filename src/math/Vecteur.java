@@ -1,5 +1,7 @@
 package math;
 
+import java.util.Arrays;
+
 import modele.Point;
 
 public class Vecteur {
@@ -122,5 +124,34 @@ public class Vecteur {
 		res += "vecteur = (" + vecteur[0] + ", " + vecteur[1] + ", " + vecteur[2] + ")" ;
 		return res;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		long temp;
+		temp = Double.doubleToLongBits(norme);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		result = prime * result + Arrays.hashCode(vecteur);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Vecteur other = (Vecteur) obj;
+		if (Double.doubleToLongBits(norme) != Double.doubleToLongBits(other.norme))
+			return false;
+		if (!Arrays.equals(vecteur, other.vecteur))
+			return false;
+		return true;
+	}
+	
+	
 		
 }

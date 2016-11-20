@@ -10,10 +10,13 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import erreur.BasicResult;
+import erreur.BasicResultEnum;
+import erreur.MethodResult;
+import erreur.ReaderError;
+import erreur.ReaderErrorEnum;
 import modele.Face;
 import modele.Point;
-import modele.Segment;
-import reader.LectureErreurType.ErreurType;
 
 /**
  * Cette classe donne accès à la liste des Points et de Faces de l'objet .ply dont on veut modéliser à travers les méthodes {@link #getPoints()} et
@@ -24,17 +27,38 @@ import reader.LectureErreurType.ErreurType;
  */
 public class Lecture {
 
+	/**
+	 * Le Path vers le fichier .ply qu'on manipule.
+	 */
 	private Path file;
+	/** 
+	 * Le nombre de Points d'après "element vertex X". Sert à garder la trace de lecture du fichier.
+	 */
 	private int nbPoints;
+	/**
+	 * Le nombre de Faces d'apres "element face X". Sert à garder la trace de lecture du fichier.
+	 */
 	private int nbFaces;
-	private Pattern lastIntPattern;
+	/**
+	 * Règle le Charset de lecture pour les fichiers .ply
+	 */
 	private Charset charset;
+	/**
+	 * Les Points lus sont stockés ici.
+	 */
 	private List<Point> points;
+	/**
+	 * Les Faces lues sont stockés ici.
+	 */
 	private List<Face> faces;
-	private List<Segment> segments;
-	private boolean erreur = false;
+	/**
+	 * Si on veut empêcher les System.out.println lors d'erreus
+	 */
 	private boolean noPrint;
-	private LectureErreurType erreurType = null;
+	/**
+	 * Le type d'erreur si Lecture en rencontre.
+	 */
+	private MethodResult erreurType;
 
 	/**
 	 * Retourne la <b>List&ltPoint&gt</b> de l'objet .ply. Si celle n'est pas encore faite, on éxécute {@link #stockerPoints()}
@@ -54,37 +78,40 @@ public class Lecture {
 		return faces;
 	}
 
-	public List<Segment> getSegments() {
-		return segments;
-	}
-
-	public boolean isErreur() {
-		return erreur;
+	/**
+	 * Donne le résultat d'éxécution de Lecture.
+	 * 
+	 * @return Soit un {@link ReaderError} ou {@link BasicResult}
+	 */
+	public MethodResult getResult() {
+		if (erreurType == null) {
+			return new BasicResult(BasicResultEnum.ALL_OK);
+		}
+		return erreurType;
 	}
 
 	/**
 	 * Initialise variables
 	 * 
-	 * @param file
-	 *            le <b>Path</b> de l'objet .ply
+	 * @param file le <b>Path</b> de l'objet .ply
+	 * @param noPrint si on veut empêcher les System.out.println
 	 */
 	public Lecture(Path file, boolean noPrint) {
 		this.file = file;
 		this.noPrint = noPrint;
+		erreurType = null;
 		nbPoints = -1;
 		nbFaces = -1;
-		lastIntPattern = Pattern.compile("[^0-9]+([0-9]+)$");
 		charset = Charset.forName("US-ASCII");
 		points = new ArrayList<>();
 		faces = new ArrayList<>();
-		segments = new ArrayList<>();
 		getElements();
 	}
 
 	/**
 	 * Verifie que le fichier en parametre est un vrai fichier et que la premiere ligne est simplement "ply"
 	 * 
-	 * @return
+	 * @return si la vérification du fichier est OK
 	 */
 	public boolean verifieFichier() {
 		String filename = file.getFileName().toString();
@@ -102,9 +129,8 @@ public class Lecture {
 							System.out.println("Erreur dans fichier " + file.getFileName() + " : Fichier ne commence pas par \"ply\"");
 						}
 						if (erreurType == null) {
-							erreurType = new LectureErreurType(ErreurType.PLY_NOT_FOUND);
+							erreurType = new ReaderError(ReaderErrorEnum.PLY_NOT_FOUND);
 						}
-						erreur = true;
 						return false;
 					}
 				} catch (Exception e) {
@@ -115,9 +141,8 @@ public class Lecture {
 					System.out.println("Erreur dans fichier " + file.getFileName() + " : Fichier n'a pas l'extension .ply");
 				}
 				if (erreurType == null) {
-					erreurType = new LectureErreurType(ErreurType.BAD_EXTENSION);
+					erreurType = new ReaderError(ReaderErrorEnum.BAD_EXTENSION);
 				}
-				erreur = true;
 				return false;
 			}
 		}
@@ -125,9 +150,8 @@ public class Lecture {
 			System.out.println("Fichier " + file.getFileName() + " inexistant");
 		}
 		if (erreurType == null) {
-			erreurType = new LectureErreurType(ErreurType.FILE_NONEXISTING);
+			erreurType = new ReaderError(ReaderErrorEnum.FILE_NONEXISTING);
 		}
-		erreur = true;
 		return false;
 	}
 
@@ -139,20 +163,19 @@ public class Lecture {
 		return nbFaces;
 	}
 
+	/**
+	 * Exécute les méthodes de stockage de Points et Faces
+	 */
 	private void getElements() {
 		if (verifieFichier()) {
 			findNb();
-			if (!erreur) {
+			if (erreurType == null) {
 				stockerPoints();
 			}
-			if (!erreur) {
+			if (erreurType == null) {
 				stockerFaces();
 			}
 		}
-	}
-
-	public LectureErreurType getErreurType() {
-		return erreurType;
 	}
 
 	/**
@@ -170,9 +193,8 @@ public class Lecture {
 						System.out.println("Erreur dans fichier " + file.getFileName() + " : Nombre de points non indiqué");
 					}
 					if (erreurType == null) {
-						erreurType = new LectureErreurType(ErreurType.MISSING_ELEMENT_VERTEX);
+						erreurType = new ReaderError(ReaderErrorEnum.MISSING_ELEMENT_VERTEX);
 					}
-					erreur = true;
 				}
 			} while (line != null && !line.startsWith("element vertex"));
 			if (line != null) {
@@ -188,9 +210,8 @@ public class Lecture {
 						System.out.println("Erreur dans fichier " + file.getFileName() + " : Nombre de faces non indiqué");
 					}
 					if (erreurType == null) {
-						erreurType = new LectureErreurType(ErreurType.MISSING_ELEMENT_FACE);
+						erreurType = new ReaderError(ReaderErrorEnum.MISSING_ELEMENT_FACE);
 					}
-					erreur = true;
 				}
 			} while (line != null && !line.startsWith("element face"));
 			if (line != null) {
@@ -222,7 +243,7 @@ public class Lecture {
 								System.out.println("Peut être causée par un Point(s) manquant");
 							}
 							if (erreurType == null) {
-								erreurType = new LectureErreurType(ErreurType.MISSING_COORD);
+								erreurType = new ReaderError(ReaderErrorEnum.MISSING_COORD);
 							}
 						} else if (strArray.length > 3) {
 							if (!noPrint) {
@@ -230,10 +251,9 @@ public class Lecture {
 								System.out.println("Peut être causée par un Point(s) manquant ou nombre de Points incorrects");
 							}
 							if (erreurType == null) {
-								erreurType = new LectureErreurType(ErreurType.TOO_MANY_COORDS);
+								erreurType = new ReaderError(ReaderErrorEnum.TOO_MANY_COORDS);
 							}
 						}
-						erreur = true;
 					}
 				}
 				if (startCount) {
@@ -283,9 +303,8 @@ public class Lecture {
 					System.out.println("Peut être causée par une ligne supprimée ou nombre de faces incorrects");
 				}
 				if (erreurType == null) {
-					erreurType = new LectureErreurType(ErreurType.MISSING_FACE);
+					erreurType = new ReaderError(ReaderErrorEnum.MISSING_FACE);
 				}
-				erreur = true;
 			}
 			if (line != null && !line.startsWith("{")) {
 				// Fichier comporte plus de lignes qu'attendu
@@ -294,9 +313,8 @@ public class Lecture {
 					System.out.println("Trop de lignes par rapport au nombre de Faces");
 				}
 				if (erreurType == null) {
-					erreurType = new LectureErreurType(ErreurType.TOO_MANY_LINES);
+					erreurType = new ReaderError(ReaderErrorEnum.TOO_MANY_LINES);
 				}
-				erreur = true;
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -306,12 +324,9 @@ public class Lecture {
 	/**
 	 * Sauvegard la <b>List&ltPoint&gt</b> pour chaque Face de <b>List&ltFace&gt</b>
 	 * 
-	 * @param line
-	 *            la ligne contenant la liste de Points composant la Face courante
-	 * @param faces
-	 *            la liste de faces
-	 * @param points
-	 *            la liste de points
+	 * @param line la ligne contenant la liste de Points composant la Face courante
+	 * @param faces la liste de faces
+	 * @param points la liste de points
 	 */
 	private void getPointsDeFace(String line, List<Face> faces, List<Point> points) {
 		int expectedPoints = getPremierNombre(line);
@@ -323,9 +338,8 @@ public class Lecture {
 				System.out.println("Erreur dans fichier " + file.getFileName() + " : Face incomplet ou a trouvé point");
 			}
 			if (erreurType == null) {
-				erreurType = new LectureErreurType(ErreurType.MISSING_POINT_IN_FACE);
+				erreurType = new ReaderError(ReaderErrorEnum.MISSING_POINT_IN_FACE);
 			}
-			erreur = true;
 		}
 		faces.add(new Face());
 		Face tmpFace = faces.get(faces.size() - 1);
@@ -337,9 +351,8 @@ public class Lecture {
 					System.out.println("Erreur dans fichier " + file.getFileName() + " : Face fait référence à point \"" + element + "\" inexistant");
 				}
 				if (erreurType == null) {
-					erreurType = new LectureErreurType(ErreurType.POINT_NOT_FOUND);
+					erreurType = new ReaderError(ReaderErrorEnum.POINT_NOT_FOUND);
 				}
-				erreur = true;
 			} else {
 				tmpFace.addPoint(points.get(element));
 			}
@@ -349,10 +362,8 @@ public class Lecture {
 	/**
 	 * Remplis les coordonnes pour chaque Point dans <b>List&ltPoint&gt</b>
 	 * 
-	 * @param line
-	 *            le string a extraire les coordonnes
-	 * @param points
-	 *            la liste des points dont on ajoute les coordonnees
+	 * @param line le string a extraire les coordonnes
+	 * @param points la liste des points dont on ajoute les coordonnees
 	 */
 	private void getDoubles(String line, List<Point> points) {
 		String[] strArray = line.split(" ");
@@ -363,9 +374,8 @@ public class Lecture {
 				System.out.println("Peut être causée si attendait Point mais trouvé Face");
 			}
 			if (erreurType == null) {
-				erreurType = new LectureErreurType(ErreurType.TOO_MANY_COORDS);
+				erreurType = new ReaderError(ReaderErrorEnum.TOO_MANY_COORDS);
 			}
-			erreur = true;
 		}
 		Point tmpPoint = new Point();
 		points.add(tmpPoint);
@@ -380,20 +390,19 @@ public class Lecture {
 				System.out.println("Erreur dans fichier " + file.getFileName() + " : Point ne comporte pas 3 coordonnées");
 			}
 			if (erreurType == null) {
-				erreurType = new LectureErreurType(ErreurType.MISSING_COORD);
+				erreurType = new ReaderError(ReaderErrorEnum.MISSING_COORD);
 			}
-			erreur = true;
 		}
 	}
 
 	/**
 	 * Donne un nombre a la fin d'un string
 	 * 
-	 * @param line
-	 *            la ligne a extraire le numero
+	 * @param line la ligne a extraire le numero
 	 * @return le numero
 	 */
 	private int getDernierNombre(String line) {
+		Pattern lastIntPattern = Pattern.compile("[^0-9]+([0-9]+)$");
 		int number = 0;
 		String convert = "";
 		Matcher matcher = lastIntPattern.matcher(line);
@@ -404,8 +413,11 @@ public class Lecture {
 		return number;
 	}
 
+	/**
+	 * @param line
+	 * @return le premier nombre dans la ligne
+	 */
 	private int getPremierNombre(String line) {
-		int number = 0;
 		Matcher matcher = Pattern.compile("\\d+").matcher(line);
 		matcher.find();
 		return Integer.valueOf(matcher.group());

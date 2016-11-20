@@ -4,6 +4,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+import erreur.BasicResultEnum;
 import math.Matrice;
 import reader.Lecture;
 
@@ -86,13 +87,19 @@ public class Figure {
 		ptsMat.setHomogeneousCoords();
 	}
 	
+	
+	
+	public Lecture getLecture() {
+		return lecture;
+	}
+
 	public Point getCenter() {
 		return center;
 	}
 
 	public boolean getErreurLecture() {
 		if (lecture != null) {
-			return lecture.isErreur();
+			return lecture.getResult().equals(BasicResultEnum.ALL_OK);
 		} else {
 			return true;
 		}

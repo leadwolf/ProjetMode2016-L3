@@ -25,7 +25,7 @@ public class Main {
 			
 			createViewer();
 			
-			//diagnose();
+//			diagnose();
 		}
 	}
 	

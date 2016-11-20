@@ -6,8 +6,9 @@ import java.nio.file.Paths;
 
 import org.junit.Test;
 
+import erreur.BasicResultEnum;
+import erreur.ReaderErrorEnum;
 import reader.Lecture;
-import reader.LectureErreurType.ErreurType;
 
 /**
  * Test si {@link Lecture} détecte bien les erreurs dans le fichiers .ply
@@ -18,51 +19,54 @@ import reader.LectureErreurType.ErreurType;
 public class LectureTest {
 
 	/**
-	 * Test tous les types d'erreurs dans {@link ErreurType}
+	 * Test tous les types d'erreurs dans {@link ReaderErrorEnum}
 	 */
 	@Test
 	public void testLecture() {
 		Lecture lecture = new Lecture(Paths.get("badPLY/missingCoord.ply"), true);
-		assertEquals(ErreurType.MISSING_COORD, lecture.getErreurType().getErreur());
+		assertEquals(ReaderErrorEnum.MISSING_COORD, lecture.getResult().getCode());
 
 		// on ne peut pas directment détecter un point manquant, le seul moyen de savoir est lire le nombre de lignes dicté par l'entête et puis on ne peut que
 		// voir qu'il y a trop de coordonneés
 		lecture = new Lecture(Paths.get("badPLY/missingPoint.ply"), true);
-		assertEquals(ErreurType.TOO_MANY_COORDS, lecture.getErreurType().getErreur());
+		assertEquals(ReaderErrorEnum.TOO_MANY_COORDS, lecture.getResult().getCode());
 
 		lecture = new Lecture(Paths.get("badPLY/missingFace.ply"), true);
-		assertEquals(ErreurType.MISSING_FACE, lecture.getErreurType().getErreur());
+		assertEquals(ReaderErrorEnum.MISSING_FACE, lecture.getResult().getCode());
 
 		lecture = new Lecture(Paths.get("badPLY/missingPointInFace.ply"), true);
-		assertEquals(ErreurType.MISSING_POINT_IN_FACE, lecture.getErreurType().getErreur());
+		assertEquals(ReaderErrorEnum.MISSING_POINT_IN_FACE, lecture.getResult().getCode());
 
 		// une face fait référence vers un point non trouvé
 		lecture = new Lecture(Paths.get("badPLY/pointNotFound.ply"), true);
-		assertEquals(ErreurType.POINT_NOT_FOUND, lecture.getErreurType().getErreur());
+		assertEquals(ReaderErrorEnum.POINT_NOT_FOUND, lecture.getResult().getCode());
 
 		lecture = new Lecture(Paths.get("badPLY/tooManyLines.ply"), true);
-		assertEquals(ErreurType.TOO_MANY_LINES, lecture.getErreurType().getErreur());
+		assertEquals(ReaderErrorEnum.TOO_MANY_LINES, lecture.getResult().getCode());
 
 		lecture = new Lecture(Paths.get("badPLY/missingElementVertex.ply"), true);
-		assertEquals(ErreurType.MISSING_ELEMENT_VERTEX, lecture.getErreurType().getErreur());
+		assertEquals(ReaderErrorEnum.MISSING_ELEMENT_VERTEX, lecture.getResult().getCode());
 
 		lecture = new Lecture(Paths.get("badPLY/missingElementFace.ply"), true);
-		assertEquals(ErreurType.MISSING_ELEMENT_FACE, lecture.getErreurType().getErreur());
+		assertEquals(ReaderErrorEnum.MISSING_ELEMENT_FACE, lecture.getResult().getCode());
 
 		// fichier inexistant
 		lecture = new Lecture(Paths.get("badPLY/allo.ply"), true);
-		assertEquals(ErreurType.FILE_NONEXISTING, lecture.getErreurType().getErreur());
+		assertEquals(ReaderErrorEnum.FILE_NONEXISTING, lecture.getResult().getCode());
 
 		// pas d'extension .ply
 		lecture = new Lecture(Paths.get("badPLY/cube"), true);
-		assertEquals(ErreurType.BAD_EXTENSION, lecture.getErreurType().getErreur());
+		assertEquals(ReaderErrorEnum.BAD_EXTENSION, lecture.getResult().getCode());
 
 		// la première ligne de l'entête n'est pas composé uniquement de "ply"
 		lecture = new Lecture(Paths.get("badPLY/plyNotFound.ply"), true);
-		assertEquals(ErreurType.PLY_NOT_FOUND, lecture.getErreurType().getErreur());
+		assertEquals(ReaderErrorEnum.PLY_NOT_FOUND, lecture.getResult().getCode());
 
 		lecture = new Lecture(Paths.get("badPLY/cube.ply"), true);
-		assertFalse(lecture.isErreur());
+		assertEquals(BasicResultEnum.ALL_OK, lecture.getResult().getCode());
+
+		lecture = new Lecture(Paths.get("badPLY/cube.ply"), true);
+		assertEquals(BasicResultEnum.ALL_OK, lecture.getResult().getCode());
 	}
 
 }

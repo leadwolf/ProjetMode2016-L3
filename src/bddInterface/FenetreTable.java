@@ -19,6 +19,12 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import erreur.BDDResult;
+import erreur.BDDResultEnum;
+import erreur.BasicResult;
+import erreur.BasicResultEnum;
+import erreur.MethodResult;
+
 /**
  * Sert à présenter les informations à éditer, visualiser ou à insérer.
  * 
@@ -285,12 +291,13 @@ public class FenetreTable extends JFrame {
 	}
 
 	/**
-	 * Prend les valeurs à update du JTable, vérifie qu'elles sont différentes que les originales et exécute {@link #updateTable(String, String, String, boolean)}
+	 * Prend les valeurs à update du JTable, vérifie qu'elles sont différentes que les originales et exécute
+	 * {@link #updateTable(String, String, String, boolean)}
 	 * 
 	 * @param debug afficher ou non les JOptionPane d'erreur/succès
 	 * @return si le modèle a bien été mis à jour
 	 */
-	public boolean updateTableAmorce(boolean debug) {
+	public MethodResult updateTableAmorce(boolean debug) {
 
 		String name = "";
 		String chemin = "";
@@ -300,20 +307,29 @@ public class FenetreTable extends JFrame {
 		chemin = (String) tablePanel.getTable().getModel().getValueAt(0, 1);
 		keywords = (String) tablePanel.getTable().getModel().getValueAt(0, 3);
 
-		if ((name != null && !name.equals("") && name != orignalFields[0]) || (chemin != null && !chemin.equals("") && chemin != orignalFields[1])
-				|| (keywords != null && !keywords.equals("") && keywords != orignalFields[3])) {
+		// si au moins un des 3 est renseigné et différent de l'original
+		if ((name != null && !name.equals("") && !name.equals(orignalFields[0])) || (chemin != null && !chemin.equals("") && !chemin.equals(orignalFields[1]))
+				|| (keywords != null && !keywords.equals("") && !keywords.equals(orignalFields[3]))) {
 			return updateTable(name, chemin, keywords, debug);
-		} else {
+		} else if ((name != null && name.equals(orignalFields[0])) || (chemin != null && chemin.equals(orignalFields[1]))
+				|| (keywords != null && keywords.equals(orignalFields[3]))) {
 			if (!debug) {
 				showFieldErrorMessage(name, chemin, keywords);
-				return false;
 			}
+			return new BDDResult(BDDResultEnum.NO_DIFFERENT_VALUES);
+		} else if ((name != null && name.equals("")) && (chemin != null && chemin.equals(""))
+				&& (keywords != null && keywords.equals(""))) {
+			if (!debug) {
+				showFieldErrorMessage(name, chemin, keywords);
+			}
+			return new BDDResult(BDDResultEnum.NO_VALUES_SPECIFIED);
 		}
-		return false;
+		return new BDDResult(BDDResultEnum.UPDATE_NOT_SUCCESSFUL);
 	}
 
 	/**
-	 * Prend les valeurs à update en paramètre, vérifie qu'elles sont différentes que les originales et exécute {@link #updateTable(String, String, String, boolean)}
+	 * Prend les valeurs à update en paramètre, vérifie qu'elles sont différentes que les originales et exécute
+	 * {@link #updateTable(String, String, String, boolean)}
 	 * 
 	 * @param name
 	 * @param chemin
@@ -321,17 +337,24 @@ public class FenetreTable extends JFrame {
 	 * @param debug afficher ou non les JOptionPane d'erreur/succès
 	 * @return si le modèle a bien été mis à jour
 	 */
-	public boolean updateTableAmorce(String name, String chemin, String keywords, boolean debug) {
-		if ((name != null && !name.equals("") && name != orignalFields[0]) || (chemin != null && !chemin.equals("") && chemin != orignalFields[1])
-				|| (keywords != null && !keywords.equals("") && keywords != orignalFields[3])) {
+	public MethodResult updateTableAmorce(String name, String chemin, String keywords, boolean debug) {
+		if ((name != null && !name.equals("") && !name.equals(orignalFields[0])) || (chemin != null && !chemin.equals("") && !chemin.equals(orignalFields[1]))
+				|| (keywords != null && !keywords.equals("") && !keywords.equals(orignalFields[3]))) {
 			return updateTable(name, chemin, keywords, debug);
-		} else {
+		} else if ((name != null && name.equals(orignalFields[0])) || (chemin != null && chemin.equals(orignalFields[1]))
+				|| (keywords != null && keywords.equals(orignalFields[3]))) {
 			if (!debug) {
 				showFieldErrorMessage(name, chemin, keywords);
-				return false;
 			}
+			return new BDDResult(BDDResultEnum.NO_DIFFERENT_VALUES);
+		} else if ((name != null && name.equals("")) && (chemin != null && chemin.equals(""))
+				&& (keywords != null && keywords.equals(""))) {
+			if (!debug) {
+				showFieldErrorMessage(name, chemin, keywords);
+			}
+			return new BDDResult(BDDResultEnum.NO_VALUES_SPECIFIED);
 		}
-		return false;
+		return new BDDResult(BDDResultEnum.UPDATE_NOT_SUCCESSFUL);
 	}
 
 	/**
@@ -343,7 +366,7 @@ public class FenetreTable extends JFrame {
 	 * @param debug
 	 * @return si l'update a bien modifié plus d'une ligne
 	 */
-	private boolean updateTable(String name, String chemin, String keywords, boolean debug) {
+	private MethodResult updateTable(String name, String chemin, String keywords, boolean debug) {
 		boolean success = false;
 		try {
 			Class.forName("org.sqlite.JDBC");
@@ -404,7 +427,10 @@ public class FenetreTable extends JFrame {
 			}
 			// System.exit(0);
 			success = true;
-			return result > 0;
+			if (result > 0) {
+				return new BDDResult(BDDResultEnum.UPDATE_SUCCESSFUL);
+			}
+			return new BDDResult(BDDResultEnum.UPDATE_NOT_SUCCESSFUL);
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} catch (SQLException e) {
@@ -423,16 +449,17 @@ public class FenetreTable extends JFrame {
 			String message = "La mise à jour du modèle " + orignalFields[0] + " vers " + name + " n'a pas pu être réalisée";
 			JOptionPane.showMessageDialog(null, message);
 		}
-		return false;
+		return new BDDResult(BDDResultEnum.UPDATE_NOT_SUCCESSFUL);
 	}
 
 	/**
-	 * Prend les valeurs à insérer du JTable, vérifie si le nom du modèle à insérer n'existe pas et éxecute {@link #insertTable(String, String, String, boolean)}
+	 * Prend les valeurs à insérer du JTable, vérifie si le nom du modèle à insérer n'existe pas et éxecute
+	 * {@link #insertTable(String, String, String, boolean)}
 	 * 
 	 * @param debug
 	 * @return si l'insertion du modèle a pu être réalisée
 	 */
-	public boolean insertTableAmorce(boolean debug) {
+	public MethodResult insertTableAmorce(boolean debug) {
 
 		String name = "";
 		String chemin = "";
@@ -456,7 +483,7 @@ public class FenetreTable extends JFrame {
 						JOptionPane.showMessageDialog(null, message);
 					}
 					success = true;
-					return false;
+					return new BDDResult(BDDResultEnum.PRE_EXISTING_MODEL);
 				} else {
 					success = true;
 					return insertTable(name, chemin, keywords, debug);
@@ -477,14 +504,15 @@ public class FenetreTable extends JFrame {
 		} else {
 			if (!debug) {
 				showFieldErrorMessage(name, chemin, keywords);
-				return false;
 			}
+			return new BDDResult(BDDResultEnum.NO_VALUES_SPECIFIED);
 		}
-		return false;
+		return new BDDResult(BDDResultEnum.INSERT_NOT_SUCCESSFUL);
 	}
 
 	/**
-	 * Prend les valeurs à insérer en paramètre, vérifie si le nom du modèle à insérer n'existe pas et éxecute {@link #insertTable(String, String, String, boolean)}
+	 * Prend les valeurs à insérer en paramètre, vérifie si le nom du modèle à insérer n'existe pas et éxecute
+	 * {@link #insertTable(String, String, String, boolean)}
 	 * 
 	 * @param name
 	 * @param chemin
@@ -492,7 +520,7 @@ public class FenetreTable extends JFrame {
 	 * @param debug
 	 * @return si l'insertion du modèle a pu être réalisée
 	 */
-	public boolean insertTableAmorce(String name, String chemin, String keywords, boolean debug) {// il faut qu'au moins le nom du modèle soit renseigné
+	public MethodResult insertTableAmorce(String name, String chemin, String keywords, boolean debug) {// il faut qu'au moins le nom du modèle soit renseigné
 		if ((name != null && !name.equals("")) || ((chemin != null && !chemin.equals("")) || (keywords != null && !keywords.equals("")))) {
 			boolean success = false;
 			try {
@@ -506,7 +534,7 @@ public class FenetreTable extends JFrame {
 						JOptionPane.showMessageDialog(null, message);
 					}
 					success = true;
-					return false;
+					return new BDDResult(BDDResultEnum.PRE_EXISTING_MODEL);
 				} else {
 					success = true;
 					return insertTable(name, chemin, keywords, debug);
@@ -527,10 +555,10 @@ public class FenetreTable extends JFrame {
 		} else {
 			if (!debug) {
 				showFieldErrorMessage(name, chemin, keywords);
-				return false;
 			}
+			return new BDDResult(BDDResultEnum.NO_VALUES_SPECIFIED);
 		}
-		return false;
+		return new BDDResult(BDDResultEnum.INSERT_NOT_SUCCESSFUL);
 	}
 
 	/**
@@ -542,7 +570,7 @@ public class FenetreTable extends JFrame {
 	 * @param debug
 	 * @return si l'insertion du modèle a pu être réalisée
 	 */
-	private boolean insertTable(String name, String chemin, String keywords, boolean debug) {
+	private MethodResult insertTable(String name, String chemin, String keywords, boolean debug) {
 		boolean success = false;
 		try {
 			Class.forName("org.sqlite.JDBC");
@@ -578,7 +606,10 @@ public class FenetreTable extends JFrame {
 			}
 			// System.exit(0);
 			success = true;
-			return result > 0;
+			if (result > 0) {
+				return new BDDResult(BDDResultEnum.INSERT_SUCCESSFUL);
+			}
+			return new BDDResult(BDDResultEnum.INSERT_NOT_SUCCESSFUL);
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} catch (SQLException e) {
@@ -596,7 +627,7 @@ public class FenetreTable extends JFrame {
 			String message = "Le modèle " + name + " n'a pas pu être insérée";
 			JOptionPane.showMessageDialog(null, message, "Mauvais arguments", JOptionPane.ERROR_MESSAGE);
 		}
-		return false;
+		return new BDDResult(BDDResultEnum.INSERT_NOT_SUCCESSFUL);
 	}
 
 	/**
@@ -624,6 +655,7 @@ public class FenetreTable extends JFrame {
 	}
 
 	/**
+	 * <b>A REFAIRE CAR CHANGMENT DE PRATIQUE DE REMPLISSAGE -> il suffit q'un champ soit rensigné</b><br>
 	 * Crée un JOptionPane d'erreur en fonction de la validité du nom, chemin et keywords
 	 * 
 	 * @param name

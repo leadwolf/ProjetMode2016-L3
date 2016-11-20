@@ -14,6 +14,7 @@ import org.junit.Test;
 
 import bdd.BaseDeDonnees;
 import bddInterface.FenetreTable;
+import erreur.BDDResultEnum;
 
 /**
  * Classe de test de fonctionnement de la classe {@link FenetreTable}, spécifiquement de l'insertion et update
@@ -116,19 +117,24 @@ public class FenetreTableTest {
 		BaseDeDonnees.fillTable(connection);
 		BaseDeDonnees.closeConnection();
 
-		// False car aucun champ valide
+		// aucun champ valide
 		initFenetreTableEdit("weathervane");
-		assertFalse(fen.updateTableAmorce("", "", "", true));
+		assertEquals(BDDResultEnum.NO_VALUES_SPECIFIED, fen.updateTableAmorce("", "", "", true).getCode());
+		
+		// champs identiques qu'avant
+		initFenetreTableEdit("weathervane");
+		assertEquals(BDDResultEnum.NO_DIFFERENT_VALUES, fen.updateTableAmorce("weathervane", "ply/weathervane.ply", "mes mots clés", true).getCode());
 
-		// true car au moins un champ valide
-		assertTrue(fen.updateTableAmorce("weathervane2", "", "", true));
+		// au moins un champ valide
+		assertEquals(BDDResultEnum.UPDATE_SUCCESSFUL, fen.updateTableAmorce("weathervane2", "", "", true).getCode());
 
-		// true car champs valides
+		// champs valides
 		initFenetreTableEdit("weathervane2"); // il faut à chaque fois créer une nouvelle fenêtre car on a changé de nom de modèle
-		assertTrue(fen.updateTableAmorce("weathervane3", "weathervane3", "weathervane3", true));
+		assertEquals(BDDResultEnum.UPDATE_SUCCESSFUL, fen.updateTableAmorce("weathervane3", "weathervane3", "weathervane3", true).getCode());
 
+		// au moins un champ valide
 		initFenetreTableEdit("weathervane3");
-		assertTrue(fen.updateTableAmorce("", "", "allo", true));
+		assertEquals(BDDResultEnum.UPDATE_SUCCESSFUL, fen.updateTableAmorce("", "", "allo", true).getCode());
 	}
 
 	/**
@@ -140,21 +146,22 @@ public class FenetreTableTest {
 		BaseDeDonnees.resetTable(connection);
 		BaseDeDonnees.fillTable(connection);
 		BaseDeDonnees.closeConnection();
-		// false car nom pas renseigné
+		
+		// nom pas renseigné
 		initFenetreTableEdit(null);
-		assertFalse(fen.insertTableAmorce("", "", "", true));
+		assertEquals(BDDResultEnum.NO_VALUES_SPECIFIED, fen.insertTableAmorce("", "", "", true).getCode());
 
-		// false car nom existe déja
+		// nom existe déja
 		initFenetreTableEdit(null);
-		assertFalse(fen.insertTableAmorce("weathervane", "", "", true));
+		assertEquals(BDDResultEnum.PRE_EXISTING_MODEL, fen.insertTableAmorce("weathervane", "", "", true).getCode());
 
-		// true car nom renseigné et n'existe pas
+		// nom renseigné et n'existe pas
 		initFenetreTableEdit(null);
-		assertTrue(fen.insertTableAmorce("weathervane2", "", "", true));
+		assertEquals(BDDResultEnum.INSERT_SUCCESSFUL, fen.insertTableAmorce("weathervane2", "", "", true).getCode());
 
-		// true car valeurs renseignés avec nom inexistant dans la base
+		// valeurs renseignés avec nom inexistant dans la base
 		initFenetreTableEdit(null);
-		assertTrue(fen.insertTableAmorce("weathervane3", "allo", "allo", true));
+		assertEquals(BDDResultEnum.INSERT_SUCCESSFUL, fen.insertTableAmorce("weathervane3", "allo", "allo", true).getCode());
 	}
 
 }

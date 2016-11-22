@@ -5,6 +5,8 @@ import java.awt.GridLayout;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
@@ -23,11 +25,16 @@ public class TranslationPanel extends JPanel {
 		
 		setLayout(new GridLayout(3, 3));
 		setPreferredSize(buttonPanelDim);
-		center = new JButton("center");
-		left = new JButton("left");
-		right = new JButton("right");
-		up = new JButton("up");
-		down = new JButton("down");
+		Icon resetCenter = new ImageIcon(getClass().getResource("/center.png"));
+		center = new JButton(resetCenter);
+		Icon moveLeft = new ImageIcon(getClass().getResource("/left.png"));
+		left = new JButton(moveLeft);
+		Icon moveRight = new ImageIcon(getClass().getResource("/right.png"));
+		right = new JButton(moveRight);
+		Icon moveUp = new ImageIcon(getClass().getResource("/up.png"));
+		up = new JButton(moveUp);
+		Icon moveDown = new ImageIcon(getClass().getResource("/down.png"));
+		down = new JButton(moveDown);
 		
 		center.setPreferredSize(buttonDim);
 		left.setPreferredSize(buttonDim);

@@ -26,7 +26,7 @@ public class Fenetre extends JFrame {
 		super();
 
 		Dimension dim = new Dimension(800,800);
-		Dimension buttonDim = new Dimension(30, 30);
+		Dimension buttonDim = new Dimension(50, 50);
 		Dimension buttonPanelDim = new Dimension(buttonDim.width*3, buttonDim.height*3);
 		int borderHeight = 70;
 		

@@ -5,6 +5,8 @@ import java.awt.GridLayout;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
@@ -22,10 +24,14 @@ public class RotationPanel extends JPanel {
 		
 		setLayout(new GridLayout(3, 3));
 		setPreferredSize(buttonPanelDim);
-		left = new JButton("rotateCounterClockwise");
-		right = new JButton("rotateClockwise");
-		up = new JButton("rotateBackwards");
-		down = new JButton("rotateForwards");
+		Icon rotateLeft = new ImageIcon(getClass().getResource("/rotate_left.png"));
+		left = new JButton(rotateLeft);
+		Icon rotateRight = new ImageIcon(getClass().getResource("/rotate_right.png"));
+		right = new JButton(rotateRight);
+		Icon rotateBackwards = new ImageIcon(getClass().getResource("/rotate_back_front.png"));
+		up = new JButton(rotateBackwards);
+		Icon rotateForwards = new ImageIcon(getClass().getResource("/rotate_front_back.png"));
+		down = new JButton(rotateForwards);
 		
 		left.setPreferredSize(buttonDim);
 		right.setPreferredSize(buttonDim);

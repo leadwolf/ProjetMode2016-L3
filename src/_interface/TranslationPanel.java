@@ -2,6 +2,7 @@ package _interface;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.Image;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -52,7 +53,10 @@ public class TranslationPanel extends JPanel {
 		add(down);
 		add(Box.createRigidArea(buttonDim));
 		setBorder(BorderFactory.createLineBorder(Color.BLACK));
-		
 	}
-
+	
+	public static void scaleImageIcon(ImageIcon imageIcon, int width, int height) {
+		Image newImage = imageIcon.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH);
+		imageIcon = new ImageIcon(newImage);
+	}
 }

@@ -21,6 +21,7 @@ public class Matrice {
 	}
 	
 	public Matrice(double[][] matrix) {
+		this(matrix[0].length, matrix.length);
 		copyFromMatrix(matrix);
 	}
 
@@ -34,7 +35,7 @@ public class Matrice {
 		int aColumns = this.matrice[0].length;
 		int bRows = matrixSource.length;
 
-		if (aColumns != bRows) {
+		if (aRows != bRows) {
 			this.matrice = null;
 		} else {
 			for (int i = 0; i < aRows; i++) {
@@ -78,7 +79,6 @@ public class Matrice {
 				}
 			}
 		}
-
 		return C;
 	}
 	
@@ -118,7 +118,7 @@ public class Matrice {
 		}
 	}
 
-	double[][] addMatrices(double[][] matrixA, double[][] matrixB) {
+	public static double[][] addMatrices(double[][] matrixA, double[][] matrixB) {
 		
 		int rows = matrixA.length;
 		int cols = matrixA[0].length;
@@ -131,7 +131,6 @@ public class Matrice {
 				sum[i][j] = matrixA[i][j] + matrixB[i][j];
 			}
 		}
-		System.out.println("");
 		return sum;
 	}
 
@@ -218,11 +217,24 @@ public class Matrice {
 	 */
 	public void zoom(double zoomLevel) {
 	//	@formatter:off
-		double[][] zoom = new double[][] { 
-			{ zoomLevel, 0.0, 0.0, 0.0}, 
-			{ 0.0, zoomLevel, 0.0, 0.0},
-			{ 0.0, 0.0, zoomLevel, 0.0}, 
-			{ 0.0, 0.0, 0.0, 1.0 } };
+		int lines = this.matrice.length;
+		int cols = lines;
+		
+//		{ zoomLevel, 0.0, 0.0, 0.0}, 
+//		{ 0.0, zoomLevel, 0.0, 0.0},
+//		{ 0.0, 0.0, zoomLevel, 0.0}, 
+//		{ 0.0, 0.0, 0.0, 1.0 } };
+		double[][] zoom = new double[lines][cols];
+		for (int i=0;i<lines;i++) {
+			for (int j=0;j<cols;j++) {
+				if (i==j && i<lines-1) {
+					zoom[i][j] = zoomLevel;
+				} else {
+					zoom[i][j] = 0.0;
+				}
+			}
+		}
+		zoom[lines-1][cols-1] = 1.0;
 		this.matrice = multiply(zoom, this.matrice);
 	// 	@formatter:on
 	}

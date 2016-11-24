@@ -10,6 +10,7 @@ import reader.Lecture;
 
 public class Figure {
 
+	private Path path;
 	private int nbPoints;
 	private int nbFaces;
 	private List<Point> points;
@@ -73,14 +74,15 @@ public class Figure {
 	}
 
 	public Figure(Path file, boolean noPrint) {
+		this.path = file;
 		lecture = new Lecture(file, noPrint);
 		nbPoints = lecture.getNbPoints();
 		nbFaces = lecture.getNbFaces();
 		points = lecture.getPoints();
 		invertPoints();
 		faces = lecture.getFaces();
-		ptsTrans = new ArrayList<>(points);
-		facesTrans = new ArrayList<>(faces);
+		ptsTrans = lecture.getPointsDouble();
+		facesTrans = lecture.getFacesDouble();
 		polygones = new ArrayList<>();
 		center = new Point();
 		ptsMat = new Matrice(ptsTrans.size(), 4);
@@ -88,7 +90,26 @@ public class Figure {
 	}
 	
 	
-	
+	public Path getPath() {
+		return path;
+	}
+
+	public void setPoints(List<Point> points) {
+		this.points = points;
+	}
+
+	public void setFaces(List<Face> faces) {
+		this.faces = faces;
+	}
+
+	public void setPtsTrans(List<Point> ptsTrans) {
+		this.ptsTrans = ptsTrans;
+	}
+
+	public void setFacesTrans(List<Face> facesTrans) {
+		this.facesTrans = facesTrans;
+	}
+
 	public Lecture getLecture() {
 		return lecture;
 	}

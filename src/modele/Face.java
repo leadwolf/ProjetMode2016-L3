@@ -53,22 +53,6 @@ public class Face implements Comparable<Face>{
 		return pointList;
 	}
 	
-	public double[] getListX() {
-		double[] listX = new double[pointList.size()-1];
-		for (int i=0;i<pointList.size()-1;i++) {
-			listX[i] = pointList.get(i).getX();
-		}
-		return listX;
-	}
-	
-	public double[] getListY() {
-		double[] listY = new double[pointList.size()-1];
-		for (int i=0;i<pointList.size()-1;i++) {
-			listY[i] = pointList.get(i).getY();
-		}
-		return listY;
-	}
-
 	/**
 	 * Compare by average Z
 	 */

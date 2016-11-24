@@ -52,6 +52,14 @@ public class Lecture {
 	 */
 	private List<Face> faces;
 	/**
+	 * Les Points doubles lus sont stockés ici.
+	 */
+	private List<Point> pointsDouble;
+	/**
+	 * Les Faces doubles lues sont stockés ici.
+	 */
+	private List<Face> facesDouble;
+	/**
 	 * Si on veut empêcher les System.out.println lors d'erreus
 	 */
 	private boolean noPrint;
@@ -79,6 +87,24 @@ public class Lecture {
 	}
 
 	/**
+	 * Retourne la <b>List&ltPoint&gt</b> double de l'objet .ply. Si celle n'est pas encore faite, on éxécute {@link #stockerPoints()}
+	 * 
+	 * @return la liste des points
+	 */
+	public List<Point> getPointsDouble() {
+		return pointsDouble;
+	}
+
+	/**
+	 * Retourne la <b>List&ltFace&gt</b> double de l'objet .ply. Si celle n'est pas encore faite, on �x�cute {@link #stockerFaces()}
+	 * 
+	 * @return la liste des Faces
+	 */
+	public List<Face> getFacesDouble() {
+		return facesDouble;
+	}
+	
+	/**
 	 * Donne le résultat d'éxécution de Lecture.
 	 * 
 	 * @return Soit un {@link ReaderError} ou {@link BasicResult}
@@ -105,6 +131,8 @@ public class Lecture {
 		charset = Charset.forName("US-ASCII");
 		points = new ArrayList<>();
 		faces = new ArrayList<>();
+		pointsDouble = new ArrayList<>();
+		facesDouble = new ArrayList<>();
 		getElements();
 	}
 
@@ -258,6 +286,7 @@ public class Lecture {
 				}
 				if (startCount) {
 					getDoubles(line, points);
+					getDoubles(line, pointsDouble);
 					nbLignesLus++;
 				}
 				line = reader.readLine();
@@ -286,6 +315,7 @@ public class Lecture {
 			do {
 				if (nbFromPoints > nbPoints) {
 					getPointsDeFace(line, faces, points);
+					getPointsDeFace(line, facesDouble, pointsDouble);
 					nbLignesLus++;
 				}
 				if (startCount) {

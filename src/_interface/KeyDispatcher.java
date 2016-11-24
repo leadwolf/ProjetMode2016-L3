@@ -2,8 +2,10 @@ package _interface;
 
 import java.awt.KeyEventDispatcher;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 
 import math.Calculations;
+import modele.Figure;
 
 public class KeyDispatcher implements KeyEventDispatcher {
 
@@ -56,6 +58,9 @@ public class KeyDispatcher implements KeyEventDispatcher {
 				Calculations.fitFigureToWindow(fenetre.getVisPanel(), 0.75);
 				Calculations.centrerFigure(fenetre.getVisPanel());
 				fenetre.getVisPanel().refreshObject();
+				break;
+			case KeyEvent.VK_R:
+				fenetre.setFigure(new Figure(fenetre.getFigure().getPath(), false), 1.0);
 				break;
 			default:
 				break;

@@ -52,6 +52,11 @@ public class KeyDispatcher implements KeyEventDispatcher {
 				Calculations.rotateXByPoint(fenetre.getFigure(), -5);
 				fenetre.getVisPanel().refreshObject();
 				break;
+			case KeyEvent.VK_C:
+				Calculations.fitFigureToWindow(fenetre.getVisPanel(), 0.75);
+				Calculations.centrerFigure(fenetre.getVisPanel());
+				fenetre.getVisPanel().refreshObject();
+				break;
 			default:
 				break;
 			}

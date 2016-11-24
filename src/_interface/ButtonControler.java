@@ -13,10 +13,11 @@ import math.Calculations;
  */
 public class ButtonControler implements ActionListener{
 
-	private VisualisationPanel visPanel;
+	private Fenetre fenetre;
 	
-	public ButtonControler(VisualisationPanel visualisationPanel) {
-		this.visPanel = visualisationPanel;
+	public ButtonControler(Fenetre fenetre) {
+		super();
+		this.fenetre = fenetre;
 	}
 
 	/**
@@ -24,8 +25,10 @@ public class ButtonControler implements ActionListener{
 	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
-		
+		if (e.getSource().equals(fenetre.getOptionPanel().getDirectionalLight())) {
+			fenetre.getVisPanel().setDirectionalLight(!fenetre.getVisPanel().isDirectionalLight());
+			fenetre.getVisPanel().refreshObject();
+		}
 	}
 
 }

@@ -33,9 +33,9 @@ public class VisualisationPanel extends JPanel {
 	private boolean drawPoints = true;
 	private boolean drawSegments = true;
 	private boolean drawFaces = true;
+	private boolean directionalLight = true;
 	private int heightWindow;
 	private int widthWindow;
-	private MouseControler mouseControler;
 
 	public VisualisationPanel(boolean drawPoints, boolean drawSegments, boolean drawFaces) {
 		super();
@@ -43,11 +43,6 @@ public class VisualisationPanel extends JPanel {
 		this.drawPoints = drawPoints;
 		this.drawSegments = drawSegments;
 		this.drawFaces = drawFaces;
-		
-		mouseControler = new MouseControler(this);
-		this.addMouseWheelListener(mouseControler);
-		this.addMouseListener(mouseControler);
-		this.addMouseMotionListener(mouseControler);
 	}
 
 	public void paintComponent(Graphics gg) {
@@ -70,8 +65,12 @@ public class VisualisationPanel extends JPanel {
 			}
 			if (drawFaces) {
 				Vecteur lightVector = new Vecteur(new double[]{0, 0, -1});
-				double greyScale = Calculations.getGreyScale(figure, figure.getFacesTrans().get(i), lightVector);
-				g.setColor(new Color((float) greyScale, (float) greyScale, (float) greyScale));
+				if (directionalLight) {
+					double greyScale = Calculations.getGreyScale(figure, figure.getFacesTrans().get(i), lightVector);
+					g.setColor(new Color((float) greyScale, (float) greyScale, (float) greyScale));
+				} else {
+					g.setColor(Color.GRAY);
+				}
 				g.fill(p);
 				
 			}
@@ -94,6 +93,20 @@ public class VisualisationPanel extends JPanel {
 				g.fill(shape);
 			}
 		}
+	}
+
+	
+	
+	public void setDrawSegments(boolean drawSegments) {
+		this.drawSegments = drawSegments;
+	}
+	
+	public boolean isDirectionalLight() {
+		return directionalLight;
+	}
+
+	public void setDirectionalLight(boolean directionalLight) {
+		this.directionalLight = directionalLight;
 	}
 
 	/**
@@ -167,6 +180,7 @@ public class VisualisationPanel extends JPanel {
 		figure.getPolygones().clear();
 		Collections.sort(figure.getFacesTrans());
 		setPolyGones();
+		repaint();
 	}
 
 

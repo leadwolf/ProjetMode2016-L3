@@ -2,8 +2,6 @@ package _interface;
 
 import java.awt.KeyEventDispatcher;
 import java.awt.event.KeyEvent;
-import java.util.ArrayList;
-
 import math.Calculations;
 import modele.Figure;
 

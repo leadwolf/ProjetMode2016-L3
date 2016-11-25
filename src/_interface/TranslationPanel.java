@@ -3,6 +3,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Image;
+import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -63,8 +64,55 @@ public class TranslationPanel extends JPanel {
 		down.getModel().addChangeListener(timerControler);
 	}
 	
+	public void addActionTranslat(ActionListener e){
+		
+		left.addActionListener(e);
+		right.addActionListener(e);
+		up.addActionListener(e);
+		down.addActionListener(e);
+		center.addActionListener(e);
+
+		center.setActionCommand("CENTER_T");
+		left.setActionCommand("LEFT_T");
+		right.setActionCommand("RIGHT_T");
+		up.setActionCommand("UP_T");
+		down.setActionCommand("DOWN_T");
+		
+		center.getModel().setActionCommand("CENTER_T");
+		left.getModel().setActionCommand("LEFT_T");
+		right.getModel().setActionCommand("RIGHT_T");
+		up.getModel().setActionCommand("UP_T");
+		down.getModel().setActionCommand("DOWN_T");
+	}
+	
 	public static void scaleImageIcon(ImageIcon imageIcon, int width, int height) {
 		Image newImage = imageIcon.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH);
 		imageIcon = new ImageIcon(newImage);
 	}
+
+	public JButton getCenter() {
+		return center;
+	}
+
+
+	public JButton getLeft() {
+		return left;
+	}
+
+
+	public JButton getRight() {
+		return right;
+	}
+
+
+	public JButton getUp() {
+		return up;
+	}
+
+
+	public JButton getDown() {
+		return down;
+	}
+	
+	
 }

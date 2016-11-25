@@ -52,6 +52,7 @@ public class Lecture {
 	 */
 	private List<Face> faces;
 	/**
+<<<<<<< HEAD
 	 * Les Points doubles lus sont stockés ici.
 	 */
 	private List<Point> pointsDouble;
@@ -60,6 +61,8 @@ public class Lecture {
 	 */
 	private List<Face> facesDouble;
 	/**
+=======
+>>>>>>> d739b7ff5e9dfb9aecb74515fc4ae498d95795c9
 	 * Si on veut empêcher les System.out.println lors d'erreus
 	 */
 	private boolean noPrint;
@@ -87,6 +90,7 @@ public class Lecture {
 	}
 
 	/**
+<<<<<<< HEAD
 	 * Retourne la <b>List&ltPoint&gt</b> double de l'objet .ply. Si celle n'est pas encore faite, on éxécute {@link #stockerPoints()}
 	 * 
 	 * @return la liste des points
@@ -105,6 +109,8 @@ public class Lecture {
 	}
 	
 	/**
+=======
+>>>>>>> d739b7ff5e9dfb9aecb74515fc4ae498d95795c9
 	 * Donne le résultat d'éxécution de Lecture.
 	 * 
 	 * @return Soit un {@link ReaderError} ou {@link BasicResult}

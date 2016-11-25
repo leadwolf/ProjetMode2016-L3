@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import math.Calculations;
 import modele.Figure;
 
+import math.Calculations;
+
 public class KeyDispatcher implements KeyEventDispatcher {
 
 	private Fenetre fenetre;

@@ -30,7 +30,6 @@ public class Fenetre extends JFrame {
 	MouseControler mouseControler;
 	KeyDispatcher keyDispatcher;
 	Timer timer;
-	
 	private Calculations calcs;
 	private Figure figure;
 	
@@ -94,9 +93,14 @@ public class Fenetre extends JFrame {
 		TimerChangeListener timerChangeListener = new TimerChangeListener();
 		timer = new Timer(100, buttonControler);
 		timerChangeListener.setTimer(timer);
+		timerChangeListener.setPanels(translationPanel, rotationPanel);
 		translationPanel.addButtonChangeListeners(timerChangeListener);
 		rotationPanel.addButtonChangeListeners(timerChangeListener);
 		
+
+		rotationPanel.addActionRotat(buttonControler);
+		translationPanel.addActionTranslat(buttonControler);
+
 		KeyboardFocusManager manager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
         manager.addKeyEventDispatcher(keyDispatcher);
 		

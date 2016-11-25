@@ -1,5 +1,6 @@
 package _interface;
 
+import javax.swing.ButtonModel;
 import javax.swing.Timer;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -13,6 +14,8 @@ import javax.swing.event.ChangeListener;
 public class TimerChangeListener implements ChangeListener {
 
 	Timer timer;
+	TranslationPanel transPanel;
+	RotationPanel rotationPanel;
 
 	public TimerChangeListener() {
 		super();
@@ -21,6 +24,15 @@ public class TimerChangeListener implements ChangeListener {
 	@Override
 	public void stateChanged(ChangeEvent e) {
 		if (!timer.isRunning()) {
+			ButtonModel buttonModel = (ButtonModel) e.getSource();
+			switch (buttonModel.getActionCommand()) {
+			case "DOWN_T":
+				timer.setActionCommand("DOWN_T");
+				break;
+
+			default:
+				break;
+			}
 			timer.start();
 		} else if (timer.isRunning()) {
 			timer.stop();
@@ -32,6 +44,11 @@ public class TimerChangeListener implements ChangeListener {
 	 */
 	public void setTimer(Timer timer) {
 		this.timer = timer;
+	}
+	
+	public void setPanels(TranslationPanel transPanel, RotationPanel rotationPanel) {
+		this.transPanel = transPanel;
+		this.rotationPanel = rotationPanel;
 	}
 
 }

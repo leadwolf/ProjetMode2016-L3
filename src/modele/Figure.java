@@ -83,6 +83,8 @@ public class Figure {
 		faces = lecture.getFaces();
 		ptsTrans = lecture.getPointsDouble();
 		facesTrans = lecture.getFacesDouble();
+		ptsTrans = new ArrayList<>(points);
+		facesTrans = new ArrayList<>(faces);
 		polygones = new ArrayList<>();
 		center = new Point();
 		ptsMat = new Matrice(ptsTrans.size(), 4);

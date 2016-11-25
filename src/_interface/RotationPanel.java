@@ -3,6 +3,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.GridLayout;
+import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -58,5 +60,40 @@ public class RotationPanel extends JPanel {
 		up.getModel().addChangeListener(timerControler);
 		down.getModel().addChangeListener(timerControler);
 	}
+	
+	
+	public void addActionRotat(ActionListener e){
+		left.addActionListener(e);
+		right.addActionListener(e);
+		up.addActionListener(e);
+		down.addActionListener(e);
+
+		left.setActionCommand("LEFT_R");
+		right.setActionCommand("RIGHT_R");
+		up.setActionCommand("UP_R");
+		down.setActionCommand("DOWN_R");
+		
+		left.getModel().setActionCommand("LEFT_R");
+		right.getModel().setActionCommand("RIGHT_R");
+		up.getModel().setActionCommand("UP_R");
+		down.getModel().setActionCommand("DOWN_R");
+	}
+
+	public JButton getLeft() {
+		return left;
+	}
+
+	public JButton getRight() {
+		return right;
+	}
+
+	public JButton getUp() {
+		return up;
+	}
+
+	public JButton getDown() {
+		return down;
+	}
+	
 	
 }

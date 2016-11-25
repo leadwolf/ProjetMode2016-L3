@@ -11,6 +11,7 @@ import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.Timer;
 
 import math.Calculations;
 import modele.Figure;
@@ -24,9 +25,11 @@ public class Fenetre extends JFrame {
 	TranslationPanel translationPanel;
 	OptionPanel optionPanel;
 	RotationPanel rotationPanel;
+	
 	ButtonControler buttonControler;
 	MouseControler mouseControler;
 	KeyDispatcher keyDispatcher;
+	Timer timer;
 	private Calculations calcs;
 	private Figure figure;
 	
@@ -86,6 +89,18 @@ public class Fenetre extends JFrame {
 		mouseControler = new MouseControler(visPanel);
 		keyDispatcher = new KeyDispatcher(this);
 		
+		// TIMER pour rester appuyé sur le bouton
+		TimerChangeListener timerChangeListener = new TimerChangeListener();
+		timer = new Timer(50, buttonControler);
+		timerChangeListener.setTimer(timer);
+		timerChangeListener.setPanels(translationPanel, rotationPanel);
+		translationPanel.addButtonChangeListeners(timerChangeListener);
+		rotationPanel.addButtonChangeListeners(timerChangeListener);
+		
+
+		rotationPanel.addActionRotat(buttonControler);
+		translationPanel.addActionTranslat(buttonControler);
+
 		KeyboardFocusManager manager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
         manager.addKeyEventDispatcher(keyDispatcher);
 		

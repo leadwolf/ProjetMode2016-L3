@@ -88,6 +88,7 @@ public class Lecture {
 
 	/**
 	 * Retourne la <b>List<Point></b> double de l'objet .ply. Si celle n'est pas encore faite, on éxécute {@link #stockerPoints()}
+	 * Retourne la <b>List&ltPoint&gt</b> double de l'objet .ply. Si celle n'est pas encore faite, on éxécute {@link #stockerPoints()}
 	 * 
 	 * @return la liste des points
 	 */

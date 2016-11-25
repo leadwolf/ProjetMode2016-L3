@@ -29,7 +29,7 @@ public class TimerChangeListener implements ChangeListener {
 		if (buttonModel.isPressed() && !timer.isRunning() && command != null) {
 			timer.setActionCommand(command);
 			timer.start();
-		} else if (timer.isRunning()) {
+		} else if (!buttonModel.isPressed() && timer.isRunning()) {
 			timer.stop();
 		}
 	}

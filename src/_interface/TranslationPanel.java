@@ -58,6 +58,7 @@ public class TranslationPanel extends JPanel {
 
 
 	public void addButtonChangeListeners(TimerChangeListener timerControler) {
+		center.getModel().addChangeListener(timerControler);
 		left.getModel().addChangeListener(timerControler);
 		right.getModel().addChangeListener(timerControler);
 		up.getModel().addChangeListener(timerControler);

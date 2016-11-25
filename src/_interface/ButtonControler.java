@@ -21,7 +21,8 @@ public class ButtonControler implements ActionListener{
 	}
 
 	/**
-	 * Ici voir quel bouton a été actionnée et en agir en conséquence sur la figure de visPanel
+	 * Ici voir quel bouton a été actionnée et en agir en conséquence sur la figure de visPanel.
+	 * Elle est aussi appelé par timer.start()
 	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {

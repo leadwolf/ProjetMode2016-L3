@@ -52,4 +52,11 @@ public class RotationPanel extends JPanel {
 		
 	}
 
+	public void addButtonChangeListeners(TimerChangeListener timerControler) {
+		left.getModel().addChangeListener(timerControler);
+		right.getModel().addChangeListener(timerControler);
+		up.getModel().addChangeListener(timerControler);
+		down.getModel().addChangeListener(timerControler);
+	}
+	
 }

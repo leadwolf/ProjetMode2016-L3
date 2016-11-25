@@ -54,6 +54,14 @@ public class TranslationPanel extends JPanel {
 		add(Box.createRigidArea(buttonDim));
 		setBorder(BorderFactory.createLineBorder(Color.BLACK));
 	}
+
+
+	public void addButtonChangeListeners(TimerChangeListener timerControler) {
+		left.getModel().addChangeListener(timerControler);
+		right.getModel().addChangeListener(timerControler);
+		up.getModel().addChangeListener(timerControler);
+		down.getModel().addChangeListener(timerControler);
+	}
 	
 	public static void scaleImageIcon(ImageIcon imageIcon, int width, int height) {
 		Image newImage = imageIcon.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH);

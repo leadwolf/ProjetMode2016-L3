@@ -38,16 +38,16 @@ public class Fenetre extends JFrame {
 		Dimension buttonPanelDim = new Dimension(buttonDim.width*3, buttonDim.height*3);
 		int borderHeight = 80;
 		
-				/* PANNEAU AFFICHAGE */
+		/* PANNEAU AFFICHAGE */
 		visPanel = new VisualisationPanel(drawPoints, drawSegments, drawFaces);
 		visPanel.setTempDimensions(new Dimension(dim.width, dim.height-buttonPanelDim.height-borderHeight));
 		visPanel.setPreferredSize(new Dimension(dim.width, dim.height-buttonPanelDim.height-borderHeight));
 		
 		/* PANNEAUX BOUTONS */
 		translationPanel = new TranslationPanel(buttonPanelDim, buttonDim);
-		translationPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK), "Translater le modèle"));
+		translationPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK), "Translater le modÃ¨le"));
 		rotationPanel = new RotationPanel(buttonPanelDim, buttonDim);
-		rotationPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK), "Tourner le modèle"));
+		rotationPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK), "Tourner le modÃ¨le"));
 		optionPanel = new OptionPanel();
 		optionPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK), "Autres options"));
 		
@@ -95,6 +95,9 @@ public class Fenetre extends JFrame {
 		visPanel.addMouseMotionListener(mouseControler);
 		
 		optionPanel.getDirectionalLight().addActionListener(buttonControler);
+		optionPanel.getshowFaces().addActionListener(buttonControler);
+		optionPanel.getshowSegments().addActionListener(buttonControler);
+		optionPanel.getshowPoints().addActionListener(buttonControler);
 	}
 		
 	public Figure getFigure() {

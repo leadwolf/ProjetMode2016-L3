@@ -29,6 +29,18 @@ public class ButtonControler implements ActionListener{
 			fenetre.getVisPanel().setDirectionalLight(!fenetre.getVisPanel().isDirectionalLight());
 			fenetre.getVisPanel().refreshObject();
 		}
+		if (e.getSource().equals(fenetre.getOptionPanel().getshowFaces())) {
+			fenetre.getVisPanel().setDrawFaces(!fenetre.getVisPanel().isDrawFaces());
+			fenetre.getVisPanel().refreshObject();
+		}
+		if (e.getSource().equals(fenetre.getOptionPanel().getshowSegments())) {
+			fenetre.getVisPanel().setDrawSegments(!fenetre.getVisPanel().isDrawSegments());
+			fenetre.getVisPanel().refreshObject();
+		}
+		if (e.getSource().equals(fenetre.getOptionPanel().getshowPoints())) {
+			fenetre.getVisPanel().setDrawPoints(!fenetre.getVisPanel().isDrawPoints());
+			fenetre.getVisPanel().refreshObject();
+		}
 	}
 
 }

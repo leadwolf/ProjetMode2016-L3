@@ -86,7 +86,7 @@ public class VisualisationPanel extends JPanel {
 		
 
 		if (drawPoints) {
-			g.setColor(Color.PINK);
+			g.setColor(Color.GRAY);
 			for (Point pt : figure.getPtsTrans()) {
 				double x = pt.getX() - (ptsDim.getWidth() / 2);
 				double y = pt.getY() - (ptsDim.getHeight() / 2);
@@ -100,6 +100,26 @@ public class VisualisationPanel extends JPanel {
 	
 	public void setDrawSegments(boolean drawSegments) {
 		this.drawSegments = drawSegments;
+	}
+	
+	public void setDrawFaces(boolean drawFaces) {
+		this.drawFaces = drawFaces;
+	}
+	
+	public void setDrawPoints(boolean drawPoints) {
+		this.drawPoints = drawPoints;
+	}
+	
+	public boolean isDrawPoints() {
+		return this.drawPoints;
+	}
+	
+	public boolean isDrawSegments() {
+		return this.drawSegments;
+	}
+	
+	public boolean isDrawFaces() {
+		return this.drawFaces;
 	}
 	
 	public boolean isDirectionalLight() {

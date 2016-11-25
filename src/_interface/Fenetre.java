@@ -91,7 +91,7 @@ public class Fenetre extends JFrame {
 		
 		// TIMER pour rester appuyé sur le bouton
 		TimerChangeListener timerChangeListener = new TimerChangeListener();
-		timer = new Timer(100, buttonControler);
+		timer = new Timer(50, buttonControler);
 		timerChangeListener.setTimer(timer);
 		timerChangeListener.setPanels(translationPanel, rotationPanel);
 		translationPanel.addButtonChangeListeners(timerChangeListener);

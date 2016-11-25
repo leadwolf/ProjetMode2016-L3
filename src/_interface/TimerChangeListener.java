@@ -24,15 +24,10 @@ public class TimerChangeListener implements ChangeListener {
 	@Override
 	public void stateChanged(ChangeEvent e) {
 		ButtonModel buttonModel = (ButtonModel) e.getSource();
-		if (buttonModel.isPressed() && !timer.isRunning()) {
-			switch (buttonModel.getActionCommand()) {
-			case "DOWN_T":
-				timer.setActionCommand("DOWN_T");
-				break;
-
-			default:
-				break;
-			}
+		String command = buttonModel.getActionCommand();
+		
+		if (buttonModel.isPressed() && !timer.isRunning() && command != null) {
+			timer.setActionCommand(command);
 			timer.start();
 		} else if (timer.isRunning()) {
 			timer.stop();

@@ -45,9 +45,9 @@ public class Fenetre extends JFrame {
 		
 		/* PANNEAUX BOUTONS */
 		translationPanel = new TranslationPanel(buttonPanelDim, buttonDim);
-		translationPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK), "Translater le modÃ¨le"));
+		translationPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK), "Translater le modèle"));
 		rotationPanel = new RotationPanel(buttonPanelDim, buttonDim);
-		rotationPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK), "Tourner le modÃ¨le"));
+		rotationPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK), "Tourner le modèle"));
 		optionPanel = new OptionPanel();
 		optionPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK), "Autres options"));
 		

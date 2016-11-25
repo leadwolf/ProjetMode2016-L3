@@ -55,7 +55,6 @@ public class Figure {
 	public List<Face> getFaces() {
 		return faces;
 	}
-
 		
 	public double getHeightFig() {
 		return heightFig;
@@ -73,6 +72,11 @@ public class Figure {
 		this.widthFig = widthFig;
 	}
 
+	/**
+	 * Cree une figure
+	 * @param file le <b>Path</b> de l'objet .ply
+	 * @param noPrint si on veut empêcher les System.out.println
+	 */
 	public Figure(Path file, boolean noPrint) {
 		this.path = file;
 		lecture = new Lecture(file, noPrint);
@@ -127,7 +131,7 @@ public class Figure {
 	}
 	
 	/**
-	 * Inverse la figure par rapport à l'axe X car on dessine du haut en bas
+	 * Inverse la figure par rapport à  l'axe X car on dessine du haut en bas
 	 */
 	public void invertPoints() {
 		for (Point pt : points) {

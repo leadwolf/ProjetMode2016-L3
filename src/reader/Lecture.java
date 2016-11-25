@@ -19,7 +19,7 @@ import modele.Face;
 import modele.Point;
 
 /**
- * Cette classe donne accès à la liste des Points et de Faces de l'objet .ply dont on veut modéliser à travers les méthodes {@link #getPoints()} et
+ * Cette classe donne accès à la liste des Points et de Faces de l'objet .ply dont on veut modéliser à  travers les méthodes {@link #getPoints()} et
  * {@link #getFaces()}
  * 
  * @author Groupe L3
@@ -32,11 +32,11 @@ public class Lecture {
 	 */
 	private Path file;
 	/** 
-	 * Le nombre de Points d'après "element vertex X". Sert à garder la trace de lecture du fichier.
+	 * Le nombre de Points d'après "element vertex X". Sert à  garder la trace de lecture du fichier.
 	 */
 	private int nbPoints;
 	/**
-	 * Le nombre de Faces d'apres "element face X". Sert à garder la trace de lecture du fichier.
+	 * Le nombre de Faces d'apres "element face X". Sert à  garder la trace de lecture du fichier.
 	 */
 	private int nbFaces;
 	/**
@@ -69,7 +69,7 @@ public class Lecture {
 	private MethodResult erreurType;
 
 	/**
-	 * Retourne la <b>List&ltPoint&gt</b> de l'objet .ply. Si celle n'est pas encore faite, on éxécute {@link #stockerPoints()}
+	 * Retourne la <b>List<Point></b> de l'objet .ply. Si celle n'est pas encore faite, on éxécute {@link #stockerPoints()}
 	 * 
 	 * @return la liste des points
 	 */
@@ -78,7 +78,7 @@ public class Lecture {
 	}
 
 	/**
-	 * Retourne la <b>List&ltFace&gt</b> de l'objet .ply. Si celle n'est pas encore faite, on �x�cute {@link #stockerFaces()}
+	 * Retourne la <b>List<Face></b> de l'objet .ply. Si celle n'est pas encore faite, on éxécute {@link #stockerFaces()}
 	 * 
 	 * @return la liste des Faces
 	 */
@@ -87,7 +87,7 @@ public class Lecture {
 	}
 
 	/**
-	 * Retourne la <b>List&ltPoint&gt</b> double de l'objet .ply. Si celle n'est pas encore faite, on éxécute {@link #stockerPoints()}
+	 * Retourne la <b>List<Point></b> double de l'objet .ply. Si celle n'est pas encore faite, on éxécute {@link #stockerPoints()}
 	 * 
 	 * @return la liste des points
 	 */
@@ -96,7 +96,7 @@ public class Lecture {
 	}
 
 	/**
-	 * Retourne la <b>List&ltFace&gt</b> double de l'objet .ply. Si celle n'est pas encore faite, on �x�cute {@link #stockerFaces()}
+	 * Retourne la <b>List<Face></b> double de l'objet .ply. Si celle n'est pas encore faite, on éxécute {@link #stockerFaces()}
 	 * 
 	 * @return la liste des Faces
 	 */
@@ -253,7 +253,7 @@ public class Lecture {
 	}
 
 	/**
-	 * Lit le fichier .ply et sauvegarde la liste des Points dans une dans une <b>List&ltPoint&gt</b>
+	 * Lit le fichier .ply et sauvegarde la liste des Points dans une dans une <b>List<Point></b>
 	 */
 	private void stockerPoints() {
 		int nbLignesLus = 0;
@@ -302,7 +302,7 @@ public class Lecture {
 	}
 
 	/**
-	 * Lit le fichier .ply et sauvegarde la liste des faces dans une dans une <b>List&ltFace&gt</b> Si la liste des points n'est pas encore faite, elle éxécute
+	 * Lit le fichier .ply et sauvegarde la liste des faces dans une dans une <b>List<Face></b> Si la liste des points n'est pas encore faite, elle éxécute
 	 * aussi {@link #stockerPoints()}
 	 */
 	private void stockerFaces() {
@@ -339,7 +339,7 @@ public class Lecture {
 			if (line != null && !line.startsWith("{")) {
 				// Fichier comporte plus de lignes qu'attendu
 				if (!noPrint && erreurType == null) {
-					System.out.println("Erreur dans fichier " + file.getFileName() + " : Entête ne correspond pas à la description");
+					System.out.println("Erreur dans fichier " + file.getFileName() + " : Entête ne correspond pas à  la description");
 					System.out.println("Trop de lignes par rapport au nombre de Faces");
 				}
 				if (erreurType == null) {
@@ -352,7 +352,7 @@ public class Lecture {
 	}
 
 	/**
-	 * Sauvegard la <b>List&ltPoint&gt</b> pour chaque Face de <b>List&ltFace&gt</b>
+	 * Sauvegard la <b>List<Point></b> pour chaque Face de <b>List<Face></b>
 	 * 
 	 * @param line la ligne contenant la liste de Points composant la Face courante
 	 * @param faces la liste de faces
@@ -378,7 +378,7 @@ public class Lecture {
 			if (element < 0 || element > points.size()) {
 				// Face comporte point n=" + element + " alors qu'il est inexistant
 				if (!noPrint && erreurType == null) {
-					System.out.println("Erreur dans fichier " + file.getFileName() + " : Face fait référence à point \"" + element + "\" inexistant");
+					System.out.println("Erreur dans fichier " + file.getFileName() + " : Face fait référence à  point \"" + element + "\" inexistant");
 				}
 				if (erreurType == null) {
 					erreurType = new ReaderError(ReaderErrorEnum.POINT_NOT_FOUND);
@@ -390,7 +390,7 @@ public class Lecture {
 	}
 
 	/**
-	 * Remplis les coordonnes pour chaque Point dans <b>List&ltPoint&gt</b>
+	 * Remplis les coordonnes pour chaque Point dans <b>List<Point></b>
 	 * 
 	 * @param line le string a extraire les coordonnes
 	 * @param points la liste des points dont on ajoute les coordonnees

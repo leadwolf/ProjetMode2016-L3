@@ -14,6 +14,11 @@ public class Face implements Comparable<Face>{
 		segmentList = new ArrayList<>();
 	}
 	
+	/**
+	 * Cree une face à partir d'un nombre de points et d'une liste de points
+	 * @param nbPoint
+	 * @param list
+	 */
 	public Face(int nbPoint, List<Point> list){
 		this.nbPoint=nbPoint;
 		this.pointList=list;
@@ -25,6 +30,10 @@ public class Face implements Comparable<Face>{
 		
 	}
 	
+	/**
+	 * Ajoute le point à la liste des points de la face
+	 * @param point
+	 */
 	public void addPoint(Point point) {
 		pointList.add(point);
 	}

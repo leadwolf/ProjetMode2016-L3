@@ -9,11 +9,17 @@ public class Vecteur {
 	private double[] vecteur;
 	private double norme;
 
-	
+	/**
+	 * Retourne la norme du vecteur.
+	 */
 	public double getNorme() {
 		return norme;
 	}
 	
+	/**
+	 * Cree un vecteur à partir d'un autre vecteur.
+	 * @param vecteur
+	 */
 	public Vecteur(double[] vecteur) {
 		this.vecteur = new double[vecteur.length];
 		norme = 0;

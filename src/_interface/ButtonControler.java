@@ -27,6 +27,7 @@ public class ButtonControler implements ActionListener{
 	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		Calculations.refreshFigDims(fenetre.getVisPanel());
 		if (e.getSource().equals(fenetre.getOptionPanel().getDirectionalLight())) {
 			fenetre.getVisPanel().setDirectionalLight(!fenetre.getVisPanel().isDirectionalLight());
 			fenetre.getVisPanel().refreshObject();

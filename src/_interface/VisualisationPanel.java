@@ -67,7 +67,7 @@ public class VisualisationPanel extends JPanel {
 			if (drawFaces) {
 				Vecteur lightVector = new Vecteur(new double[]{0, 0, -1});
 				if (directionalLight) {
-					double greyScale = Calculations.getGreyScale(figure, figure.getFacesTrans().get(i), lightVector);
+					double greyScale = Calculations.getGreyScale(figure, figure.getFaces().get(i), lightVector);
 					g.setColor(new Color((float) greyScale, (float) greyScale, (float) greyScale));
 				} else {
 					g.setColor(Color.GRAY);
@@ -87,7 +87,7 @@ public class VisualisationPanel extends JPanel {
 
 		if (drawPoints) {
 			g.setColor(Color.GRAY);
-			for (Point pt : figure.getPtsTrans()) {
+			for (Point pt : figure.getPoints()) {
 				double x = pt.getX() - (ptsDim.getWidth() / 2);
 				double y = pt.getY() - (ptsDim.getHeight() / 2);
 				Ellipse2D.Double shape = new Ellipse2D.Double(x, y, ptsDim.getWidth(), ptsDim.getHeight());
@@ -147,7 +147,7 @@ public class VisualisationPanel extends JPanel {
 			Calculations.fitFigureToWindow(this, 0.65);
 		}
 		Calculations.centrerFigure(this);
-		figure.getPtsMat().importPoints(figure.getPtsTrans(), 3);
+		figure.getPtsMat().importPoints(figure.getPoints(), 3);
 		refreshObject();
 	}
 
@@ -165,14 +165,14 @@ public class VisualisationPanel extends JPanel {
 	}
 
 	/**
-	 * Sauvegarde les polygones à dessiner grâce aux points de {@link Figure#getFacesTrans()}
+	 * Sauvegarde les polygones à dessiner grâce aux points de {@link Figure#getFaces()}
 	 * <br>En clair, {@link Figure#getPolygones()} contient les vrais formes que Graphics peut dessiner.
 	 */
 	private void setPolyGones() {
-		for (int i = 0; i < figure.getFacesTrans().size(); i++) {
+		for (int i = 0; i < figure.getFaces().size(); i++) {
 			Path2D path = new Path2D.Double();
 			figure.getPolygones().add(path);
-			List<Point> pt = figure.getFacesTrans().get(i).getList();
+			List<Point> pt = figure.getFaces().get(i).getList();
 			path.moveTo(pt.get(0).getX(), pt.get(0).getY());
 			for (int j = 1; j < pt.size(); j++) {
 				path.lineTo(pt.get(j).getX(),pt.get(j).getY());
@@ -199,7 +199,7 @@ public class VisualisationPanel extends JPanel {
 	 */
 	public void refreshObject() {
 		figure.getPolygones().clear();
-		Collections.sort(figure.getFacesTrans());
+		Collections.sort(figure.getFaces());
 		setPolyGones();
 		repaint();
 	}

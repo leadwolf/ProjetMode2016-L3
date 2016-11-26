@@ -15,22 +15,12 @@ public class Figure {
 	private int nbFaces;
 	private List<Point> points;
 	private List<Face> faces;
-	private List<Point> ptsTrans;
-	private List<Face> facesTrans;
 	private List<Path2D> polygones;
 	private Point center;
 	private Lecture lecture;
 	private Matrice ptsMat;
 	private double heightFig, widthFig;
 	
-	
-	public List<Point> getPtsTrans() {
-		return ptsTrans;
-	}
-
-	public List<Face> getFacesTrans() {
-		return facesTrans;
-	}
 	
 	public Matrice getPtsMat() {
 		return ptsMat;
@@ -85,13 +75,9 @@ public class Figure {
 		points = lecture.getPoints();
 		invertPoints();
 		faces = lecture.getFaces();
-		ptsTrans = lecture.getPointsDouble();
-		facesTrans = lecture.getFacesDouble();
-		ptsTrans = new ArrayList<>(points);
-		facesTrans = new ArrayList<>(faces);
 		polygones = new ArrayList<>();
 		center = new Point();
-		ptsMat = new Matrice(ptsTrans.size(), 4);
+		ptsMat = new Matrice(points.size(), 4);
 		ptsMat.setHomogeneousCoords();
 	}
 	
@@ -106,14 +92,6 @@ public class Figure {
 
 	public void setFaces(List<Face> faces) {
 		this.faces = faces;
-	}
-
-	public void setPtsTrans(List<Point> ptsTrans) {
-		this.ptsTrans = ptsTrans;
-	}
-
-	public void setFacesTrans(List<Face> facesTrans) {
-		this.facesTrans = facesTrans;
 	}
 
 	public Lecture getLecture() {

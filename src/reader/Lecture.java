@@ -31,7 +31,7 @@ public class Lecture {
 	 * Le Path vers le fichier .ply qu'on manipule.
 	 */
 	private Path file;
-	/** 
+	/**
 	 * Le nombre de Points d'après "element vertex X". Sert à  garder la trace de lecture du fichier.
 	 */
 	private int nbPoints;
@@ -51,14 +51,6 @@ public class Lecture {
 	 * Les Faces lues sont stockés ici.
 	 */
 	private List<Face> faces;
-	/**
-	 * Les Points doubles lus sont stockés ici.
-	 */
-	private List<Point> pointsDouble;
-	/**
-	 * Les Faces doubles lues sont stockés ici.
-	 */
-	private List<Face> facesDouble;
 	/**
 	 * Si on veut empêcher les System.out.println lors d'erreus
 	 */
@@ -87,25 +79,6 @@ public class Lecture {
 	}
 
 	/**
-	 * Retourne la <b>List<Point></b> double de l'objet .ply. Si celle n'est pas encore faite, on éxécute {@link #stockerPoints()}
-	 * Retourne la <b>List&ltPoint&gt</b> double de l'objet .ply. Si celle n'est pas encore faite, on éxécute {@link #stockerPoints()}
-	 * 
-	 * @return la liste des points
-	 */
-	public List<Point> getPointsDouble() {
-		return pointsDouble;
-	}
-
-	/**
-	 * Retourne la <b>List<Face></b> double de l'objet .ply. Si celle n'est pas encore faite, on éxécute {@link #stockerFaces()}
-	 * 
-	 * @return la liste des Faces
-	 */
-	public List<Face> getFacesDouble() {
-		return facesDouble;
-	}
-	
-	/**
 	 * Donne le résultat d'éxécution de Lecture.
 	 * 
 	 * @return Soit un {@link ReaderError} ou {@link BasicResult}
@@ -132,8 +105,6 @@ public class Lecture {
 		charset = Charset.forName("US-ASCII");
 		points = new ArrayList<>();
 		faces = new ArrayList<>();
-		pointsDouble = new ArrayList<>();
-		facesDouble = new ArrayList<>();
 		getElements();
 	}
 
@@ -254,7 +225,7 @@ public class Lecture {
 	}
 
 	/**
-	 * Lit le fichier .ply et sauvegarde la liste des Points dans une dans une <b>List<Point></b>
+	 * Lit le fichier .ply et sauvegarde la liste des Points dans une dans une <b>List&ltPoint&gt</b>
 	 */
 	private void stockerPoints() {
 		int nbLignesLus = 0;
@@ -287,7 +258,6 @@ public class Lecture {
 				}
 				if (startCount) {
 					getDoubles(line, points);
-					getDoubles(line, pointsDouble);
 					nbLignesLus++;
 				}
 				line = reader.readLine();
@@ -303,7 +273,7 @@ public class Lecture {
 	}
 
 	/**
-	 * Lit le fichier .ply et sauvegarde la liste des faces dans une dans une <b>List<Face></b> Si la liste des points n'est pas encore faite, elle éxécute
+	 * Lit le fichier .ply et sauvegarde la liste des faces dans une dans une <b>List&ltFace&gt</b> Si la liste des points n'est pas encore faite, elle éxécute
 	 * aussi {@link #stockerPoints()}
 	 */
 	private void stockerFaces() {
@@ -316,7 +286,6 @@ public class Lecture {
 			do {
 				if (nbFromPoints > nbPoints) {
 					getPointsDeFace(line, faces, points);
-					getPointsDeFace(line, facesDouble, pointsDouble);
 					nbLignesLus++;
 				}
 				if (startCount) {
@@ -340,7 +309,7 @@ public class Lecture {
 			if (line != null && !line.startsWith("{")) {
 				// Fichier comporte plus de lignes qu'attendu
 				if (!noPrint && erreurType == null) {
-					System.out.println("Erreur dans fichier " + file.getFileName() + " : Entête ne correspond pas à  la description");
+					System.out.println("Erreur dans fichier " + file.getFileName() + " : Entête ne correspond pas à la description");
 					System.out.println("Trop de lignes par rapport au nombre de Faces");
 				}
 				if (erreurType == null) {
@@ -353,7 +322,7 @@ public class Lecture {
 	}
 
 	/**
-	 * Sauvegard la <b>List<Point></b> pour chaque Face de <b>List<Face></b>
+	 * Sauvegarde la <b>List&ltPoint&gt</b> pour chaque Face de <b>List&ltFace&gt</b>
 	 * 
 	 * @param line la ligne contenant la liste de Points composant la Face courante
 	 * @param faces la liste de faces
@@ -379,7 +348,7 @@ public class Lecture {
 			if (element < 0 || element > points.size()) {
 				// Face comporte point n=" + element + " alors qu'il est inexistant
 				if (!noPrint && erreurType == null) {
-					System.out.println("Erreur dans fichier " + file.getFileName() + " : Face fait référence à  point \"" + element + "\" inexistant");
+					System.out.println("Erreur dans fichier " + file.getFileName() + " : Face fait référence à point \"" + element + "\" inexistant");
 				}
 				if (erreurType == null) {
 					erreurType = new ReaderError(ReaderErrorEnum.POINT_NOT_FOUND);

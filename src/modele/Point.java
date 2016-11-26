@@ -8,14 +8,14 @@ public class Point {
 	private int iter;
 	
 	/**
-	 * Cr�e un point.
+	 * Crée un point.
 	 */
 	public Point() {
 		iter = -1;
 	}
 	
 	/**
-	 * Cree un point a partir des coordonnees x et y
+	 * Crée un point a partir des coordonnées x et y
 	 * @param x
 	 * @param y
 	 */
@@ -26,7 +26,7 @@ public class Point {
 	}
 	
 	/**
-	 * Cree un point a partir des coordonnees x, y et z
+	 * Crée un point a partir des coordonnées x, y et z
 	 * @param x
 	 * @param y
 	 * @param z
@@ -37,7 +37,7 @@ public class Point {
 	}
 	
 	/**
-	 * Cree un point avec un nom a partir des coordonnees x, y et z.
+	 * Crée un point avec un nom a partir des coordonnées x, y et z.
 	 * @param nom
 	 * @param x
 	 * @param y
@@ -49,7 +49,7 @@ public class Point {
 	}
 	
 	/**
-	 * Remplace les coordonnees x et y avec celles donnees en parametres
+	 * Remplace les coordonnées x et y avec celles donnees en paramètre
 	 * @param x
 	 * @param y
 	 */
@@ -59,7 +59,7 @@ public class Point {
 	}
 	
 	/**
-	 * Remplace les coordonnées x, y et z avec celles donnees en parametres
+	 * Remplace les coordonnées x, y et z avec celles donnees en paramètre
 	 * @param x
 	 * @param y
 	 * @param z
@@ -70,14 +70,14 @@ public class Point {
 	}
 	
 	/**
-	 * Retourne la coordonnee x
+	 * Retourne la coordonnée x
 	 */
 	public double getX() {
 		return x;
 	}
 	
 	/**
-	 * Remplace la coordonnee x avec celle donnee en parametre
+	 * Remplace la coordonnée x avec celle donnée en parametre
 	 * @param x
 	 */
 	public void setX(double x) {
@@ -85,7 +85,7 @@ public class Point {
 	}
 
 	/**
-	 * Remplace la coordonnee y avec celle donnee en parametre
+	 * Remplace la coordonnée y avec celle donnée en parametre
 	 * @param y
 	 */
 	public void setY(double y) {
@@ -93,7 +93,7 @@ public class Point {
 	}
 
 	/**
-	 * Remplace la coordonnee z avec celle donnee en parametre
+	 * Remplace la coordonnée z avec celle donnée en parametre
 	 * @param z
 	 */
 	public void setZ(double z) {
@@ -108,14 +108,14 @@ public class Point {
 	}
 
 	/**
-	 * Retourne la coordonnee y
+	 * Retourne la coordonnée y
 	 */
 	public double getY() {
 		return y;
 	}
 
 	/**
-	 * Retourne la coordonnee z
+	 * Retourne la coordonnée z
 	 */
 	public double getZ() {
 		return z;
@@ -127,8 +127,8 @@ public class Point {
 	}
 	
 	/**
-	 * Ajoute au fur et a mesure les coordonnes de ce point
-	 * @param nb le coordonnee a ajouter dans ce point
+	 * Ajoute au fur et a mesure les coordonnées de ce point
+	 * @param nb le coordonnée a ajouter dans ce point
 	 */
 	public void add(Double nb) {
 		if (iter == -1) {
@@ -152,7 +152,7 @@ public class Point {
 	}
 	
 	/**
-	 * Si ce points comporte 3 coordonnees
+	 * Si ce points comporte 3 coordonnées
 	 * @return
 	 */
 	public boolean complet() {
@@ -192,7 +192,7 @@ public class Point {
 	}
 	
 	/**
-	 * Donne la coordonnee correspondante.<br>
+	 * Donne la coordonnée correspondante.<br>
 	 * 0 = x, 1 = y, 2 = z
 	 * @param coord
 	 * @return
@@ -208,7 +208,7 @@ public class Point {
 	}
 	
 	/**
-	 * Met les coordonnees de ce points a 0
+	 * Met les coordonnées de ce points a 0
 	 */
 	public void resetCoords() {
 		this.x = 0.0;

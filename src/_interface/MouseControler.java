@@ -232,7 +232,7 @@ public class MouseControler extends MouseAdapter {
 	private void translate(int nextMouseX, int nextMouseY, double localReduceTransSens) {
 		double moveX = (originalMouseX - nextMouseX) * -1 * localReduceTransSens;
 		double moveY = (originalMouseY - nextMouseY) * -1 * localReduceTransSens;
-		Calculations.translatePoints(visPanel.getFigure().getPtsTrans(), moveX, moveY, 0);
+		Calculations.translatePoints(visPanel.getFigure().getPoints(), moveX, moveY, 0);
 	}
 
 	/**

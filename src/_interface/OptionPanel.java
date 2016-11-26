@@ -20,7 +20,7 @@ public class OptionPanel extends JPanel{
 		
 		setLayout(new GridLayout(0, 1));
 		
-		directionalLight = new JCheckBox("Lumière directionnelle");
+		directionalLight = new JCheckBox("LumiÃ¨re directionnelle");
 		directionalLight.setSelected(true);
 		showFaces = new JCheckBox("Afficher Faces");
 		showFaces.setSelected(true);

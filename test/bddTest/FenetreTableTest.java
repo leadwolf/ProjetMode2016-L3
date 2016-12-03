@@ -14,7 +14,7 @@ import org.junit.Test;
 
 import bdd.BaseDeDonnees;
 import bddInterface.FenetreTable;
-import erreur.BDDResultEnum;
+import result.BDDResultEnum;
 
 /**
  * Classe de test de fonctionnement de la classe {@link FenetreTable},

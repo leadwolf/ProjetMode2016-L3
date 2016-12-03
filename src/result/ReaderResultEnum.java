@@ -1,4 +1,4 @@
-package erreur;
+package result;
 
 import reader.Lecture;
 
@@ -8,7 +8,7 @@ import reader.Lecture;
  * @author L3
  *
  */
-public enum ReaderErrorEnum {
+public enum ReaderResultEnum {
 	/**
 	 * On suppose qu'on lit un point. Il manque une coordonnée alors qu'on s'attend à en avoir 3.
 	 */

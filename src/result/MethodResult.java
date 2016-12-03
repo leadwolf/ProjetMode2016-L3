@@ -1,4 +1,4 @@
-package erreur;
+package result;
 
 import bdd.BaseDeDonnees;
 import reader.Lecture;
@@ -11,12 +11,12 @@ import reader.Lecture;
 public abstract class MethodResult {
 
 	/**
-	 * La constante de retour de la méthode qui retoune celle-ci.
+	 * La constante (Enum) de retour qu'une méthode pourra retourner.
 	 */
 	protected Enum<?> result;
 	
 	/**
-	 * @return un Enum correspondant à une constante de retour de méthode
+	 * @return un Enum correspondant au de retour d'une méthode implémentant MethodResult.
 	 */
 	public Enum<?> getCode() {
 		return result;

@@ -1,4 +1,4 @@
-package erreur;
+package result;
 
 /**
  * Type de résultat basique.

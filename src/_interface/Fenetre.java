@@ -93,7 +93,6 @@ public class Fenetre extends JFrame {
 		TimerChangeListener timerChangeListener = new TimerChangeListener();
 		timer = new Timer(50, buttonControler);
 		timerChangeListener.setTimer(timer);
-		timerChangeListener.setPanels(translationPanel, rotationPanel);
 		translationPanel.addButtonChangeListeners(timerChangeListener);
 		rotationPanel.addButtonChangeListeners(timerChangeListener);
 		

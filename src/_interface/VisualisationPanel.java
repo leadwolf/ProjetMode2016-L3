@@ -156,10 +156,18 @@ public class VisualisationPanel extends JPanel {
 	}
 	
 
+	/**
+	 * Donne la hauteur de ce panel lors de sa création. Nécessaire pour centrer la figure avant que le panel apparaisse car sinon getHeight() retourne 0.
+	 * @return la hauteur initiale de panel.
+	 */
 	public int getHeightWindow() {
 		return heightWindow;
 	}
-
+	
+	/**
+	 * Donne la largeur de ce panel lors de sa création. Nécessaire pour centrer la figure avant que le panel apparaisse car sinon getHeight() retourne 0.
+	 * @return la largeur initiale de panel.
+	 */
 	public int getWidthWindow() {
 		return widthWindow;
 	}

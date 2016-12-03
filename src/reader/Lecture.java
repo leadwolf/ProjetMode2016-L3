@@ -10,13 +10,13 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import erreur.BasicResult;
-import erreur.BasicResultEnum;
-import erreur.MethodResult;
-import erreur.ReaderError;
-import erreur.ReaderErrorEnum;
 import modele.Face;
 import modele.Point;
+import result.BasicResult;
+import result.BasicResultEnum;
+import result.MethodResult;
+import result.ReaderResult;
+import result.ReaderResultEnum;
 
 /**
  * Cette classe donne accès à la liste des Points et de Faces de l'objet .ply dont on veut modéliser à  travers les méthodes {@link #getPoints()} et
@@ -81,7 +81,7 @@ public class Lecture {
 	/**
 	 * Donne le résultat d'éxécution de Lecture.
 	 * 
-	 * @return Soit un {@link ReaderError} ou {@link BasicResult}
+	 * @return Soit un {@link ReaderResult} ou {@link BasicResult}
 	 */
 	public MethodResult getResult() {
 		if (erreurType == null) {
@@ -129,7 +129,7 @@ public class Lecture {
 							System.out.println("Erreur dans fichier " + file.getFileName() + " : Fichier ne commence pas par \"ply\"");
 						}
 						if (erreurType == null) {
-							erreurType = new ReaderError(ReaderErrorEnum.PLY_NOT_FOUND);
+							erreurType = new ReaderResult(ReaderResultEnum.PLY_NOT_FOUND);
 						}
 						return false;
 					}
@@ -141,7 +141,7 @@ public class Lecture {
 					System.out.println("Erreur dans fichier " + file.getFileName() + " : Fichier n'a pas l'extension .ply");
 				}
 				if (erreurType == null) {
-					erreurType = new ReaderError(ReaderErrorEnum.BAD_EXTENSION);
+					erreurType = new ReaderResult(ReaderResultEnum.BAD_EXTENSION);
 				}
 				return false;
 			}
@@ -150,7 +150,7 @@ public class Lecture {
 			System.out.println("Fichier " + file.getFileName() + " inexistant");
 		}
 		if (erreurType == null) {
-			erreurType = new ReaderError(ReaderErrorEnum.FILE_NONEXISTING);
+			erreurType = new ReaderResult(ReaderResultEnum.FILE_NONEXISTING);
 		}
 		return false;
 	}
@@ -193,7 +193,7 @@ public class Lecture {
 						System.out.println("Erreur dans fichier " + file.getFileName() + " : Nombre de points non indiqué");
 					}
 					if (erreurType == null) {
-						erreurType = new ReaderError(ReaderErrorEnum.MISSING_ELEMENT_VERTEX);
+						erreurType = new ReaderResult(ReaderResultEnum.MISSING_ELEMENT_VERTEX);
 					}
 				}
 			} while (line != null && !line.startsWith("element vertex"));
@@ -210,7 +210,7 @@ public class Lecture {
 						System.out.println("Erreur dans fichier " + file.getFileName() + " : Nombre de faces non indiqué");
 					}
 					if (erreurType == null) {
-						erreurType = new ReaderError(ReaderErrorEnum.MISSING_ELEMENT_FACE);
+						erreurType = new ReaderResult(ReaderResultEnum.MISSING_ELEMENT_FACE);
 					}
 				}
 			} while (line != null && !line.startsWith("element face"));
@@ -243,7 +243,7 @@ public class Lecture {
 								System.out.println("Peut être causée par un Point(s) manquant");
 							}
 							if (erreurType == null) {
-								erreurType = new ReaderError(ReaderErrorEnum.MISSING_COORD);
+								erreurType = new ReaderResult(ReaderResultEnum.MISSING_COORD);
 							}
 						} else if (strArray.length > 3) {
 							if (!noPrint) {
@@ -251,7 +251,7 @@ public class Lecture {
 								System.out.println("Peut être causée par un Point(s) manquant ou nombre de Points incorrects");
 							}
 							if (erreurType == null) {
-								erreurType = new ReaderError(ReaderErrorEnum.TOO_MANY_COORDS);
+								erreurType = new ReaderResult(ReaderResultEnum.TOO_MANY_COORDS);
 							}
 						}
 					}
@@ -303,7 +303,7 @@ public class Lecture {
 					System.out.println("Peut être causée par une ligne supprimée ou nombre de faces incorrects");
 				}
 				if (erreurType == null) {
-					erreurType = new ReaderError(ReaderErrorEnum.MISSING_FACE);
+					erreurType = new ReaderResult(ReaderResultEnum.MISSING_FACE);
 				}
 			}
 			if (line != null && !line.startsWith("{")) {
@@ -313,7 +313,7 @@ public class Lecture {
 					System.out.println("Trop de lignes par rapport au nombre de Faces");
 				}
 				if (erreurType == null) {
-					erreurType = new ReaderError(ReaderErrorEnum.TOO_MANY_LINES);
+					erreurType = new ReaderResult(ReaderResultEnum.TOO_MANY_LINES);
 				}
 			}
 		} catch (Exception e) {
@@ -338,7 +338,7 @@ public class Lecture {
 				System.out.println("Erreur dans fichier " + file.getFileName() + " : Face incomplet ou a trouvé point");
 			}
 			if (erreurType == null) {
-				erreurType = new ReaderError(ReaderErrorEnum.MISSING_POINT_IN_FACE);
+				erreurType = new ReaderResult(ReaderResultEnum.MISSING_POINT_IN_FACE);
 			}
 		}
 		faces.add(new Face());
@@ -351,7 +351,7 @@ public class Lecture {
 					System.out.println("Erreur dans fichier " + file.getFileName() + " : Face fait référence à point \"" + element + "\" inexistant");
 				}
 				if (erreurType == null) {
-					erreurType = new ReaderError(ReaderErrorEnum.POINT_NOT_FOUND);
+					erreurType = new ReaderResult(ReaderResultEnum.POINT_NOT_FOUND);
 				}
 			} else {
 				tmpFace.addPoint(points.get(element));
@@ -374,7 +374,7 @@ public class Lecture {
 				System.out.println("Peut être causée si attendait Point mais trouvé Face");
 			}
 			if (erreurType == null) {
-				erreurType = new ReaderError(ReaderErrorEnum.TOO_MANY_COORDS);
+				erreurType = new ReaderResult(ReaderResultEnum.TOO_MANY_COORDS);
 			}
 		}
 		Point tmpPoint = new Point();
@@ -390,7 +390,7 @@ public class Lecture {
 				System.out.println("Erreur dans fichier " + file.getFileName() + " : Point ne comporte pas 3 coordonnées");
 			}
 			if (erreurType == null) {
-				erreurType = new ReaderError(ReaderErrorEnum.MISSING_COORD);
+				erreurType = new ReaderResult(ReaderResultEnum.MISSING_COORD);
 			}
 		}
 	}

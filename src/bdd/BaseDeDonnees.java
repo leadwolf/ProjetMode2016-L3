@@ -14,11 +14,11 @@ import java.util.GregorianCalendar;
 import javax.swing.JOptionPane;
 
 import bddInterface.FenetreTable;
-import erreur.BDDResult;
-import erreur.BDDResultEnum;
-import erreur.BasicResult;
-import erreur.BasicResultEnum;
-import erreur.MethodResult;
+import result.BDDResult;
+import result.BDDResultEnum;
+import result.BasicResult;
+import result.BasicResultEnum;
+import result.MethodResult;
 
 /**
  * Cette classe permet d'exécuter toutes les requêtes vers la base de données des modèles
@@ -55,7 +55,7 @@ public class BaseDeDonnees {
 
 	@SuppressWarnings("javadoc")
 	public static void main(String[] args) {
-		parseArgs(args, false, false, false, null);
+		parseArgsWithDB(args, false, false, false, null);
 	}
 
 	/**
@@ -103,7 +103,17 @@ public class BaseDeDonnees {
 		return false;
 	}
 
-	public static MethodResult parseArgs(String[] args, boolean reset, boolean fill, boolean debug, Path dbPath) {
+	/**
+	 * Crée la conenction vers la base.
+	 * 
+	 * @param args la commande de l'utlisateur
+	 * @param reset réinitialisation ou non de la table
+	 * @param fill ré-remplissage de la table
+	 * @param debug afficher ou non les fenêtres
+	 * @param dbPath le chemin vers la base utilisée
+	 * @return
+	 */
+	public static MethodResult parseArgsWithDB(String[] args, boolean reset, boolean fill, boolean debug, Path dbPath) {
 
 		if (dbPath == null) {
 			boolean success = false;
@@ -154,7 +164,7 @@ public class BaseDeDonnees {
 	/**
 	 * Vérifie les arguments et éxecute l'interface pertinente
 	 * 
-	 * @param args les arguments à vérifier
+	 * @param args la commande de l'utlisateur
 	 * @param reset réinitialisation ou non de la table
 	 * @param fill ré-remplissage de la table
 	 * @param debug afficher ou non les fenêtres

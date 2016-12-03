@@ -19,11 +19,11 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import erreur.BDDResult;
-import erreur.BDDResultEnum;
-import erreur.BasicResult;
-import erreur.BasicResultEnum;
-import erreur.MethodResult;
+import result.BDDResult;
+import result.BDDResultEnum;
+import result.BasicResult;
+import result.BasicResultEnum;
+import result.MethodResult;
 
 /**
  * Sert à présenter les informations à éditer, visualiser ou à insérer.

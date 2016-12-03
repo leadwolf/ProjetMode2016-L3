@@ -1,4 +1,4 @@
-package erreur;
+package result;
 
 import bdd.BaseDeDonnees;
 

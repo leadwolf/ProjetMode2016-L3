@@ -7,7 +7,7 @@ import java.nio.file.Paths;
 import org.junit.Test;
 
 import bdd.BaseDeDonnees;
-import erreur.BDDResultEnum;
+import result.BDDResultEnum;
 
 /**
  * Classe de test de fonctionnement de la classe BaseDeDonnees
@@ -26,7 +26,7 @@ public class BaseDeDonneesTest {
 	public void test_all_base_init_remplie() {
 		String[] args = new String[] { "--all" };
 		assertEquals(BDDResultEnum.SHOW_ALL_SUCCESSFUL,
-				BaseDeDonnees.parseArgs(args, true, true, true, Paths.get("test-data/test.sqlite")).getCode());
+				BaseDeDonnees.parseArgsWithDB(args, true, true, true, Paths.get("test-data/test.sqlite")).getCode());
 		BaseDeDonnees.closeConnection();
 	}
 
@@ -34,7 +34,7 @@ public class BaseDeDonneesTest {
 	public void test_all_base_init_vide() {
 		String[] args = new String[] { "--all" };
 		assertEquals(BDDResultEnum.EMPTY_DB,
-				BaseDeDonnees.parseArgs(args, true, false, true, Paths.get("test-data/test.sqlite")).getCode());
+				BaseDeDonnees.parseArgsWithDB(args, true, false, true, Paths.get("test-data/test.sqlite")).getCode());
 		BaseDeDonnees.closeConnection();
 	}
 
@@ -46,7 +46,7 @@ public class BaseDeDonneesTest {
 	public void test_name_recherche_valide() {
 		String[] args = new String[] { ("--name"), ("weathervane") };
 		assertEquals(BDDResultEnum.SHOW_NAME_SUCCESSFUL,
-				BaseDeDonnees.parseArgs(args, true, true, true, Paths.get("test-data/test.sqlite")).getCode());
+				BaseDeDonnees.parseArgsWithDB(args, true, true, true, Paths.get("test-data/test.sqlite")).getCode());
 		BaseDeDonnees.closeConnection();
 	}
 
@@ -54,7 +54,7 @@ public class BaseDeDonneesTest {
 	public void test_name_base_vide() {
 		String[] args = new String[] { ("--name"), ("weathervane") };
 		assertEquals(BDDResultEnum.EMPTY_DB,
-				BaseDeDonnees.parseArgs(args, true, false, true, Paths.get("test-data/test.sqlite")).getCode());
+				BaseDeDonnees.parseArgsWithDB(args, true, false, true, Paths.get("test-data/test.sqlite")).getCode());
 		BaseDeDonnees.closeConnection();
 	}
 
@@ -62,7 +62,7 @@ public class BaseDeDonneesTest {
 	public void test_name_recherche_invalide() {
 		String[] args = new String[] { ("--name"), ("hello") };
 		assertEquals(BDDResultEnum.MODEL_NOT_FOUND,
-				BaseDeDonnees.parseArgs(args, false, true, true, Paths.get("test-data/test.sqlite")).getCode());
+				BaseDeDonnees.parseArgsWithDB(args, false, true, true, Paths.get("test-data/test.sqlite")).getCode());
 		BaseDeDonnees.closeConnection();
 	}
 
@@ -74,7 +74,7 @@ public class BaseDeDonneesTest {
 	public void test_find_recherche_invalide() {
 		String[] args = new String[] { ("--find"), ("hello") };
 		assertEquals(BDDResultEnum.MODEL_NOT_FOUND,
-				BaseDeDonnees.parseArgs(args, true, true, true, Paths.get("test-data/test.sqlite")).getCode());
+				BaseDeDonnees.parseArgsWithDB(args, true, true, true, Paths.get("test-data/test.sqlite")).getCode());
 		BaseDeDonnees.closeConnection();
 	}
 
@@ -82,7 +82,7 @@ public class BaseDeDonneesTest {
 	public void test_find_base_vide() {
 		String[] args = new String[] { ("--find"), ("mot") };
 		assertEquals(BDDResultEnum.EMPTY_DB,
-				BaseDeDonnees.parseArgs(args, true, false, true, Paths.get("test-data/test.sqlite")).getCode());
+				BaseDeDonnees.parseArgsWithDB(args, true, false, true, Paths.get("test-data/test.sqlite")).getCode());
 		BaseDeDonnees.closeConnection();
 	}
 
@@ -90,7 +90,7 @@ public class BaseDeDonneesTest {
 	public void test_find_tous_ont_mot_cle() {
 		String[] args = new String[] { ("--find"), ("mot") };
 		assertEquals(BDDResultEnum.FIND_SUCCESSFUL,
-				BaseDeDonnees.parseArgs(args, true, true, true, Paths.get("test-data/test.sqlite")).getCode());
+				BaseDeDonnees.parseArgsWithDB(args, true, true, true, Paths.get("test-data/test.sqlite")).getCode());
 		BaseDeDonnees.closeConnection();
 	}
 
@@ -98,7 +98,7 @@ public class BaseDeDonneesTest {
 	public void test_find_recherche_valide() {
 		String[] args3 = new String[] { ("--find"), ("mes mots") };
 		assertEquals(BDDResultEnum.FIND_SUCCESSFUL,
-				BaseDeDonnees.parseArgs(args3, false, false, true, Paths.get("test-data/test.sqlite")).getCode());
+				BaseDeDonnees.parseArgsWithDB(args3, false, false, true, Paths.get("test-data/test.sqlite")).getCode());
 		BaseDeDonnees.closeConnection();
 	}
 
@@ -111,7 +111,7 @@ public class BaseDeDonneesTest {
 		// la base est vide
 		String[] args = new String[] { ("--delete"), ("weathervane") };
 		assertEquals(BDDResultEnum.EMPTY_DB,
-				BaseDeDonnees.parseArgs(args, true, false, true, Paths.get("test-data/test.sqlite")).getCode());
+				BaseDeDonnees.parseArgsWithDB(args, true, false, true, Paths.get("test-data/test.sqlite")).getCode());
 		BaseDeDonnees.closeConnection();
 	}
 
@@ -119,11 +119,11 @@ public class BaseDeDonneesTest {
 	public void test_delete_base_remplie_et_venant_detre_suppr() {
 		String[] args = new String[] { ("--delete"), ("weathervane") };
 		assertEquals(BDDResultEnum.DELTE_SUCCESSFUL,
-				BaseDeDonnees.parseArgs(args, true, true, true, Paths.get("test-data/test.sqlite")).getCode());
+				BaseDeDonnees.parseArgsWithDB(args, true, true, true, Paths.get("test-data/test.sqlite")).getCode());
 		BaseDeDonnees.closeConnection();
 
 		assertEquals(BDDResultEnum.MODEL_NOT_FOUND,
-				BaseDeDonnees.parseArgs(args, false, false, true, Paths.get("test-data/test.sqlite")).getCode());
+				BaseDeDonnees.parseArgsWithDB(args, false, false, true, Paths.get("test-data/test.sqlite")).getCode());
 		BaseDeDonnees.closeConnection();
 
 	}

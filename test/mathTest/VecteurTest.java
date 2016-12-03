@@ -1,4 +1,4 @@
-package readerTest;
+package mathTest;
 
 import static org.junit.Assert.*;
 

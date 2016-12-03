@@ -69,7 +69,6 @@ public class Calculations {
 			back = panel.getWidth();
 			front = -panel.getWidth();
 		}
-		// w/2 or h/2 because all points are set to center when drawn, see setPolygones()
 		for (Point p : panel.getFigure().getPoints()) {
 			if (p.getX() < left) {
 				left = p.getX();

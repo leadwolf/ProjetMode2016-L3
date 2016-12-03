@@ -17,10 +17,10 @@ public class RotationPanel extends JPanel {
 
 	private static final long serialVersionUID = 8757878476291206876L;
 	
-	JButton left;
-	JButton right;
-	JButton up;
-	JButton down;
+	private JButton left;
+	private JButton right;
+	private JButton up;
+	private JButton down;
 	
 	public RotationPanel(Dimension buttonPanelDim, Dimension buttonDim) {
 		super();

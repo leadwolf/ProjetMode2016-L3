@@ -85,8 +85,6 @@ public class Matrice {
 	/**
 	 * Multiplie cette matrice de manière à avoir A.this.matrice
 	 * @param A
-	 * @param B
-	 * @return la matrice multipliée
 	 */
 	public void multiply(double[][] A) {
 
@@ -318,7 +316,6 @@ public class Matrice {
 	
 	/**
 	 * Donne une visualisation de la matrice
-	 * @param m
 	 * @param length le nombre de colonnes à afficher
 	 * @return
 	 */

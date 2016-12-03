@@ -30,8 +30,6 @@ public class Fenetre extends JFrame {
 	MouseControler mouseControler;
 	KeyDispatcher keyDispatcher;
 	Timer timer;
-	private Calculations calcs;
-	private Figure figure;
 	
 	public Fenetre(boolean drawPoints, boolean drawSegments, boolean drawFaces) {
 		super();
@@ -93,7 +91,6 @@ public class Fenetre extends JFrame {
 		TimerChangeListener timerChangeListener = new TimerChangeListener();
 		timer = new Timer(50, buttonControler);
 		timerChangeListener.setTimer(timer);
-		timerChangeListener.setPanels(translationPanel, rotationPanel);
 		translationPanel.addButtonChangeListeners(timerChangeListener);
 		rotationPanel.addButtonChangeListeners(timerChangeListener);
 		
@@ -116,11 +113,10 @@ public class Fenetre extends JFrame {
 	}
 		
 	public Figure getFigure() {
-		return this.figure;
+		return visPanel.getFigure();
 	}
 
 	public void setFigure(Figure figure, double zoom) {
-		this.figure = figure;
 		visPanel.setFigure(figure, zoom);
 	}
 

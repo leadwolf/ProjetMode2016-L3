@@ -10,10 +10,10 @@ public class OptionPanel extends JPanel{
 	
 	private static final long serialVersionUID = 5934434784791064085L;
 	
-	JCheckBox directionalLight;
-	JCheckBox showFaces;
-	JCheckBox showSegments;
-	JCheckBox showPoints;
+	private JCheckBox directionalLight;
+	private JCheckBox showFaces;
+	private JCheckBox showSegments;
+	private JCheckBox showPoints;
 	
 	public OptionPanel() {
 		super();
@@ -25,7 +25,7 @@ public class OptionPanel extends JPanel{
 		showFaces = new JCheckBox("Afficher Faces");
 		showFaces.setSelected(true);
 		showSegments = new JCheckBox("Afficher Segments");
-		showSegments.setSelected(true);
+		showSegments.setSelected(false);
 		showPoints = new JCheckBox("Afficher Points");
 		showPoints.setSelected(false);
 		

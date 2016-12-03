@@ -14,11 +14,11 @@ import java.util.GregorianCalendar;
 import javax.swing.JOptionPane;
 
 import bddInterface.FenetreTable;
-import erreur.BDDResult;
-import erreur.BDDResultEnum;
-import erreur.BasicResult;
-import erreur.BasicResultEnum;
-import erreur.MethodResult;
+import result.BDDResult;
+import result.BDDResultEnum;
+import result.BasicResult;
+import result.BasicResultEnum;
+import result.MethodResult;
 
 /**
  * Cette classe permet d'exécuter toutes les requêtes vers la base de données des modèles
@@ -31,7 +31,7 @@ public class BaseDeDonnees {
 	/**
 	 * La liste de modèles
 	 */
-	static String[] items;
+	private static String[] items;
 	/**
 	 * La connection utilisée par cette classe
 	 */
@@ -48,14 +48,14 @@ public class BaseDeDonnees {
 	/**
 	 * @return la date d'aujourd'hui sous forme YYYY/MM/DD
 	 */
-	public static String toDay() {
+	private static String toDay() {
 		Calendar dat = new GregorianCalendar();
 		return dat.get(Calendar.YEAR) + "/" + dat.get(Calendar.MONTH) + "/" + dat.get(Calendar.DAY_OF_MONTH);
 	}
 
 	@SuppressWarnings("javadoc")
 	public static void main(String[] args) {
-		parseArgs(args, false, false, false, null);
+		parseArgsWithDB(args, false, false, false, null);
 	}
 
 	/**
@@ -64,7 +64,7 @@ public class BaseDeDonnees {
 	 * @param args
 	 * @return si les arguments sont corrects
 	 */
-	public static boolean verifArgs(String[] args) {
+	private static boolean verifArgs(String[] args) {
 		if (args[0].equals("--name")) {
 			for (int i = 1; i < args.length; i++) {
 				if (args[i].startsWith("--")) {
@@ -103,7 +103,17 @@ public class BaseDeDonnees {
 		return false;
 	}
 
-	public static MethodResult parseArgs(String[] args, boolean reset, boolean fill, boolean debug, Path dbPath) {
+	/**
+	 * Crée la conenction vers la base.
+	 * 
+	 * @param args la commande de l'utlisateur
+	 * @param reset réinitialisation ou non de la table
+	 * @param fill ré-remplissage de la table
+	 * @param debug afficher ou non les fenêtres
+	 * @param dbPath le chemin vers la base utilisée
+	 * @return si la requête était correcte et que l'interface, si besoin, a été éxecutée
+	 */
+	public static MethodResult parseArgsWithDB(String[] args, boolean reset, boolean fill, boolean debug, Path dbPath) {
 
 		if (dbPath == null) {
 			boolean success = false;
@@ -154,13 +164,13 @@ public class BaseDeDonnees {
 	/**
 	 * Vérifie les arguments et éxecute l'interface pertinente
 	 * 
-	 * @param args les arguments à vérifier
+	 * @param args la commande de l'utlisateur
 	 * @param reset réinitialisation ou non de la table
 	 * @param fill ré-remplissage de la table
 	 * @param debug afficher ou non les fenêtres
 	 * @return si la requête était correcte et que l'interface, si besoin, a été éxecutée
 	 */
-	public static MethodResult parseArgs(String[] args, boolean reset, boolean fill, boolean debug) {
+	private static MethodResult parseArgs(String[] args, boolean reset, boolean fill, boolean debug) {
 
 		if (!verifArgs(args)) {
 			return new BasicResult(BasicResultEnum.BAD_ARGUMENTS);
@@ -300,7 +310,7 @@ public class BaseDeDonnees {
 	 * @param debug afficher ou non les fenêtres
 	 * @return si le modele existe et qu'il a pu créer la fenêtre
 	 */
-	public static MethodResult showName(int i, String[] args, Connection connection, boolean debug) {
+	private static MethodResult showName(int i, String[] args, Connection connection, boolean debug) {
 		ResultSet rs;
 		ResultSet rs2;
 		if (args.length - 1 == i + 1) {
@@ -380,7 +390,7 @@ public class BaseDeDonnees {
 	 * @param debug afficher ou non les requêtes
 	 * @return s'il a pu créer la fenêtre
 	 */
-	public static MethodResult showAll(int i, String[] args, Connection connection, boolean debug) {
+	private static MethodResult showAll(int i, String[] args, Connection connection, boolean debug) {
 		ResultSet rs;
 		ResultSet rs2;
 		if (args.length - 1 == i) {
@@ -445,7 +455,7 @@ public class BaseDeDonnees {
 	 * @param debug afficher ou non les fenêtres
 	 * @return s'il a trouvé des modèles et a pu affiché la fenêtre
 	 */
-	public static MethodResult find(int i, String[] args, Connection connection, boolean debug) {
+	private static MethodResult find(int i, String[] args, Connection connection, boolean debug) {
 		ResultSet rs;
 		ResultSet rs2;
 		String matching = "";
@@ -531,7 +541,7 @@ public class BaseDeDonnees {
 	 * @param connection la connection utilsée pour les requêtes
 	 * @return si fenêtre crée. Pour savoir si requête sql éxecutée, voir {@link FenetreTable}
 	 */
-	public static MethodResult add(Connection connection) {
+	private static MethodResult add(Connection connection) {
 		String[] columnNames = { "Nom", "Chemin", "Date", "Description" };
 		String[] buttonNames = new String[] { "Confirmer", "Reset" };
 		FenetreTable fen = new FenetreTable("Add a model", 1, buttonNames, columnNames, new int[] { 3 }, connection);
@@ -674,7 +684,7 @@ public class BaseDeDonnees {
 	 * @param connection
 	 * @return
 	 */
-	public static MethodResult checkTable(Connection connection) {
+	private static MethodResult checkTable(Connection connection) {
 		boolean success = false;
 		try {
 			PreparedStatement statement;

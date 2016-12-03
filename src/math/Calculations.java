@@ -69,7 +69,6 @@ public class Calculations {
 			back = panel.getWidth();
 			front = -panel.getWidth();
 		}
-		// w/2 or h/2 because all points are set to center when drawn, see setPolygones()
 		for (Point p : panel.getFigure().getPoints()) {
 			if (p.getX() < left) {
 				left = p.getX();
@@ -116,6 +115,7 @@ public class Calculations {
 	/**
 	 * Applique une homothétie pour que la plus grande dimensions
 	 * (largeur ou longueur) de la figure prenne <b>maxSize</b> de l'écran
+	 * @param panel 
 	 * @param maxSize
 	 */
 	public static void fitFigureToWindow(VisualisationPanel panel, double maxSize) {

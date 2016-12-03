@@ -156,10 +156,18 @@ public class VisualisationPanel extends JPanel {
 	}
 	
 
+	/**
+	 * Donne la hauteur de ce panel lors de sa création. Nécessaire pour centrer la figure avant que le panel apparaisse car sinon getHeight() retourne 0.
+	 * @return la hauteur initiale de panel.
+	 */
 	public int getHeightWindow() {
 		return heightWindow;
 	}
-
+	
+	/**
+	 * Donne la largeur de ce panel lors de sa création. Nécessaire pour centrer la figure avant que le panel apparaisse car sinon getHeight() retourne 0.
+	 * @return la largeur initiale de panel.
+	 */
 	public int getWidthWindow() {
 		return widthWindow;
 	}
@@ -195,7 +203,7 @@ public class VisualisationPanel extends JPanel {
 	 * Vide le container Path2D de {@link Figure#getPolygones()} pour le ré-remplir avec les
 	 * nouveaux points tranformés Sinon on afficherait encore les vieux points
 	 * en plus des nouveaux points transformés.
-	 * <br>Tri aussi les faces dans l'ordre d'appartition (arrière -> devant)
+	 * <br>Tri aussi les faces dans l'ordre d'appartition (arrière en premier dans la liste)
 	 */
 	public void refreshObject() {
 		figure.getPolygones().clear();

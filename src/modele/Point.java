@@ -16,8 +16,8 @@ public class Point {
 	
 	/**
 	 * Crée un point a partir des coordonnées x et y
-	 * @param x
-	 * @param y
+	 * @param Coordx 
+	 * @param Coordy 
 	 */
 	public Point(Double Coordx,Double Coordy) {
 		iter = 0;
@@ -27,9 +27,9 @@ public class Point {
 	
 	/**
 	 * Crée un point a partir des coordonnées x, y et z
-	 * @param x
-	 * @param y
-	 * @param z
+	 * @param Coordx 
+	 * @param Coordy 
+	 * @param Coordz
 	 */
 	public Point(Double Coordx,Double Coordy,Double Coordz) {
 		this(Coordx, Coordy);
@@ -39,9 +39,9 @@ public class Point {
 	/**
 	 * Crée un point avec un nom a partir des coordonnées x, y et z.
 	 * @param nom
-	 * @param x
-	 * @param y
-	 * @param z
+	 * @param Coordx 
+	 * @param Coordy 
+	 * @param Coordz
 	 */
 	public Point(String nom,Double Coordx,Double Coordy,Double Coordz){
 		this(Coordx, Coordy, Coordz);
@@ -145,7 +145,7 @@ public class Point {
 	
 	/**
 	 * Remplace le nom du point avec celui donne en parametre
-	 * @param x
+	 * @param name 
 	 */
 	public void setName(String name) {
 		this.nom = name;

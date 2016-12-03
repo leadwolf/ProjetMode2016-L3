@@ -19,11 +19,11 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import erreur.BDDResult;
-import erreur.BDDResultEnum;
-import erreur.BasicResult;
-import erreur.BasicResultEnum;
-import erreur.MethodResult;
+import result.BDDResult;
+import result.BDDResultEnum;
+import result.BasicResult;
+import result.BasicResultEnum;
+import result.MethodResult;
 
 /**
  * Sert à présenter les informations à éditer, visualiser ou à insérer.
@@ -655,7 +655,7 @@ public class FenetreTable extends JFrame {
 	}
 
 	/**
-	 * <b>A REFAIRE CAR CHANGMENT DE PRATIQUE DE REMPLISSAGE -> il suffit q'un champ soit rensigné</b><br>
+	 * <b>A REFAIRE CAR CHANGMENT DE PRATIQUE DE REMPLISSAGE = il suffit q'un champ soit rensigné</b><br>
 	 * Crée un JOptionPane d'erreur en fonction de la validité du nom, chemin et keywords
 	 * 
 	 * @param name

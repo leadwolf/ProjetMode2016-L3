@@ -4,9 +4,9 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-import erreur.BasicResultEnum;
 import math.Matrice;
 import reader.Lecture;
+import result.BasicResultEnum;
 
 public class Figure {
 

@@ -14,8 +14,6 @@ import javax.swing.event.ChangeListener;
 public class TimerChangeListener implements ChangeListener {
 
 	Timer timer;
-	TranslationPanel transPanel;
-	RotationPanel rotationPanel;
 
 	public TimerChangeListener() {
 		super();
@@ -39,11 +37,6 @@ public class TimerChangeListener implements ChangeListener {
 	 */
 	public void setTimer(Timer timer) {
 		this.timer = timer;
-	}
-	
-	public void setPanels(TranslationPanel transPanel, RotationPanel rotationPanel) {
-		this.transPanel = transPanel;
-		this.rotationPanel = rotationPanel;
 	}
 
 }

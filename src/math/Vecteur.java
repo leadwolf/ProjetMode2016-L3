@@ -11,13 +11,14 @@ public class Vecteur {
 
 	/**
 	 * Retourne la norme du vecteur.
+	 * @return 
 	 */
 	public double getNorme() {
 		return norme;
 	}
 	
 	/**
-	 * Cree un vecteur à partir d'un autre vecteur.
+	 * Cree un vecteur Ã  partir d'un autre vecteur.
 	 * @param vecteur
 	 */
 	public Vecteur(double[] vecteur) {

@@ -116,7 +116,6 @@ public class Lecture {
 	public boolean verifieFichier() {
 		String filename = file.getFileName().toString();
 		String extension = filename.substring(filename.lastIndexOf(".") + 1, filename.length());
-
 		if (new File(file.toString()).isFile()) {
 			if (extension.equals("ply")) {
 				try (BufferedReader reader = Files.newBufferedReader(file, charset)) {
@@ -149,9 +148,7 @@ public class Lecture {
 		if (!noPrint) {
 			System.out.println("Fichier " + file.getFileName() + " inexistant");
 		}
-		if (result == null) {
-			result = new ReaderResult(ReaderResultEnum.FILE_NONEXISTING);
-		}
+		result = new ReaderResult(ReaderResultEnum.FILE_NONEXISTING);
 		return false;
 	}
 

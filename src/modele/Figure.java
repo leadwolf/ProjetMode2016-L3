@@ -104,7 +104,7 @@ public class Figure {
 
 	public boolean getErreurLecture() {
 		if (lecture != null) {
-			return lecture.getResult().equals(BasicResultEnum.ALL_OK);
+			return !lecture.getResult().getCode().equals(BasicResultEnum.ALL_OK);
 		} else {
 			return true;
 		}

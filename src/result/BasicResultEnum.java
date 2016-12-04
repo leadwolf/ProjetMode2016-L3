@@ -15,5 +15,7 @@ public enum BasicResultEnum {
 	 * Erreur quelconque.
 	 */
 	UNKNOWN_ERROR,
-	BAD_ARGUMENTS;
+	BAD_ARGUMENTS,
+	NO_ARGUMENTS,
+	CONFLICTING_ARGUMENTS;
 }

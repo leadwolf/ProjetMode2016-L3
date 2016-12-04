@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import bdd.BaseDeDonnees;
 import result.BDDResultEnum;
+import result.BasicResultEnum;
 
 /**
  * Classe de test de fonctionnement de la classe BaseDeDonnees
@@ -17,11 +18,26 @@ import result.BDDResultEnum;
  */
 public class BaseDeDonneesTest {
 
+	@Test
+	public void test_no_args() {
+		String[] args = new String[0];
+		assertEquals(BasicResultEnum.NO_ARGUMENTS,
+				BaseDeDonnees.parseArgsWithDB(args, true, true, true, Paths.get("test-data/test.sqlite")).getCode());
+		BaseDeDonnees.closeConnection();
+	}
+	
+	@Test
+	public void test_conflicting_args() {
+		String[] args = new String[]{"--all", "--name", "galleon"};
+		assertEquals(BasicResultEnum.CONFLICTING_ARGUMENTS,
+				BaseDeDonnees.parseArgsWithDB(args, true, true, true, Paths.get("test-data/test.sqlite")).getCode());
+		BaseDeDonnees.closeConnection();
+	}
+	
 	/**
 	 * Vérifie que la commande --all liste correctement des modèles avec une
 	 * base vide et remplie
 	 */
-
 	@Test
 	public void test_all_base_init_remplie() {
 		String[] args = new String[] { "--all" };

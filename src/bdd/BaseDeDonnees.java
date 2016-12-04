@@ -62,45 +62,53 @@ public class BaseDeDonnees {
 	 * Verifie seuelement si la syntaxte des arguments sont corrects, pas si la commande a pu être éxecutée
 	 * 
 	 * @param args
-	 * @return si les arguments sont corrects
+	 * @return un {@link MethodResult} décrivant la validité des arguments
 	 */
-	private static boolean verifArgs(String[] args) {
+	private static MethodResult verifArgs(String[] args) {
 		if (args[0].equals("--name")) {
 			for (int i = 1; i < args.length; i++) {
 				if (args[i].startsWith("--")) {
-					return false;
+					return new BasicResult(BasicResultEnum.CONFLICTING_ARGUMENTS);
 				}
 			}
-			return true;
+			return new BasicResult(BasicResultEnum.ALL_OK);
 		} else if (args[0].equals("--all")) {
-			// nothing is wrong
-			return true;
+			for (int i = 1; i < args.length; i++) {
+				if (args[i].startsWith("--")) {
+					return new BasicResult(BasicResultEnum.CONFLICTING_ARGUMENTS);
+				}
+			}
+			return new BasicResult(BasicResultEnum.ALL_OK);
 		} else if (args[0].equals("--find")) {
 			for (int i = 1; i < args.length; i++) {
 				if (args[i].startsWith("--")) {
-					return false;
+					return new BasicResult(BasicResultEnum.CONFLICTING_ARGUMENTS);
 				}
 			}
-			return true;
+			return new BasicResult(BasicResultEnum.ALL_OK);
 		} else if (args[0].equals("--add")) {
-			// nothing is wrong
-			return true;
+			for (int i = 1; i < args.length; i++) {
+				if (args[i].startsWith("--")) {
+					return new BasicResult(BasicResultEnum.CONFLICTING_ARGUMENTS);
+				}
+			}
+			return new BasicResult(BasicResultEnum.ALL_OK);
 		} else if (args[0].equals("--delete")) {
 			for (int i = 1; i < args.length; i++) {
 				if (args[i].startsWith("--")) {
-					return false;
+					return new BasicResult(BasicResultEnum.CONFLICTING_ARGUMENTS);
 				}
 			}
-			return true;
+			return new BasicResult(BasicResultEnum.ALL_OK);
 		} else if (args[0].equals("--edit")) {
 			for (int i = 1; i < args.length; i++) {
 				if (args[i].startsWith("--")) {
-					return false;
+					return new BasicResult(BasicResultEnum.CONFLICTING_ARGUMENTS);
 				}
 			}
-			return true;
+			return new BasicResult(BasicResultEnum.ALL_OK);
 		}
-		return false;
+		return new BasicResult(BasicResultEnum.CONFLICTING_ARGUMENTS);
 	}
 
 	/**
@@ -111,14 +119,25 @@ public class BaseDeDonnees {
 	 * @param fill ré-remplissage de la table
 	 * @param debug afficher ou non les fenêtres
 	 * @param dbPath le chemin vers la base utilisée
-<<<<<<< HEAD
 	 * @return si la requête était correcte et que l'interface, si besoin, a été éxecutée
-=======
-	 * @return
->>>>>>> abe947f3cadf789297755b148f96305b1ba29a43
 	 */
 	public static MethodResult parseArgsWithDB(String[] args, boolean reset, boolean fill, boolean debug, Path dbPath) {
-
+		// check args before connecting to DB
+		if ( (args == null) || (args != null && args.length <= 0)) {
+			if (!debug) {
+				String message = "Vous n'avez pas spécifié d'arguments.";
+				JOptionPane.showMessageDialog(null, message, "Mauvais arguments", JOptionPane.ERROR_MESSAGE);
+			}
+			return new BasicResult(BasicResultEnum.NO_ARGUMENTS);
+		}
+		MethodResult testArgs = verifArgs(args);
+		if (!testArgs.getCode().equals(BasicResultEnum.ALL_OK)) {
+			if (!debug) {
+				String message = "Vous avez spécifié deux commandes incompatibles.";
+				JOptionPane.showMessageDialog(null, message, "Mauvais arguments", JOptionPane.ERROR_MESSAGE);
+			}
+			return testArgs;
+		} // else continue program
 		if (dbPath == null) {
 			boolean success = false;
 			try {
@@ -171,15 +190,10 @@ public class BaseDeDonnees {
 	 * @param args la commande de l'utlisateur
 	 * @param reset réinitialisation ou non de la table
 	 * @param fill ré-remplissage de la table
-	 * @param debug afficher ou non les fenêtres
+	 * @param debug afficher ou non les fenêtres, debug = cacher
 	 * @return si la requête était correcte et que l'interface, si besoin, a été éxecutée
 	 */
 	private static MethodResult parseArgs(String[] args, boolean reset, boolean fill, boolean debug) {
-
-		if (!verifArgs(args)) {
-			return new BasicResult(BasicResultEnum.BAD_ARGUMENTS);
-		} // else continue program
-
 		if (reset) {
 			resetTable(connection);
 		}

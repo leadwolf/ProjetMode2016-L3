@@ -1,0 +1,33 @@
+CARONI Christopher
+Contributions livrable 2
+
+MODELE
+Création de la classe Calculations fournissant des méthodes statiques permettant de faire des rotations et translations par calculs SIMPLES.
+Création de la classe MouseControler --pour rotation autour du centre de la figure et translation, avec la souris.
+Déplacement de toutes les données du modèle PLY dans une classe Figure.
+Création de la classe Matrice.
+Changement toutes les transformations de la classe Calculations (rotation/translation/zoom/centrage) qui utilisent des calculs simples pour utiliser des calculs de la classe Matrice.
+Création de la classe Vecteur.
+Création d'une méthode permettant de calculer le niveau de lumière avec un vecteur directeur de lumière et changement de VisualisationPanel pour afficher des nuances d'une couleur avec cela.
+Création de classes RotationPanel et TranslationPanel avec des boutons et des icônes pour la translation et rotation.
+Changement de Fenetre pour incorporer ces panels avec une mise en page correct, sans ActionListener pour laisser à l'équipe de faire.
+Création de la classe KeyDispatcher pour la manipulation de la figure avec le clavier : R (reset figure), C (centrer), WASD (rotations), flèches (translations HAUT/BAS/DROITE/GAUCHE).
+Ampleur des transformations de la figure diminuée lors de transformations de la souris si maintien de la touche SHIFT.
+Création de TimerChangeListener pour continuer à exécuter des transformations du modèle si maintien du clic sur un bouton et changement de Fenêtre pour prendre cela en compte.
+
+
+BASE DE DONNEES
+Changement de la classe principale BaseDeDonnees pour utiliser des PreparedStatement.
+Changement de BaseDeDonnees pour vérifier les commandes de l'utilisateur et répondre correctement à ses erreurs ou des erreurs de la base (modelé non existant, aucun modelé avec mots clés...) ainsi que la modification des requetés SQL dans le cas de multiples paramètres.
+Création de tout l'interface de BDD :
+	- Création d'une classe FenetreTable pour présenter un ResultSet avec TablePanel (JTable car JList moins joli) au lieu d'afficher dans la console et changement de BaseDeDonnees pour refléter ceci.
+	- Création de méthodes permettant de réaliser une insertion ou modification à partir de FenetreTable sans passer par des paramètres dans la console et changement de BaseDeDonnes pour refléter ceci.
+
+
+TESTS
+Création de tous les tests :
+	- Création d'une classe MethodResult qui servira de classe de base pour fournir une Enum décrivant un résultat des méthodes de Lecture, BaseDeDonnées, et FenetreTable. Ces 3 classes retourneront soit un BDDResult ou ReaderResult lors d'une éxécution d'une requête SQL ou lecture d'un fichier .ply.
+	- Changement de tout le comportement de Lecture, BaseDeDonnees et FenetreTable pour retourner MethodResult dans les méthodes pertinentes.
+	- Création de tests compréhensifs de ces trois classes dans BaseDeDonnesTest, FenetreTableTest de LectureTest en utilisant MethodResult.
+
+	- Création de tests pour les méthodes de Matrice et Vecteur.

@@ -111,7 +111,11 @@ public class BaseDeDonnees {
 	 * @param fill ré-remplissage de la table
 	 * @param debug afficher ou non les fenêtres
 	 * @param dbPath le chemin vers la base utilisée
+<<<<<<< HEAD
 	 * @return si la requête était correcte et que l'interface, si besoin, a été éxecutée
+=======
+	 * @return
+>>>>>>> abe947f3cadf789297755b148f96305b1ba29a43
 	 */
 	public static MethodResult parseArgsWithDB(String[] args, boolean reset, boolean fill, boolean debug, Path dbPath) {
 

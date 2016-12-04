@@ -1,7 +1,6 @@
 package result;
 
 import reader.Lecture;
-
 /**
  * Type d'erreur correspondant à une erreur de {@link Lecture}
  * @author L3

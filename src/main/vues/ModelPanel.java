@@ -71,7 +71,8 @@ public class ModelPanel extends JPanel {
 		visPanel = new VisualisationPanel(figureModel, drawPoints, drawSegments, drawFaces);
 		visPanel.setTempDimensions(new Dimension(mainPanelDim.width, mainPanelDim.height - buttonPanelDim.height - extraBottomPanelHeight));
 		visPanel.setPreferredSize(mainPanelDim);
-
+		visPanel.setBackground(Color.WHITE);
+		
 		/* PANNEAUX BOUTONS */
 		translationPanel = new TranslationPanel(buttonPanelDim, buttonDim);
 		translationPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK), "Translater le modèle"));

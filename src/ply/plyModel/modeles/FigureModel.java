@@ -71,6 +71,13 @@ public class FigureModel extends Observable{
 	}
 
 	/**
+	 * @return the path
+	 */
+	public Path getPath() {
+		return path;
+	}
+
+	/**
 	 * @return the points
 	 */
 	public List<Point> getPoints() {

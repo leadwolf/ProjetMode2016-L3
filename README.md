@@ -9,7 +9,7 @@ Les fonctionnalités de la partie visualisation sont les suivantes :
   - Centrer le modèle sur son écran et la disposer de manière que tout le modèle soit visible
 
 Les fonctionnalités de la partie base de données sont les suivantes :
-  - `--find <nom_modele>` : Afficher les données sur le modèle précisé.
+  - `--name <nom_modele>` : Afficher les données sur le modèle précisé.
   - `--all` : Afficher tout le contenu de la base (nom du modèle, emplacement, date, mot clés).
   - `--find <list mots cles>` : Afficher les données sur les modèles ayant au moins un de ces mots dans leur description
   - `--add` : Ajouter un modèle dans la base.

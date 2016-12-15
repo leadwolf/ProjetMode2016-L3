@@ -2,8 +2,8 @@
 <class-diagram version="1.1.13" icons="true" automaticImage="PNG" always-add-relationships="false" 
   generalizations="true" realizations="true" associations="true" dependencies="false" nesting-relationships="true" 
   router="FAN">  
-  <class id="1" language="java" name="_interface.ButtonControler" project="ProjetMode2016-L3" 
-    file="/ProjetMode2016-L3/src/_interface/ButtonControler.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="1" language="java" name="_interface.controlers.ButtonControler" project="ProjetMode2016-L3" 
+    file="/ProjetMode2016-L3/src/_interface/controlers/ButtonControler.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1894" y="102"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -20,8 +20,8 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="3" language="java" name="_interface.KeyDispatcher" project="ProjetMode2016-L3" 
-    file="/ProjetMode2016-L3/src/_interface/KeyDispatcher.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="3" language="java" name="_interface.controlers.KeyDispatcher" project="ProjetMode2016-L3" 
+    file="/ProjetMode2016-L3/src/_interface/controlers/KeyDispatcher.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="2135" y="102"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -29,8 +29,8 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="4" language="java" name="_interface.TimerChangeListener" project="ProjetMode2016-L3" 
-    file="/ProjetMode2016-L3/src/_interface/TimerChangeListener.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="4" language="java" name="_interface.controlers.TimerChangeListener" project="ProjetMode2016-L3" 
+    file="/ProjetMode2016-L3/src/_interface/controlers/TimerChangeListener.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1372" y="104"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -74,8 +74,8 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="9" language="java" name="_interface.MouseControler" project="ProjetMode2016-L3" 
-    file="/ProjetMode2016-L3/src/_interface/MouseControler.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="9" language="java" name="_interface.controlers.MouseControler" project="ProjetMode2016-L3" 
+    file="/ProjetMode2016-L3/src/_interface/controlers/MouseControler.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="2475" y="975"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -264,15 +264,15 @@
     </display>  
   </class>  
   <association id="30">    
-    <end type="SOURCE" refId="22" navigable="false">      
-      <attribute id="31" name="points">        
-        <position height="0" width="0" x="-6" y="12"/>      
+    <end type="SOURCE" refId="7" navigable="false">      
+      <attribute id="31" name="visPanel">        
+        <position height="0" width="0" x="198" y="-279"/>      
       </attribute>      
-      <multiplicity id="32" minimum="0" maximum="2147483647">        
-        <position height="0" width="0" x="-6" y="12"/>      
+      <multiplicity id="32" minimum="0" maximum="1">        
+        <position height="0" width="0" x="198" y="-279"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="19" navigable="true"/>    
+    <end type="TARGET" refId="8" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="33">    
@@ -287,71 +287,73 @@
     <end type="TARGET" refId="11" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <generalization id="36">    
-    <end type="SOURCE" refId="28"/>    
-    <end type="TARGET" refId="29"/>  
-  </generalization>  
-  <association id="37">    
-    <end type="SOURCE" refId="7" navigable="false">      
-      <attribute id="38" name="translationPanel">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="39" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="2" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="40">    
-    <end type="SOURCE" refId="7" navigable="false">      
-      <attribute id="41" name="mouseControler">        
-        <position height="18" width="86" x="2229" y="847"/>      
-      </attribute>      
-      <multiplicity id="42" minimum="0" maximum="1">        
-        <position height="0" width="0" x="1049" y="-280"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="9" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="43">    
+  <association id="36">    
     <end type="SOURCE" refId="22" navigable="false">      
-      <attribute id="44" name="faces">        
+      <attribute id="37" name="result">        
+        <position height="0" width="0" x="-296" y="-338"/>      
+      </attribute>      
+      <multiplicity id="38" minimum="0" maximum="1">        
+        <position height="0" width="0" x="-296" y="-338"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="29" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="39">    
+    <bendpoint x="2049" y="262"/>    
+    <end type="SOURCE" refId="7" navigable="false">      
+      <attribute id="40" name="keyDispatcher">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
-      <multiplicity id="45" minimum="0" maximum="2147483647">        
+      <multiplicity id="41" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="18" navigable="true"/>    
+    <end type="TARGET" refId="3" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="46">    
+  <association id="42">    
+    <bendpoint x="2126" y="313"/>    
+    <end type="SOURCE" refId="3" navigable="false">      
+      <attribute id="43" name="fenetre">        
+        <position height="18" width="43" x="2069" y="423"/>      
+      </attribute>      
+      <multiplicity id="44" minimum="0" maximum="1">        
+        <position height="16" width="23" x="2119" y="424"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="7" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="45">    
     <bendpoint x="2561" y="1544"/>    
     <bendpoint x="2658" y="1598"/>    
     <bendpoint x="2713" y="1688"/>    
     <end type="SOURCE" refId="20" navigable="false">      
-      <attribute id="47" name="points">        
+      <attribute id="46" name="points">        
         <position height="0" width="0" x="-6" y="12"/>      
       </attribute>      
-      <multiplicity id="48" minimum="0" maximum="2147483647">        
+      <multiplicity id="47" minimum="0" maximum="2147483647">        
         <position height="0" width="0" x="-6" y="12"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="19" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <generalization id="49">    
-    <end type="SOURCE" refId="25"/>    
-    <end type="TARGET" refId="29"/>  
-  </generalization>  
-  <generalization id="50">    
-    <end type="SOURCE" refId="26"/>    
-    <end type="TARGET" refId="29"/>  
-  </generalization>  
+  <association id="48">    
+    <end type="SOURCE" refId="18" navigable="false">      
+      <attribute id="49" name="pointList">        
+        <position height="18" width="48" x="2550" y="1949"/>      
+      </attribute>      
+      <multiplicity id="50" minimum="0" maximum="2147483647">        
+        <position height="0" width="0" x="-6" y="12"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="19" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
   <association id="51">    
-    <end type="SOURCE" refId="7" navigable="false">      
+    <end type="SOURCE" refId="9" navigable="false">      
       <attribute id="52" name="visPanel">        
         <position height="0" width="0" x="198" y="-279"/>      
       </attribute>      
@@ -363,177 +365,176 @@
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="54">    
-    <end type="SOURCE" refId="11" navigable="false">      
-      <attribute id="55" name="tablePanel">        
-        <position height="0" width="0" x="-336" y="-435"/>      
-      </attribute>      
-      <multiplicity id="56" minimum="0" maximum="1">        
-        <position height="0" width="0" x="-336" y="-435"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="14" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="57">    
-    <bendpoint x="1951" y="297"/>    
-    <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="58" name="fenetre">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="59" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="7" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="60">    
-    <bendpoint x="2049" y="262"/>    
-    <end type="SOURCE" refId="7" navigable="false">      
-      <attribute id="61" name="keyDispatcher">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="62" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="3" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="63">    
-    <bendpoint x="2126" y="313"/>    
-    <end type="SOURCE" refId="3" navigable="false">      
-      <attribute id="64" name="fenetre">        
-        <position height="18" width="43" x="2069" y="423"/>      
-      </attribute>      
-      <multiplicity id="65" minimum="0" maximum="1">        
-        <position height="16" width="23" x="2119" y="424"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="7" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="66">    
-    <end type="SOURCE" refId="20" navigable="false">      
-      <attribute id="67" name="ptsMat">        
-        <position height="0" width="0" x="204" y="-359"/>      
-      </attribute>      
-      <multiplicity id="68" minimum="0" maximum="1">        
-        <position height="0" width="0" x="204" y="-359"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="15" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="69">    
-    <end type="SOURCE" refId="18" navigable="false">      
-      <attribute id="70" name="pointList">        
-        <position height="18" width="48" x="2550" y="1949"/>      
-      </attribute>      
-      <multiplicity id="71" minimum="0" maximum="2147483647">        
-        <position height="0" width="0" x="-6" y="12"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="19" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="72">    
     <end type="SOURCE" refId="22" navigable="false">      
-      <attribute id="73" name="result">        
-        <position height="0" width="0" x="-296" y="-338"/>      
-      </attribute>      
-      <multiplicity id="74" minimum="0" maximum="1">        
-        <position height="0" width="0" x="-296" y="-338"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="29" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="75">    
-    <end type="SOURCE" refId="8" navigable="false">      
-      <attribute id="76" name="figure">        
-        <position height="18" width="36" x="2174" y="1344"/>      
-      </attribute>      
-      <multiplicity id="77" minimum="0" maximum="1">        
-        <position height="0" width="0" x="-192" y="123"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="20" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="78">    
-    <end type="SOURCE" refId="7" navigable="false">      
-      <attribute id="79" name="rotationPanel">        
-        <position height="18" width="72" x="1646" y="628"/>      
-      </attribute>      
-      <multiplicity id="80" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="5" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="81">    
-    <end type="SOURCE" refId="7" navigable="false">      
-      <attribute id="82" name="optionPanel">        
-        <position height="0" width="0" x="79" y="20"/>      
-      </attribute>      
-      <multiplicity id="83" minimum="0" maximum="1">        
-        <position height="16" width="23" x="1769" y="457"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="6" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="84">    
-    <end type="SOURCE" refId="20" navigable="false">      
-      <attribute id="85" name="faces">        
+      <attribute id="55" name="faces">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
-      <multiplicity id="86" minimum="0" maximum="2147483647">        
+      <multiplicity id="56" minimum="0" maximum="2147483647">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="18" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="87">    
-    <end type="SOURCE" refId="20" navigable="false">      
-      <attribute id="88" name="lecture">        
+  <generalization id="57">    
+    <end type="SOURCE" refId="26"/>    
+    <end type="TARGET" refId="29"/>  
+  </generalization>  
+  <association id="58">    
+    <end type="SOURCE" refId="7" navigable="false">      
+      <attribute id="59" name="optionPanel">        
+        <position height="0" width="0" x="79" y="20"/>      
+      </attribute>      
+      <multiplicity id="60" minimum="0" maximum="1">        
+        <position height="16" width="23" x="1769" y="457"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="6" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="61">    
+    <end type="SOURCE" refId="7" navigable="false">      
+      <attribute id="62" name="translationPanel">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
-      <multiplicity id="89" minimum="0" maximum="1">        
+      <multiplicity id="63" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="2" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="64">    
+    <end type="SOURCE" refId="7" navigable="false">      
+      <attribute id="65" name="mouseControler">        
+        <position height="18" width="86" x="2229" y="847"/>      
+      </attribute>      
+      <multiplicity id="66" minimum="0" maximum="1">        
+        <position height="0" width="0" x="1049" y="-280"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="9" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="67">    
+    <bendpoint x="1951" y="297"/>    
+    <end type="SOURCE" refId="1" navigable="false">      
+      <attribute id="68" name="fenetre">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="69" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="7" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="70">    
+    <end type="SOURCE" refId="7" navigable="false">      
+      <attribute id="71" name="rotationPanel">        
+        <position height="18" width="72" x="1646" y="628"/>      
+      </attribute>      
+      <multiplicity id="72" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="5" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="73">    
+    <end type="SOURCE" refId="20" navigable="false">      
+      <attribute id="74" name="lecture">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="75" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="22" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="90">    
-    <end type="SOURCE" refId="9" navigable="false">      
-      <attribute id="91" name="visPanel">        
-        <position height="0" width="0" x="198" y="-279"/>      
-      </attribute>      
-      <multiplicity id="92" minimum="0" maximum="1">        
-        <position height="0" width="0" x="198" y="-279"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="8" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="93">    
-    <bendpoint x="2503" y="1581"/>    
-    <bendpoint x="2588" y="1627"/>    
-    <bendpoint x="2622" y="1695"/>    
-    <end type="SOURCE" refId="20" navigable="false">      
-      <attribute id="94" name="center">        
+  <generalization id="76">    
+    <end type="SOURCE" refId="25"/>    
+    <end type="TARGET" refId="29"/>  
+  </generalization>  
+  <association id="77">    
+    <end type="SOURCE" refId="22" navigable="false">      
+      <attribute id="78" name="points">        
         <position height="0" width="0" x="-6" y="12"/>      
       </attribute>      
-      <multiplicity id="95" minimum="0" maximum="1">        
+      <multiplicity id="79" minimum="0" maximum="2147483647">        
         <position height="0" width="0" x="-6" y="12"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="19" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="80">    
+    <end type="SOURCE" refId="11" navigable="false">      
+      <attribute id="81" name="tablePanel">        
+        <position height="0" width="0" x="-336" y="-435"/>      
+      </attribute>      
+      <multiplicity id="82" minimum="0" maximum="1">        
+        <position height="0" width="0" x="-336" y="-435"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="14" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="83">    
+    <end type="SOURCE" refId="20" navigable="false">      
+      <attribute id="84" name="ptsMat">        
+        <position height="0" width="0" x="204" y="-359"/>      
+      </attribute>      
+      <multiplicity id="85" minimum="0" maximum="1">        
+        <position height="0" width="0" x="204" y="-359"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="15" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="86">    
+    <bendpoint x="2503" y="1581"/>    
+    <bendpoint x="2588" y="1627"/>    
+    <bendpoint x="2622" y="1695"/>    
+    <end type="SOURCE" refId="20" navigable="false">      
+      <attribute id="87" name="center">        
+        <position height="0" width="0" x="-6" y="12"/>      
+      </attribute>      
+      <multiplicity id="88" minimum="0" maximum="1">        
+        <position height="0" width="0" x="-6" y="12"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="19" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="89">    
+    <bendpoint x="1903" y="310"/>    
+    <end type="SOURCE" refId="7" navigable="false">      
+      <attribute id="90" name="buttonControler">        
+        <position height="18" width="84" x="1778" y="173"/>      
+      </attribute>      
+      <multiplicity id="91" minimum="0" maximum="1">        
+        <position height="16" width="23" x="1872" y="176"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="1" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <generalization id="92">    
+    <end type="SOURCE" refId="28"/>    
+    <end type="TARGET" refId="29"/>  
+  </generalization>  
+  <association id="93">    
+    <end type="SOURCE" refId="20" navigable="false">      
+      <attribute id="94" name="faces">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="95" minimum="0" maximum="2147483647">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="18" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="96">    
@@ -549,16 +550,15 @@
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="99">    
-    <bendpoint x="1903" y="310"/>    
-    <end type="SOURCE" refId="7" navigable="false">      
-      <attribute id="100" name="buttonControler">        
-        <position height="18" width="84" x="1778" y="173"/>      
+    <end type="SOURCE" refId="8" navigable="false">      
+      <attribute id="100" name="figure">        
+        <position height="18" width="36" x="2174" y="1344"/>      
       </attribute>      
       <multiplicity id="101" minimum="0" maximum="1">        
-        <position height="16" width="23" x="1872" y="176"/>      
+        <position height="0" width="0" x="-192" y="123"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="1" navigable="true"/>    
+    <end type="TARGET" refId="20" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 

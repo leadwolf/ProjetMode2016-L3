@@ -12,6 +12,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
+import _interface.controlers.TimerChangeListener;
+
 public class TranslationPanel extends JPanel {
 
 	private static final long serialVersionUID = 8757878476291206876L;

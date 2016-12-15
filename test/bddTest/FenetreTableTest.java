@@ -12,8 +12,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import bdd.BaseDeDonnees;
-import bdd.vues.FenetreTable;
+import ply.bdd.vues.FenetreTable;
 import result.BDDResultEnum;
 
 /**
@@ -113,9 +112,9 @@ public class FenetreTableTest {
 	
 	
 	public void reset() {
-		BaseDeDonnees.resetTable(connection);
-		BaseDeDonnees.fillTable(connection);
-		BaseDeDonnees.closeConnection();
+		main.BaseDeDonnees.resetTable(connection);
+		main.BaseDeDonnees.fillTable(connection);
+		main.BaseDeDonnees.closeConnection();
 	}
 
 	/**

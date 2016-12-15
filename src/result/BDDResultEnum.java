@@ -1,7 +1,5 @@
 package result;
 
-import bdd.BaseDeDonnees;
-
 /**
  * Codes d'erreurs que peut retourner {@link BaseDeDonnees}
  * @author L3
@@ -69,7 +67,7 @@ public enum BDDResultEnum {
 	/**
 	 * Le delete SQL a réussi.
 	 */
-	DELTE_NOT_SUCCESSFUL,
+	DELETE_NOT_SUCCESSFUL,
 	/**
 	 * La méthode --edit n'a pas pu être éxécutée.
 	 */
@@ -93,7 +91,7 @@ public enum BDDResultEnum {
 	/**
 	 * Le delete SQL a réussi.
 	 */
-	DELTE_SUCCESSFUL,
+	DELETE_SUCCESSFUL,
 	/**
 	 * L'update SQl a réussi.
 	 */

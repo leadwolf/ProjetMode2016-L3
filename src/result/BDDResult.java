@@ -1,7 +1,5 @@
 package result;
 
-import bdd.BaseDeDonnees;
-
 /**
  *  Type d'erreur correspondant à une erreur de {@link BaseDeDonnees}
  * @author L3

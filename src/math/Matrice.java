@@ -2,8 +2,8 @@ package math;
 
 import java.util.List;
 
-import ply.modeles.FigureModel;
-import ply.modeles.Point;
+import ply.plyModel.modeles.FigureModel;
+import ply.plyModel.modeles.Point;
 
 public class Matrice {
 

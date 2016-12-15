@@ -1,3 +1,21 @@
+
+# Current Changes
+## Merging BDD and Model to same JFrame
+
+### Changes
+This commit introduces the follwing changes :
+  - Both bdd and ply MVCs are in the "ply" package under `ply.bdd` and `ply.plyModel`.  
+  - The executing classes are in `ply.main`.  
+  - Changed **Fenetre** to **ModelPanel** to separate the view of the model.
+  - Created a new class **MainFenetre** to present both **ModelPanel** and **BDDPanel** in `ply.vues`.
+  - 
+  
+### What's next
+For now, Modelisationator executes either **ply.main.ModelVisualizer** or **ply.main.BaseDeDonnes** corresponding to which command the user executes.  
+Here is what needs to be done/decided :
+  - **ply.main.ModelVisualizer** already implements **MainFenetre** so all we need to do is change **ply.main.BaseDeDonnes** to launch it as well.
+  - We also need to decide whether **MainFenetre** will display both **ModelPanel** and **BDDPanel** at the same time or alternate the right side between these two and then a simple model navigator on the left.
+
 # Modelisationator
 
 Modelisationanator est un programme permettant de visualiser des modèles .ply (ASCII uniquement) ainsi que de gérer une base de données décrivant ces modèles. A l'instant, elle est séparé en deux parties, dont deux programmes distincts.

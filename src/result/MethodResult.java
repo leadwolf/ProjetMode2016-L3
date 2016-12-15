@@ -1,6 +1,5 @@
 package result;
 
-import bdd.BaseDeDonnees;
 import reader.Lecture;
 
 /**

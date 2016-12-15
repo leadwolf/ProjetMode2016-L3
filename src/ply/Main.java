@@ -2,9 +2,9 @@ package ply;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import _interface.Fenetre;
-import modele.Figure;
-import modele.Point;
+import ply.modeles.FigureModel;
+import ply.modeles.Point;
+import ply.vues.Fenetre;
 
 public class Main {
 	
@@ -13,7 +13,7 @@ public class Main {
 
 		Fenetre fen = null;
 		Path path = null;
-		Figure figure = null;
+		FigureModel figureModel = null;
 		boolean fileChosen = false;
 		boolean paramsOK = true;
 		boolean drawPoints = false, drawSegments = false, drawFaces = false;
@@ -57,18 +57,17 @@ public class Main {
 				drawSegments = false;
 			}
 			if (paramsOK) {
-				figure = new Figure(path, false);
+				figureModel = new FigureModel(path, false);
 			}
 		} else {
 			System.out.println("Aucun fichier précisé");
 		}
 		
 		/* EXECUTE */
-		if (paramsOK && figure != null && !figure.getErreurLecture()) {
-			fen = new Fenetre(drawPoints, drawSegments, drawFaces);
-			fen.setFigure(figure, 1.0);
+		if (paramsOK && figureModel != null && !figureModel.getErreurLecture()) {
+			fen = new Fenetre(figureModel, drawPoints, drawSegments, drawFaces);
 			fen.setVisible(true);
-			fen.repaint();
+			fen.initModelForWindow();
 		}
 	}
 }

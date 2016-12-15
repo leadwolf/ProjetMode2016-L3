@@ -6,7 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import math.Vecteur;
-import modele.Point;
+import ply.modeles.Point;
 
 public class VecteurTest {
 

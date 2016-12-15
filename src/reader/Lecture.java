@@ -10,8 +10,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import modele.Face;
-import modele.Point;
+import ply.modeles.Face;
+import ply.modeles.Point;
 import result.BasicResult;
 import result.BasicResultEnum;
 import result.MethodResult;
@@ -94,11 +94,11 @@ public class Lecture {
 	 * Initialise variables
 	 * 
 	 * @param file le <b>Path</b> de l'objet .ply
-	 * @param noPrint si on veut empêcher les System.out.println
+	 * @param doPrint false si on veut empêcher les System.out.println
 	 */
-	public Lecture(Path file, boolean noPrint) {
+	public Lecture(Path file, boolean doPrint) {
 		this.file = file;
-		this.noPrint = noPrint;
+		this.noPrint = doPrint;
 		result = null;
 		nbPoints = -1;
 		nbFaces = -1;

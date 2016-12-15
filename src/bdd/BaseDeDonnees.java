@@ -13,7 +13,7 @@ import java.util.GregorianCalendar;
 
 import javax.swing.JOptionPane;
 
-import bddInterface.FenetreTable;
+import bdd.vues.FenetreTable;
 import result.BDDResult;
 import result.BDDResultEnum;
 import result.BasicResult;

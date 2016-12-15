@@ -2,8 +2,8 @@ package math;
 
 import java.util.List;
 
-import modele.Figure;
-import modele.Point;
+import ply.modeles.FigureModel;
+import ply.modeles.Point;
 
 public class Matrice {
 
@@ -151,7 +151,7 @@ public class Matrice {
 	 * 
 	 * @param angle
 	 */
-	public void rotateX(Figure fig, double angle) {
+	public void rotateX(FigureModel fig, double angle) {
 		double rad = Math.toRadians(angle);
 
 		//	@formatter:off
@@ -172,7 +172,7 @@ public class Matrice {
 	 * 
 	 * @param angle
 	 */
-	public void rotateY(Figure fig, double angle) {
+	public void rotateY(FigureModel fig, double angle) {
 		double rad = Math.toRadians(angle);
 
 		//	@formatter:off
@@ -193,7 +193,7 @@ public class Matrice {
 	 * 
 	 * @param angle
 	 */
-	public void rotateZ(Figure fig, double angle) {
+	public void rotateZ(FigureModel fig, double angle) {
 		double rad = Math.toRadians(angle);
 
 		//	@formatter:off

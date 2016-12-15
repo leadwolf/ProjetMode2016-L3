@@ -13,7 +13,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import bdd.BaseDeDonnees;
-import bddInterface.FenetreTable;
+import bdd.vues.FenetreTable;
 import result.BDDResultEnum;
 
 /**

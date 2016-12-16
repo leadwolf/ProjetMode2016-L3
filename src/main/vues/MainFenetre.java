@@ -1,19 +1,16 @@
 package main.vues;
 
-import java.awt.Color;
 import java.awt.Dimension;
+import java.sql.Connection;
 
-import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 
-import main.BaseDeDonneesOld;
 import main.BaseDeDonneesNew;
 import ply.plyModel.modeles.FigureModel;
 
@@ -50,7 +47,9 @@ public class MainFenetre extends JFrame {
 		
 		/* LEFT PANEL */
 		Dimension leftPanelDim = new Dimension(leftPanelWidth - (separatorWidth / 2), frameDim.height);
-		LeftSidePanel leftPanel = new LeftSidePanel(figureModel.getPath().getParent(), leftPanelDim);
+		String modelName = figureModel.getPath().toAbsolutePath().getFileName().toString();
+		modelName = modelName.substring(0, modelName.lastIndexOf("."));
+		LeftSidePanel leftPanel = new LeftSidePanel(figureModel.getPath().getParent(), modelName, leftPanelDim);
 		leftPanel.setPreferredSize(leftPanelDim);
 //		leftPanel.setMinimumSize(leftPanelDim);
 		leftPanel.setMinimumSize(new Dimension(10, leftPanelDim.height));
@@ -96,10 +95,11 @@ public class MainFenetre extends JFrame {
 		/* BDD PANEL */
 		// par défaut on veut afficher toute la base
 		BDDPanel bddPanel = BaseDeDonneesNew.getPanel(command, false, false, false, null);
+		BaseDeDonneesNew.closeConnection();
 		
 		/* LEFT PANEL */
 		Dimension leftPanelDim = new Dimension(leftPanelWidth - (separatorWidth / 2), frameDim.height);
-		LeftSidePanel leftPanel = new LeftSidePanel(null, leftPanelDim);
+		LeftSidePanel leftPanel = new LeftSidePanel(null, null, leftPanelDim);
 		leftPanel.setPreferredSize(leftPanelDim);
 //		leftPanel.setMinimumSize(leftPanelDim);
 		leftPanel.setMinimumSize(new Dimension(10, leftPanelDim.height));

@@ -23,12 +23,12 @@ public class LeftSidePanel extends JPanel{
 	 * @param path leave null for default data/
 	 * @param dim
 	 */
-	public LeftSidePanel(Path path, Dimension dim) {
+	public LeftSidePanel(Path path, String modelName, Dimension dim) {
 		super();
 				
 		/* MODEL INFO */
-		ModelInfo modelInfo = new ModelInfo("default");
-		modelInfo.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK), "Informations sur default :"));
+		ModelInfo modelInfo = new ModelInfo(modelName);
+		modelInfo.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK), "Informations sur " + modelName + " :"));
 		modelInfo.setPreferredSize(new Dimension(dim.width, 100));
 		
 		/* MODEL BROWSER */

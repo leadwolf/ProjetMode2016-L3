@@ -22,6 +22,12 @@ import result.BasicResult;
 import result.BasicResultEnum;
 import result.MethodResult;
 
+/**
+ * Cette classe est pareil que BaseDeDonnesOld mais donne une JPanel au lieu d'éxécuter directement les commandes
+ * 
+ * @author L3
+ *
+ */
 public class BaseDeDonneesNew {
 
 	/**
@@ -35,24 +41,59 @@ public class BaseDeDonneesNew {
 
 	/**
 	 * Constructeur par défaut, initalise la liste des modèles à utilser dans le remplissage de la table
+	 * 
 	 * @param dbPath le chemin vers la bdd.sqlite
 	 */
 	public BaseDeDonneesNew(Path dbPath) {
 		items = dbPath.toFile().list();
 	}
 
-	
+	public static Connection getDefaultConnection() {
+		Connection tempCon = null;
+		try {
+			if (connection != null && !connection.isClosed()) {
+				return connection;
+			} else {
+				try {
+					Class.forName("org.sqlite.JDBC");
+					tempCon = DriverManager.getConnection("jdbc:sqlite:data/test.sqlite");
+				} catch (ClassNotFoundException e) {
+					e.printStackTrace();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return tempCon;
+	}
+
+	/**
+	 * Ferme la connection utilisée par cette classe
+	 */
+	public static void closeConnection() {
+		try {
+			if (connection != null) {
+				connection.close();
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
 	/**
 	 * Creates a BDDPanel from the args given
+	 * 
 	 * @param args
-	 * @param reset 
-	 * @param fill 
+	 * @param reset
+	 * @param fill
 	 * @param dbPath path to the db.sqlite
 	 * @param noPrint
 	 * @return
 	 */
-	public static BDDPanel getPanel(String[] args, boolean reset, boolean fill, boolean noPrint, Path dbPath) {	
-		if ( (args == null) || (args != null && args.length <= 0)) {
+	public static BDDPanel getPanel(String[] args, boolean reset, boolean fill, boolean noPrint, Path dbPath) {
+		if ((args == null) || (args != null && args.length <= 0)) {
 			if (!noPrint) {
 				String message = "Vous n'avez pas spécifié d'arguments.";
 				JOptionPane.showMessageDialog(null, message, "Mauvais arguments", JOptionPane.ERROR_MESSAGE);
@@ -68,7 +109,7 @@ public class BaseDeDonneesNew {
 			}
 			return null;
 		} // else continue program
-		
+
 		if (dbPath == null) {
 			boolean success = false;
 			try {
@@ -111,7 +152,7 @@ public class BaseDeDonneesNew {
 		}
 		return parseArgs(args, reset, fill, noPrint);
 	}
-	
+
 	/**
 	 * Verifie seuelement si la syntaxte des arguments sont corrects, pas si la commande a pu être éxecutée
 	 * 
@@ -165,7 +206,7 @@ public class BaseDeDonneesNew {
 		}
 		return new BasicResult(BasicResultEnum.NO_ARGUMENTS);
 	}
-	
+
 	/**
 	 * Vérifie les arguments et éxecute l'interface pertinente
 	 * 
@@ -189,21 +230,21 @@ public class BaseDeDonneesNew {
 					if (checkTable(connection).getCode().equals(BasicResultEnum.ALL_OK)) {
 						return showName(i, args, connection, noPrint);
 					} else {
-//						return new BDDResult(BDDResultEnum.EMPTY_DB);
+						// return new BDDResult(BDDResultEnum.EMPTY_DB);
 					}
 				}
 				if (args[i].equals("--all")) {
 					if (checkTable(connection).getCode().equals(BasicResultEnum.ALL_OK)) {
 						return showAll(i, args, connection, noPrint);
 					} else {
-//						return new BDDResult(BDDResultEnum.EMPTY_DB);
+						// return new BDDResult(BDDResultEnum.EMPTY_DB);
 					}
 				}
 				if (args[i].equals("--find")) {
 					if (checkTable(connection).getCode().equals(BasicResultEnum.ALL_OK)) {
 						return find(i, args, connection, noPrint);
 					} else {
-//						return new BDDResult(BDDResultEnum.EMPTY_DB);
+						// return new BDDResult(BDDResultEnum.EMPTY_DB);
 					}
 				}
 				if (args[i].equals("--add")) {
@@ -213,22 +254,76 @@ public class BaseDeDonneesNew {
 					if (checkTable(connection).getCode().equals(BasicResultEnum.ALL_OK)) {
 						delete(i, args, connection, noPrint);
 					} else {
-//						return new BDDResult(BDDResultEnum.EMPTY_DB);
+						// return new BDDResult(BDDResultEnum.EMPTY_DB);
 					}
 				}
 				if (args[i].equals("--edit")) {
 					if (checkTable(connection).getCode().equals(BasicResultEnum.ALL_OK)) {
 						return edit(i, args, connection);
 					} else {
-//						return new BDDResult(BDDResultEnum.EMPTY_DB);
+						// return new BDDResult(BDDResultEnum.EMPTY_DB);
 					}
 				}
 			}
 		}
-//		return new BasicResult(BasicResultEnum.UNKNOWN_ERROR);
+		// return new BasicResult(BasicResultEnum.UNKNOWN_ERROR);
 		return null;
 	}
-	
+
+	/**
+	 * @param name the name of the model
+	 * @param connection
+	 * @param debug false to prevent print
+	 * @return
+	 */
+	public static String[] getNameInfo(String name, boolean debug) {
+		ResultSet rs;
+		ResultSet rs2;
+		boolean success = false;
+		try {
+			PreparedStatement statement = getDefaultConnection().prepareStatement("select COUNT(*) from PLY where NOM = ?");
+			statement.setString(1, name);
+			rs = statement.executeQuery();
+			if (rs.next()) {
+				int totalLines = rs.getInt(1);
+				if (totalLines > 0) {
+					if (!debug) {
+						PreparedStatement statement2 = getDefaultConnection().prepareStatement("select * from PLY where NOM = ?");
+						statement2.setString(1, name);
+						rs2 = statement2.executeQuery();
+						String[] nameInfo = new String[rs2.getMetaData().getColumnCount()];
+						rs2.next();
+						for (int i = 1; i <= rs2.getMetaData().getColumnCount(); i++) {
+							nameInfo[i - 1] = rs2.getString(i);
+						}
+						return nameInfo;
+					}
+					success = true;
+				} else {
+					return null;
+				}
+			} else {
+				if (!debug) {
+					String message = "Le modèle " + name + " n'existe pas\nUtilisation: basededonneés --name <name>";
+					JOptionPane.showMessageDialog(null, message, "Mauvais arguments", JOptionPane.ERROR_MESSAGE);
+				}
+				success = true;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (!success) {
+				try {
+					getDefaultConnection().close();
+				} catch (SQLException e) {
+					System.err.println(e);
+				}
+			}
+		}
+		return null;
+
+	}
+
 	/**
 	 * Vérifie et crée la fenetre d'informations sur le modèle précisé
 	 * 
@@ -259,7 +354,8 @@ public class BaseDeDonneesNew {
 							return new BDDPanel(firstFile, totalLines, null, rs2, columnNames, new int[] { 1, 2, 3, 4 }, connection);
 						}
 						success = true;
-//						return new BDDResult(BDDResultEnum.SHOW_NAME_SUCCESSFUL);
+						// return new
+						// BDDResult(BDDResultEnum.SHOW_NAME_SUCCESSFUL);
 					} else {
 						if (!debug) {
 							String message = "Le modèle " + firstFile + " n'existe pas\nUtilisation: basededonneés --name <name>";
@@ -267,7 +363,7 @@ public class BaseDeDonneesNew {
 						}
 						// System.exit(1);
 						success = true;
-//						return new BDDResult(BDDResultEnum.MODEL_NOT_FOUND);
+						// return new BDDResult(BDDResultEnum.MODEL_NOT_FOUND);
 					}
 				} else {
 					if (!debug) {
@@ -276,7 +372,7 @@ public class BaseDeDonneesNew {
 					}
 					// System.exit(1);
 					success = true;
-//					return new BDDResult(BDDResultEnum.MODEL_NOT_FOUND);
+					// return new BDDResult(BDDResultEnum.MODEL_NOT_FOUND);
 				}
 			} catch (SQLException e) {
 				e.printStackTrace();
@@ -296,19 +392,19 @@ public class BaseDeDonneesNew {
 				JOptionPane.showMessageDialog(null, message, "Mauvais arguments", JOptionPane.ERROR_MESSAGE);
 			}
 			// System.exit(1);
-//			return new BDDResult(BDDResultEnum.NAME_NOT_SPECIFIED);
+			// return new BDDResult(BDDResultEnum.NAME_NOT_SPECIFIED);
 		} else {
 			if (!debug) {
 				String message = "Trop d'arguments\nUtilisation: basededonneés --name <name>";
 				JOptionPane.showMessageDialog(null, message, "Mauvais arguments", JOptionPane.ERROR_MESSAGE);
 			}
 			// System.exit(1);
-//			return new BDDResult(BDDResultEnum.TOO_MANY_ARGS);
+			// return new BDDResult(BDDResultEnum.TOO_MANY_ARGS);
 		}
-//		return new BDDResult(BDDResultEnum.SHOW_NAME_NOT_SUCCESSFUL);
+		// return new BDDResult(BDDResultEnum.SHOW_NAME_NOT_SUCCESSFUL);
 		return null;
 	}
-	
+
 	/**
 	 * Vérifie les arguments et crée la fenetre listant toute la base
 	 * 
@@ -336,7 +432,8 @@ public class BaseDeDonneesNew {
 							return new BDDPanel("All models", totalLines, null, rs2, columnNames, new int[] { 1, 2, 3, 4 }, connection);
 						}
 						success = true;
-//						return new BDDResult(BDDResultEnum.SHOW_ALL_SUCCESSFUL);
+						// return new
+						// BDDResult(BDDResultEnum.SHOW_ALL_SUCCESSFUL);
 					} else {
 						if (!debug) {
 							String message = "Il n'y a pas de modèles enregistré";
@@ -344,7 +441,7 @@ public class BaseDeDonneesNew {
 						}
 						// System.exit(1);
 						success = true;
-//						return new BDDResult(BDDResultEnum.EMPTY_DB);
+						// return new BDDResult(BDDResultEnum.EMPTY_DB);
 					}
 				}
 
@@ -367,12 +464,12 @@ public class BaseDeDonneesNew {
 				JOptionPane.showMessageDialog(null, message, "Mauvais arguments", JOptionPane.ERROR_MESSAGE);
 			}
 			// System.exit(1);
-//			return new BDDResult(BDDResultEnum.TOO_MANY_ARGS);
+			// return new BDDResult(BDDResultEnum.TOO_MANY_ARGS);
 		}
-//		return new BDDResult(BDDResultEnum.SHOW_ALL_NOT_SUCCESSFUL);
+		// return new BDDResult(BDDResultEnum.SHOW_ALL_NOT_SUCCESSFUL);
 		return null;
 	}
-	
+
 	/**
 	 * Vérifie les arguments et puis crée la fenetre listant les informations des modèles correspondants aux keywords
 	 * 
@@ -423,7 +520,7 @@ public class BaseDeDonneesNew {
 							return new BDDPanel("Find models", totalLines, null, rs2, columnNames, new int[] { 1, 2, 3, 4 }, connection);
 						}
 						success = true;
-//						return new BDDResult(BDDResultEnum.FIND_SUCCESSFUL);
+						// return new BDDResult(BDDResultEnum.FIND_SUCCESSFUL);
 					} else {
 						if (!debug) {
 							String message = "Aucun modèle trouvé comportant ces mot clés";
@@ -431,7 +528,7 @@ public class BaseDeDonneesNew {
 						}
 						// System.exit(1);
 						success = true;
-//						return new BDDResult(BDDResultEnum.MODEL_NOT_FOUND);
+						// return new BDDResult(BDDResultEnum.MODEL_NOT_FOUND);
 					}
 				}
 
@@ -455,9 +552,9 @@ public class BaseDeDonneesNew {
 				JOptionPane.showMessageDialog(null, message, "Mauvais arguments", JOptionPane.ERROR_MESSAGE);
 			}
 			// System.exit(1);
-//			return new BDDResult(BDDResultEnum.NO_DESC_SPECIFIED);
+			// return new BDDResult(BDDResultEnum.NO_DESC_SPECIFIED);
 		}
-//		return new BDDResult(BDDResultEnum.FIND_NOT_SUCCESSFUL);
+		// return new BDDResult(BDDResultEnum.FIND_NOT_SUCCESSFUL);
 		return null;
 	}
 
@@ -471,7 +568,7 @@ public class BaseDeDonneesNew {
 		String[] columnNames = { "Nom", "Chemin", "Date", "Description" };
 		String[] buttonNames = new String[] { "Confirmer", "Reset" };
 		return new BDDPanel("Add a model", 1, buttonNames, columnNames, new int[] { 3 }, connection);
-//		return new BasicResult(BasicResultEnum.ALL_OK);
+		// return new BasicResult(BasicResultEnum.ALL_OK);
 	}
 
 	/**
@@ -501,13 +598,13 @@ public class BaseDeDonneesNew {
 						ResultSet rs2 = st.executeQuery();
 						success = true;
 						return new BDDPanel("Insert", totalLines, buttonNames, rs2, columnNames, new int[] { 3 }, connection);
-//						return new BasicResult(BasicResultEnum.ALL_OK);
+						// return new BasicResult(BasicResultEnum.ALL_OK);
 					} else {
 						String message = "Le modèle " + firstFile + " n'existe pas";
 						JOptionPane.showMessageDialog(null, message, "Mauvais arguments", JOptionPane.ERROR_MESSAGE);
 						// System.exit(1);
 						success = true;
-//						return new BDDResult(BDDResultEnum.MODEL_NOT_FOUND);
+						// return new BDDResult(BDDResultEnum.MODEL_NOT_FOUND);
 					}
 				}
 				success = true;
@@ -528,14 +625,14 @@ public class BaseDeDonneesNew {
 			String message = "Trop d'arguments\nUtilisation: basededonneés --name <name>";
 			JOptionPane.showMessageDialog(null, message, "Mauvais arguments", JOptionPane.ERROR_MESSAGE);
 			// System.exit(1);
-//			return new BDDResult(BDDResultEnum.TOO_MANY_ARGS);
+			// return new BDDResult(BDDResultEnum.TOO_MANY_ARGS);
 		} else {
 			String message = "Pas de nom précisé\nUtilisation: basededonneés --name <name>";
 			JOptionPane.showMessageDialog(null, message, "Mauvais arguments", JOptionPane.ERROR_MESSAGE);
 			// System.exit(1);
-//			return new BDDResult(BDDResultEnum.NAME_NOT_SPECIFIED);
+			// return new BDDResult(BDDResultEnum.NAME_NOT_SPECIFIED);
 		}
-//		return new BDDResult(BDDResultEnum.EDIT_NOT_SUCCESSFUL);
+		// return new BDDResult(BDDResultEnum.EDIT_NOT_SUCCESSFUL);
 		return null;
 	}
 
@@ -558,7 +655,9 @@ public class BaseDeDonneesNew {
 				if (totalLines == 1) {
 					PreparedStatement stDelete = connection.prepareStatement("delete from PLY where NOM = ?");
 					stDelete.setString(1, firstFile);
-					int result = stDelete.executeUpdate(); // result = nombre de lignes affectés par le delete
+					int result = stDelete.executeUpdate(); // result = nombre de
+															// lignes affectés
+															// par le delete
 					if (!debug && result > 0) {
 						String message = "Le modèle " + firstFile + " a été supprimé avec succès!";
 						JOptionPane.showMessageDialog(null, message);
@@ -603,7 +702,7 @@ public class BaseDeDonneesNew {
 		}
 		return new BDDResult(BDDResultEnum.DELETE_NOT_SUCCESSFUL);
 	}
-	
+
 	/**
 	 * Drop la table PLY et la recrée
 	 * 
@@ -647,7 +746,8 @@ public class BaseDeDonneesNew {
 			for (int i = 0; i < items.length; i++) {
 				if (items[i].lastIndexOf(".ply") > 0) {
 					String nom = items[i].substring(0, items[i].lastIndexOf(".ply"));
-					firstStatement.executeUpdate("insert into PLY values " + "('" + nom + "', 'ply/" + items[i] + "', '" + toDay() + "' ,'mes mots clés')");
+					firstStatement
+							.executeUpdate("insert into PLY values " + "('" + nom + "', 'ply/" + items[i] + "', '" + toDay() + "' ,'mes mots clés')");
 				}
 			}
 			success = true;
@@ -664,7 +764,7 @@ public class BaseDeDonneesNew {
 			}
 		}
 	}
-	
+
 	/**
 	 * @return la date d'aujourd'hui sous forme YYYY/MM/DD
 	 */
@@ -672,7 +772,7 @@ public class BaseDeDonneesNew {
 		Calendar dat = new GregorianCalendar();
 		return dat.get(Calendar.YEAR) + "/" + dat.get(Calendar.MONTH) + "/" + dat.get(Calendar.DAY_OF_MONTH);
 	}
-	
+
 	/**
 	 * Vérifie si la table est vide
 	 * 

@@ -40,20 +40,7 @@ public class BaseDeDonneesNew {
 	public BaseDeDonneesNew(Path dbPath) {
 		items = dbPath.toFile().list();
 	}
-	
-	/**
-	 * @param args
-	 * @param reset
-	 * @param fill
-	 * @param noPrint
-	 * @param dbPath null for default path in data/base.sqlite
-	 * @return
-	 */
-	public static MethodResult executeDB(String[] args, boolean reset, boolean fill, boolean noPrint, Path dbPath) {
-		MainFenetre mainFrame = new MainFenetre(args);
-		mainFrame.setTitle("Modelisationator");
-		return null;
-	}
+
 	
 	/**
 	 * Creates a BDDPanel from the args given

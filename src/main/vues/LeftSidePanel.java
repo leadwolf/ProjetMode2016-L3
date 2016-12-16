@@ -3,6 +3,7 @@ package main.vues;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -18,6 +19,10 @@ import ply.bdd.vues.ModelInfo;
  */
 public class LeftSidePanel extends JPanel{
 
+	/**
+	 * @param path leave null for default data/
+	 * @param dim
+	 */
 	public LeftSidePanel(Path path, Dimension dim) {
 		super();
 				
@@ -27,7 +32,12 @@ public class LeftSidePanel extends JPanel{
 		modelInfo.setPreferredSize(new Dimension(dim.width, 100));
 		
 		/* MODEL BROWSER */
-		ModelBrowser modelBrowser = new ModelBrowser(path);
+		ModelBrowser modelBrowser;
+		if (path != null) {
+			 modelBrowser = new ModelBrowser(path);
+		} else {
+			modelBrowser = new ModelBrowser(Paths.get("data/"));
+		}
 		modelBrowser.setBorder(BorderFactory.createLineBorder(Color.black));
 		modelBrowser.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK), "Model Browser :"));
 		

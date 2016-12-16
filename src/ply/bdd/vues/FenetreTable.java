@@ -260,12 +260,12 @@ public class FenetreTable extends JFrame {
 
 		/* BOUTONS */
 		buttonList = new ArrayList<>();
-		ButtonControler buttonControler = new ButtonControler(this);
+//		ButtonControler buttonControler = new ButtonControler(this);
 
 		for (int i = 0; i < buttonNames.length; i++) {
 			JButton tmpButton = new JButton(buttonNames[i]);
 			tmpButton.setActionCommand(buttonNames[i]);
-			tmpButton.addActionListener(buttonControler);
+//			tmpButton.addActionListener(buttonControler);
 			buttonList.add(tmpButton);
 		}
 

@@ -1,7 +1,7 @@
 package result;
 
 /**
- *  Type d'erreur correspondant à une erreur de {@link BaseDeDonnees}
+ *  Type d'erreur correspondant à une erreur de {@link BaseDeDonneesOld}
  * @author L3
  *
  */

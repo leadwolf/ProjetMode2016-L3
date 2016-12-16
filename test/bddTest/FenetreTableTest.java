@@ -112,9 +112,9 @@ public class FenetreTableTest {
 	
 	
 	public void reset() {
-		main.BaseDeDonnees.resetTable(connection);
-		main.BaseDeDonnees.fillTable(connection);
-		main.BaseDeDonnees.closeConnection();
+		main.BaseDeDonneesOld.resetTable(connection);
+		main.BaseDeDonneesOld.fillTable(connection);
+		main.BaseDeDonneesOld.closeConnection();
 	}
 
 	/**

@@ -1,7 +1,7 @@
 package result;
 
 /**
- * Codes d'erreurs que peut retourner {@link BaseDeDonnees}
+ * Codes d'erreurs que peut retourner {@link BaseDeDonneesOld}
  * @author L3
  *
  */

@@ -3,6 +3,7 @@ package ply.bdd.controlers;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import main.vues.BDDPanel;
 import ply.bdd.vues.FenetreTable;
 
 /**
@@ -16,7 +17,7 @@ public class ButtonControler implements ActionListener {
 	/**
 	 * le {@link FenetreTable} à qui ce contrôleur est lié
 	 */
-	private FenetreTable frame;
+	private BDDPanel bddPanel;
 
 	/**
 	 * Constructeur principale
@@ -24,21 +25,21 @@ public class ButtonControler implements ActionListener {
 	 * @param frame
 	 *            le {@link FenetreTable} à qui ce contrôleur est lié
 	 */
-	public ButtonControler(FenetreTable frame) {
-		this.frame = frame;
+	public ButtonControler(BDDPanel frame) {
+		this.bddPanel = frame;
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		switch (e.getActionCommand().toLowerCase()) {
 		case "insert":
-			frame.insertTableAmorce(false);
+			bddPanel.insertTableAmorce(false);
 			break;
 		case "reset":
-			frame.resetFields();
+			bddPanel.resetFields();
 			break;
 		case "confirmer":
-			frame.updateTableAmorce(false);
+			bddPanel.updateTableAmorce(false);
 			break;
 		default:
 			break;

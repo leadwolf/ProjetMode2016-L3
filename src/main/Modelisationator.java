@@ -32,7 +32,7 @@ public class Modelisationator {
 			if (singleMinus.matcher(args[0]).find()) {
 				return ModeleVisualizer.execute3Dargs(args, false);
 			} else if (doubleMinus.matcher(args[0]).find()) {
-				return BaseDeDonnees.executeDB(args, false, false, false, null);
+				return BaseDeDonneesNew.executeDB(args, false, false, false, null);
 			} else if (extension != null && extension.equals("ply")) {
 				return ModeleVisualizer.executePly(args, false);
 			} else {

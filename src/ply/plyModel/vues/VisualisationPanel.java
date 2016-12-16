@@ -49,7 +49,9 @@ public class VisualisationPanel extends JPanel implements Observer {
 		this.drawFaces = drawFaces;
 		
 		this.figureModel = figureModel;
-		figureModel.addObserver(this);
+		if (figureModel != null) {
+			figureModel.addObserver(this);
+		}
 	}
 
 	@Override
@@ -60,7 +62,7 @@ public class VisualisationPanel extends JPanel implements Observer {
 		/*
 		 * On met les segments et faces dans la meme boucle pour qu'on les dessine dans le meme ordre de leur moyenne de Z
 		 */
-		if (drawSegments || drawFaces) {
+		if (figureModel != null && (drawSegments || drawFaces)) {
 
 			Stroke defaultStroke2 =  new BasicStroke(1.5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
 			final float dash1[] = { 7.0f };
@@ -95,7 +97,7 @@ public class VisualisationPanel extends JPanel implements Observer {
 //		g.fill(shapeCenter);
 		
 
-		if (drawPoints) {
+		if (figureModel != null && drawPoints) {
 			g.setColor(Color.GRAY);
 			for (Point pt : figureModel.getPoints()) {
 				double x = pt.getX() - (ptsDim.getWidth() / 2);

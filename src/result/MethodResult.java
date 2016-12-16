@@ -3,7 +3,7 @@ package result;
 import reader.Lecture;
 
 /**
- * Cette classe englobe tout les types de résultats que peut retourner {@link BaseDeDonnees} et {@link Lecture}
+ * Cette classe englobe tout les types de résultats que peut retourner {@link BaseDeDonneesOld} et {@link Lecture}
  * @author L3
  *
  */

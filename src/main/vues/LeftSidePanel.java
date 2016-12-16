@@ -2,13 +2,16 @@ package main.vues;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.event.MouseListener;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
+import javax.swing.JList;
 import javax.swing.JPanel;
 
+import ply.bdd.controlers.JListControler;
 import ply.bdd.vues.ModelBrowser;
 import ply.bdd.vues.ModelInfo;
 
@@ -19,6 +22,8 @@ import ply.bdd.vues.ModelInfo;
  */
 public class LeftSidePanel extends JPanel{
 
+	private ModelBrowser modelBrowser;
+	
 	/**
 	 * @param path leave null for default data/
 	 * @param dim
@@ -32,12 +37,7 @@ public class LeftSidePanel extends JPanel{
 		modelInfo.setPreferredSize(new Dimension(dim.width, 100));
 		
 		/* MODEL BROWSER */
-		ModelBrowser modelBrowser;
-		if (path != null) {
-			 modelBrowser = new ModelBrowser(path);
-		} else {
-			modelBrowser = new ModelBrowser(Paths.get("data/"));
-		}
+		 modelBrowser = new ModelBrowser(path);
 		modelBrowser.setBorder(BorderFactory.createLineBorder(Color.black));
 		modelBrowser.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK), "Model Browser :"));
 		
@@ -47,6 +47,10 @@ public class LeftSidePanel extends JPanel{
 		
 		add(modelInfo);
 		add(modelBrowser);
+	}
+	
+	public void addMouseListenerToList(MouseListener listener) {
+		modelBrowser.addMouseListenerToList(listener);
 	}
 	
 }

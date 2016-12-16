@@ -1,5 +1,6 @@
 package ply.bdd.vues;
 
+import java.awt.event.MouseListener;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -13,8 +14,10 @@ import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.ListModel;
+import javax.swing.ListSelectionModel;
 
 import main.vues.ModelPanel;
+import ply.bdd.controlers.JListControler;
 
 /**
  * Cette classe propose une JList des modèles permettant de changer rapidement de modèle qui est dans {@link ModelPanel}
@@ -31,9 +34,6 @@ public class ModelBrowser extends JPanel {
 	 * Sauvegarde les noms de modèles
 	 */
 	private List<Path> modelsPathsList;
-	
-	private DefaultListModel<String> listModel;
-	
 	private JList<String> modelsList;
 	
 	/**
@@ -46,7 +46,7 @@ public class ModelBrowser extends JPanel {
 		/* INIT VARS */
 		this.path = path.toAbsolutePath();
 		modelsPathsList = new ArrayList<>();
-		listModel = new DefaultListModel<>();
+		DefaultListModel<String> listModel = new DefaultListModel<>();
 		
 		/* INIT LISTS */
 		for (String s : path.toFile().list()) {
@@ -61,13 +61,24 @@ public class ModelBrowser extends JPanel {
 		
 		/* JLIST */
 		modelsList = new JList<>(listModel);
+		modelsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		
 		JScrollPane scrollPane = new JScrollPane(modelsList);
 
 		/* THIS PANEL */
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		add(scrollPane);
-		
+	}
+	
+	public void addMouseListenerToList(MouseListener listener) {
+		modelsList.addMouseListener(listener);
+	}
+
+	/**
+	 * @return the modelsList
+	 */
+	public JList<String> getModelsList() {
+		return modelsList;
 	}
 
 }

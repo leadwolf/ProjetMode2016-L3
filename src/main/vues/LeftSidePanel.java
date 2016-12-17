@@ -17,40 +17,50 @@ import ply.bdd.vues.ModelInfo;
 
 /**
  * Cette classe est un JPanel qui toujours placé à gauche dans le JSplitPane de {@link MainFenetre}
+ * 
  * @author L3
  *
  */
-public class LeftSidePanel extends JPanel{
+public class LeftSidePanel extends JPanel {
 
 	private ModelBrowser modelBrowser;
-	
+	private ModelInfo modelInfo;
+
 	/**
 	 * @param path leave null for default data/
 	 * @param dim
 	 */
 	public LeftSidePanel(Path path, String modelName, Dimension dim) {
 		super();
-				
+
 		/* MODEL INFO */
-		ModelInfo modelInfo = new ModelInfo(modelName);
+		modelInfo = new ModelInfo(modelName);
+		modelName = modelName.substring(0, 1).toUpperCase() + modelName.substring(1);
 		modelInfo.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK), "Informations sur " + modelName + " :"));
 		modelInfo.setPreferredSize(new Dimension(dim.width, 100));
-		
+
 		/* MODEL BROWSER */
-		 modelBrowser = new ModelBrowser(path);
+		modelBrowser = new ModelBrowser(path);
 		modelBrowser.setBorder(BorderFactory.createLineBorder(Color.black));
 		modelBrowser.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK), "Model Browser :"));
-		
 
 		/* THIS PANEL */
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-		
+
 		add(modelInfo);
 		add(modelBrowser);
+	}
+
+	public void setNewModelInfo(String newModelName) {
+		modelInfo.initModelInfo(newModelName);
+	}
+
+	public void setModelInfoBorderTitle(String title) {
+		modelInfo.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK), "Informations sur " + title + " :"));
 	}
 	
 	public void addMouseListenerToList(MouseListener listener) {
 		modelBrowser.addMouseListenerToList(listener);
 	}
-	
+
 }

@@ -72,6 +72,10 @@ public enum BDDResultEnum {
 	 * La méthode --edit n'a pas pu être éxécutée.
 	 */
 	EDIT_NOT_SUCCESSFUL,
+	/**
+	 * On a souhaité remplir la base sans qu'elle soit vide au départ.
+	 */
+	INCORRECT_FILL,
 	
 	/* ICI CODE DE SUCCES */
 

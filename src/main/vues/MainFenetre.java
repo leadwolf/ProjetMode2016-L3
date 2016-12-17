@@ -19,6 +19,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import main.BaseDeDonneesNew;
 import ply.bdd.controlers.JListControler;
@@ -34,7 +36,7 @@ public class MainFenetre extends JFrame {
 	private LeftSidePanel leftPanel;
 
 	private JLabel toolLabel;
-	
+
 	private JMenuBar menuBar;
 	private Dimension frameDim;
 	private int leftPanelWidth = 350;
@@ -45,11 +47,9 @@ public class MainFenetre extends JFrame {
 	 * Create the main Frame with default view being the given in constructor. We must manually create the BDDPanel from scratch
 	 * 
 	 * @param figureModel
-	 * @param drawPoints
-	 * @param drawSegments
-	 * @param drawFaces
+	 * @param options [0] &gt; drawPoints, [1] &gt; drawSegments, [2] &gt; drawFaces, [3] &gt; resetBase, [4] &gt; fillBase,
 	 */
-	public MainFenetre(FigureModel figureModel, boolean drawPoints, boolean drawSegments, boolean drawFaces) {
+	public MainFenetre(FigureModel figureModel, boolean[] options) {
 		super();
 		this.parentPath = figureModel.getPath().getParent();
 		firstSetup();
@@ -58,13 +58,16 @@ public class MainFenetre extends JFrame {
 
 		/* ModelPanel */
 		Dimension modelPanelDim = new Dimension(frameDim.width - leftPanelWidth - (separatorWidth / 2), frameDim.height - tabHeight);
-		ModelPanel modelPanel = new ModelPanel(figureModel, modelPanelDim, drawPoints, drawSegments, drawFaces);
+		ModelPanel modelPanel = new ModelPanel(figureModel, modelPanelDim, options[0], options[1], options[2]);
 		modelPanel.initModelForWindow();
 		modelPanelList.add(modelPanel);
 
 		/* BDD PANEL */
 		// par défaut on veut afficher toute la base
-		BDDPanel bddPanel = BaseDeDonneesNew.getPanel(new String[] { "--all" }, false, false, false, null);
+		BDDPanel bddPanel = BaseDeDonneesNew.getPanel(new String[] { "--all" }, options[3], options[4], false, null);
+		if (bddPanel == null) {
+			System.exit(1);
+		}
 		BaseDeDonneesNew.closeConnection(); // ferme la connection pour qu'on puisse créer une nouvelle connection pour ModelInfo
 
 		/* LEFT PANEL */
@@ -76,6 +79,15 @@ public class MainFenetre extends JFrame {
 		tabbedPane = new JTabbedPane();
 		addTab(modelName.substring(0, 1).toUpperCase() + modelName.substring(1), modelPanel);
 		addTab("Base", bddPanel);
+		tabbedPane.addChangeListener(new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				if (tabbedPane.getSelectedComponent() instanceof ModelPanel) {
+					ModelPanel newFocus = (ModelPanel) tabbedPane.getSelectedComponent();
+					changeModelPanelFocus(newFocus);
+				}
+			}
+		});
 
 		/* MAIN PANEL */
 		mainPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftPanel, tabbedPane);
@@ -88,9 +100,11 @@ public class MainFenetre extends JFrame {
 
 	/**
 	 * Create the main Frame showing the result of the db command given in parameter. We don't create a ModelPanel yet
+	 * 
 	 * @param command la commande bdd avec laqelle on a lancé le programme
+	 * @param options [0] &gt; resetBase, [1] &gt; fillBase
 	 */
-	public MainFenetre(String[] command) {
+	public MainFenetre(String[] command, boolean[] options) {
 		super();
 		this.parentPath = Paths.get("data/");
 		firstSetup();
@@ -98,7 +112,7 @@ public class MainFenetre extends JFrame {
 		frameDim = new Dimension(800, 500);
 
 		/* BDD PANEL */
-		BDDPanel bddPanel = BaseDeDonneesNew.getPanel(command, false, false, false, null);
+		BDDPanel bddPanel = BaseDeDonneesNew.getPanel(command, options[0], options[1], false, null);
 		BaseDeDonneesNew.closeConnection(); // ferme la connection pour qu'on puisse créer une nouvelle connection pour ModelInfo
 
 		/* LEFT PANEL */
@@ -124,7 +138,7 @@ public class MainFenetre extends JFrame {
 		setupMenu();
 		modelPanelList = new ArrayList<>();
 	}
-	
+
 	/**
 	 * 
 	 */
@@ -141,19 +155,20 @@ public class MainFenetre extends JFrame {
 		this.setLocationRelativeTo(null);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
-	
+
 	private void createToolTip() {
 		JPanel toolPanel = new JPanel();
-		toolLabel = new JLabel("Bienvenue à Modelisationator. Double cliquez sur on modèle dans le \"Browser\" pour l'ouvrir dans un nouvel onglet. Maintenez \"SHIFT\" pour des transformations plus précises.");
+		toolLabel = new JLabel(
+				"Bienvenue à Modelisationator. Double cliquez sur un modèle dans le \"Browser\" pour l'ouvrir dans un nouvel onglet. Maintenez \"SHIFT\" pour des transformations plus précises.");
 		toolPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
 		toolPanel.add(toolLabel);
 		add(toolPanel, BorderLayout.PAGE_END);
 	}
-	
+
 	private void updateToolTip(String newTip) {
 		toolLabel.setText(newTip);
 	}
-	
+
 	/**
 	 * @param modelName le nom du premier modèle affiché. Sert à initialiser {@link ModelInfo}. Laisser null si on affiche la bdd en premier.
 	 */
@@ -168,6 +183,7 @@ public class MainFenetre extends JFrame {
 
 	/**
 	 * Ajoute un ModelPanel à tabbedPane quand on double clique sur un nom de modèle dans ModelBrowser
+	 * 
 	 * @param clickIndex the index of the click in the JList
 	 */
 	public void addNewModel(int clickIndex) {
@@ -187,62 +203,80 @@ public class MainFenetre extends JFrame {
 
 		Path newModelPath = allFiles[clickIndex].toPath();
 		FigureModel newFigureModel;
-		
+
 		if (!modelWasDisplayed(newModelPath)) { // si on n'a jamais ouvert le modèle, crée le avec une ModelPanel associé
 			newFigureModel = new FigureModel(newModelPath, false);
 			Dimension modelPanelDim = new Dimension(frameDim.width - leftPanelWidth - (separatorWidth / 2), frameDim.height - tabHeight);
 			ModelPanel newModelPanel = new ModelPanel(newFigureModel, modelPanelDim, false, false, true);
 			newModelPanel.initModelForWindow();
 			modelPanelList.add(newModelPanel);
-			addTab(newFigureModel.getPath().getFileName().toString(), newModelPanel);
-			tabbedPane.setSelectedComponent(newModelPanel);
+
+			addTab(newModelPath, newModelPanel);
 		} else {
 			// si on l'a déja ouvert et qu'il n'est pas en train d'être affiché, réajouter le ModelPanel associé à tabbedPane
 			if (!modelCurrentlyDisplayed(newModelPath)) {
 				ModelPanel newModelPanel = modelPanelList.get(getModelPanelIndex(newModelPath));
 				newFigureModel = newModelPanel.getFigure();
 				newModelPanel.initModelForWindow();
-				addTab(newFigureModel.getPath().getFileName().toString(), newModelPanel);
-				tabbedPane.setSelectedComponent(newModelPanel);
+				
+				addTab(newModelPath, newModelPanel);
 			} else {
 				JOptionPane.showMessageDialog(null, "Ce modèle est déja affiché.");
 			}
 		}
 
 	}
-	
+
+	private void changeModelPanelFocus(JPanel newModelPanel) {
+		String title = newModelPanel.getName().toString();
+		leftPanel.setNewModelInfo(title);
+		leftPanel.setModelInfoBorderTitle(title);
+		tabbedPane.setSelectedComponent(newModelPanel);
+	}
+
 	/**
 	 * Ajoute un onglet à tabbedPane avec un {@link ButtonTabComponent} pour le quitter.
+	 * 
 	 * @param index
 	 * @param title
 	 * @param panel
 	 */
-	private void addTab(String title, JPanel panel) {
-		tabbedPane.addTab(title, panel);
-		tabbedPane.setTabComponentAt(tabbedPane.getTabCount()-1, new ButtonTabComponent(tabbedPane));
+	private void addTab(Path newModelPath, JPanel panel) {
+		String modelName = newModelPath.getFileName().toString();
+		modelName = modelName.substring(0, 1).toUpperCase() + modelName.substring(1, modelName.lastIndexOf("."));
+		tabbedPane.addTab(modelName, panel);
+		tabbedPane.setTabComponentAt(tabbedPane.getTabCount() - 1, new ButtonTabComponent(tabbedPane));
+		panel.setName(modelName);
+		changeModelPanelFocus(panel);
 	}
 	
+	private void addTab(String title, JPanel panel) {
+		tabbedPane.addTab(title, panel);
+		tabbedPane.setTabComponentAt(tabbedPane.getTabCount() - 1, new ButtonTabComponent(tabbedPane));
+		panel.setName(title);
+	}
+
 	/**
 	 * @param newModelPath
 	 * @return l'index du ModelPanel correspondant à newModelPath dans modelPanelList
 	 */
 	private int getModelPanelIndex(Path newModelPath) {
-		for (int i=0;i<modelPanelList.size();i++) {
+		for (int i = 0; i < modelPanelList.size(); i++) {
 			if (modelPanelList.get(i).getFigure().getPath().toAbsolutePath().equals(newModelPath.toAbsolutePath())) {
 				return i;
 			}
 		}
 		return -1;
 	}
-	
+
 	/**
 	 * @param newModelPath
 	 * @return true si le model associé à newModelPath a déja une ModelPanel associé dans tabbedPane
 	 */
 	private boolean modelCurrentlyDisplayed(Path newModelPath) {
 		boolean isBeingDisplayed = false;
-		int i=0;
-		while (i<tabbedPane.getTabCount() && !isBeingDisplayed) {
+		int i = 0;
+		while (i < tabbedPane.getTabCount() && !isBeingDisplayed) {
 			if (tabbedPane.getComponentAt(i) instanceof ModelPanel) {
 				ModelPanel modelPanel = (ModelPanel) tabbedPane.getComponentAt(i);
 				if (modelPanel.getFigure().getPath().toAbsolutePath().equals(newModelPath.toAbsolutePath())) {
@@ -253,15 +287,15 @@ public class MainFenetre extends JFrame {
 		}
 		return isBeingDisplayed;
 	}
-	
+
 	/**
 	 * @param newModelPath
 	 * @return true if the model corresponding to newPath is already being displayed
 	 */
 	private boolean modelWasDisplayed(Path newModelPath) {
 		boolean isContained = false;
-		int i=0;
-		while (i<modelPanelList.size() && !isContained) {
+		int i = 0;
+		while (i < modelPanelList.size() && !isContained) {
 			if (modelPanelList.get(i).getFigure().getPath().toAbsolutePath().equals(newModelPath.toAbsolutePath())) {
 				isContained = true;
 			}

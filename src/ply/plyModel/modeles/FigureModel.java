@@ -13,6 +13,7 @@ import math.Vecteur;
 import ply.plyModel.vues.VisualisationPanel;
 import reader.Lecture;
 import result.BasicResultEnum;
+import result.MethodResult;
 
 public class FigureModel extends Observable{
 
@@ -59,6 +60,10 @@ public class FigureModel extends Observable{
 		ptsMat.setHomogeneousCoords();
 	}
 	
+	public MethodResult getLectureResult() {
+		return lecture.getResult();
+	}
+	
 	/**
 	 * @return true si un erreur a été rencontré lors de la lecture du ficher
 	 */
@@ -68,6 +73,20 @@ public class FigureModel extends Observable{
 		} else {
 			return true;
 		}
+	}
+
+	/**
+	 * @return the nbPoints
+	 */
+	public int getNbPoints() {
+		return nbPoints;
+	}
+
+	/**
+	 * @return the nbFaces
+	 */
+	public int getNbFaces() {
+		return nbFaces;
 	}
 
 	/**
@@ -105,12 +124,6 @@ public class FigureModel extends Observable{
 		return center;
 	}
 
-	/**
-	 * @return the lecture
-	 */
-	public Lecture getLecture() {
-		return lecture;
-	}
 
 	/**
 	 * @return the ptsMat

@@ -1,20 +1,26 @@
-
-# Current Changes
+# Current Big Changes
 ## Merging BDD and Model to same JFrame
 
-### Changes
+### Recent Changes list
 This commit introduces the follwing changes :
-  - Both bdd and ply MVCs are in the "ply" package under `ply.bdd` and `ply.plyModel`.  
-  - The executing classes are in `ply.main`.  
-  - Changed **Fenetre** to **ModelPanel** to separate the view of the model.
-  - Created a new class **MainFenetre** to present both **ModelPanel** and **BDDPanel** in `ply.vues`.
-  - 
+  - Changed the database to incorporate number of points and number of faces for all figures and set the name as primary key.
+  - You can now use options `--r` and `--f` to reset and fill the DB. They can be used together as in `--rf` but not with a normal command. For example `--rall` will not work. But you can use them even when using a 3D command so you can display a model and update the DB at the same time.
+  - All commands can now be launched from the same program and they are parsed by the same method in `Modelisationator`.
+  - You can now open new models by double clicking a model in ModelBrowser.
+  - You can now quit a tab.
+  - All opened models are kept in memory. Now when the user quits a model, it can be reopened without re-reading the .ply file.
+  - Created a tool tip `toolLabel` at the bottom of MainFenetre.
+  - `ModelInfo` now updates accordingly when switching tab or when opening a new tab.
   
 ### What's next
-For now, Modelisationator executes either **ply.main.ModelVisualizer** or **ply.main.BaseDeDonnes** corresponding to which command the user executes.  
-Here is what needs to be done/decided :
-  - **ply.main.ModelVisualizer** already implements **MainFenetre** so all we need to do is change **ply.main.BaseDeDonnes** to launch it as well.
-  - We also need to decide whether **MainFenetre** will display both **ModelPanel** and **BDDPanel** at the same time or alternate the right side between these two and then a simple model navigator on the left.
+Priority objectives :
+  - Display shadows
+
+Non-Priority objectives :
+  - Update `toolLabel` according to state changes.
+  - Try to use more patterns for cleaner code.
+  - Try to refactor using more MVC ?
+  - Other ?
 
 # Modelisationator
 

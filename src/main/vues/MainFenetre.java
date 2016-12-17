@@ -1,5 +1,6 @@
 package main.vues;
 
+import java.awt.Component;
 import java.awt.Dimension;
 import java.io.File;
 import java.io.FilenameFilter;
@@ -13,18 +14,23 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 
 import main.BaseDeDonneesNew;
 import ply.bdd.controlers.JListControler;
+import ply.bdd.vues.ModelInfo;
 import ply.plyModel.modeles.FigureModel;
 
 public class MainFenetre extends JFrame {
 
 	private Path parentPath;
 	private List<ModelPanel> modelPanelList;
+	private JSplitPane mainPanel;
 	private JTabbedPane tabbedPane;
+	private LeftSidePanel leftPanel;
 
 	private JMenuBar menuBar;
 	private Dimension frameDim;
@@ -42,6 +48,7 @@ public class MainFenetre extends JFrame {
 	 */
 	public MainFenetre(FigureModel figureModel, boolean drawPoints, boolean drawSegments, boolean drawFaces) {
 		super();
+		this.parentPath = figureModel.getPath().getParent();
 		firstSetup();
 
 		frameDim = new Dimension(1200, 800);
@@ -55,78 +62,67 @@ public class MainFenetre extends JFrame {
 		/* BDD PANEL */
 		// par défaut on veut afficher toute la base
 		BDDPanel bddPanel = BaseDeDonneesNew.getPanel(new String[] { "--all" }, false, false, false, null);
+		BaseDeDonneesNew.closeConnection(); // ferme la connection pour qu'on puisse créer une nouvelle connection pour ModelInfo
 
 		/* LEFT PANEL */
-		Dimension leftPanelDim = new Dimension(leftPanelWidth - (separatorWidth / 2), frameDim.height);
-		String modelName = figureModel.getPath().toAbsolutePath().getFileName().toString();
-		modelName = modelName.substring(0, modelName.lastIndexOf("."));
-		this.parentPath = figureModel.getPath().getParent();
-		LeftSidePanel leftPanel = new LeftSidePanel(parentPath, modelName, leftPanelDim);
-		leftPanel.setPreferredSize(leftPanelDim);
-		// leftPanel.setMinimumSize(leftPanelDim);
-		leftPanel.setMinimumSize(new Dimension(10, leftPanelDim.height));
-		leftPanel.addMouseListenerToList(new JListControler(this));
+		String modelName = figureModel.getPath().getFileName().toString();
+		modelName = modelName.substring(0, modelName.lastIndexOf(".")); // capitalize first letter
+		createLeftPanel(modelName);
 
 		/* TABBED PANE */
 		tabbedPane = new JTabbedPane();
-		tabbedPane.addTab(modelName.substring(0, 1).toUpperCase() + modelName.substring(1), modelPanel);
-		tabbedPane.addTab("Base", bddPanel);
+		addTab(modelName.substring(0, 1).toUpperCase() + modelName.substring(1), modelPanel);
+		addTab("Base", bddPanel);
 
 		/* MAIN PANEL */
-		JSplitPane mainPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftPanel, tabbedPane);
+		mainPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftPanel, tabbedPane);
 
 		/* FENETRE */
-		this.setTitle("Modelisationator");
-		setLayout(new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS));
-		setSize(frameDim);
-
-		add(mainPanel);
-		pack();
-		setVisible(true);
-
-		this.setLocationRelativeTo(null);
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setupFenetre();
 
 		setJMenuBar(menuBar);
 	}
 
 	/**
 	 * Create the main Frame showing the result of the db command given in parameter. We don't create a ModelPanel yet
-	 * 
-	 * @param figureModel
-	 * @param drawPoints
-	 * @param drawSegments
-	 * @param drawFaces
+	 * @param command la commande bdd avec laqelle on a lancé le programme
 	 */
 	public MainFenetre(String[] command) {
 		super();
+		this.parentPath = Paths.get("data/");
 		firstSetup();
 
-		int tabHeight = 23;
 		frameDim = new Dimension(800, 500);
 
 		/* BDD PANEL */
-		// par défaut on veut afficher toute la base
 		BDDPanel bddPanel = BaseDeDonneesNew.getPanel(command, false, false, false, null);
-		BaseDeDonneesNew.closeConnection();
+		BaseDeDonneesNew.closeConnection(); // ferme la connection pour qu'on puisse créer une nouvelle connection pour ModelInfo
 
 		/* LEFT PANEL */
-		Dimension leftPanelDim = new Dimension(leftPanelWidth - (separatorWidth / 2), frameDim.height);
-		this.parentPath = Paths.get("data/");
-		LeftSidePanel leftPanel = new LeftSidePanel(parentPath, null, leftPanelDim);
-		leftPanel.setPreferredSize(leftPanelDim);
-		// leftPanel.setMinimumSize(leftPanelDim);
-		leftPanel.setMinimumSize(new Dimension(10, leftPanelDim.height));
-		leftPanel.addMouseListenerToList(new JListControler(this));
+		createLeftPanel(null);
 
 		/* TABBED PANE */
 		tabbedPane = new JTabbedPane();
-		tabbedPane.addTab("Base", bddPanel);
+		addTab("Base", bddPanel);
 
 		/* MAIN PANEL */
-		JSplitPane mainPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftPanel, tabbedPane);
+		mainPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftPanel, tabbedPane);
 
 		/* FENETRE */
+		setupFenetre();
+
+		setJMenuBar(menuBar);
+	}
+
+	/**
+	 * Crée JMenuBar et initliase les variables.
+	 */
+	private void firstSetup() {
+		setupMenu();
+		modelPanelList = new ArrayList<>();
+	}
+	
+	private void setupFenetre() {
 		this.setTitle("Modelisationator");
 		setLayout(new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS));
 		setSize(frameDim);
@@ -137,16 +133,18 @@ public class MainFenetre extends JFrame {
 
 		this.setLocationRelativeTo(null);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-		setJMenuBar(menuBar);
 	}
-
+	
 	/**
-	 * Sets up JMenuBar and initialies vars
+	 * @param modelName le nom du premier modèle affiché. Sert à initialiser {@link ModelInfo}. Laisser null si on affiche la bdd en premier.
 	 */
-	private void firstSetup() {
-		setupMenu();
-		modelPanelList = new ArrayList<>();
+	private void createLeftPanel(String modelName) {
+		Dimension leftPanelDim = new Dimension(leftPanelWidth - (separatorWidth / 2), frameDim.height);
+		leftPanel = new LeftSidePanel(parentPath, modelName, leftPanelDim);
+		leftPanel.setPreferredSize(leftPanelDim);
+		// leftPanel.setMinimumSize(leftPanelDim);
+		leftPanel.setMinimumSize(new Dimension(10, leftPanelDim.height));
+		leftPanel.addMouseListenerToList(new JListControler(this));
 	}
 
 	/**
@@ -169,27 +167,83 @@ public class MainFenetre extends JFrame {
 		});
 
 		Path newModelPath = allFiles[clickIndex].toPath();
-		if (!modelAlreadyDisplayed(newModelPath)) {
-			FigureModel figureModel = new FigureModel(newModelPath, false);
+		FigureModel newFigureModel;
+		
+		if (!modelWasDisplayed(newModelPath)) { // si on n'a jamais ouvert le modèle, crée le avec une ModelPanel associé
+			newFigureModel = new FigureModel(newModelPath, false);
 			Dimension modelPanelDim = new Dimension(frameDim.width - leftPanelWidth - (separatorWidth / 2), frameDim.height - tabHeight);
-			ModelPanel modelPanel = new ModelPanel(figureModel, modelPanelDim, false, false, true);
-			modelPanel.initModelForWindow();
-			modelPanelList.add(modelPanel);
-			tabbedPane.addTab(figureModel.getPath().getFileName().toString(), modelPanel);
-			tabbedPane.setSelectedComponent(modelPanel);
+			ModelPanel newModelPanel = new ModelPanel(newFigureModel, modelPanelDim, false, false, true);
+			newModelPanel.initModelForWindow();
+			modelPanelList.add(newModelPanel);
+			addTab(newFigureModel.getPath().getFileName().toString(), newModelPanel);
+			tabbedPane.setSelectedComponent(newModelPanel);
+		} else {
+			// si on l'a déja ouvert et qu'il n'est pas en train d'être affiché, réajouter le ModelPanel associé à tabbedPane
+			if (!modelCurrentlyDisplayed(newModelPath)) {
+				ModelPanel newModelPanel = modelPanelList.get(getModelPanelIndex(newModelPath));
+				newFigureModel = newModelPanel.getFigure();
+				newModelPanel.initModelForWindow();
+				addTab(newFigureModel.getPath().getFileName().toString(), newModelPanel);
+				tabbedPane.setSelectedComponent(newModelPanel);
+			} else {
+				JOptionPane.showMessageDialog(null, "Ce modèle est déja affiché.");
+			}
 		}
 
 	}
 	
 	/**
-	 * @param newPath
+	 * Ajoute un onglet à tabbedPane avec un {@link ButtonTabComponent} pour le quitter.
+	 * @param index
+	 * @param title
+	 * @param panel
+	 */
+	private void addTab(String title, JPanel panel) {
+		tabbedPane.addTab(title, panel);
+		tabbedPane.setTabComponentAt(tabbedPane.getTabCount()-1, new ButtonTabComponent(tabbedPane));
+	}
+	
+	/**
+	 * @param newModelPath
+	 * @return l'index du ModelPanel correspondant à newModelPath dans modelPanelList
+	 */
+	private int getModelPanelIndex(Path newModelPath) {
+		for (int i=0;i<modelPanelList.size();i++) {
+			if (modelPanelList.get(i).getFigure().getPath().toAbsolutePath().equals(newModelPath.toAbsolutePath())) {
+				return i;
+			}
+		}
+		return -1;
+	}
+	
+	/**
+	 * @param newModelPath
+	 * @return true si le model associé à newModelPath a déja une ModelPanel associé dans tabbedPane
+	 */
+	private boolean modelCurrentlyDisplayed(Path newModelPath) {
+		boolean isBeingDisplayed = false;
+		int i=0;
+		while (i<tabbedPane.getTabCount() && !isBeingDisplayed) {
+			if (tabbedPane.getComponentAt(i) instanceof ModelPanel) {
+				ModelPanel modelPanel = (ModelPanel) tabbedPane.getComponentAt(i);
+				if (modelPanel.getFigure().getPath().toAbsolutePath().equals(newModelPath.toAbsolutePath())) {
+					isBeingDisplayed = true;
+				}
+			}
+			i++;
+		}
+		return isBeingDisplayed;
+	}
+	
+	/**
+	 * @param newModelPath
 	 * @return true if the model corresponding to newPath is already being displayed
 	 */
-	private boolean modelAlreadyDisplayed(Path newPath) {
+	private boolean modelWasDisplayed(Path newModelPath) {
 		boolean isContained = false;
 		int i=0;
 		while (i<modelPanelList.size() && !isContained) {
-			if (modelPanelList.get(i).getFigure().getPath().toAbsolutePath().equals(newPath.toAbsolutePath())) {
+			if (modelPanelList.get(i).getFigure().getPath().toAbsolutePath().equals(newModelPath.toAbsolutePath())) {
 				isContained = true;
 			}
 			i++;
@@ -197,6 +251,9 @@ public class MainFenetre extends JFrame {
 		return isContained;
 	}
 
+	/**
+	 * Crée le JMenuBar
+	 */
 	private void setupMenu() {
 		JMenu menu, controls;
 		JMenuItem menuItem;

@@ -1,7 +1,8 @@
 package main.vues;
 
-import java.awt.Component;
+import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.nio.file.Path;
@@ -9,8 +10,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.BoxLayout;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -32,6 +33,8 @@ public class MainFenetre extends JFrame {
 	private JTabbedPane tabbedPane;
 	private LeftSidePanel leftPanel;
 
+	private JLabel toolLabel;
+	
 	private JMenuBar menuBar;
 	private Dimension frameDim;
 	private int leftPanelWidth = 350;
@@ -122,17 +125,33 @@ public class MainFenetre extends JFrame {
 		modelPanelList = new ArrayList<>();
 	}
 	
+	/**
+	 * 
+	 */
 	private void setupFenetre() {
 		this.setTitle("Modelisationator");
-		setLayout(new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS));
+		setLayout(new BorderLayout());
 		setSize(frameDim);
 
 		add(mainPanel);
+		createToolTip();
 		pack();
 		setVisible(true);
 
 		this.setLocationRelativeTo(null);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	}
+	
+	private void createToolTip() {
+		JPanel toolPanel = new JPanel();
+		toolLabel = new JLabel("Bienvenue à Modelisationator. Double cliquez sur on modèle dans le \"Browser\" pour l'ouvrir dans un nouvel onglet. Maintenez \"SHIFT\" pour des transformations plus précises.");
+		toolPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+		toolPanel.add(toolLabel);
+		add(toolPanel, BorderLayout.PAGE_END);
+	}
+	
+	private void updateToolTip(String newTip) {
+		toolLabel.setText(newTip);
 	}
 	
 	/**

@@ -9,7 +9,6 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
@@ -40,7 +39,7 @@ public class BaseDeDonneesNew {
 	 * La connection utilisée par cette classe
 	 */
 	private static Connection connection;
-	
+
 	private static String[] columnNames = new String[] { "Nom", "Chemin", "Date", "Mot Clés", "Nombre de Points", "Nombre de Faces" };
 
 	/**
@@ -105,10 +104,81 @@ public class BaseDeDonneesNew {
 	 * @param reset
 	 * @param fill
 	 * @param noPrint
-	 * @param dbPath path to the db.sqlite
+	 * @param dbPath path to the db.sqlite, leave null for default data/test.sqlite
 	 * @return
 	 */
 	public static BDDPanel getPanel(String[] args, boolean reset, boolean fill, boolean noPrint, Path dbPath) {
+		if ((args == null) || (args != null && args.length <= 0)) {
+			if (!noPrint) {
+				String message = "Vous n'avez pas spécifié d'arguments.";
+				JOptionPane.showMessageDialog(null, message, "Mauvais arguments", JOptionPane.ERROR_MESSAGE);
+			}
+			return null;
+		}
+		// VERIF ARGS
+		MethodResult testArgs = verifArgs(args);
+		if (!testArgs.getCode().equals(BasicResultEnum.ALL_OK)) {
+			if (!noPrint) {
+				String message = "Vous avez spécifié deux commandes incompatibles.";
+				JOptionPane.showMessageDialog(null, message, "Mauvais arguments", JOptionPane.ERROR_MESSAGE);
+			}
+			return null;
+		} // else continue program
+
+		if (dbPath == null) {
+			boolean success = false;
+			try {
+				Class.forName("org.sqlite.JDBC");
+				connection = DriverManager.getConnection("jdbc:sqlite:data/test.sqlite");
+				success = true;
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} finally {
+				if (!success) {
+					try {
+						connection.close();
+					} catch (SQLException e) {
+						System.err.println(e);
+					}
+				}
+			}
+		} else {
+			boolean success = false;
+			try {
+				Class.forName("org.sqlite.JDBC");
+				connection = DriverManager.getConnection("jdbc:sqlite:" + dbPath.getParent() + "/" + dbPath.getFileName());
+				success = true;
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} finally {
+				if (!success) {
+					try {
+						connection.close();
+					} catch (SQLException e) {
+						System.err.println(e);
+					}
+				}
+			}
+
+		}
+		return parseArgsForPanel(args, reset, fill, noPrint);
+	}
+
+	/**
+	 * Execute une commande bdd
+	 * 
+	 * @param args
+	 * @param reset
+	 * @param fill
+	 * @param noPrint
+	 * @param dbPath path to the db.sqlite, leave null for default data/test.sqlite
+	 * @return
+	 */
+	public static MethodResult executeCommand(String[] args, boolean reset, boolean fill, boolean noPrint, Path dbPath) {
 		if ((args == null) || (args != null && args.length <= 0)) {
 			if (!noPrint) {
 				String message = "Vous n'avez pas spécifié d'arguments.";
@@ -170,6 +240,40 @@ public class BaseDeDonneesNew {
 	}
 
 	/**
+	 * Verifie et execute la commande au lieu de donner un BDDPanel
+	 * 
+	 * @param args
+	 * @param reset
+	 * @param fill
+	 * @param noPrint
+	 * @return
+	 */
+	private static MethodResult parseArgs(String[] args, boolean reset, boolean fill, boolean noPrint) {
+		if (reset) {
+			resetTable(connection);
+		}
+		if (fill) {
+			fillTable(connection);
+		}
+
+		if (args.length > 0) {
+			for (int i = 0; i < args.length; i++) {
+				if (args[i].equals("--delete")) {
+					if (checkTable(connection).getCode().equals(BasicResultEnum.ALL_OK)) {
+						return delete(i, args, connection, noPrint);
+					} else {
+						if (!noPrint) {
+							JOptionPane.showMessageDialog(null, "La base de données est vide", "Base de données", JOptionPane.ERROR_MESSAGE);
+						}
+						return null;
+					}
+				}
+			}
+		}
+		return new BasicResult(BasicResultEnum.UNKNOWN_ERROR);
+	}
+
+	/**
 	 * Verifie seuelement si la syntaxte des arguments sont corrects, pas si la commande a pu être éxecutée
 	 * 
 	 * @param args
@@ -179,48 +283,56 @@ public class BaseDeDonneesNew {
 	private static MethodResult verifArgs(String[] args) {
 		if (args[0].equals("--name")) {
 			for (int i = 1; i < args.length; i++) {
-				if (args[i].startsWith("--")) {
+				if (isConflicting(args[i])) {
 					return new BasicResult(BasicResultEnum.CONFLICTING_ARGUMENTS);
 				}
 			}
 			return new BasicResult(BasicResultEnum.ALL_OK);
 		} else if (args[0].equals("--all")) {
 			for (int i = 1; i < args.length; i++) {
-				if (args[i].startsWith("--")) {
+				if (isConflicting(args[i])) {
 					return new BasicResult(BasicResultEnum.CONFLICTING_ARGUMENTS);
 				}
 			}
 			return new BasicResult(BasicResultEnum.ALL_OK);
 		} else if (args[0].equals("--find")) {
 			for (int i = 1; i < args.length; i++) {
-				if (args[i].startsWith("--")) {
+				if (isConflicting(args[i])) {
 					return new BasicResult(BasicResultEnum.CONFLICTING_ARGUMENTS);
 				}
 			}
 			return new BasicResult(BasicResultEnum.ALL_OK);
 		} else if (args[0].equals("--add")) {
 			for (int i = 1; i < args.length; i++) {
-				if (args[i].startsWith("--")) {
+				if (isConflicting(args[i])) {
 					return new BasicResult(BasicResultEnum.CONFLICTING_ARGUMENTS);
 				}
 			}
 			return new BasicResult(BasicResultEnum.ALL_OK);
 		} else if (args[0].equals("--delete")) {
 			for (int i = 1; i < args.length; i++) {
-				if (args[i].startsWith("--")) {
+				if (isConflicting(args[i])) {
 					return new BasicResult(BasicResultEnum.CONFLICTING_ARGUMENTS);
 				}
 			}
 			return new BasicResult(BasicResultEnum.ALL_OK);
 		} else if (args[0].equals("--edit")) {
 			for (int i = 1; i < args.length; i++) {
-				if (args[i].startsWith("--")) {
+				if (isConflicting(args[i])) {
 					return new BasicResult(BasicResultEnum.CONFLICTING_ARGUMENTS);
 				}
 			}
 			return new BasicResult(BasicResultEnum.ALL_OK);
 		}
 		return new BasicResult(BasicResultEnum.NO_ARGUMENTS);
+	}
+
+	private static boolean isConflicting(String arg) {
+		return arg.startsWith("--") && !isDBOption(arg);
+	}
+	
+	private static boolean isDBOption(String arg) {
+		return arg.equals("--r") || arg.equals("--r") || arg.equals("--rf");
 	}
 
 	/**
@@ -232,7 +344,7 @@ public class BaseDeDonneesNew {
 	 * @param noPrint afficher ou non les fenêtres, debug = cacher
 	 * @return si la requête était correcte et que l'interface, si besoin, a été éxecutée
 	 */
-	private static BDDPanel parseArgs(String[] args, boolean reset, boolean fill, boolean noPrint) {
+	private static BDDPanel parseArgsForPanel(String[] args, boolean reset, boolean fill, boolean noPrint) {
 		if (reset) {
 			resetTable(connection);
 		}
@@ -274,16 +386,6 @@ public class BaseDeDonneesNew {
 				}
 				if (args[i].equals("--add")) {
 					return add(connection);
-				}
-				if (args[i].equals("--delete")) {
-					if (checkTable(connection).getCode().equals(BasicResultEnum.ALL_OK)) {
-						delete(i, args, connection, noPrint);
-					} else {
-						if (!noPrint) {
-							JOptionPane.showMessageDialog(null, "La base de données est vide", "Base de données", JOptionPane.ERROR_MESSAGE);
-						}
-						return null;
-					}
 				}
 				if (args[i].equals("--edit")) {
 					if (checkTable(connection).getCode().equals(BasicResultEnum.ALL_OK)) {
@@ -333,7 +435,8 @@ public class BaseDeDonneesNew {
 							return nameInfo;
 						} else {
 							if (!debug) {
-								JOptionPane.showMessageDialog(null, "Le modèle " + name + " n'est pas dans la base", "Erreur Base", JOptionPane.ERROR_MESSAGE);
+								JOptionPane.showMessageDialog(null, "Le modèle " + name + " n'est pas dans la base", "Erreur Base",
+										JOptionPane.ERROR_MESSAGE);
 							}
 							return null;
 						}
@@ -341,7 +444,8 @@ public class BaseDeDonneesNew {
 					success = true;
 				} else {
 					if (!debug) {
-						JOptionPane.showMessageDialog(null, "Le modèle " + name + " n'est pas dans la base", "Erreur Base", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(null, "Le modèle " + name + " n'est pas dans la base", "Erreur Base",
+								JOptionPane.ERROR_MESSAGE);
 					}
 					return null;
 				}
@@ -379,7 +483,13 @@ public class BaseDeDonneesNew {
 	private static BDDPanel showName(int i, String[] args, Connection connection, boolean debug) {
 		ResultSet rs;
 		ResultSet rs2;
-		if (args.length - 1 == i + 1) {
+		int nbArgs = 0;
+		for (int j=0;j<args.length;j++) {
+			if (!isDBOption(args[j])) {
+				nbArgs++;
+			}
+		}
+		if (nbArgs == 2) {
 			boolean success = false;
 			try {
 				String firstFile = args[i + 1];
@@ -428,7 +538,7 @@ public class BaseDeDonneesNew {
 					}
 				}
 			}
-		} else if (args.length - 1 == i) {
+		} else if (nbArgs == i) {
 			if (!debug) {
 				String message = "Vous n'avez pas spécifié de nom\nUtilisation: basededonneés --name <name>";
 				JOptionPane.showMessageDialog(null, message, "Mauvais arguments", JOptionPane.ERROR_MESSAGE);
@@ -459,55 +569,45 @@ public class BaseDeDonneesNew {
 	private static BDDPanel showAll(int i, String[] args, Connection connection, boolean debug) {
 		ResultSet rs;
 		ResultSet rs2;
-		if (args.length - 1 == i) {
-			boolean success = false;
-			try {
-				PreparedStatement statement = connection.prepareStatement("select COUNT(*) from PLY");
-				rs = statement.executeQuery();
-				if (rs.next()) {
-					int totalLines = rs.getInt(1);
-					if (totalLines > 0) {
-						if (!debug) {
-							PreparedStatement statement2 = connection.prepareStatement("select * from PLY");
-							rs2 = statement2.executeQuery();
-							return new BDDPanel("All models", totalLines, null, rs2, columnNames, new int[] { 1, 2, 3, 4 }, connection);
-						}
-						success = true;
-						// return new
-						// BDDResult(BDDResultEnum.SHOW_ALL_SUCCESSFUL);
-					} else {
-						if (!debug) {
-							String message = "Il n'y a pas de modèles enregistré";
-							JOptionPane.showMessageDialog(null, message, "Base de données vide", JOptionPane.ERROR_MESSAGE);
-						}
-						// System.exit(1);
-						success = true;
-						// return new BDDResult(BDDResultEnum.EMPTY_DB);
+		boolean success = false;
+		try {
+			PreparedStatement statement = connection.prepareStatement("select COUNT(*) from PLY");
+			rs = statement.executeQuery();
+			if (rs.next()) {
+				int totalLines = rs.getInt(1);
+				if (totalLines > 0) {
+					if (!debug) {
+						PreparedStatement statement2 = connection.prepareStatement("select * from PLY");
+						rs2 = statement2.executeQuery();
+						return new BDDPanel("All models", totalLines, null, rs2, columnNames, new int[] { 1, 2, 3, 4 }, connection);
 					}
-				}
-
-				success = true;
-
-			} catch (SQLException e) {
-				e.printStackTrace();
-			} finally {
-				if (!success) {
-					try {
-						connection.close();
-					} catch (SQLException e) {
-						System.err.println(e);
+					success = true;
+					// return new
+					// BDDResult(BDDResultEnum.SHOW_ALL_SUCCESSFUL);
+				} else {
+					if (!debug) {
+						String message = "Il n'y a pas de modèles enregistré";
+						JOptionPane.showMessageDialog(null, message, "Base de données vide", JOptionPane.ERROR_MESSAGE);
 					}
+					// System.exit(1);
+					success = true;
+					// return new BDDResult(BDDResultEnum.EMPTY_DB);
 				}
 			}
-		} else {
-			if (!debug) {
-				String message = "Trop d'arguments\nUtilisation: basededonneés --all";
-				JOptionPane.showMessageDialog(null, message, "Mauvais arguments", JOptionPane.ERROR_MESSAGE);
+
+			success = true;
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (!success) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					System.err.println(e);
+				}
 			}
-			// System.exit(1);
-			// return new BDDResult(BDDResultEnum.TOO_MANY_ARGS);
 		}
-		// return new BDDResult(BDDResultEnum.SHOW_ALL_NOT_SUCCESSFUL);
 		return null;
 	}
 
@@ -523,32 +623,40 @@ public class BaseDeDonneesNew {
 	private static BDDPanel find(int i, String[] args, Connection connection, boolean debug) {
 		ResultSet rs;
 		ResultSet rs2;
-		String matching = "";
-		if (args.length - 1 > i) {
+		int nbLikes = 0;
+		int nbTreated = 0;
+		for (int j=0;j<args.length;j++) {
+			if (!args[j].startsWith("--")) {
+				nbLikes++;
+			}
+		}
+		if (nbLikes > 0) {
 			boolean success = false;
 			try {
-				String queryCount = "select COUNT(*) from PLY where DESCRIPTION like";
 				String queryString = "select * from PLY where DESCRIPTION like";
+				String queryCount = "select COUNT(*) from PLY where DESCRIPTION like";
 				for (int j = i + 1; j < args.length; j++) {
-					if (j == i + 1) {
-						queryString += " ?";
-						queryCount += " ?";
-					} else {
-						queryString += " union select * from PLY where DESCRIPTION LIKE ?";
-						queryCount += " ?";
+					if (!isDBOption(args[j])) {
+						nbTreated++;
+						if (nbTreated == 1) {
+							queryString += " ?";
+							queryCount += " ?";
+						} else {
+							if (nbTreated < nbLikes) {
+								queryString += " union select * from PLY where DESCRIPTION LIKE ?,";
+							} else {
+								queryString += " union select * from PLY where DESCRIPTION LIKE ?";
+							}
+							queryCount += " OR DESCRIPTION LIKE ?";
+						}
 					}
 				}
-				queryString += ";";
-				queryCount += ";";
 				PreparedStatement statement = connection.prepareStatement(queryCount);
 				PreparedStatement statement2 = connection.prepareStatement(queryString);
 				for (int j = i + 1; j < args.length; j++) {
-					statement.setString(j, "%" + args[j] + "%");
-					statement2.setString(j, "%" + args[j] + "%");
-					if (j < args.length - 1) {
-						matching += "\"" + args[j] + "\", ";
-					} else {
-						matching += "\"" + args[j] + "\"";
+					if (!args[j].startsWith("--")) {
+						statement.setString(j, "%" + args[j] + "%");
+						statement2.setString(j, "%" + args[j] + "%");
 					}
 				}
 				rs = statement.executeQuery();
@@ -621,7 +729,13 @@ public class BaseDeDonneesNew {
 	private static BDDPanel edit(int i, String[] args, Connection connection) {
 
 		boolean success = false;
-		if (args.length - 1 == i + 1) {
+		int modelNames = 0;
+		for (int j=0;j<args.length;j++) {
+			if (!args[j].startsWith("--")) {
+				modelNames++;
+			}
+		}
+		if (modelNames == 1) {
 			try {
 				String firstFile = args[i + 1];
 				PreparedStatement statement = connection.prepareStatement("select COUNT(*) from PLY where NOM = ?");
@@ -683,31 +797,41 @@ public class BaseDeDonneesNew {
 	 */
 	private static MethodResult delete(int i, String[] args, Connection connection, boolean debug) {
 		boolean success = false;
-		try {
-			String firstFile = args[i + 1];
-			PreparedStatement stExists = connection.prepareStatement("select COUNT(*) from PLY where NOM = ?");
-			stExists.setString(1, firstFile);
-			ResultSet rs = stExists.executeQuery();
-			if (rs.next()) {
-				int totalLines = rs.getInt(1);
-				if (totalLines == 1) {
-					PreparedStatement stDelete = connection.prepareStatement("delete from PLY where NOM = ?");
-					stDelete.setString(1, firstFile);
-					int result = stDelete.executeUpdate(); // result = nombre de
-															// lignes affectés
-															// par le delete
-					if (!debug && result > 0) {
-						String message = "Le modèle " + firstFile + " a été supprimé avec succès!";
-						JOptionPane.showMessageDialog(null, message);
-					} else if (!debug && result <= 0) {
-						String message = "Le modèle " + firstFile + " n'a pas pu être supprimé!";
-						JOptionPane.showMessageDialog(null, message);
-					}
-					// System.exit(0);
-					// ICI REMPLACER PAR LE RESULTAT DU DELETE
-					success = true;
-					if (result > 0) {
-						return new BDDResult(BDDResultEnum.DELETE_SUCCESSFUL);
+		if (args.length > 1) {
+			try {
+				String firstFile = args[i + 1];
+				PreparedStatement stExists = connection.prepareStatement("select COUNT(*) from PLY where NOM = ?");
+				stExists.setString(1, firstFile);
+				ResultSet rs = stExists.executeQuery();
+				if (rs.next()) {
+					int totalLines = rs.getInt(1);
+					if (totalLines == 1) {
+						PreparedStatement stDelete = connection.prepareStatement("delete from PLY where NOM = ?");
+						stDelete.setString(1, firstFile);
+						int result = stDelete.executeUpdate(); // result = nombre de
+																// lignes affectés
+																// par le delete
+						if (!debug && result > 0) {
+							String message = "Le modèle " + firstFile + " a été supprimé avec succès!";
+							JOptionPane.showMessageDialog(null, message);
+						} else if (!debug && result <= 0) {
+							String message = "Le modèle " + firstFile + " n'a pas pu être supprimé!";
+							JOptionPane.showMessageDialog(null, message);
+						}
+						// System.exit(0);
+						// ICI REMPLACER PAR LE RESULTAT DU DELETE
+						success = true;
+						if (result > 0) {
+							return new BDDResult(BDDResultEnum.DELETE_SUCCESSFUL);
+						}
+					} else {
+						if (!debug) {
+							String message = "Le modèle " + firstFile + " n'existe pas";
+							JOptionPane.showMessageDialog(null, message, "Erreur", JOptionPane.ERROR_MESSAGE);
+						}
+						// System.exit(1);
+						success = true;
+						return new BDDResult(BDDResultEnum.MODEL_NOT_FOUND);
 					}
 				} else {
 					if (!debug) {
@@ -718,25 +842,22 @@ public class BaseDeDonneesNew {
 					success = true;
 					return new BDDResult(BDDResultEnum.MODEL_NOT_FOUND);
 				}
-			} else {
-				if (!debug) {
-					String message = "Le modèle " + firstFile + " n'existe pas";
-					JOptionPane.showMessageDialog(null, message, "Erreur", JOptionPane.ERROR_MESSAGE);
-				}
-				// System.exit(1);
-				success = true;
-				return new BDDResult(BDDResultEnum.MODEL_NOT_FOUND);
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			if (!success) {
-				try {
-					connection.close();
-				} catch (SQLException e) {
-					System.err.println(e);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} finally {
+				if (!success) {
+					try {
+						connection.close();
+					} catch (SQLException e) {
+						System.err.println(e);
+					}
 				}
 			}
+		} else {
+			if (!debug) {
+				JOptionPane.showMessageDialog(null, "Vous n'avez pas spécifié de modèle à supprimer", "Erreur", JOptionPane.ERROR_MESSAGE);
+			}
+			return new BasicResult(BasicResultEnum.NO_ARGUMENTS);
 		}
 		return new BDDResult(BDDResultEnum.DELETE_NOT_SUCCESSFUL);
 	}
@@ -782,20 +903,20 @@ public class BaseDeDonneesNew {
 
 			String insertStatement = "";
 			for (int i = 0; i < files.length; i++) {
-					String nom = files[i].toPath().getFileName().toString();
-					nom = nom.substring(0, nom.lastIndexOf("."));
-					FigureModel fig = new FigureModel(files[i].toPath().toAbsolutePath(), true);
+				String nom = files[i].toPath().getFileName().toString();
+				nom = nom.substring(0, nom.lastIndexOf("."));
+				FigureModel fig = new FigureModel(files[i].toPath().toAbsolutePath(), true);
 
-					insertStatement = "insert into PLY values (?, ?, ?, ?, ?, ?)";
-					PreparedStatement firstStatement;
-					firstStatement = connection.prepareStatement(insertStatement);
-					firstStatement.setString(1, nom);
-					firstStatement.setString(2, files[i].getAbsolutePath().toString());
-					firstStatement.setString(3, toDay());
-					firstStatement.setString(4, "mes mots clés");
-					firstStatement.setInt(5, fig.getNbPoints());
-					firstStatement.setInt(6, fig.getNbFaces());
-					firstStatement.executeUpdate();
+				insertStatement = "insert into PLY values (?, ?, ?, ?, ?, ?)";
+				PreparedStatement firstStatement;
+				firstStatement = connection.prepareStatement(insertStatement);
+				firstStatement.setString(1, nom);
+				firstStatement.setString(2, files[i].getAbsolutePath().toString());
+				firstStatement.setString(3, toDay());
+				firstStatement.setString(4, "mes mots clés");
+				firstStatement.setInt(5, fig.getNbPoints());
+				firstStatement.setInt(6, fig.getNbFaces());
+				firstStatement.executeUpdate();
 			}
 			success = true;
 		} catch (SQLException e) {

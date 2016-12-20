@@ -35,8 +35,10 @@ public class LeftSidePanel extends JPanel {
 
 		/* MODEL INFO */
 		modelInfo = new ModelInfo(modelName);
-		modelName = modelName.substring(0, 1).toUpperCase() + modelName.substring(1);
-		modelInfo.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK), "Informations sur " + modelName + " :"));
+		if (modelName != null) {
+			modelName = modelName.substring(0, 1).toUpperCase() + modelName.substring(1);
+		}
+		modelInfo.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK), "Informations sur " + modelName + " : "));
 		modelInfo.setPreferredSize(new Dimension(dim.width, 100));
 
 		/* MODEL BROWSER */
@@ -56,7 +58,7 @@ public class LeftSidePanel extends JPanel {
 	}
 
 	public void setModelInfoBorderTitle(String title) {
-		modelInfo.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK), "Informations sur " + title + " :"));
+		modelInfo.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK), "Informations sur " + title + " : "));
 	}
 	
 	public void addMouseListenerToList(MouseListener listener) {

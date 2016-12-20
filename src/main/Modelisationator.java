@@ -19,6 +19,7 @@ public class Modelisationator {
 	private static boolean drawPoints = false;
 	private static boolean reset = false;
 	private static boolean fill = false;
+	private static boolean delete = false;
 	private static Path plyPath;
 
 	private static boolean executeDB = false;
@@ -41,10 +42,6 @@ public class Modelisationator {
 	 */
 	public static MethodResult parseArgs(String[] args, boolean noPrint) {
 		if (args.length > 0) {
-			// CHECK THE FIRST ARGUMENT, IT CAN EITHER BE
-			// 1) 3D OPTIONS
-			// 2) BDD OPTION
-			// 3) .PLY FILE
 			MethodResult verifArgsResult = verifArgs(args, false);
 			if (verifArgsResult.getCode().equals(BasicResultEnum.ALL_OK)) {
 				return execute(args, false);
@@ -120,9 +117,13 @@ public class Modelisationator {
 			}
 		} else if (executeDB) {
 			boolean options[] = new boolean[] { reset, fill };
-			MainFenetre mainFrame = new MainFenetre(args, options);
-			mainFrame.setTitle("Modelisationator");
-			return new BasicResult(BasicResultEnum.UNKNOWN_ERROR);
+			if (delete) {
+				return BaseDeDonneesNew.executeCommand(args, options[0], options[1], noPrint, null);
+			} else {
+				MainFenetre mainFrame = new MainFenetre(args, options);
+				mainFrame.setTitle("Modelisationator");
+				return new BasicResult(BasicResultEnum.ALL_OK);
+			}
 		}
 		return new BasicResult(BasicResultEnum.UNKNOWN_ERROR);
 	}
@@ -166,6 +167,8 @@ public class Modelisationator {
 			reset = true;
 		} else if (arg.equalsIgnoreCase("--fill")) {
 			fill = true;
+		} else if (arg.equals("--delete")) {
+			delete = true;
 		} else if (!isExecutableArg(arg)) { // if neither a command to reset/fill db, neither a direct command for the db, check for single letter options 
 			for (int j = 2; j < arg.length(); j++) { // start comparing after "--"
 				char c = arg.charAt(j);

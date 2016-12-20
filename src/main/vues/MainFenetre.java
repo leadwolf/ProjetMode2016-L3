@@ -30,6 +30,7 @@ import ply.plyModel.modeles.FigureModel;
 public class MainFenetre extends JFrame {
 
 	private Path parentPath;
+	private static File[] allFiles;
 	private List<ModelPanel> modelPanelList;
 	private JSplitPane mainPanel;
 	private JTabbedPane tabbedPane;
@@ -99,7 +100,7 @@ public class MainFenetre extends JFrame {
 	}
 
 	/**
-	 * Create the main Frame showing the result of the db command given in parameter. We don't create a ModelPanel yet
+	 * Create the main Frame showing the result of the db command given in parameter
 	 * 
 	 * @param command la commande bdd avec laqelle on a lancé le programme
 	 * @param options [0] &gt; resetBase, [1] &gt; fillBase
@@ -113,6 +114,9 @@ public class MainFenetre extends JFrame {
 
 		/* BDD PANEL */
 		BDDPanel bddPanel = BaseDeDonneesNew.getPanel(command, options[0], options[1], false, null);
+		if (bddPanel == null) {
+			System.exit(1);
+		}
 		BaseDeDonneesNew.closeConnection(); // ferme la connection pour qu'on puisse créer une nouvelle connection pour ModelInfo
 
 		/* LEFT PANEL */
@@ -136,6 +140,19 @@ public class MainFenetre extends JFrame {
 	 */
 	private void firstSetup() {
 		setupMenu();
+		allFiles = parentPath.toFile().listFiles(new FilenameFilter() {
+			@Override
+			public boolean accept(File dir, String name) {
+				if (name.lastIndexOf('.') > 0) {
+					String str = name.substring(name.lastIndexOf("."));
+					// match path name extension
+					if (str.equals(".ply")) {
+						return true;
+					}
+				}
+				return false;
+			}
+		});
 		modelPanelList = new ArrayList<>();
 	}
 
@@ -187,20 +204,6 @@ public class MainFenetre extends JFrame {
 	 * @param clickIndex the index of the click in the JList
 	 */
 	public void addNewModel(int clickIndex) {
-		File[] allFiles = parentPath.toFile().listFiles(new FilenameFilter() {
-			@Override
-			public boolean accept(File dir, String name) {
-				if (name.lastIndexOf('.') > 0) {
-					String str = name.substring(name.lastIndexOf("."));
-					// match path name extension
-					if (str.equals(".ply")) {
-						return true;
-					}
-				}
-				return false;
-			}
-		});
-
 		Path newModelPath = allFiles[clickIndex].toPath();
 		FigureModel newFigureModel;
 

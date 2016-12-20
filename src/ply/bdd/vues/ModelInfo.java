@@ -19,7 +19,11 @@ public class ModelInfo extends JPanel {
 
 	public ModelInfo(String modelName) {
 		super();
-		initModelInfo(modelName);
+		if (modelName != null) {
+			initModelInfo(modelName);
+		} else {
+			add(new JLabel("Aucune information sur le modèle"));
+		}
 	}
 	
 	public void initModelInfo(String name) {

@@ -21,6 +21,7 @@ import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.MenuListener;
 
 import main.BaseDeDonneesNew;
 import ply.bdd.controlers.JListControler;
@@ -313,6 +314,7 @@ public class MainFenetre extends JFrame {
 	private void setupMenu() {
 		JMenu menu, controls;
 		JMenuItem menuItem;
+		main.controlers.MenuListener menuListener = new main.controlers.MenuListener();
 
 		// Create the menu bar.
 		menuBar = new JMenuBar();
@@ -325,9 +327,11 @@ public class MainFenetre extends JFrame {
 		controls = new JMenu("Aide");
 		menuItem = new JMenuItem("Contrôles");
 		menuItem.setActionCommand("controles");
+		menuItem.addActionListener(menuListener);
 		controls.add(menuItem);
 		menuItem = new JMenuItem("Credits");
 		menuItem.setActionCommand("credits");
+		menuItem.addActionListener(menuListener);
 		controls.add(menuItem);
 		menuBar.add(controls);
 	}

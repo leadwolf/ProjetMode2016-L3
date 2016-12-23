@@ -8,17 +8,19 @@ import javax.swing.JPanel;
 
 import main.vues.Controls;
 
-public class MenuListener implements ActionListener{
+public class MenuControler implements ActionListener{
 
-	public MenuListener() {
-		// TODO Auto-generated constructor stub
+	Controls controls;
+	
+	public MenuControler() {
+		controls = new Controls();
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		switch (e.getActionCommand()) {
 		case "controles":
-			Controls controls = new Controls();
+			controls.setVisible(true);
 			break;
 		default:
 			break;

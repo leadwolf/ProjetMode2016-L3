@@ -1,4 +1,4 @@
-package main.vues;
+package ply.bdd.vues;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -21,15 +21,12 @@ import javax.swing.JPanel;
 
 import ply.bdd.controlers.ButtonControler;
 import ply.bdd.modeles.TableModel;
-import ply.bdd.vues.FenetreTable;
-import ply.bdd.vues.TablePanel;
 import result.BDDResult;
 import result.BDDResultEnum;
 import result.MethodResult;
 
 /**
- * Nouvelle classe qui va remplacer {@link FenetreTable}
- * Sert à présenter les informations à éditer, visualiser ou à insérer.
+ * Nouvelle classe qui va remplacer {@link FenetreTable} Sert à présenter les informations à éditer, visualiser ou à insérer.
  * 
  * @author L3
  *
@@ -38,8 +35,6 @@ public class BDDPanel extends JPanel {
 
 	private static final long serialVersionUID = 3259687165838481557L;
 	private TablePanel tablePanel;
-	private List<JButton> buttonList;
-	private JPanel buttonPanel;
 	private Connection con;
 
 	/**
@@ -47,63 +42,21 @@ public class BDDPanel extends JPanel {
 	 */
 	String[] orignalFields;
 
-	Dimension dim;
+	Dimension dim = new Dimension(600, 250);
 
 	/**
-	 * Crée une FenetreTable soit avec des données existantes pour --edit ou vide si rs est null pour --add
+	 * Crée une fenetre avec un TablePanel avec des champs vides
 	 * 
-	 * @param rows le nombre de lignes de la table
-	 * @param cols le nombre de colonnes de la table
-	 * @param rs ResultSet des données à utliser dans la table, null si veut laisser vide
-	 * @param connection la connection utilisée pour les requêtes update/edit
-	 */
-	public BDDPanel(int rows, int cols, ResultSet rs, Connection connection) {
-		boolean success = false;
-		if (rows > 0 && cols > 0) {
-			this.con = connection;
-
-			if (rs != null) {
-				orignalFields = new String[cols];
-				try {
-					if (rs.next()) {
-						int colCount = rs.getMetaData().getColumnCount();
-						for (int j = 1; j <= colCount; j++) {
-							orignalFields[j - 1] = rs.getString(j);
-						}
-					}
-					success = true;
-				} catch (SQLException e) {
-					e.printStackTrace();
-				} finally {
-					if (!success) {
-						try {
-							con.close();
-						} catch (SQLException e) {
-							System.err.println(e);
-						}
-					}
-				}
-			}
-		} else {
-			throw new NullPointerException("Row and columns must be superior to 0");
-		}
-	}
-
-	/**
-	 * Crée une fenetre avec un TablePanel avec des boutons mais champs vides
-	 * 
-	 * @param title le titre de ce fenetre
 	 * @param rows le nombre de lignes vides à avoir
-	 * @param buttonNames les noms des boutons à avoir, laisser null si pas de boutons
 	 * @param colNames les noms des colonnes
 	 * @param noModifyColumns les colonnes qui ne seront pas possibles de modifier
 	 * @param connection
 	 */
-	public BDDPanel(String title, int rows, String[] buttonNames, String[] colNames, int[] noModifyColumns, Connection connection) {
+	public BDDPanel(int rows, String[] colNames, int[] noModifyColumns, Connection connection) {
 		super();
 
 		this.con = connection;
-		tablePanel = new TablePanel(rows, colNames.length, colNames);
+		tablePanel = new TablePanel(rows, colNames.length, colNames, false);
 		orignalFields = new String[colNames.length];
 		TableModel dataTableModel = tablePanel.getTableModel();
 		for (int i = 0; i < rows; i++) {
@@ -113,31 +66,23 @@ public class BDDPanel extends JPanel {
 			}
 		}
 
-		if (buttonNames != null && buttonNames.length > 0) {
-			setDims(true, rows);
-			SetupPanelWithButtons(title, rows, buttonNames);
-		} else {
-			setDims(false, rows);
-			SetupPanelWithOutButtons(title, rows);
-		}
+		setupMainPanel(rows);
 	}
 
 	/**
-	 * Crée une fenetre avec un TabelPanel, des boutons et des champs remplis
+	 * Crée une fenetre avec un TabelPanel et des champs remplis
 	 * 
-	 * @param title le titre de ce fenetre
 	 * @param rows le nombre de lignes que la table comportera
-	 * @param buttonNames les noms des boutons à avoir, laisser null si pas de boutons
 	 * @param rs un ResultSet qui comporte les valeurs avec lesquelles remplir la table
 	 * @param colNames les noms des colonnes
 	 * @param noModifyColumns les colonnes qui ne seront pas possibles à modifier
 	 * @param connection
 	 */
-	public BDDPanel(String title, int rows, String[] buttonNames, ResultSet rs, String[] colNames, int[] noModifyColumns, Connection connection) {
+	public BDDPanel(int rows, ResultSet rs, String[] colNames, int[] noModifyColumns, Connection connection) {
 		super();
 
 		this.con = connection;
-		tablePanel = new TablePanel(rows, colNames.length, colNames);
+		tablePanel = new TablePanel(rows, colNames.length, colNames, false);
 		orignalFields = new String[colNames.length];
 		TableModel dataTableModel = tablePanel.getTableModel();
 		for (int i = 0; i < rows; i++) {
@@ -173,41 +118,15 @@ public class BDDPanel extends JPanel {
 			}
 		}
 
-		if (buttonNames != null && buttonNames.length > 0) {
-			setDims(true, rows);
-			SetupPanelWithButtons(title, rows, buttonNames);
-		} else {
-			setDims(false, rows);
-			SetupPanelWithOutButtons(title, rows);
-		}
+		setupMainPanel(rows);
 	}
 
 	/**
-	 * Crée les dimensions du fenetre en fonction du nombre de lignes dans la table
+	 * Crée ce panel
 	 * 
-	 * @param buttons
 	 * @param rows
 	 */
-	private void setDims(boolean buttons, int rows) {
-		dim = new Dimension(600, 250);
-		if (buttons) {
-			if (rows <= 10) {
-				dim = new Dimension(600, 125 + (16 * rows));
-			}
-		} else {
-			if (rows <= 10) {
-				dim = new Dimension(600, 100 + (16 * rows));
-			}
-		}
-	}
-
-	/**
-	 * Crée mainPanel
-	 * 
-	 * @param title
-	 * @param rows
-	 */
-	private void setUpMainPanel(String title, int rows) {
+	private void setupMainPanel(int rows) {
 
 		/* PANNEAU PRINCIPAL */
 		setPreferredSize(new Dimension((int) dim.getWidth(), (int) dim.getHeight()));
@@ -215,53 +134,6 @@ public class BDDPanel extends JPanel {
 		add(tablePanel, BorderLayout.CENTER);
 	}
 
-
-	/**
-	 * Crée mainPanel et fenetre sans boutons
-	 * 
-	 * @param title
-	 * @param rows
-	 */
-	private void SetupPanelWithOutButtons(String title, int rows) {
-		/* PANNEAU PRINCIPAL */
-		setUpMainPanel(title, rows);
-
-		setSize(dim);
-	}
-
-	/**
-	 * Crée mainPanel, fenetre et ajoute des boutons
-	 * 
-	 * @param title
-	 * @param rows le nombre de lignes que comportera la table
-	 * @param buttonNames les noms des boutons
-	 */
-	private void SetupPanelWithButtons(String title, int rows, String[] buttonNames) {
-
-		/* BOUTONS */
-		buttonList = new ArrayList<>();
-		ButtonControler buttonControler = new ButtonControler(this);
-
-		for (int i = 0; i < buttonNames.length; i++) {
-			JButton tmpButton = new JButton(buttonNames[i]);
-			tmpButton.setActionCommand(buttonNames[i]);
-			tmpButton.addActionListener(buttonControler);
-			buttonList.add(tmpButton);
-		}
-
-		/* PANNEAU BOUTONS */
-		buttonPanel = new JPanel();
-		buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
-		for (JButton button : buttonList) {
-			buttonPanel.add(button);
-		}
-
-		/* PANNEAU PRINCIPAL */
-		SetupPanelWithOutButtons(title, rows);
-		add(buttonPanel, BorderLayout.SOUTH);
-
-		setSize(dim);
-	}
 
 	/**
 	 * Prend les valeurs à update du JTable, vérifie qu'elles sont différentes que les originales et exécute
@@ -281,7 +153,8 @@ public class BDDPanel extends JPanel {
 		keywords = (String) tablePanel.getTable().getModel().getValueAt(0, 3);
 
 		// si au moins un des 3 est renseigné et différent de l'original
-		if ((name != null && !name.equals("") && !name.equals(orignalFields[0])) || (chemin != null && !chemin.equals("") && !chemin.equals(orignalFields[1]))
+		if ((name != null && !name.equals("") && !name.equals(orignalFields[0]))
+				|| (chemin != null && !chemin.equals("") && !chemin.equals(orignalFields[1]))
 				|| (keywords != null && !keywords.equals("") && !keywords.equals(orignalFields[3]))) {
 			return updateTable(name, chemin, keywords, debug);
 		} else if ((name != null && name.equals(orignalFields[0])) || (chemin != null && chemin.equals(orignalFields[1]))
@@ -290,8 +163,7 @@ public class BDDPanel extends JPanel {
 				showFieldErrorMessage(name, chemin, keywords);
 			}
 			return new BDDResult(BDDResultEnum.NO_DIFFERENT_VALUES);
-		} else if ((name != null && name.equals("")) && (chemin != null && chemin.equals(""))
-				&& (keywords != null && keywords.equals(""))) {
+		} else if ((name != null && name.equals("")) && (chemin != null && chemin.equals("")) && (keywords != null && keywords.equals(""))) {
 			if (!debug) {
 				showFieldErrorMessage(name, chemin, keywords);
 			}
@@ -311,7 +183,8 @@ public class BDDPanel extends JPanel {
 	 * @return si le modèle a bien été mis à jour
 	 */
 	public MethodResult updateTableAmorce(String name, String chemin, String keywords, boolean debug) {
-		if ((name != null && !name.equals("") && !name.equals(orignalFields[0])) || (chemin != null && !chemin.equals("") && !chemin.equals(orignalFields[1]))
+		if ((name != null && !name.equals("") && !name.equals(orignalFields[0]))
+				|| (chemin != null && !chemin.equals("") && !chemin.equals(orignalFields[1]))
 				|| (keywords != null && !keywords.equals("") && !keywords.equals(orignalFields[3]))) {
 			return updateTable(name, chemin, keywords, debug);
 		} else if ((name != null && name.equals(orignalFields[0])) || (chemin != null && chemin.equals(orignalFields[1]))
@@ -320,8 +193,7 @@ public class BDDPanel extends JPanel {
 				showFieldErrorMessage(name, chemin, keywords);
 			}
 			return new BDDResult(BDDResultEnum.NO_DIFFERENT_VALUES);
-		} else if ((name != null && name.equals("")) && (chemin != null && chemin.equals(""))
-				&& (keywords != null && keywords.equals(""))) {
+		} else if ((name != null && name.equals("")) && (chemin != null && chemin.equals("")) && (keywords != null && keywords.equals(""))) {
 			if (!debug) {
 				showFieldErrorMessage(name, chemin, keywords);
 			}

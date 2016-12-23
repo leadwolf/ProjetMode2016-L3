@@ -37,7 +37,7 @@ public class Controls extends JFrame {
 		setLayout(new FlowLayout());
 		setSize(dim);
 		setLocationRelativeTo(null);
-		setVisible(true);
+		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 	}
 	
 }

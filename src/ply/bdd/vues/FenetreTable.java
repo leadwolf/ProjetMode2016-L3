@@ -103,7 +103,7 @@ public class FenetreTable extends JFrame {
 		super();
 
 		this.con = connection;
-		tablePanel = new TablePanel(rows, colNames.length, colNames);
+		tablePanel = new TablePanel(rows, colNames.length, colNames, false);
 		orignalFields = new String[colNames.length];
 		TableModel dataTableModel = tablePanel.getTableModel();
 		for (int i = 0; i < rows; i++) {
@@ -137,7 +137,7 @@ public class FenetreTable extends JFrame {
 		super();
 
 		this.con = connection;
-		tablePanel = new TablePanel(rows, colNames.length, colNames);
+		tablePanel = new TablePanel(rows, colNames.length, colNames, false);
 		orignalFields = new String[colNames.length];
 		TableModel dataTableModel = tablePanel.getTableModel();
 		for (int i = 0; i < rows; i++) {

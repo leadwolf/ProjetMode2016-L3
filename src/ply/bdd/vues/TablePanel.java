@@ -47,7 +47,7 @@ public class TablePanel extends JPanel {
 	 * @param columnNames les noms de colonnes à utiliser
 	 * @param dataArray les données à utliser pour remplir la table
 	 */
-	public TablePanel(String[] columnNames, String[][] dataArray) {
+	public TablePanel(String[] columnNames, String[][] dataArray, boolean buttons) {
 		super();
 
 		this.columnNames = new String[columnNames.length];
@@ -79,7 +79,7 @@ public class TablePanel extends JPanel {
 	 * @param dataColumns le nombre de colonnes de la table des données
 	 * @param columnNames les noms de colonnes à utliser
 	 */
-	public TablePanel(int dataRows, int dataColumns, String[] columnNames) {
+	public TablePanel(int dataRows, int dataColumns, String[] columnNames, boolean buttons) {
 		super();
 
 		this.columnNames = new String[columnNames.length];

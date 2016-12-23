@@ -24,7 +24,9 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.MenuListener;
 
 import main.BaseDeDonneesNew;
+import main.controlers.MenuControler;
 import ply.bdd.controlers.JListControler;
+import ply.bdd.vues.BDDPanel;
 import ply.bdd.vues.ModelInfo;
 import ply.plyModel.modeles.FigureModel;
 
@@ -314,8 +316,8 @@ public class MainFenetre extends JFrame {
 	private void setupMenu() {
 		JMenu menu, controls;
 		JMenuItem menuItem;
-		main.controlers.MenuListener menuListener = new main.controlers.MenuListener();
-
+		MenuControler menuListener = new MenuControler();	
+		
 		// Create the menu bar.
 		menuBar = new JMenuBar();
 

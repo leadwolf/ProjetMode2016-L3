@@ -3,7 +3,8 @@ package ply.bdd.controlers;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import main.vues.BDDPanel;
+import ply.bdd.vues.BDDPanel;
+import ply.bdd.vues.BDDPanel;
 import ply.bdd.vues.FenetreTable;
 
 /**
@@ -22,11 +23,10 @@ public class ButtonControler implements ActionListener {
 	/**
 	 * Constructeur principale
 	 * 
-	 * @param frame
-	 *            le {@link FenetreTable} à qui ce contrôleur est lié
+	 * @param bddPanel le {@link FenetreTable} à qui ce contrôleur est lié
 	 */
-	public ButtonControler(BDDPanel frame) {
-		this.bddPanel = frame;
+	public ButtonControler(BDDPanel bddPanel) {
+		this.bddPanel = bddPanel;
 	}
 
 	@Override

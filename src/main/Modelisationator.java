@@ -5,6 +5,7 @@ import java.nio.file.Paths;
 import java.util.regex.Pattern;
 
 import main.vues.MainFenetre;
+import ply.bdd.other.BaseDeDonneesNew;
 import ply.plyModel.modeles.FigureModel;
 import result.BDDResult;
 import result.BDDResultEnum;

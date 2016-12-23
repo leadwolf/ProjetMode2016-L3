@@ -23,9 +23,10 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.MenuListener;
 
-import main.BaseDeDonneesNew;
 import main.controlers.MenuControler;
 import ply.bdd.controlers.JListControler;
+import ply.bdd.other.BDDUtilities;
+import ply.bdd.other.BaseDeDonneesNew;
 import ply.bdd.vues.BDDPanel;
 import ply.bdd.vues.ModelInfo;
 import ply.plyModel.modeles.FigureModel;
@@ -72,7 +73,7 @@ public class MainFenetre extends JFrame {
 		if (bddPanel == null) {
 			System.exit(1);
 		}
-		BaseDeDonneesNew.closeConnection(); // ferme la connection pour qu'on puisse créer une nouvelle connection pour ModelInfo
+		BaseDeDonneesNew.closeUsedConnection(); // ferme la connection pour qu'on puisse créer une nouvelle connection pour ModelInfo
 
 		/* LEFT PANEL */
 		String modelName = figureModel.getPath().getFileName().toString();
@@ -120,7 +121,7 @@ public class MainFenetre extends JFrame {
 		if (bddPanel == null) {
 			System.exit(1);
 		}
-		BaseDeDonneesNew.closeConnection(); // ferme la connection pour qu'on puisse créer une nouvelle connection pour ModelInfo
+		BaseDeDonneesNew.closeUsedConnection(); // ferme la connection pour qu'on puisse créer une nouvelle connection pour ModelInfo
 
 		/* LEFT PANEL */
 		createLeftPanel(null);

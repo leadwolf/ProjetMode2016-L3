@@ -6,7 +6,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
-import main.BaseDeDonneesNew;
+import ply.bdd.other.BaseDeDonneesNew;
 
 /**
  * Cette classe donne les informations sur le modèle en vue, comme --name &lt;modele&gt;

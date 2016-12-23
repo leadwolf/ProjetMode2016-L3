@@ -20,6 +20,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import ply.bdd.controlers.ButtonControler;
+import ply.bdd.legacy.FenetreTable;
 import ply.bdd.modeles.TableModel;
 import result.BDDResult;
 import result.BDDResultEnum;

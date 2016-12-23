@@ -1,4 +1,4 @@
-package ply.bdd.vues;
+package ply.bdd.legacy;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -21,6 +21,7 @@ import javax.swing.JPanel;
 
 import ply.bdd.controlers.ButtonControler;
 import ply.bdd.modeles.TableModel;
+import ply.bdd.vues.TablePanel;
 import result.BDDResult;
 import result.BDDResultEnum;
 import result.BasicResult;

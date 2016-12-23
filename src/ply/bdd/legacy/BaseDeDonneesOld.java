@@ -1,4 +1,4 @@
-package main;
+package ply.bdd.legacy;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -13,7 +13,6 @@ import java.util.GregorianCalendar;
 
 import javax.swing.JOptionPane;
 
-import ply.bdd.vues.FenetreTable;
 import result.BDDResult;
 import result.BDDResultEnum;
 import result.BasicResult;

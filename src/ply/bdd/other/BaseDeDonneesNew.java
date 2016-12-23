@@ -1,22 +1,13 @@
-package main;
+package ply.bdd.other;
 
-import java.io.File;
-import java.io.FilenameFilter;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-
 import javax.swing.JOptionPane;
 
+import ply.bdd.legacy.FenetreTable;
 import ply.bdd.vues.BDDPanel;
-import ply.bdd.vues.FenetreTable;
-import ply.plyModel.modeles.FigureModel;
 import result.BDDResult;
 import result.BDDResultEnum;
 import result.BasicResult;
@@ -24,7 +15,8 @@ import result.BasicResultEnum;
 import result.MethodResult;
 
 /**
- * Cette classe est pareil que BaseDeDonnesOld mais donne une JPanel au lieu d'éxécuter directement les commandes
+ * Cette classe est pareil que BaseDeDonnesOld mais donne une JPanel au lieu d'éxécuter directement les commandes/
+ * Elle ne contient plus les méthodes de manipulation de base, qui sont maintenant dans {@link BDDUtilities}
  * 
  * @author L3
  *
@@ -32,88 +24,10 @@ import result.MethodResult;
 public class BaseDeDonneesNew {
 
 	/**
-	 * Le chemin vers le fichiers .ply
+	 * La getConnection() utilisée par cette classe
 	 */
-	private static File[] files;
-	/**
-	 * La connection utilisée par cette classe
-	 */
-	private static Connection connection;
 
 	private static String[] columnNames = new String[] { "Nom", "Chemin", "Date", "Mot Clés", "Nombre de Points", "Nombre de Faces" };
-
-	/**
-	 * Constructeur par défaut, initalise la liste des modèles à utilser dans le remplissage de la table
-	 * 
-	 * @param dbPath le chemin le dossier contenant les modeles .ply et le fichier .sqlite
-	 */
-	public BaseDeDonneesNew(Path dbPath) {
-		files = dbPath.toFile().listFiles(new FilenameFilter() {
-			@Override
-			public boolean accept(File dir, String name) {
-				if (name.lastIndexOf('.') > 0) {
-					String str = name.substring(name.lastIndexOf("."));
-					// match path name extension
-					if (str.equals(".ply")) {
-						return true;
-					}
-				}
-				return false;
-			}
-		});
-	}
-	
-	/**
-	 * Initalise la connection vers un fichier .sqlite précis ou le fichier par défaut
-	 * @param dbPath
-	 */
-	public static void initConnection(Path dbPath) {
-		if (dbPath == null) {
-			boolean success = false;
-			try {
-				Class.forName("org.sqlite.JDBC");
-				connection = DriverManager.getConnection("jdbc:sqlite:data/test.sqlite");
-				success = true;
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			} finally {
-				if (!success) {
-					closeConnection();
-				}
-			}
-		} else {
-			boolean success = false;
-			try {
-				Class.forName("org.sqlite.JDBC");
-				connection = DriverManager.getConnection("jdbc:sqlite:" + dbPath.toAbsolutePath().toString());
-				success = true;
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			} finally {
-				if (!success) {
-					closeConnection();
-				}
-			}
-
-		}
-	}
-
-	/**
-	 * Ferme la connection utilisée par cette classe
-	 */
-	public static void closeConnection() {
-		try {
-			if (connection != null) {
-				connection.close();
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
 
 	/**
 	 * Creates a BDDPanel from the args given
@@ -143,7 +57,7 @@ public class BaseDeDonneesNew {
 			return null;
 		} // else continue program
 
-		initConnection(dbPath);
+		BDDUtilities.initConnection(dbPath);
 		return parseArgsForPanel(args, reset, fill, noPrint);
 	}
 
@@ -175,7 +89,7 @@ public class BaseDeDonneesNew {
 			return null;
 		} // else continue program
 
-		initConnection(dbPath);
+		BDDUtilities.initConnection(dbPath);
 		return parseArgs(args, reset, fill, noPrint);
 	}
 
@@ -190,17 +104,17 @@ public class BaseDeDonneesNew {
 	 */
 	private static MethodResult parseArgs(String[] args, boolean reset, boolean fill, boolean noPrint) {
 		if (reset) {
-			resetTable();
+			BDDUtilities.resetTable();
 		}
 		if (fill) {
-			fillTable();
+			BDDUtilities.fillTable();
 		}
 
 		if (args.length > 0) {
 			for (int i = 0; i < args.length; i++) {
 				if (args[i].equals("--delete")) {
-					if (checkTable().getCode().equals(BasicResultEnum.ALL_OK)) {
-						return delete(i, args, connection, noPrint);
+					if (BDDUtilities.checkTable().getCode().equals(BasicResultEnum.ALL_OK)) {
+						return delete(i, args, noPrint);
 					} else {
 						if (!noPrint) {
 							JOptionPane.showMessageDialog(null, "La base de données est vide", "Base de données", JOptionPane.ERROR_MESSAGE);
@@ -285,17 +199,17 @@ public class BaseDeDonneesNew {
 	 */
 	private static BDDPanel parseArgsForPanel(String[] args, boolean reset, boolean fill, boolean noPrint) {
 		if (reset) {
-			resetTable();
+			BDDUtilities.resetTable();
 		}
 		if (fill) {
-			fillTable();
+			BDDUtilities.fillTable();
 		}
 
 		if (args.length > 0) {
 			for (int i = 0; i < args.length; i++) {
 				if (args[i].equals("--name")) {
-					if (checkTable().getCode().equals(BasicResultEnum.ALL_OK)) {
-						return showName(i, args, connection, noPrint);
+					if (BDDUtilities.checkTable().getCode().equals(BasicResultEnum.ALL_OK)) {
+						return showName(i, args, noPrint);
 					} else {
 						if (!noPrint) {
 							JOptionPane.showMessageDialog(null, "La base de données est vide", "Base de données", JOptionPane.ERROR_MESSAGE);
@@ -304,8 +218,8 @@ public class BaseDeDonneesNew {
 					}
 				}
 				if (args[i].equals("--all")) {
-					if (checkTable().getCode().equals(BasicResultEnum.ALL_OK)) {
-						return showAll(i, args, connection, noPrint);
+					if (BDDUtilities.checkTable().getCode().equals(BasicResultEnum.ALL_OK)) {
+						return showAll(i, args, noPrint);
 					} else {
 						if (!noPrint) {
 							JOptionPane.showMessageDialog(null, "La base de données est vide", "Base de données", JOptionPane.ERROR_MESSAGE);
@@ -314,8 +228,8 @@ public class BaseDeDonneesNew {
 					}
 				}
 				if (args[i].equals("--find")) {
-					if (checkTable().getCode().equals(BasicResultEnum.ALL_OK)) {
-						return find(i, args, connection, noPrint);
+					if (BDDUtilities.checkTable().getCode().equals(BasicResultEnum.ALL_OK)) {
+						return find(i, args, noPrint);
 					} else {
 						if (!noPrint) {
 							JOptionPane.showMessageDialog(null, "La base de données est vide", "Base de données", JOptionPane.ERROR_MESSAGE);
@@ -324,11 +238,11 @@ public class BaseDeDonneesNew {
 					}
 				}
 				if (args[i].equals("--add")) {
-					return add(connection);
+					return add();
 				}
 				if (args[i].equals("--edit")) {
-					if (checkTable().getCode().equals(BasicResultEnum.ALL_OK)) {
-						return edit(i, args, connection);
+					if (BDDUtilities.checkTable().getCode().equals(BasicResultEnum.ALL_OK)) {
+						return edit(i, args);
 					} else {
 						if (!noPrint) {
 							JOptionPane.showMessageDialog(null, "La base de données est vide", "Base de données", JOptionPane.ERROR_MESSAGE);
@@ -346,7 +260,7 @@ public class BaseDeDonneesNew {
 	 * Donne toutes les colonnes de la base de données
 	 * 
 	 * @param name the name of the model
-	 * @param connection
+	 * @param getConnection()
 	 * @param debug false to prevent print
 	 * @return
 	 */
@@ -355,7 +269,7 @@ public class BaseDeDonneesNew {
 		ResultSet rs2;
 		boolean success = false;
 		try {
-			PreparedStatement statement = connection.prepareStatement("select COUNT(*) from PLY where NOM = ?");
+			PreparedStatement statement = BDDUtilities.getConnection().prepareStatement("select COUNT(*) from PLY where NOM = ?");
 			name = name.toLowerCase();
 			statement.setString(1, name);
 			rs = statement.executeQuery();
@@ -363,7 +277,7 @@ public class BaseDeDonneesNew {
 				int totalLines = rs.getInt(1);
 				if (totalLines > 0) {
 					if (!debug) {
-						PreparedStatement statement2 = connection.prepareStatement("select * from PLY where NOM = ?");
+						PreparedStatement statement2 = BDDUtilities.getConnection().prepareStatement("select * from PLY where NOM = ?");
 						statement2.setString(1, name);
 						rs2 = statement2.executeQuery();
 						String[] nameInfo = new String[rs2.getMetaData().getColumnCount()];
@@ -399,11 +313,7 @@ public class BaseDeDonneesNew {
 			e.printStackTrace();
 		} finally {
 			if (!success) {
-				try {
-					connection.close();
-				} catch (SQLException e) {
-					System.err.println(e);
-				}
+				BDDUtilities.closeConnection();
 			}
 		}
 		return null;
@@ -415,11 +325,11 @@ public class BaseDeDonneesNew {
 	 * 
 	 * @param i la place de "--name" dans les arguments. Servira à parcourir la liste si on aura besoin d'afficher de multiples modèles
 	 * @param args le modèle à afficher
-	 * @param connection la connection utilsée pour les requêtes
+	 * @param getConnection() la getConnection() utilsée pour les requêtes
 	 * @param debug afficher ou non les fenêtres
 	 * @return si le modele existe et qu'il a pu créer la fenêtre
 	 */
-	private static BDDPanel showName(int i, String[] args, Connection connection, boolean debug) {
+	private static BDDPanel showName(int i, String[] args, boolean debug) {
 		ResultSet rs;
 		ResultSet rs2;
 		int nbArgs = 0;
@@ -432,17 +342,17 @@ public class BaseDeDonneesNew {
 			boolean success = false;
 			try {
 				String firstFile = args[i + 1];
-				PreparedStatement statement = connection.prepareStatement("select COUNT(*) from PLY where NOM = ?");
+				PreparedStatement statement = BDDUtilities.getConnection().prepareStatement("select COUNT(*) from PLY where NOM = ?");
 				statement.setString(1, firstFile);
 				rs = statement.executeQuery();
 				if (rs.next()) {
 					int totalLines = rs.getInt(1);
 					if (totalLines > 0) {
 						if (!debug) {
-							PreparedStatement statement2 = connection.prepareStatement("select * from PLY where NOM = ?");
+							PreparedStatement statement2 = BDDUtilities.getConnection().prepareStatement("select * from PLY where NOM = ?");
 							statement2.setString(1, firstFile);
 							rs2 = statement2.executeQuery();
-							return new BDDPanel(totalLines, rs2, columnNames, new int[] { 1, 2, 3, 4 }, connection);
+							return new BDDPanel(totalLines, rs2, columnNames, new int[] { 1, 2, 3, 4 }, BDDUtilities.getConnection());
 						}
 						success = true;
 						// return new
@@ -469,7 +379,7 @@ public class BaseDeDonneesNew {
 				e.printStackTrace();
 			} finally {
 				if (!success) {
-					closeConnection();
+					BDDUtilities.closeConnection();
 				}
 			}
 		} else if (nbArgs == i) {
@@ -496,24 +406,24 @@ public class BaseDeDonneesNew {
 	 * 
 	 * @param i la place de "--all" dans les arguments
 	 * @param args les arguments, sert à vérifier aucun paramètres inutiles
-	 * @param connection la connection utilsée pour les requêtes
+	 * @param getConnection() la getConnection() utilsée pour les requêtes
 	 * @param debug afficher ou non les requêtes
 	 * @return s'il a pu créer la fenêtre
 	 */
-	private static BDDPanel showAll(int i, String[] args, Connection connection, boolean debug) {
+	private static BDDPanel showAll(int i, String[] args, boolean debug) {
 		ResultSet rs;
 		ResultSet rs2;
 		boolean success = false;
 		try {
-			PreparedStatement statement = connection.prepareStatement("select COUNT(*) from PLY");
+			PreparedStatement statement = BDDUtilities.getConnection().prepareStatement("select COUNT(*) from PLY");
 			rs = statement.executeQuery();
 			if (rs.next()) {
 				int totalLines = rs.getInt(1);
 				if (totalLines > 0) {
 					if (!debug) {
-						PreparedStatement statement2 = connection.prepareStatement("select * from PLY");
+						PreparedStatement statement2 = BDDUtilities.getConnection().prepareStatement("select * from PLY");
 						rs2 = statement2.executeQuery();
-						return new BDDPanel(totalLines, rs2, columnNames, new int[] { 1, 2, 3, 4 }, connection);
+						return new BDDPanel(totalLines, rs2, columnNames, new int[] { 1, 2, 3, 4 }, BDDUtilities.getConnection());
 					}
 					success = true;
 					// return new
@@ -535,7 +445,7 @@ public class BaseDeDonneesNew {
 			e.printStackTrace();
 		} finally {
 			if (!success) {
-				closeConnection();
+				BDDUtilities.closeConnection();
 			}
 		}
 		return null;
@@ -546,11 +456,11 @@ public class BaseDeDonneesNew {
 	 * 
 	 * @param i la place de "--find" dans les arguments
 	 * @param args les mots clés à rechercher
-	 * @param connection la connection utilsée pour les requêtes
+	 * @param getConnection() la getConnection() utilsée pour les requêtes
 	 * @param debug afficher ou non les fenêtres
 	 * @return s'il a trouvé des modèles et a pu affiché la fenêtre
 	 */
-	private static BDDPanel find(int i, String[] args, Connection connection, boolean debug) {
+	private static BDDPanel find(int i, String[] args, boolean debug) {
 		ResultSet rs;
 		ResultSet rs2;
 		int nbLikes = 0;
@@ -581,8 +491,8 @@ public class BaseDeDonneesNew {
 						}
 					}
 				}
-				PreparedStatement statement = connection.prepareStatement(queryCount);
-				PreparedStatement statement2 = connection.prepareStatement(queryString);
+				PreparedStatement statement = BDDUtilities.getConnection().prepareStatement(queryCount);
+				PreparedStatement statement2 = BDDUtilities.getConnection().prepareStatement(queryString);
 				for (int j = i + 1; j < args.length; j++) {
 					if (!args[j].startsWith("--")) {
 						statement.setString(j, "%" + args[j] + "%");
@@ -595,7 +505,7 @@ public class BaseDeDonneesNew {
 					if (totalLines > 0) {
 						if (!debug) {
 							rs2 = statement2.executeQuery();
-							return new BDDPanel(totalLines, rs2, columnNames, new int[] { 1, 2, 3, 4 }, connection);
+							return new BDDPanel(totalLines, rs2, columnNames, new int[] { 1, 2, 3, 4 }, BDDUtilities.getConnection());
 						}
 						success = true;
 						// return new BDDResult(BDDResultEnum.FIND_SUCCESSFUL);
@@ -616,7 +526,7 @@ public class BaseDeDonneesNew {
 				e.printStackTrace();
 			} finally {
 				if (!success) {
-					closeConnection();
+					BDDUtilities.closeConnection();
 				}
 			}
 		} else {
@@ -634,11 +544,11 @@ public class BaseDeDonneesNew {
 	/**
 	 * Crée la fenêtre d'insertion de modèle
 	 * 
-	 * @param connection la connection utilsée pour les requêtes
+	 * @param getConnection() la getConnection() utilsée pour les requêtes
 	 * @return si fenêtre crée. Pour savoir si requête sql éxecutée, voir {@link FenetreTable}
 	 */
-	private static BDDPanel add(Connection connection) {
-		return new BDDPanel(1, columnNames, new int[] { 3 }, connection);
+	private static BDDPanel add() {
+		return new BDDPanel(1, columnNames, new int[] { 3 }, BDDUtilities.getConnection());
 		// return new BasicResult(BasicResultEnum.ALL_OK);
 	}
 
@@ -647,10 +557,10 @@ public class BaseDeDonneesNew {
 	 * 
 	 * @param i la place de "--edit" dans les arguments. Servira à parcourir la liste si on aura besoin de modifier de multiples modèles
 	 * @param args le modèle à supprimer
-	 * @param connection la connection utilsée pour les requêtes
+	 * @param getConnection() la getConnection() utilsée pour les requêtes
 	 * @return si fenêtre bien crée. Pour savoir si requête sql éxecutée, voir {@link FenetreTable}
 	 */
-	private static BDDPanel edit(int i, String[] args, Connection connection) {
+	private static BDDPanel edit(int i, String[] args) {
 
 		boolean success = false;
 		int modelNames = 0;
@@ -662,17 +572,17 @@ public class BaseDeDonneesNew {
 		if (modelNames == 1) {
 			try {
 				String firstFile = args[i + 1];
-				PreparedStatement statement = connection.prepareStatement("select COUNT(*) from PLY where NOM = ?");
+				PreparedStatement statement = BDDUtilities.getConnection().prepareStatement("select COUNT(*) from PLY where NOM = ?");
 				statement.setString(1, firstFile);
 				ResultSet rs = statement.executeQuery();
 				if (rs.next()) {
 					int totalLines = rs.getInt(1);
 					if (totalLines == 1) {
-						PreparedStatement st = connection.prepareStatement("select * from ply where nom = ?");
+						PreparedStatement st = BDDUtilities.getConnection().prepareStatement("select * from ply where nom = ?");
 						st.setString(1, firstFile);
 						ResultSet rs2 = st.executeQuery();
 						success = true;
-						return new BDDPanel(totalLines, rs2, columnNames, new int[] { 3 }, connection);
+						return new BDDPanel(totalLines, rs2, columnNames, new int[] { 3 }, BDDUtilities.getConnection());
 						// return new BasicResult(BasicResultEnum.ALL_OK);
 					} else {
 						String message = "Le modèle " + firstFile + " n'existe pas";
@@ -687,8 +597,7 @@ public class BaseDeDonneesNew {
 				e.printStackTrace();
 			} finally {
 				if (!success) {
-
-					closeConnection();
+					BDDUtilities.closeConnection();
 				}
 			}
 		} else if (args.length > i + 1) {
@@ -709,22 +618,22 @@ public class BaseDeDonneesNew {
 	/**
 	 * @param i la place de "--delete" dans les arguments. Servira à parcourir la liste si on aura besoin de supprimer de multiples modèles
 	 * @param args le modèle à supprimer
-	 * @param connection la connection utilsée pour les requêtes
+	 * @param getConnection() la getConnection() utilsée pour les requêtes
 	 * @param debug afficher ou non les fenêtres
 	 * @return si modèle a bien été supprimé
 	 */
-	private static MethodResult delete(int i, String[] args, Connection connection, boolean debug) {
+	private static MethodResult delete(int i, String[] args, boolean debug) {
 		boolean success = false;
 		if (args.length > 1) {
 			try {
 				String firstFile = args[i + 1];
-				PreparedStatement stExists = connection.prepareStatement("select COUNT(*) from PLY where NOM = ?");
+				PreparedStatement stExists = BDDUtilities.getConnection().prepareStatement("select COUNT(*) from PLY where NOM = ?");
 				stExists.setString(1, firstFile);
 				ResultSet rs = stExists.executeQuery();
 				if (rs.next()) {
 					int totalLines = rs.getInt(1);
 					if (totalLines == 1) {
-						PreparedStatement stDelete = connection.prepareStatement("delete from PLY where NOM = ?");
+						PreparedStatement stDelete = BDDUtilities.getConnection().prepareStatement("delete from PLY where NOM = ?");
 						stDelete.setString(1, firstFile);
 						int result = stDelete.executeUpdate(); // result = nombre de
 																// lignes affectés
@@ -764,7 +673,7 @@ public class BaseDeDonneesNew {
 				e.printStackTrace();
 			} finally {
 				if (!success) {
-					closeConnection();
+					BDDUtilities.closeConnection();
 				}
 			}
 		} else {
@@ -775,102 +684,9 @@ public class BaseDeDonneesNew {
 		}
 		return new BDDResult(BDDResultEnum.DELETE_NOT_SUCCESSFUL);
 	}
-
-	/**
-	 * Drop la table PLY et la recrée
-	 */
-	public static void resetTable() {
-		boolean success = false;
-		try {
-
-			PreparedStatement firstStatement = connection.prepareStatement("drop table PLY");
-			firstStatement.executeUpdate();
-			PreparedStatement secondStatement = connection.prepareStatement(
-					"create table PLY(NOM text PRIMARY KEY, CHEMIN text, DATE text, DESCRIPTION text, NOMBRE_POINTS integer, NOMBRE_FACES integer)");
-			secondStatement.executeUpdate();
-			success = true;
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			if (!success) {
-				closeConnection();
-			}
-		}
-
+	
+	public static void closeUsedConnection() {
+		BDDUtilities.closeConnection();
 	}
 
-	/**
-	 * Remplit la table PLY avec les fichiers dans le dossier ply/
-	 * 
-	 */
-	public static void fillTable() {
-		boolean success = false;
-		new BaseDeDonneesNew(Paths.get("data/"));
-		try {
-
-			String insertStatement = "";
-			for (int i = 0; i < files.length; i++) {
-				String nom = files[i].toPath().getFileName().toString();
-				nom = nom.substring(0, nom.lastIndexOf("."));
-				FigureModel fig = new FigureModel(files[i].toPath().toAbsolutePath(), true);
-
-				insertStatement = "insert into PLY values (?, ?, ?, ?, ?, ?)";
-				PreparedStatement firstStatement;
-				firstStatement = connection.prepareStatement(insertStatement);
-				firstStatement.setString(1, nom);
-				firstStatement.setString(2, files[i].getAbsolutePath().toString());
-				firstStatement.setString(3, toDay());
-				firstStatement.setString(4, "mes mots clés");
-				firstStatement.setInt(5, fig.getNbPoints());
-				firstStatement.setInt(6, fig.getNbFaces());
-				firstStatement.executeUpdate();
-			}
-			success = true;
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			if (!success) {
-				closeConnection();
-			}
-		}
-	}
-
-	/**
-	 * @return la date d'aujourd'hui sous forme YYYY/MM/DD
-	 */
-	private static String toDay() {
-		Calendar dat = new GregorianCalendar();
-		return dat.get(Calendar.YEAR) + "/" + dat.get(Calendar.MONTH) + "/" + dat.get(Calendar.DAY_OF_MONTH);
-	}
-
-	/**
-	 * Vérifie si la table est vide
-	 * 
-	 * @param connection
-	 * @return
-	 */
-	private static MethodResult checkTable() {
-		boolean success = false;
-		try {
-			PreparedStatement statement;
-			statement = connection.prepareStatement("select COUNT(*) from PLY");
-			ResultSet rs = statement.executeQuery();
-			if (rs.next()) {
-				int totalLines = rs.getInt(1);
-				if (totalLines > 0) {
-					success = true;
-					return new BasicResult(BasicResultEnum.ALL_OK);
-				}
-			}
-			success = true;
-			return new BDDResult(BDDResultEnum.EMPTY_DB);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			if (!success) {
-				closeConnection();
-			}
-		}
-		return new BasicResult(BasicResultEnum.UNKNOWN_ERROR);
-	}
 }

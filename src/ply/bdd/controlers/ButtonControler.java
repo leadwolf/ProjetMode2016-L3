@@ -3,9 +3,9 @@ package ply.bdd.controlers;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import ply.bdd.legacy.FenetreTable;
 import ply.bdd.vues.BDDPanel;
 import ply.bdd.vues.BDDPanel;
-import ply.bdd.vues.FenetreTable;
 
 /**
  * Cette classe permet d'exécuter les requêtes SQL correspondants aux boutons concernés

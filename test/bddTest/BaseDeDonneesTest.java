@@ -6,7 +6,7 @@ import java.nio.file.Paths;
 
 import org.junit.Test;
 
-import main.BaseDeDonneesOld;
+import ply.bdd.legacy.BaseDeDonneesOld;
 import result.BDDResultEnum;
 import result.BasicResultEnum;
 

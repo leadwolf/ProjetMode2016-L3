@@ -11,6 +11,8 @@ This commit introduces the follwing changes :
   - All opened models are kept in memory. Now when the user quits a model, it can be reopened without re-reading the .ply file.
   - Created a tool tip `toolLabel` at the bottom of MainFenetre.
   - `ModelInfo` now updates accordingly when switching tab or when opening a new tab.
+  - `JTableBDD` will replace the operations in `BDDPanel`, can be used for all displays and will be able to be operated on directly through `ButtonColumn`.
+  - `BDDPanelNew` replaces `BDDPanel` and will now just be a simple panel
   
 ### What's next
 Priority objectives :

@@ -1,15 +1,18 @@
 package ply.bdd.modeles;
 
+import java.util.List;
+
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableModel;
 
 /**
- * Cette clase est un modèle de JTable. Elle permet de customiser son comportment. Ici nous l'utilisons principalement pour modifier les permissions
- * d'édition des cellules
+ * Cette clase est un modèle de JTable comme {@link DefaultTableModel}. Elle permet de customiser son comportment. Ici nous l'utilisons principalement pour
+ * modifier les permissions d'édition des cellules
  * 
  * @author L3
  *
  */
-public class TableModel extends AbstractTableModel {
+public class TableDataModel extends AbstractTableModel {
 
 	/**
 	 * Array de noms de colonnes que comportera la JTable
@@ -29,9 +32,10 @@ public class TableModel extends AbstractTableModel {
 
 	/**
 	 * Constructeur qui exécute super() et met en place les noms de colonnes.
+	 * 
 	 * @param columnNames les noms de colonnes à appliquer
 	 */
-	private TableModel(Object[] columnNames) {
+	private TableDataModel(Object[] columnNames) {
 		super();
 
 		this.columnNames = new Object[columnNames.length];
@@ -48,7 +52,7 @@ public class TableModel extends AbstractTableModel {
 	 * @param dataRows le nombre de lignes vides à avoir dans le tableau
 	 * @param dataColumns le nombre de colonnes vides à avoir dans le tableau
 	 */
-	public TableModel(Object[] columnData, int dataRows, int dataColumns) {
+	public TableDataModel(Object[] columnData, int dataRows, int dataColumns) {
 		this(columnData);
 		if (dataRows > 0 && dataColumns > 0) {
 			initData(dataRows, dataColumns);
@@ -68,10 +72,21 @@ public class TableModel extends AbstractTableModel {
 	/**
 	 * Crée un tableau avec les noms des colonnes et remplit le tableau avec l'array donné
 	 * 
-	 * @param columnData les noms de colonnes  à appliquer
+	 * @param columnData les noms de colonnes à appliquer
 	 * @param data les données à placer dans la table
 	 */
-	public TableModel(Object[] columnData, Object[][] data) {
+	public TableDataModel(Object[] columnData, Object[][] data) {
+		this(columnData);
+		setData(data);
+	}
+
+	/**
+	 * Crée un tableau avec les noms des colonnes et remplit le tableau avec l'array donné
+	 * 
+	 * @param columnData les noms de colonnes à appliquer
+	 * @param data les données à placer dans la table
+	 */
+	public TableDataModel(String[] columnData, List<String[]> data) {
 		this(columnData);
 		setData(data);
 	}
@@ -122,6 +137,9 @@ public class TableModel extends AbstractTableModel {
 
 	@Override
 	public String getColumnName(int column) {
+		if (column >= columnNames.length) {
+			return "";
+		}
 		return (String) columnNames[column];
 	}
 
@@ -164,6 +182,22 @@ public class TableModel extends AbstractTableModel {
 		for (int i = 0; i < data.length; i++) {
 			for (int j = 0; j < data[0].length; j++) {
 				this.data[i][j] = data[i][j];
+				this.editable[i][j] = true;
+			}
+		}
+	}
+
+	/**
+	 * Remplace las valeurs du tableau avec celui donné
+	 * 
+	 * @param data les donneés à utiliser
+	 */
+	private void setData(List<String[]> data) {
+		this.editable = new boolean[data.size()][data.get(0).length];
+		this.data = new Object[data.size()][data.get(0).length];
+		for (int i = 0; i < data.size(); i++) {
+			for (int j = 0; j < data.get(0).length; j++) {
+				this.data[i][j] = data.get(i)[j];
 				this.editable[i][j] = true;
 			}
 		}

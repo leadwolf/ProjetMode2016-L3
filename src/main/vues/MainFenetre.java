@@ -27,7 +27,7 @@ import main.controlers.MenuControler;
 import ply.bdd.controlers.JListControler;
 import ply.bdd.other.BDDUtilities;
 import ply.bdd.other.BaseDeDonneesNew;
-import ply.bdd.vues.BDDPanel;
+import ply.bdd.vues.BDDPanelNew;
 import ply.bdd.vues.ModelInfo;
 import ply.plyModel.modeles.FigureModel;
 
@@ -69,7 +69,7 @@ public class MainFenetre extends JFrame {
 
 		/* BDD PANEL */
 		// par défaut on veut afficher toute la base
-		BDDPanel bddPanel = BaseDeDonneesNew.getPanel(new String[] { "--all" }, options[3], options[4], false, null);
+		BDDPanelNew bddPanel = BaseDeDonneesNew.getPanel(new String[] { "--all" }, options[3], options[4], false, null);
 		if (bddPanel == null) {
 			System.exit(1);
 		}
@@ -117,7 +117,7 @@ public class MainFenetre extends JFrame {
 		frameDim = new Dimension(800, 500);
 
 		/* BDD PANEL */
-		BDDPanel bddPanel = BaseDeDonneesNew.getPanel(command, options[0], options[1], false, null);
+		BDDPanelNew bddPanel = BaseDeDonneesNew.getPanel(command, options[0], options[1], false, null);
 		if (bddPanel == null) {
 			System.exit(1);
 		}

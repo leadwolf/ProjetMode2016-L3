@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import javax.swing.JOptionPane;
 
 import ply.bdd.legacy.FenetreTable;
-import ply.bdd.vues.BDDPanel;
+import ply.bdd.vues.BDDPanelNew;
 import result.BDDResult;
 import result.BDDResultEnum;
 import result.BasicResult;
@@ -15,17 +15,13 @@ import result.BasicResultEnum;
 import result.MethodResult;
 
 /**
- * Cette classe est pareil que BaseDeDonnesOld mais donne une JPanel au lieu d'éxécuter directement les commandes/
- * Elle ne contient plus les méthodes de manipulation de base, qui sont maintenant dans {@link BDDUtilities}
+ * Cette classe est pareil que BaseDeDonnesOld mais donne une JPanel au lieu d'éxécuter directement les commandes/ Elle ne contient plus les méthodes de
+ * manipulation de base, qui sont maintenant dans {@link BDDUtilities}
  * 
  * @author L3
  *
  */
 public class BaseDeDonneesNew {
-
-	/**
-	 * La getConnection() utilisée par cette classe
-	 */
 
 	private static String[] columnNames = new String[] { "Nom", "Chemin", "Date", "Mot Clés", "Nombre de Points", "Nombre de Faces" };
 
@@ -39,7 +35,7 @@ public class BaseDeDonneesNew {
 	 * @param dbPath path to the db.sqlite, leave null for default data/test.sqlite
 	 * @return
 	 */
-	public static BDDPanel getPanel(String[] args, boolean reset, boolean fill, boolean noPrint, Path dbPath) {
+	public static BDDPanelNew getPanel(String[] args, boolean reset, boolean fill, boolean noPrint, Path dbPath) {
 		if ((args == null) || (args != null && args.length <= 0)) {
 			if (!noPrint) {
 				String message = "Vous n'avez pas spécifié d'arguments.";
@@ -183,7 +179,7 @@ public class BaseDeDonneesNew {
 	private static boolean isConflicting(String arg) {
 		return arg.startsWith("--") && !isDBOption(arg);
 	}
-	
+
 	private static boolean isDBOption(String arg) {
 		return arg.equals("--r") || arg.equals("--r") || arg.equals("--rf");
 	}
@@ -197,7 +193,7 @@ public class BaseDeDonneesNew {
 	 * @param noPrint afficher ou non les fenêtres, debug = cacher
 	 * @return si la requête était correcte et que l'interface, si besoin, a été éxecutée
 	 */
-	private static BDDPanel parseArgsForPanel(String[] args, boolean reset, boolean fill, boolean noPrint) {
+	private static BDDPanelNew parseArgsForPanel(String[] args, boolean reset, boolean fill, boolean noPrint) {
 		if (reset) {
 			BDDUtilities.resetTable();
 		}
@@ -329,11 +325,11 @@ public class BaseDeDonneesNew {
 	 * @param debug afficher ou non les fenêtres
 	 * @return si le modele existe et qu'il a pu créer la fenêtre
 	 */
-	private static BDDPanel showName(int i, String[] args, boolean debug) {
+	private static BDDPanelNew showName(int i, String[] args, boolean debug) {
 		ResultSet rs;
 		ResultSet rs2;
 		int nbArgs = 0;
-		for (int j=0;j<args.length;j++) {
+		for (int j = 0; j < args.length; j++) {
 			if (!isDBOption(args[j])) {
 				nbArgs++;
 			}
@@ -352,7 +348,7 @@ public class BaseDeDonneesNew {
 							PreparedStatement statement2 = BDDUtilities.getConnection().prepareStatement("select * from PLY where NOM = ?");
 							statement2.setString(1, firstFile);
 							rs2 = statement2.executeQuery();
-							return new BDDPanel(totalLines, rs2, columnNames, new int[] { 1, 2, 3, 4 }, BDDUtilities.getConnection());
+							return new BDDPanelNew(totalLines, rs2, columnNames, new int[] { 1, 2, 3, 4 });
 						}
 						success = true;
 						// return new
@@ -406,41 +402,22 @@ public class BaseDeDonneesNew {
 	 * 
 	 * @param i la place de "--all" dans les arguments
 	 * @param args les arguments, sert à vérifier aucun paramètres inutiles
-	 * @param getConnection() la getConnection() utilsée pour les requêtes
-	 * @param debug afficher ou non les requêtes
+	 * @param quiet true = cacher l'affichage
 	 * @return s'il a pu créer la fenêtre
 	 */
-	private static BDDPanel showAll(int i, String[] args, boolean debug) {
+	private static BDDPanelNew showAll(int i, String[] args, boolean quiet) {
 		ResultSet rs;
-		ResultSet rs2;
 		boolean success = false;
 		try {
-			PreparedStatement statement = BDDUtilities.getConnection().prepareStatement("select COUNT(*) from PLY");
-			rs = statement.executeQuery();
-			if (rs.next()) {
-				int totalLines = rs.getInt(1);
-				if (totalLines > 0) {
-					if (!debug) {
-						PreparedStatement statement2 = BDDUtilities.getConnection().prepareStatement("select * from PLY");
-						rs2 = statement2.executeQuery();
-						return new BDDPanel(totalLines, rs2, columnNames, new int[] { 1, 2, 3, 4 }, BDDUtilities.getConnection());
-					}
-					success = true;
-					// return new
-					// BDDResult(BDDResultEnum.SHOW_ALL_SUCCESSFUL);
-				} else {
-					if (!debug) {
-						String message = "Il n'y a pas de modèles enregistré";
-						JOptionPane.showMessageDialog(null, message, "Base de données vide", JOptionPane.ERROR_MESSAGE);
-					}
-					// System.exit(1);
-					success = true;
-					// return new BDDResult(BDDResultEnum.EMPTY_DB);
-				}
+			if (!quiet) {
+				PreparedStatement statement2 = BDDUtilities.getConnection().prepareStatement("select * from PLY");
+				rs = statement2.executeQuery();
+				success = true;
+				BDDPanelNew result = new BDDPanelNew(rs, columnNames, true);
+				result.setEditableColumns(new int[]{1, 2, 4} , true);
+				return result;
 			}
-
 			success = true;
-
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
@@ -460,12 +437,12 @@ public class BaseDeDonneesNew {
 	 * @param debug afficher ou non les fenêtres
 	 * @return s'il a trouvé des modèles et a pu affiché la fenêtre
 	 */
-	private static BDDPanel find(int i, String[] args, boolean debug) {
+	private static BDDPanelNew find(int i, String[] args, boolean debug) {
 		ResultSet rs;
 		ResultSet rs2;
 		int nbLikes = 0;
 		int nbTreated = 0;
-		for (int j=0;j<args.length;j++) {
+		for (int j = 0; j < args.length; j++) {
 			if (!args[j].startsWith("--")) {
 				nbLikes++;
 			}
@@ -505,7 +482,7 @@ public class BaseDeDonneesNew {
 					if (totalLines > 0) {
 						if (!debug) {
 							rs2 = statement2.executeQuery();
-							return new BDDPanel(totalLines, rs2, columnNames, new int[] { 1, 2, 3, 4 }, BDDUtilities.getConnection());
+							return new BDDPanelNew(totalLines, rs2, columnNames, new int[] { 1, 2, 3, 4 });
 						}
 						success = true;
 						// return new BDDResult(BDDResultEnum.FIND_SUCCESSFUL);
@@ -547,8 +524,8 @@ public class BaseDeDonneesNew {
 	 * @param getConnection() la getConnection() utilsée pour les requêtes
 	 * @return si fenêtre crée. Pour savoir si requête sql éxecutée, voir {@link FenetreTable}
 	 */
-	private static BDDPanel add() {
-		return new BDDPanel(1, columnNames, new int[] { 3 }, BDDUtilities.getConnection());
+	private static BDDPanelNew add() {
+		return new BDDPanelNew(1, columnNames, new int[] { 3 });
 		// return new BasicResult(BasicResultEnum.ALL_OK);
 	}
 
@@ -560,11 +537,11 @@ public class BaseDeDonneesNew {
 	 * @param getConnection() la getConnection() utilsée pour les requêtes
 	 * @return si fenêtre bien crée. Pour savoir si requête sql éxecutée, voir {@link FenetreTable}
 	 */
-	private static BDDPanel edit(int i, String[] args) {
+	private static BDDPanelNew edit(int i, String[] args) {
 
 		boolean success = false;
 		int modelNames = 0;
-		for (int j=0;j<args.length;j++) {
+		for (int j = 0; j < args.length; j++) {
 			if (!args[j].startsWith("--")) {
 				modelNames++;
 			}
@@ -582,7 +559,7 @@ public class BaseDeDonneesNew {
 						st.setString(1, firstFile);
 						ResultSet rs2 = st.executeQuery();
 						success = true;
-						return new BDDPanel(totalLines, rs2, columnNames, new int[] { 3 }, BDDUtilities.getConnection());
+						return new BDDPanelNew(totalLines, rs2, columnNames, new int[] { 3 });
 						// return new BasicResult(BasicResultEnum.ALL_OK);
 					} else {
 						String message = "Le modèle " + firstFile + " n'existe pas";
@@ -684,7 +661,7 @@ public class BaseDeDonneesNew {
 		}
 		return new BDDResult(BDDResultEnum.DELETE_NOT_SUCCESSFUL);
 	}
-	
+
 	public static void closeUsedConnection() {
 		BDDUtilities.closeConnection();
 	}

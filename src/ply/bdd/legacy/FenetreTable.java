@@ -20,7 +20,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import ply.bdd.controlers.ButtonControler;
-import ply.bdd.modeles.TableModel;
+import ply.bdd.modeles.TableDataModel;
 import ply.bdd.vues.TablePanel;
 import result.BDDResult;
 import result.BDDResultEnum;
@@ -106,7 +106,7 @@ public class FenetreTable extends JFrame {
 		this.con = connection;
 		tablePanel = new TablePanel(rows, colNames.length, colNames, false);
 		orignalFields = new String[colNames.length];
-		TableModel dataTableModel = tablePanel.getTableModel();
+		TableDataModel dataTableModel = tablePanel.getTableModel();
 		for (int i = 0; i < rows; i++) {
 			for (int j = 0; j < noModifyColumns.length; j++) {
 				dataTableModel.setValueAt(today(), i, noModifyColumns[j] - 1);
@@ -140,7 +140,7 @@ public class FenetreTable extends JFrame {
 		this.con = connection;
 		tablePanel = new TablePanel(rows, colNames.length, colNames, false);
 		orignalFields = new String[colNames.length];
-		TableModel dataTableModel = tablePanel.getTableModel();
+		TableDataModel dataTableModel = tablePanel.getTableModel();
 		for (int i = 0; i < rows; i++) {
 			for (int j = 0; j < noModifyColumns.length; j++) {
 				dataTableModel.setCellEditable(i, noModifyColumns[j] - 1, false);
@@ -637,7 +637,7 @@ public class FenetreTable extends JFrame {
 	 * Vide les champs modifiables
 	 */
 	public void resetFields() {
-		TableModel dataTableModel = tablePanel.getTableModel();
+		TableDataModel dataTableModel = tablePanel.getTableModel();
 		for (int i = 0; i < dataTableModel.getRowCount(); i++) {
 			for (int j = 0; j < dataTableModel.getColumnCount(); j++) {
 				if (dataTableModel.isCellEditable(i, j)) {

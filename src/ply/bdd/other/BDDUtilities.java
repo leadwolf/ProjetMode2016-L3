@@ -9,8 +9,8 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
+import java.sql.Statement;
+import java.time.LocalDate;
 
 import ply.plyModel.modeles.FigureModel;
 import result.BDDResult;
@@ -29,6 +29,7 @@ public class BDDUtilities {
 
 	private static Connection connection;
 	private static Path previousPath;
+	private static String[] columnTypes;
 	/**
 	 * Le chemin vers le fichiers .ply
 	 */
@@ -60,11 +61,31 @@ public class BDDUtilities {
 		try {
 			if (connection == null || (connection != null && connection.isClosed())) {
 				initConnection(previousPath);
+				setColTypes();
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return connection;
+	}
+	
+	private static void setColTypes() {
+		try {
+			Statement st = getConnection().createStatement();
+			ResultSet rs = st.executeQuery("PRAGMA table_info(PLY)");
+			int colIndex = 0;
+			columnTypes = new String[rs.getMetaData().getColumnCount()];
+			while (rs.next()) {
+				columnTypes[colIndex] = rs.getString(3);
+				colIndex++;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static String[] getColumnTypes() {
+		return columnTypes;
 	}
 
 	/**
@@ -104,7 +125,6 @@ public class BDDUtilities {
 					closeConnection();
 				}
 			}
-
 		}
 	}
 
@@ -164,7 +184,7 @@ public class BDDUtilities {
 				firstStatement = connection.prepareStatement(insertStatement);
 				firstStatement.setString(1, nom);
 				firstStatement.setString(2, files[i].getAbsolutePath().toString());
-				firstStatement.setString(3, toDay());
+				firstStatement.setString(3, LocalDate.now().toString());
 				firstStatement.setString(4, "mes mots clés");
 				firstStatement.setInt(5, fig.getNbPoints());
 				firstStatement.setInt(6, fig.getNbFaces());
@@ -211,11 +231,4 @@ public class BDDUtilities {
 		return new BasicResult(BasicResultEnum.UNKNOWN_ERROR);
 	}
 
-	/**
-	 * @return la date d'aujourd'hui sous forme YYYY/MM/DD
-	 */
-	private static String toDay() {
-		Calendar dat = new GregorianCalendar();
-		return dat.get(Calendar.YEAR) + "/" + dat.get(Calendar.MONTH) + "/" + dat.get(Calendar.DAY_OF_MONTH);
-	}
 }

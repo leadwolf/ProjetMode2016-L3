@@ -6,6 +6,7 @@
 	<classpathentry kind="src" path="ressources/icons/move"/>
 	<classpathentry kind="src" path="ressources/icons/rotate"/>
 	<classpathentry kind="src" path="ressources/other"/>
+	<classpathentry kind="src" path="lib"/>
 	<classpathentry kind="lib" path="livrable1/L3-Livrable1.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>

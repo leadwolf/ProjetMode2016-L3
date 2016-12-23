@@ -1,140 +1,27 @@
-package ply.bdd.vues;
+package ply.bdd.modeles;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.List;
-
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JFrame;
+import java.time.LocalDate;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
+import javax.swing.JTable;
 
-import ply.bdd.controlers.ButtonControler;
-import ply.bdd.legacy.FenetreTable;
-import ply.bdd.modeles.TableModel;
+import ply.bdd.other.BDDUtilities;
 import result.BDDResult;
 import result.BDDResultEnum;
 import result.MethodResult;
 
-/**
- * Nouvelle classe qui va remplacer {@link FenetreTable} Sert à présenter les informations à éditer, visualiser ou à insérer.
- * 
- * @author L3
- *
- */
-public class BDDPanel extends JPanel {
-
-	private static final long serialVersionUID = 3259687165838481557L;
-	private TablePanel tablePanel;
-	private Connection con;
+public class JTableBDD extends JTable {
 
 	/**
 	 * Sauvegarde des données initiales de la ligne lors du chargement de la base
 	 */
 	String[] orignalFields;
-
-	Dimension dim = new Dimension(600, 250);
-
-	/**
-	 * Crée une fenetre avec un TablePanel avec des champs vides
-	 * 
-	 * @param rows le nombre de lignes vides à avoir
-	 * @param colNames les noms des colonnes
-	 * @param noModifyColumns les colonnes qui ne seront pas possibles de modifier
-	 * @param connection
-	 */
-	public BDDPanel(int rows, String[] colNames, int[] noModifyColumns, Connection connection) {
-		super();
-
-		this.con = connection;
-		tablePanel = new TablePanel(rows, colNames.length, colNames, false);
-		orignalFields = new String[colNames.length];
-		TableModel dataTableModel = tablePanel.getTableModel();
-		for (int i = 0; i < rows; i++) {
-			for (int j = 0; j < noModifyColumns.length; j++) {
-				dataTableModel.setValueAt(today(), i, noModifyColumns[j] - 1);
-				dataTableModel.setCellEditable(i, noModifyColumns[j] - 1, false);
-			}
-		}
-
-		setupMainPanel(rows);
+	
+	public JTableBDD() {
+		// TODO Auto-generated constructor stub
 	}
-
-	/**
-	 * Crée une fenetre avec un TabelPanel et des champs remplis
-	 * 
-	 * @param rows le nombre de lignes que la table comportera
-	 * @param rs un ResultSet qui comporte les valeurs avec lesquelles remplir la table
-	 * @param colNames les noms des colonnes
-	 * @param noModifyColumns les colonnes qui ne seront pas possibles à modifier
-	 * @param connection
-	 */
-	public BDDPanel(int rows, ResultSet rs, String[] colNames, int[] noModifyColumns, Connection connection) {
-		super();
-
-		this.con = connection;
-		tablePanel = new TablePanel(rows, colNames.length, colNames, false);
-		orignalFields = new String[colNames.length];
-		TableModel dataTableModel = tablePanel.getTableModel();
-		for (int i = 0; i < rows; i++) {
-			for (int j = 0; j < noModifyColumns.length; j++) {
-				dataTableModel.setCellEditable(i, noModifyColumns[j] - 1, false);
-			}
-		}
-		boolean success = false;
-		try {
-
-			int currentRow = 0;
-			while (rs.next()) {
-				int colCount = rs.getMetaData().getColumnCount();
-				for (int j = 1; j <= colCount; j++) {
-					String data = rs.getString(j);
-					if (currentRow == 0) {
-						orignalFields[j - 1] = data;
-					}
-					dataTableModel.setValueAt(data, currentRow, j - 1);
-				}
-				currentRow++;
-			}
-			success = true;
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			if (!success) {
-				try {
-					con.close();
-				} catch (SQLException e) {
-					System.err.println(e);
-				}
-			}
-		}
-
-		setupMainPanel(rows);
-	}
-
-	/**
-	 * Crée ce panel
-	 * 
-	 * @param rows
-	 */
-	private void setupMainPanel(int rows) {
-
-		/* PANNEAU PRINCIPAL */
-		setPreferredSize(new Dimension((int) dim.getWidth(), (int) dim.getHeight()));
-		setLayout(new BorderLayout());
-		add(tablePanel, BorderLayout.CENTER);
-	}
-
 
 	/**
 	 * Prend les valeurs à update du JTable, vérifie qu'elles sont différentes que les originales et exécute
@@ -149,9 +36,9 @@ public class BDDPanel extends JPanel {
 		String chemin = "";
 		String keywords = "";
 
-		name = (String) tablePanel.getTable().getModel().getValueAt(0, 0);
-		chemin = (String) tablePanel.getTable().getModel().getValueAt(0, 1);
-		keywords = (String) tablePanel.getTable().getModel().getValueAt(0, 3);
+		name = (String) getModel().getValueAt(0, 0);
+		chemin = (String) getModel().getValueAt(0, 1);
+		keywords = (String) getModel().getValueAt(0, 3);
 
 		// si au moins un des 3 est renseigné et différent de l'original
 		if ((name != null && !name.equals("") && !name.equals(orignalFields[0]))
@@ -246,7 +133,7 @@ public class BDDPanel extends JPanel {
 			}
 			updateString += " where nom = ?";
 
-			statement = con.prepareStatement(updateString);
+			statement = BDDUtilities.getConnection().prepareStatement(updateString);
 			if (updateNom) {
 				statement.setString(1, name);
 			} else if (updateCpt == 0 && updateChemin) {
@@ -284,7 +171,7 @@ public class BDDPanel extends JPanel {
 			if (!success) {
 				try {
 
-					con.close();
+					BDDUtilities.getConnection().close();
 				} catch (SQLException e) {
 					System.err.println(e);
 				}
@@ -310,16 +197,16 @@ public class BDDPanel extends JPanel {
 		String chemin = "";
 		String keywords = "";
 
-		name = (String) tablePanel.getTable().getModel().getValueAt(0, 0);
-		chemin = (String) tablePanel.getTable().getModel().getValueAt(0, 1);
-		keywords = (String) tablePanel.getTable().getModel().getValueAt(0, 3);
+		name = (String) getModel().getValueAt(0, 0);
+		chemin = (String) getModel().getValueAt(0, 1);
+		keywords = (String) getModel().getValueAt(0, 3);
 
 		// il faut qu'au moins le nom du modèle soit renseigné
 		if ((name != null && !name.equals("")) || ((chemin != null && !chemin.equals("")) || (keywords != null && !keywords.equals("")))) {
 			boolean success = false;
 			try {
 				Class.forName("org.sqlite.JDBC");
-				PreparedStatement statement = con.prepareStatement("select * from PLY where nom = ?");
+				PreparedStatement statement = BDDUtilities.getConnection().prepareStatement("select * from PLY where nom = ?");
 				statement.setString(1, name);
 				ResultSet rs = statement.executeQuery();
 				if (rs.next()) {
@@ -340,7 +227,7 @@ public class BDDPanel extends JPanel {
 			} finally {
 				if (!success) {
 					try {
-						con.close();
+						BDDUtilities.getConnection().close();
 					} catch (SQLException e) {
 						System.err.println(e);
 					}
@@ -370,7 +257,7 @@ public class BDDPanel extends JPanel {
 			boolean success = false;
 			try {
 				Class.forName("org.sqlite.JDBC");
-				PreparedStatement statement = con.prepareStatement("select * from PLY where nom = ?");
+				PreparedStatement statement = BDDUtilities.getConnection().prepareStatement("select * from PLY where nom = ?");
 				statement.setString(1, name);
 				ResultSet rs = statement.executeQuery();
 				if (rs.next()) {
@@ -391,7 +278,7 @@ public class BDDPanel extends JPanel {
 			} finally {
 				if (!success) {
 					try {
-						con.close();
+						BDDUtilities.getConnection().close();
 					} catch (SQLException e) {
 						System.err.println(e);
 					}
@@ -421,7 +308,7 @@ public class BDDPanel extends JPanel {
 			Class.forName("org.sqlite.JDBC");
 			PreparedStatement statement;
 
-			statement = con.prepareStatement("insert into PLY values(?, ?, ?, ?);");
+			statement = BDDUtilities.getConnection().prepareStatement("insert into PLY values(?, ?, ?, ?);");
 
 			if (name != null && !name.equals("")) {
 				statement.setString(1, name);
@@ -433,7 +320,7 @@ public class BDDPanel extends JPanel {
 			} else {
 				statement.setString(2, "");
 			}
-			statement.setString(3, today());
+			statement.setString(3, LocalDate.now().toString());
 			if (keywords != null && !keywords.equals("")) {
 				statement.setString(4, keywords);
 			} else {
@@ -461,7 +348,7 @@ public class BDDPanel extends JPanel {
 		} finally {
 			if (!success) {
 				try {
-					con.close();
+					BDDUtilities.getConnection().close();
 				} catch (SQLException e) {
 					System.err.println(e);
 				}
@@ -478,7 +365,7 @@ public class BDDPanel extends JPanel {
 	 * Vide les champs modifiables
 	 */
 	public void resetFields() {
-		TableModel dataTableModel = tablePanel.getTableModel();
+		TableDataModel dataTableModel = (TableDataModel) getModel();
 		for (int i = 0; i < dataTableModel.getRowCount(); i++) {
 			for (int j = 0; j < dataTableModel.getColumnCount(); j++) {
 				if (dataTableModel.isCellEditable(i, j)) {
@@ -486,16 +373,6 @@ public class BDDPanel extends JPanel {
 				}
 			}
 		}
-	}
-
-	/**
-	 * Donne la date d'aujourd'hui
-	 * 
-	 * @return un String de la date en YYYY/MM/DD
-	 */
-	public String today() {
-		Calendar dat = new GregorianCalendar();
-		return dat.get(Calendar.YEAR) + "/" + (dat.get(Calendar.MONTH) + 1) + "/" + dat.get(Calendar.DAY_OF_MONTH);
 	}
 
 	/**

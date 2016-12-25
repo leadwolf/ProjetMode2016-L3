@@ -4,11 +4,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import ply.bdd.legacy.FenetreTable;
-import ply.bdd.vues.BDDPanelOld;
-import ply.bdd.vues.BDDPanelOld;
+import ply.bdd.vues.BDDPanel;
 
 /**
- * Cette classe permet d'exécuter les requêtes SQL correspondants aux boutons concernés
+ * Cette classe permet d'agir sur la table de {@link BDDPanel}
  * 
  * @author L3
  *
@@ -18,28 +17,25 @@ public class ButtonControler implements ActionListener {
 	/**
 	 * le {@link FenetreTable} à qui ce contrôleur est lié
 	 */
-	private BDDPanelOld bddPanel;
+	private BDDPanel bddPanel;
 
 	/**
 	 * Constructeur principale
 	 * 
 	 * @param bddPanel le {@link FenetreTable} à qui ce contrôleur est lié
 	 */
-	public ButtonControler(BDDPanelOld bddPanel) {
+	public ButtonControler(BDDPanel bddPanel) {
 		this.bddPanel = bddPanel;
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		switch (e.getActionCommand().toLowerCase()) {
-		case "insert":
-			bddPanel.insertTableAmorce(false);
+		case "ajouter une ligne":
+			bddPanel.addRow();
 			break;
 		case "reset":
-			bddPanel.resetFields();
-			break;
-		case "confirmer":
-			bddPanel.updateTableAmorce(false);
+			bddPanel.resetAll();
 			break;
 		default:
 			break;

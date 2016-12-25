@@ -119,7 +119,7 @@ public class Modelisationator {
 		} else if (executeDB) {
 			boolean options[] = new boolean[] { reset, fill };
 			if (delete) {
-				return BaseDeDonneesNew.executeCommand(args, options[0], options[1], noPrint, null);
+				return BaseDeDonneesNew.executeCommand(args, null, new boolean[]{options[0], options[1], noPrint});
 			} else {
 				MainFenetre mainFrame = new MainFenetre(args, options);
 				mainFrame.setTitle("Modelisationator");

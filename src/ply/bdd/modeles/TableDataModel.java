@@ -1,5 +1,6 @@
 package ply.bdd.modeles;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
@@ -21,11 +22,11 @@ public class TableDataModel extends AbstractTableModel {
 	/**
 	 * Array 2D de données que comportera la JTable
 	 */
-	private Object[][] data;
+	private List<Object[]> data;
 	/**
 	 * Array 2D qui permet de sauvegarder les permissions d'édition des cellules
 	 */
-	private boolean[][] editable;
+	private List<boolean[]> editable;
 
 	@SuppressWarnings("javadoc")
 	static final long serialVersionUID = 2590977835553440556L;
@@ -98,9 +99,9 @@ public class TableDataModel extends AbstractTableModel {
 	 */
 	public void setEditable(boolean isEditable) {
 		if (editable != null) {
-			for (int i = 0; i < editable.length; i++) {
-				for (int j = 0; j < editable[0].length; j++) {
-					editable[i][j] = isEditable;
+			for (int i = 0; i < editable.size(); i++) {
+				for (int j = 0; j < editable.get(0).length; j++) {
+					editable.get(i)[j] = isEditable;
 				}
 			}
 		}
@@ -108,7 +109,7 @@ public class TableDataModel extends AbstractTableModel {
 
 	@Override
 	public int getRowCount() {
-		return data.length;
+		return data.size();
 	}
 
 	@Override
@@ -116,21 +117,21 @@ public class TableDataModel extends AbstractTableModel {
 		if (data == null) {
 			return -1;
 		}
-		return this.data[0].length;
+		return this.data.get(0).length;
 	}
 
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		if (this.data[rowIndex][columnIndex] == null) {
+		if (this.data.get(rowIndex)[columnIndex] == null) {
 			return "";
 		}
-		return this.data[rowIndex][columnIndex];
+		return this.data.get(rowIndex)[columnIndex];
 	}
 
 	@Override
 	public boolean isCellEditable(int row, int column) {
-		if (data[row][column] != null) {
-			return editable[row][column];
+		if (data.get(row)[column] != null) {
+			return editable.get(row)[column];
 		}
 		return false;
 	}
@@ -151,22 +152,24 @@ public class TableDataModel extends AbstractTableModel {
 	 * @param editable la permission à appliquer
 	 */
 	public void setCellEditable(int row, int column, boolean editable) {
-		this.editable[row][column] = editable;
+		this.editable.get(row)[column] = editable;
 	}
 
 	/**
-	 * Crée le tableau de valeurs nulles
+	 * Crée le tableau de valeurs nulles. Toutes les valeurs sont editables.
 	 * 
 	 * @param rows le nombre de lignes que comportera la table
 	 * @param columns le nombre de colonnes que compertera la table
 	 */
 	private void initData(int rows, int columns) {
-		this.editable = new boolean[rows][columns];
-		this.data = new Object[rows][columns];
+		this.editable = new ArrayList<>();
+		this.data = new ArrayList<>();
 		for (int i = 0; i < rows; i++) {
-			for (int j = 0; j < columns; j++) {
-				this.data[i][j] = null;
-				this.editable[i][j] = true;
+			this.data.add(new Object[columns]);
+			this.editable.add(new boolean[columns]);
+			for (int col = 0; col < columns; col++) {
+				this.data.get(i)[col] = null;
+				this.editable.get(i)[col] = true;
 			}
 		}
 	}
@@ -177,12 +180,11 @@ public class TableDataModel extends AbstractTableModel {
 	 * @param data les donneés à utiliser
 	 */
 	private void setData(Object[][] data) {
-		this.editable = new boolean[data.length][data[0].length];
-		this.data = new Object[data.length][data[0].length];
+		initData(data.length, data[0].length);
 		for (int i = 0; i < data.length; i++) {
 			for (int j = 0; j < data[0].length; j++) {
-				this.data[i][j] = data[i][j];
-				this.editable[i][j] = true;
+				this.data.get(i)[j] = data[i][j];
+				this.editable.get(i)[j] = false;
 			}
 		}
 	}
@@ -193,20 +195,54 @@ public class TableDataModel extends AbstractTableModel {
 	 * @param data les donneés à utiliser
 	 */
 	private void setData(List<String[]> data) {
-		this.editable = new boolean[data.size()][data.get(0).length];
-		this.data = new Object[data.size()][data.get(0).length];
+		initData(data.size(), data.get(0).length);
 		for (int i = 0; i < data.size(); i++) {
 			for (int j = 0; j < data.get(0).length; j++) {
-				this.data[i][j] = data.get(i)[j];
-				this.editable[i][j] = true;
+				this.data.get(i)[j] = data.get(i)[j];
+				this.editable.get(i)[j] = false;
 			}
 		}
 	}
 
 	@Override
 	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-		this.data[rowIndex][columnIndex] = aValue;
+		this.data.get(rowIndex)[columnIndex] = aValue;
 		fireTableCellUpdated(rowIndex, columnIndex);
+	}
+
+	public Object[] getRow(int rowndex) {
+		return data.get(rowndex);
+	}
+	
+	/**
+	 * Ajoute une ligne à la table. Elle hérite les permisisons d'édition de la ligne au dessus sinon tout est modifiable.
+	 * 
+	 * @param newRow
+	 */
+	public void addRow(String[] newRow) {
+		data.add(newRow);
+		boolean[] newEditableRow = new boolean[newRow.length];
+//		if (editable.size() > 0) {
+//			for (int col = 0; col < newRow.length; col++) {
+//				newEditableRow[col] = editable.get(editable.size()-1)[col]; // new row inheris tpermissions from row above.
+//			}
+//		} else {
+			for (int col = 0; col < newRow.length; col++) {
+				newEditableRow[col] = true;
+			}
+//		}
+		editable.add(newEditableRow);
+		fireTableRowsInserted(data.size(), data.size());
+	}
+
+	/**
+	 * Supprime une ligne de la table.
+	 * @param rowIndex
+	 */
+	public void removeRow(int rowIndex) {
+		data.remove(rowIndex);
+		editable.remove(rowIndex);
+		fireTableRowsDeleted(rowIndex, rowIndex);
 	}
 
 }

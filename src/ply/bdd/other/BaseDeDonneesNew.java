@@ -6,8 +6,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.swing.JOptionPane;
 
+import main.vues.MainFenetre;
 import ply.bdd.legacy.FenetreTable;
-import ply.bdd.vues.BDDPanelNew;
+import ply.bdd.vues.BDDPanel;
 import result.BDDResult;
 import result.BDDResultEnum;
 import result.BasicResult;
@@ -27,17 +28,15 @@ public class BaseDeDonneesNew {
 
 	/**
 	 * Creates a BDDPanel from the args given
-	 * 
-	 * @param args
-	 * @param reset
-	 * @param fill
-	 * @param noPrint
+	 * @param args 
 	 * @param dbPath path to the db.sqlite, leave null for default data/test.sqlite
+	 * @param mainFenetre 
+	 * @param options [0] = reset, [1] = fill, [2] = noPrint true pour empecher affichage
 	 * @return
 	 */
-	public static BDDPanelNew getPanel(String[] args, boolean reset, boolean fill, boolean noPrint, Path dbPath) {
+	public static BDDPanel getPanel(String[] args, Path dbPath, MainFenetre mainFenetre, boolean[] options) {
 		if ((args == null) || (args != null && args.length <= 0)) {
-			if (!noPrint) {
+			if (!options[2]) {
 				String message = "Vous n'avez pas spécifié d'arguments.";
 				JOptionPane.showMessageDialog(null, message, "Mauvais arguments", JOptionPane.ERROR_MESSAGE);
 			}
@@ -46,7 +45,7 @@ public class BaseDeDonneesNew {
 		// VERIF ARGS
 		MethodResult testArgs = verifArgs(args);
 		if (!testArgs.getCode().equals(BasicResultEnum.ALL_OK)) {
-			if (!noPrint) {
+			if (!options[2]) {
 				String message = "Vous avez spécifié deux commandes incompatibles.";
 				JOptionPane.showMessageDialog(null, message, "Mauvais arguments", JOptionPane.ERROR_MESSAGE);
 			}
@@ -54,22 +53,20 @@ public class BaseDeDonneesNew {
 		} // else continue program
 
 		BDDUtilities.initConnection(dbPath);
-		return parseArgsForPanel(args, reset, fill, noPrint);
+		return parseArgsForPanel(args, mainFenetre, options);
 	}
 
 	/**
 	 * Execute une commande bdd
 	 * 
 	 * @param args
-	 * @param reset
-	 * @param fill
-	 * @param noPrint
 	 * @param dbPath path to the db.sqlite, leave null for default data/test.sqlite
+	 * @param options [0] = reset, [1] = fill, [2] = noPrint true pour empecher affichage
 	 * @return
 	 */
-	public static MethodResult executeCommand(String[] args, boolean reset, boolean fill, boolean noPrint, Path dbPath) {
+	public static MethodResult executeCommand(String[] args, Path dbPath, boolean[] options) {
 		if ((args == null) || (args != null && args.length <= 0)) {
-			if (!noPrint) {
+			if (!options[2]) {
 				String message = "Vous n'avez pas spécifié d'arguments.";
 				JOptionPane.showMessageDialog(null, message, "Mauvais arguments", JOptionPane.ERROR_MESSAGE);
 			}
@@ -78,7 +75,7 @@ public class BaseDeDonneesNew {
 		// VERIF ARGS
 		MethodResult testArgs = verifArgs(args);
 		if (!testArgs.getCode().equals(BasicResultEnum.ALL_OK)) {
-			if (!noPrint) {
+			if (!options[2]) {
 				String message = "Vous avez spécifié deux commandes incompatibles.";
 				JOptionPane.showMessageDialog(null, message, "Mauvais arguments", JOptionPane.ERROR_MESSAGE);
 			}
@@ -86,23 +83,21 @@ public class BaseDeDonneesNew {
 		} // else continue program
 
 		BDDUtilities.initConnection(dbPath);
-		return parseArgs(args, reset, fill, noPrint);
+		return parseArgs(args, options);
 	}
 
 	/**
 	 * Verifie et execute la commande au lieu de donner un BDDPanel
 	 * 
 	 * @param args
-	 * @param reset
-	 * @param fill
-	 * @param noPrint
+	 * @param options [0] = reset, [1] = fill, [2] = noPrint true pour empecher affichage
 	 * @return
 	 */
-	private static MethodResult parseArgs(String[] args, boolean reset, boolean fill, boolean noPrint) {
-		if (reset) {
+	private static MethodResult parseArgs(String[] args, boolean[] options) {
+		if (options[0]) {
 			BDDUtilities.resetTable();
 		}
-		if (fill) {
+		if (options[1]) {
 			BDDUtilities.fillTable();
 		}
 
@@ -110,9 +105,9 @@ public class BaseDeDonneesNew {
 			for (int i = 0; i < args.length; i++) {
 				if (args[i].equals("--delete")) {
 					if (BDDUtilities.checkTable().getCode().equals(BasicResultEnum.ALL_OK)) {
-						return delete(i, args, noPrint);
+						return delete(i, args, options[2]);
 					} else {
-						if (!noPrint) {
+						if (!options[2]) {
 							JOptionPane.showMessageDialog(null, "La base de données est vide", "Base de données", JOptionPane.ERROR_MESSAGE);
 						}
 						return null;
@@ -188,16 +183,14 @@ public class BaseDeDonneesNew {
 	 * Vérifie les arguments et éxecute l'interface pertinente
 	 * 
 	 * @param args la commande de l'utlisateur
-	 * @param reset réinitialisation ou non de la table
-	 * @param fill ré-remplissage de la table
-	 * @param noPrint afficher ou non les fenêtres, debug = cacher
+	 * @param options [0] = reset, [1] = fill, [2] = noPrint true pour empecher affichage
 	 * @return si la requête était correcte et que l'interface, si besoin, a été éxecutée
 	 */
-	private static BDDPanelNew parseArgsForPanel(String[] args, boolean reset, boolean fill, boolean noPrint) {
-		if (reset) {
+	private static BDDPanel parseArgsForPanel(String[] args, MainFenetre mainFenetre, boolean[] options) {
+		if (options[0]) {
 			BDDUtilities.resetTable();
 		}
-		if (fill) {
+		if (options[1]) {
 			BDDUtilities.fillTable();
 		}
 
@@ -205,9 +198,9 @@ public class BaseDeDonneesNew {
 			for (int i = 0; i < args.length; i++) {
 				if (args[i].equals("--name")) {
 					if (BDDUtilities.checkTable().getCode().equals(BasicResultEnum.ALL_OK)) {
-						return showName(i, args, noPrint);
+						return showName(i, args, options[2]);
 					} else {
-						if (!noPrint) {
+						if (!options[2]) {
 							JOptionPane.showMessageDialog(null, "La base de données est vide", "Base de données", JOptionPane.ERROR_MESSAGE);
 						}
 						return null;
@@ -215,9 +208,9 @@ public class BaseDeDonneesNew {
 				}
 				if (args[i].equals("--all")) {
 					if (BDDUtilities.checkTable().getCode().equals(BasicResultEnum.ALL_OK)) {
-						return showAll(i, args, noPrint);
+						return showAll(mainFenetre, options[2]);
 					} else {
-						if (!noPrint) {
+						if (!options[2]) {
 							JOptionPane.showMessageDialog(null, "La base de données est vide", "Base de données", JOptionPane.ERROR_MESSAGE);
 						}
 						return null;
@@ -225,9 +218,9 @@ public class BaseDeDonneesNew {
 				}
 				if (args[i].equals("--find")) {
 					if (BDDUtilities.checkTable().getCode().equals(BasicResultEnum.ALL_OK)) {
-						return find(i, args, noPrint);
+						return find(i, args, options[2]);
 					} else {
-						if (!noPrint) {
+						if (!options[2]) {
 							JOptionPane.showMessageDialog(null, "La base de données est vide", "Base de données", JOptionPane.ERROR_MESSAGE);
 						}
 						return null;
@@ -240,7 +233,7 @@ public class BaseDeDonneesNew {
 					if (BDDUtilities.checkTable().getCode().equals(BasicResultEnum.ALL_OK)) {
 						return edit(i, args);
 					} else {
-						if (!noPrint) {
+						if (!options[2]) {
 							JOptionPane.showMessageDialog(null, "La base de données est vide", "Base de données", JOptionPane.ERROR_MESSAGE);
 						}
 						return null;
@@ -325,7 +318,7 @@ public class BaseDeDonneesNew {
 	 * @param debug afficher ou non les fenêtres
 	 * @return si le modele existe et qu'il a pu créer la fenêtre
 	 */
-	private static BDDPanelNew showName(int i, String[] args, boolean debug) {
+	private static BDDPanel showName(int i, String[] args, boolean debug) {
 		ResultSet rs;
 		ResultSet rs2;
 		int nbArgs = 0;
@@ -348,7 +341,7 @@ public class BaseDeDonneesNew {
 							PreparedStatement statement2 = BDDUtilities.getConnection().prepareStatement("select * from PLY where NOM = ?");
 							statement2.setString(1, firstFile);
 							rs2 = statement2.executeQuery();
-							return new BDDPanelNew(totalLines, rs2, columnNames, new int[] { 1, 2, 3, 4 });
+							return new BDDPanel(totalLines, rs2, columnNames, new int[] { 1, 2, 3, 4 });
 						}
 						success = true;
 						// return new
@@ -400,12 +393,11 @@ public class BaseDeDonneesNew {
 	/**
 	 * Vérifie les arguments et crée la fenetre listant toute la base
 	 * 
-	 * @param i la place de "--all" dans les arguments
-	 * @param args les arguments, sert à vérifier aucun paramètres inutiles
+	 * @param mainFenetrre 
 	 * @param quiet true = cacher l'affichage
 	 * @return s'il a pu créer la fenêtre
 	 */
-	private static BDDPanelNew showAll(int i, String[] args, boolean quiet) {
+	private static BDDPanel showAll(MainFenetre mainFenetrre, boolean quiet) {
 		ResultSet rs;
 		boolean success = false;
 		try {
@@ -413,8 +405,8 @@ public class BaseDeDonneesNew {
 				PreparedStatement statement2 = BDDUtilities.getConnection().prepareStatement("select * from PLY");
 				rs = statement2.executeQuery();
 				success = true;
-				BDDPanelNew result = new BDDPanelNew(rs, columnNames, true);
-				result.setEditableColumns(new int[]{1, 2, 4} , true);
+				BDDPanel result = new BDDPanel(mainFenetrre, rs, columnNames, new String[]{"Confirmer insertion/edition", "Reset", "Supprimer"}, new String[]{"Ajouter une ligne", "Reset"});
+				result.setEditableColumns(new int[]{0, 1, 3} , true);
 				return result;
 			}
 			success = true;
@@ -437,7 +429,7 @@ public class BaseDeDonneesNew {
 	 * @param debug afficher ou non les fenêtres
 	 * @return s'il a trouvé des modèles et a pu affiché la fenêtre
 	 */
-	private static BDDPanelNew find(int i, String[] args, boolean debug) {
+	private static BDDPanel find(int i, String[] args, boolean debug) {
 		ResultSet rs;
 		ResultSet rs2;
 		int nbLikes = 0;
@@ -482,7 +474,7 @@ public class BaseDeDonneesNew {
 					if (totalLines > 0) {
 						if (!debug) {
 							rs2 = statement2.executeQuery();
-							return new BDDPanelNew(totalLines, rs2, columnNames, new int[] { 1, 2, 3, 4 });
+							return new BDDPanel(totalLines, rs2, columnNames, new int[] { 1, 2, 3, 4 });
 						}
 						success = true;
 						// return new BDDResult(BDDResultEnum.FIND_SUCCESSFUL);
@@ -524,8 +516,8 @@ public class BaseDeDonneesNew {
 	 * @param getConnection() la getConnection() utilsée pour les requêtes
 	 * @return si fenêtre crée. Pour savoir si requête sql éxecutée, voir {@link FenetreTable}
 	 */
-	private static BDDPanelNew add() {
-		return new BDDPanelNew(1, columnNames, new int[] { 3 });
+	private static BDDPanel add() {
+		return new BDDPanel(1, columnNames, new int[] { 3 });
 		// return new BasicResult(BasicResultEnum.ALL_OK);
 	}
 
@@ -537,7 +529,7 @@ public class BaseDeDonneesNew {
 	 * @param getConnection() la getConnection() utilsée pour les requêtes
 	 * @return si fenêtre bien crée. Pour savoir si requête sql éxecutée, voir {@link FenetreTable}
 	 */
-	private static BDDPanelNew edit(int i, String[] args) {
+	private static BDDPanel edit(int i, String[] args) {
 
 		boolean success = false;
 		int modelNames = 0;
@@ -559,7 +551,7 @@ public class BaseDeDonneesNew {
 						st.setString(1, firstFile);
 						ResultSet rs2 = st.executeQuery();
 						success = true;
-						return new BDDPanelNew(totalLines, rs2, columnNames, new int[] { 3 });
+						return new BDDPanel(totalLines, rs2, columnNames, new int[] { 3 });
 						// return new BasicResult(BasicResultEnum.ALL_OK);
 					} else {
 						String message = "Le modèle " + firstFile + " n'existe pas";

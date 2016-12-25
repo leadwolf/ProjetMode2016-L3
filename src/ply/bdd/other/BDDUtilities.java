@@ -30,11 +30,15 @@ public class BDDUtilities {
 	private static Connection connection;
 	private static Path previousPath;
 	private static String[] columnTypes;
+	private static String[] columnNames;
 	/**
 	 * Le chemin vers le fichiers .ply
 	 */
 	private static File[] files;
 
+	/**
+	 * @param dbPath
+	 */
 	public BDDUtilities(Path dbPath) {
 		files = dbPath.toFile().listFiles(new FilenameFilter() {
 			@Override
@@ -61,7 +65,7 @@ public class BDDUtilities {
 		try {
 			if (connection == null || (connection != null && connection.isClosed())) {
 				initConnection(previousPath);
-				setColTypes();
+				setColumnInfo();
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -69,13 +73,15 @@ public class BDDUtilities {
 		return connection;
 	}
 	
-	private static void setColTypes() {
+	private static void setColumnInfo() {
 		try {
 			Statement st = getConnection().createStatement();
 			ResultSet rs = st.executeQuery("PRAGMA table_info(PLY)");
 			int colIndex = 0;
 			columnTypes = new String[rs.getMetaData().getColumnCount()];
+			columnNames = new String[rs.getMetaData().getColumnCount()];
 			while (rs.next()) {
+				columnNames[colIndex] = rs.getString(2);
 				columnTypes[colIndex] = rs.getString(3);
 				colIndex++;
 			}
@@ -86,6 +92,10 @@ public class BDDUtilities {
 	
 	public static String[] getColumnTypes() {
 		return columnTypes;
+	}
+	
+	public static String[] getColumnNames() {
+		return columnNames;
 	}
 
 	/**
@@ -101,6 +111,7 @@ public class BDDUtilities {
 				Class.forName("org.sqlite.JDBC");
 				connection = DriverManager.getConnection("jdbc:sqlite:data/test.sqlite");
 				success = true;
+				setColumnInfo();
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			} catch (SQLException e) {
@@ -116,6 +127,7 @@ public class BDDUtilities {
 				Class.forName("org.sqlite.JDBC");
 				connection = DriverManager.getConnection("jdbc:sqlite:" + dbPath.toAbsolutePath().toString());
 				success = true;
+				setColumnInfo();
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			} catch (SQLException e) {

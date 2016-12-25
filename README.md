@@ -13,6 +13,11 @@ This commit introduces the follwing changes :
   - `ModelInfo` now updates accordingly when switching tab or when opening a new tab.
   - `JTableBDD` will replace the operations in `BDDPanel`, can be used for all displays and will be able to be operated on directly through `ButtonColumn`.
   - `BDDPanelNew` replaces `BDDPanel` and will now just be a simple panel
+  - `JTableBDDNew` renamed to `Table` and `BDDPanelNew` to `BDDPanel`.
+  - `Table` now has working **confirm edit/insert**, **reset** and **delete** buttons for every row.
+  - You can also insert a new row and confirm its addition to the db.
+  - `toolLabel` updates accoring to these button actions.
+  - Refactored `TableDataModel` to use ArrayList instead of static arrays to be able to easily add and delete rows.
   
 ### What's next
 Priority objectives :

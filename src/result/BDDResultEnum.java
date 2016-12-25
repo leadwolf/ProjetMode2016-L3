@@ -76,6 +76,14 @@ public enum BDDResultEnum {
 	 * On a souhaité remplir la base sans qu'elle soit vide au départ.
 	 */
 	INCORRECT_FILL,
+	/**
+	 * On a renseigné des valeurs qui ne correspondent pas aux types de données que la base attend.
+	 */
+	INCORRECT_TYPES,
+	/**
+	 * On a pas voulu supprimer une ligne de la base.
+	 */
+	CANCEL_DELETE,
 	
 	/* ICI CODE DE SUCCES */
 

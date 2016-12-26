@@ -526,7 +526,7 @@ public class BaseDeDonneesOld {
 				JOptionPane.showMessageDialog(null, message, "Mauvais arguments", JOptionPane.ERROR_MESSAGE);
 			}
 			// System.exit(1);
-			return new BDDResult(BDDResultEnum.NO_DESC_SPECIFIED);
+			return new BDDResult(BDDResultEnum.NO_KEYWORDS_SPECIFIED);
 		}
 		return new BDDResult(BDDResultEnum.FIND_NOT_SUCCESSFUL);
 	}

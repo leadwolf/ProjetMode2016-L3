@@ -4,6 +4,7 @@ import java.nio.file.Path;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
 import javax.swing.JOptionPane;
 
 import main.vues.MainFenetre;
@@ -25,223 +26,196 @@ import result.MethodResult;
 public class BaseDeDonneesNew {
 
 	private static String[] columnNames = new String[] { "Nom", "Chemin", "Date", "Mot Clés", "Nombre de Points", "Nombre de Faces" };
+	private static String[] buttonColumns = new String[] { "Confirmer insertion/edition", "Reset", "Supprimer" };
+	private static String[] primaryButtons = new String[] { "Ajouter une ligne", "Reset" };
+	/**
+	 * Le nombre de mots clés qu'on peut chercher avec --find.
+	 */
+	private static int nbKeywordsLimit = 10;
 
 	/**
-	 * Creates a BDDPanel from the args given
-	 * @param args 
+	 * Crée un {@link BDDPanel} d'après la commande dans args.
+	 * 
+	 * @param args
 	 * @param dbPath path to the db.sqlite, leave null for default data/test.sqlite
-	 * @param mainFenetre 
-	 * @param options [0] = reset, [1] = fill, [2] = noPrint true pour empecher affichage
-	 * @return
+	 * @param mainFenetre
+	 * @param options [0] = reset, [1] = fill, [2] = quiet true pour empecher affichage
+	 * @return le panel correspondant à la commande.
 	 */
 	public static BDDPanel getPanel(String[] args, Path dbPath, MainFenetre mainFenetre, boolean[] options) {
-		if ((args == null) || (args != null && args.length <= 0)) {
-			if (!options[2]) {
-				String message = "Vous n'avez pas spécifié d'arguments.";
-				JOptionPane.showMessageDialog(null, message, "Mauvais arguments", JOptionPane.ERROR_MESSAGE);
-			}
-			return null;
-		}
 		// VERIF ARGS
-		MethodResult testArgs = verifArgs(args);
+		MethodResult testArgs = verifArgs(args, options[2]);
 		if (!testArgs.getCode().equals(BasicResultEnum.ALL_OK)) {
-			if (!options[2]) {
-				String message = "Vous avez spécifié deux commandes incompatibles.";
-				JOptionPane.showMessageDialog(null, message, "Mauvais arguments", JOptionPane.ERROR_MESSAGE);
-			}
 			return null;
 		} // else continue program
 
-		BDDUtilities.initConnection(dbPath);
-		return parseArgsForPanel(args, mainFenetre, options);
+		initConnection(dbPath, options[0], options[1]);
+		MethodResult checkResult = BDDUtilities.checkTable();
+		if (checkResult.getCode().equals(BDDResultEnum.DB_NOT_EMPTY)) {
+			return parseArgsForPanel(args, mainFenetre);
+		} else {
+			if (!options[2]) {
+				JOptionPane.showMessageDialog(null, "La base de données est vide.", "Modelisationator", JOptionPane.ERROR_MESSAGE);
+			}
+			return null;
+		}
 	}
 
 	/**
-	 * Execute une commande bdd
+	 * Execute une commande bdd sans interface. Vérifie que la base comporte des modèles et que le modèle à supprimer existe.
 	 * 
 	 * @param args
 	 * @param dbPath path to the db.sqlite, leave null for default data/test.sqlite
-	 * @param options [0] = reset, [1] = fill, [2] = noPrint true pour empecher affichage
-	 * @return
+	 * @param options [0] = reset, [1] = fill, [2] = quiet true pour empecher affichage
+	 * @return le résultat de l'éxécution de la commande ou l'erreur empechant celle ci.
 	 */
 	public static MethodResult executeCommand(String[] args, Path dbPath, boolean[] options) {
-		if ((args == null) || (args != null && args.length <= 0)) {
-			if (!options[2]) {
-				String message = "Vous n'avez pas spécifié d'arguments.";
-				JOptionPane.showMessageDialog(null, message, "Mauvais arguments", JOptionPane.ERROR_MESSAGE);
-			}
-			return null;
-		}
 		// VERIF ARGS
-		MethodResult testArgs = verifArgs(args);
-		if (!testArgs.getCode().equals(BasicResultEnum.ALL_OK)) {
-			if (!options[2]) {
-				String message = "Vous avez spécifié deux commandes incompatibles.";
-				JOptionPane.showMessageDialog(null, message, "Mauvais arguments", JOptionPane.ERROR_MESSAGE);
-			}
-			return null;
-		} // else continue program
+		MethodResult verifResult = verifArgs(args, options[2]);
+		if (!verifResult.getCode().equals(BasicResultEnum.ALL_OK)) {
+			return verifResult;
+		}
 
-		BDDUtilities.initConnection(dbPath);
-		return parseArgs(args, options);
+		initConnection(dbPath, options[0], options[1]);
+		MethodResult checkResult = BDDUtilities.checkTable();
+		if (checkResult.getCode().equals(BDDResultEnum.DB_NOT_EMPTY)) {
+			return delete(args, options[2]);
+		} else {
+			if (!options[2]) {
+				JOptionPane.showMessageDialog(null, "La base de données est vide. Impossible de supprimmer un modèle.", "Erreur",
+						JOptionPane.ERROR_MESSAGE);
+			}
+			return checkResult;
+		}
 	}
 
 	/**
-	 * Verifie et execute la commande au lieu de donner un BDDPanel
+	 * Initalise la connection, recree la table si besoin.
 	 * 
-	 * @param args
-	 * @param options [0] = reset, [1] = fill, [2] = noPrint true pour empecher affichage
-	 * @return
+	 * @param dbPath
+	 * @param reset
+	 * @param fill
 	 */
-	private static MethodResult parseArgs(String[] args, boolean[] options) {
-		if (options[0]) {
+	private static void initConnection(Path dbPath, boolean reset, boolean fill) {
+		BDDUtilities.initConnection(dbPath);
+		if (reset) {
 			BDDUtilities.resetTable();
 		}
-		if (options[1]) {
+		if (fill) {
 			BDDUtilities.fillTable();
 		}
-
-		if (args.length > 0) {
-			for (int i = 0; i < args.length; i++) {
-				if (args[i].equals("--delete")) {
-					if (BDDUtilities.checkTable().getCode().equals(BasicResultEnum.ALL_OK)) {
-						return delete(i, args, options[2]);
-					} else {
-						if (!options[2]) {
-							JOptionPane.showMessageDialog(null, "La base de données est vide", "Base de données", JOptionPane.ERROR_MESSAGE);
-						}
-						return null;
-					}
-				}
-			}
-		}
-		return new BasicResult(BasicResultEnum.UNKNOWN_ERROR);
+		BDDUtilities.setColumnInfo();
 	}
 
 	/**
-	 * Verifie seuelement si la syntaxte des arguments sont corrects, pas si la commande a pu être éxecutée
+	 * Verifie s'il y a une seule commande et qu'elle est bien écrite. Affiche l'erreur si !quiet.
 	 * 
-	 * @param args
-	 * @return un {@link MethodResult} décrivant la validité des arguments
+	 * @param args les arguments passés au programme.
+	 * @param quiet true pour empêcher affichge.
+	 * @return un {@link MethodResult} décrivant la validité des arguments.
 	 */
-	private static MethodResult verifArgs(String[] args) {
-		if (args[0].equals("--name")) {
-			for (int i = 1; i < args.length; i++) {
-				if (isConflicting(args[i])) {
-					return new BasicResult(BasicResultEnum.CONFLICTING_ARGUMENTS);
-				}
+	public static MethodResult verifArgs(String[] args, boolean quiet) {
+
+		if (args == null || (args != null && args.length <= 0)) {
+			if (!quiet) {
+				JOptionPane.showMessageDialog(null, "Vous n'avez pas donné de commande", "Modelisationator", JOptionPane.ERROR_MESSAGE);
 			}
-			return new BasicResult(BasicResultEnum.ALL_OK);
-		} else if (args[0].equals("--all")) {
-			for (int i = 1; i < args.length; i++) {
-				if (isConflicting(args[i])) {
-					return new BasicResult(BasicResultEnum.CONFLICTING_ARGUMENTS);
-				}
-			}
-			return new BasicResult(BasicResultEnum.ALL_OK);
-		} else if (args[0].equals("--find")) {
-			for (int i = 1; i < args.length; i++) {
-				if (isConflicting(args[i])) {
-					return new BasicResult(BasicResultEnum.CONFLICTING_ARGUMENTS);
-				}
-			}
-			return new BasicResult(BasicResultEnum.ALL_OK);
-		} else if (args[0].equals("--add")) {
-			for (int i = 1; i < args.length; i++) {
-				if (isConflicting(args[i])) {
-					return new BasicResult(BasicResultEnum.CONFLICTING_ARGUMENTS);
-				}
-			}
-			return new BasicResult(BasicResultEnum.ALL_OK);
-		} else if (args[0].equals("--delete")) {
-			for (int i = 1; i < args.length; i++) {
-				if (isConflicting(args[i])) {
-					return new BasicResult(BasicResultEnum.CONFLICTING_ARGUMENTS);
-				}
-			}
-			return new BasicResult(BasicResultEnum.ALL_OK);
-		} else if (args[0].equals("--edit")) {
-			for (int i = 1; i < args.length; i++) {
-				if (isConflicting(args[i])) {
-					return new BasicResult(BasicResultEnum.CONFLICTING_ARGUMENTS);
-				}
-			}
-			return new BasicResult(BasicResultEnum.ALL_OK);
+			return new BasicResult(BasicResultEnum.NO_ARGUMENTS);
 		}
-		return new BasicResult(BasicResultEnum.NO_ARGUMENTS);
+
+		boolean foundExecutableArg = false; // switch to verify we only have one command.
+		boolean findCommand = false; // si la commande est --find
+		int normalStringsFound = 0; // the counter of how many normal strings have been found (Strings in args that are not a command and not an option).
+		int normalStringsNeeded = 0; // the counter of how many normal strings should be found
+
+		for (int i = 0; i < args.length; i++) {
+			boolean currrentIsExecutable = isExecutableArg(args[i]);
+			if (currrentIsExecutable) {
+				if (!foundExecutableArg) { // si on a n'a pas encore trouvé une commande, vérifier cette commande à l'emplacement [i].
+					foundExecutableArg = true;
+					if (args[i].equals("--name")) {
+						normalStringsNeeded = 1;
+					} else if (args[i].equals("--all")) {
+						// no need to verify since the enclosing for verifies multiple commands.
+					} else if (args[i].equals("--find")) {
+						findCommand = true;
+						normalStringsNeeded = nbKeywordsLimit; // limit find to 10;
+					} else if (args[i].equals("--add")) {
+						// no need to verify since the enclosing for verifies multiple commands.
+					} else if (args[i].equals("--delete")) {
+						normalStringsNeeded = 1;
+					} else if (args[i].equals("--edit")) {
+						normalStringsNeeded = 1;
+					}
+				} else { // on a trouvé plus qu'une commande.
+					if (!quiet) {
+						JOptionPane.showMessageDialog(null, "Vous n'avez précisé plusieurs commandes incompatibles.\nVeuillez réessayer.",
+								"Modelisationator", JOptionPane.ERROR_MESSAGE);
+					}
+					return new BasicResult(BasicResultEnum.CONFLICTING_ARGUMENTS);
+				}
+			} else if (!currrentIsExecutable && !isDBOption(args[i])) {
+				normalStringsFound++;
+			}
+		}
+		if (!findCommand && normalStringsFound != normalStringsNeeded) {
+			if (!quiet) {
+				JOptionPane.showMessageDialog(null, "Vous n'avez pas précisé de modèle", "Modelisationator", JOptionPane.ERROR_MESSAGE);
+			}
+			return new BDDResult(BDDResultEnum.NAME_NOT_SPECIFIED);
+		} else if (findCommand && normalStringsFound > normalStringsNeeded) {
+			if (!quiet) {
+				JOptionPane.showMessageDialog(null, "Vous avez mis plus de mots clés que la limite.\nLa limite est de " + nbKeywordsLimit, "Erreur",
+						JOptionPane.ERROR_MESSAGE);
+			}
+			return new BDDResult(BDDResultEnum.TOO_MANY_KEYWORDS_SPECIFIED);
+		}
+		return new BasicResult(BasicResultEnum.ALL_OK);
 	}
 
-	private static boolean isConflicting(String arg) {
-		return arg.startsWith("--") && !isDBOption(arg);
+	/**
+	 * @param arg l'agument à vérifier.
+	 * @return si l'arg correspond à une option d'<b>éxécution</b> de bdd.
+	 */
+	public static boolean isExecutableArg(String arg) {
+		return arg.equals("--name") || arg.equals("--all") || arg.equals("--find") || arg.equals("--add") || arg.equals("--delete")
+				|| arg.equals("--edit");
 	}
 
+	/**
+	 * @param arg
+	 * @return si c'est une option (--rf) et non une commande à lancer (--all/--find/...).
+	 */
 	private static boolean isDBOption(String arg) {
 		return arg.equals("--r") || arg.equals("--r") || arg.equals("--rf");
 	}
 
 	/**
-	 * Vérifie les arguments et éxecute l'interface pertinente
+	 * Récupère les données pertientes pour l'affichage en question.
 	 * 
 	 * @param args la commande de l'utlisateur
-	 * @param options [0] = reset, [1] = fill, [2] = noPrint true pour empecher affichage
+	 * @param mainFenetre
+	 * @param quiet true pour empecher affichage
 	 * @return si la requête était correcte et que l'interface, si besoin, a été éxecutée
 	 */
-	private static BDDPanel parseArgsForPanel(String[] args, MainFenetre mainFenetre, boolean[] options) {
-		if (options[0]) {
-			BDDUtilities.resetTable();
-		}
-		if (options[1]) {
-			BDDUtilities.fillTable();
-		}
-
-		if (args.length > 0) {
-			for (int i = 0; i < args.length; i++) {
-				if (args[i].equals("--name")) {
-					if (BDDUtilities.checkTable().getCode().equals(BasicResultEnum.ALL_OK)) {
-						return showName(i, args, options[2]);
-					} else {
-						if (!options[2]) {
-							JOptionPane.showMessageDialog(null, "La base de données est vide", "Base de données", JOptionPane.ERROR_MESSAGE);
-						}
-						return null;
-					}
-				}
-				if (args[i].equals("--all")) {
-					if (BDDUtilities.checkTable().getCode().equals(BasicResultEnum.ALL_OK)) {
-						return showAll(mainFenetre, options[2]);
-					} else {
-						if (!options[2]) {
-							JOptionPane.showMessageDialog(null, "La base de données est vide", "Base de données", JOptionPane.ERROR_MESSAGE);
-						}
-						return null;
-					}
-				}
-				if (args[i].equals("--find")) {
-					if (BDDUtilities.checkTable().getCode().equals(BasicResultEnum.ALL_OK)) {
-						return find(i, args, options[2]);
-					} else {
-						if (!options[2]) {
-							JOptionPane.showMessageDialog(null, "La base de données est vide", "Base de données", JOptionPane.ERROR_MESSAGE);
-						}
-						return null;
-					}
-				}
-				if (args[i].equals("--add")) {
-					return add();
-				}
-				if (args[i].equals("--edit")) {
-					if (BDDUtilities.checkTable().getCode().equals(BasicResultEnum.ALL_OK)) {
-						return edit(i, args);
-					} else {
-						if (!options[2]) {
-							JOptionPane.showMessageDialog(null, "La base de données est vide", "Base de données", JOptionPane.ERROR_MESSAGE);
-						}
-						return null;
-					}
-				}
+	private static BDDPanel parseArgsForPanel(String[] args, MainFenetre mainFenetre) {
+		for (int i = 0; i < args.length; i++) {
+			if (args[i].equals("--name")) {
+				return showName(args, mainFenetre);
+			}
+			if (args[i].equals("--all")) {
+				return showAll(mainFenetre);
+			}
+			if (args[i].equals("--find")) {
+				return find(args, mainFenetre);
+			}
+			if (args[i].equals("--add")) {
+				return add(mainFenetre);
+			}
+			if (args[i].equals("--edit")) {
+				return edit(args, mainFenetre);
 			}
 		}
-		// return new BasicResult(BasicResultEnum.UNKNOWN_ERROR);
 		return null;
 	}
 
@@ -249,189 +223,109 @@ public class BaseDeDonneesNew {
 	 * Donne toutes les colonnes de la base de données
 	 * 
 	 * @param name the name of the model
-	 * @param getConnection()
-	 * @param debug false to prevent print
-	 * @return
+	 * @param quiet true pour empecher affichage.
+	 * @return un String[] contentant toute la ligne de la base ou null s'il y a eu erreur.
 	 */
-	public static String[] getNameInfo(String name, boolean debug) {
+	public static String[] getNameInfo(String name, boolean quiet) {
 		ResultSet rs;
-		ResultSet rs2;
-		boolean success = false;
 		try {
-			PreparedStatement statement = BDDUtilities.getConnection().prepareStatement("select COUNT(*) from PLY where NOM = ?");
 			name = name.toLowerCase();
-			statement.setString(1, name);
-			rs = statement.executeQuery();
+			PreparedStatement st = BDDUtilities.getConnection().prepareStatement("select * from PLY where NOM = ?");
+			st.setString(1, name);
+			rs = st.executeQuery();
 			if (rs.next()) {
-				int totalLines = rs.getInt(1);
-				if (totalLines > 0) {
-					if (!debug) {
-						PreparedStatement statement2 = BDDUtilities.getConnection().prepareStatement("select * from PLY where NOM = ?");
-						statement2.setString(1, name);
-						rs2 = statement2.executeQuery();
-						String[] nameInfo = new String[rs2.getMetaData().getColumnCount()];
-						if (rs2.next()) {
-							for (int i = 1; i <= rs2.getMetaData().getColumnCount(); i++) {
-								nameInfo[i - 1] = rs2.getString(i);
-							}
-							return nameInfo;
-						} else {
-							if (!debug) {
-								JOptionPane.showMessageDialog(null, "Le modèle " + name + " n'est pas dans la base", "Erreur Base",
-										JOptionPane.ERROR_MESSAGE);
-							}
-							return null;
-						}
-					}
-					success = true;
-				} else {
-					if (!debug) {
-						JOptionPane.showMessageDialog(null, "Le modèle " + name + " n'est pas dans la base", "Erreur Base",
-								JOptionPane.ERROR_MESSAGE);
-					}
-					return null;
+				String[] nameInfo = new String[rs.getMetaData().getColumnCount()];
+				for (int i = 1; i <= rs.getMetaData().getColumnCount(); i++) {
+					nameInfo[i - 1] = rs.getString(i);
 				}
+				BDDUtilities.closeConnection();
+				return nameInfo;
 			} else {
-				if (!debug) {
-					String message = "Le modèle " + name + " n'existe pas\nUtilisation: basededonneés --name <name>";
-					JOptionPane.showMessageDialog(null, message, "Mauvais arguments", JOptionPane.ERROR_MESSAGE);
+				if (!quiet) {
+					JOptionPane.showMessageDialog(null, "Le modèle " + name + " n'est pas dans la base", "Modelisationator",
+							JOptionPane.ERROR_MESSAGE);
 				}
-				success = true;
+				BDDUtilities.closeConnection();
+				return null;
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
-		} finally {
-			if (!success) {
-				BDDUtilities.closeConnection();
-			}
 		}
 		return null;
-
 	}
 
 	/**
-	 * Vérifie et crée la fenetre d'informations sur le modèle précisé
+	 * Execute la requête donnant les informations sur le modèle et crée le panel concerné.
 	 * 
 	 * @param i la place de "--name" dans les arguments. Servira à parcourir la liste si on aura besoin d'afficher de multiples modèles
 	 * @param args le modèle à afficher
-	 * @param getConnection() la getConnection() utilsée pour les requêtes
-	 * @param debug afficher ou non les fenêtres
-	 * @return si le modele existe et qu'il a pu créer la fenêtre
+	 * @param mainFenetre
+	 * @return le {@link BDDPanel} contenant les données du modèle précisé ou null.
 	 */
-	private static BDDPanel showName(int i, String[] args, boolean debug) {
+	private static BDDPanel showName(String[] args, MainFenetre mainFenetre) {
+		ResultSet rsCount;
 		ResultSet rs;
-		ResultSet rs2;
-		int nbArgs = 0;
-		for (int j = 0; j < args.length; j++) {
-			if (!isDBOption(args[j])) {
-				nbArgs++;
-			}
-		}
-		if (nbArgs == 2) {
-			boolean success = false;
-			try {
-				String firstFile = args[i + 1];
-				PreparedStatement statement = BDDUtilities.getConnection().prepareStatement("select COUNT(*) from PLY where NOM = ?");
-				statement.setString(1, firstFile);
-				rs = statement.executeQuery();
-				if (rs.next()) {
-					int totalLines = rs.getInt(1);
-					if (totalLines > 0) {
-						if (!debug) {
-							PreparedStatement statement2 = BDDUtilities.getConnection().prepareStatement("select * from PLY where NOM = ?");
-							statement2.setString(1, firstFile);
-							rs2 = statement2.executeQuery();
-							return new BDDPanel(totalLines, rs2, columnNames, new int[] { 1, 2, 3, 4 });
-						}
-						success = true;
-						// return new
-						// BDDResult(BDDResultEnum.SHOW_NAME_SUCCESSFUL);
-					} else {
-						if (!debug) {
-							String message = "Le modèle " + firstFile + " n'existe pas\nUtilisation: basededonneés --name <name>";
-							JOptionPane.showMessageDialog(null, message, "Mauvais arguments", JOptionPane.ERROR_MESSAGE);
-						}
-						// System.exit(1);
-						success = true;
-						// return new BDDResult(BDDResultEnum.MODEL_NOT_FOUND);
-					}
-				} else {
-					if (!debug) {
-						String message = "Le modèle " + firstFile + " n'existe pas\nUtilisation: basededonneés --name <name>";
-						JOptionPane.showMessageDialog(null, message, "Mauvais arguments", JOptionPane.ERROR_MESSAGE);
-					}
-					// System.exit(1);
-					success = true;
-					// return new BDDResult(BDDResultEnum.MODEL_NOT_FOUND);
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-			} finally {
-				if (!success) {
-					BDDUtilities.closeConnection();
+		try {
+			String modelName = "";
+			for (int i = 0; i < args.length; i++) {
+				if (!isDBOption(args[i]) && !isExecutableArg(args[i])) {
+					modelName = args[i];
 				}
 			}
-		} else if (nbArgs == i) {
-			if (!debug) {
-				String message = "Vous n'avez pas spécifié de nom\nUtilisation: basededonneés --name <name>";
-				JOptionPane.showMessageDialog(null, message, "Mauvais arguments", JOptionPane.ERROR_MESSAGE);
+			PreparedStatement statement = BDDUtilities.getConnection().prepareStatement("select * from PLY where NOM = ?");
+			statement.setString(1, modelName);
+			rsCount = statement.executeQuery();
+			if (rsCount.next()) {
+				PreparedStatement statement2 = BDDUtilities.getConnection().prepareStatement("select * from PLY where NOM = ?");
+				statement2.setString(1, modelName);
+				rs = statement2.executeQuery();
+				BDDUtilities.closeConnection();
+				BDDPanel result = new BDDPanel(mainFenetre, rs, columnNames, buttonColumns, primaryButtons);
+				result.setEditableColumns(new int[] { 0, 1, 3 }, true);
+				return result;
+			} else {
+				String message = "Le modèle " + modelName + " n'existe pas\nUtilisation: basededonneés --name <name>";
+				JOptionPane.showMessageDialog(null, message, "Modelisationator", JOptionPane.ERROR_MESSAGE);
 			}
-			// System.exit(1);
-			// return new BDDResult(BDDResultEnum.NAME_NOT_SPECIFIED);
-		} else {
-			if (!debug) {
-				String message = "Trop d'arguments\nUtilisation: basededonneés --name <name>";
-				JOptionPane.showMessageDialog(null, message, "Mauvais arguments", JOptionPane.ERROR_MESSAGE);
-			}
-			// System.exit(1);
-			// return new BDDResult(BDDResultEnum.TOO_MANY_ARGS);
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
-		// return new BDDResult(BDDResultEnum.SHOW_NAME_NOT_SUCCESSFUL);
 		return null;
 	}
 
 	/**
 	 * Vérifie les arguments et crée la fenetre listant toute la base
 	 * 
-	 * @param mainFenetrre 
-	 * @param quiet true = cacher l'affichage
+	 * @param mainFenetre
 	 * @return s'il a pu créer la fenêtre
 	 */
-	private static BDDPanel showAll(MainFenetre mainFenetrre, boolean quiet) {
+	private static BDDPanel showAll(MainFenetre mainFenetre) {
 		ResultSet rs;
-		boolean success = false;
+		// no need for statement to check because its done before this method is executed
 		try {
-			if (!quiet) {
-				PreparedStatement statement2 = BDDUtilities.getConnection().prepareStatement("select * from PLY");
-				rs = statement2.executeQuery();
-				success = true;
-				BDDPanel result = new BDDPanel(mainFenetrre, rs, columnNames, new String[]{"Confirmer insertion/edition", "Reset", "Supprimer"}, new String[]{"Ajouter une ligne", "Reset"});
-				result.setEditableColumns(new int[]{0, 1, 3} , true);
-				return result;
-			}
-			success = true;
+			PreparedStatement st = BDDUtilities.getConnection().prepareStatement("select * from PLY");
+			rs = st.executeQuery();
+			BDDPanel result = new BDDPanel(mainFenetre, rs, columnNames, buttonColumns, primaryButtons);
+			result.setEditableColumns(new int[] { 0, 1, 3 }, true);
+			BDDUtilities.closeConnection();
+			return result;
 		} catch (SQLException e) {
 			e.printStackTrace();
-		} finally {
-			if (!success) {
-				BDDUtilities.closeConnection();
-			}
 		}
+		BDDUtilities.closeConnection();
 		return null;
 	}
 
 	/**
 	 * Vérifie les arguments et puis crée la fenetre listant les informations des modèles correspondants aux keywords
 	 * 
-	 * @param i la place de "--find" dans les arguments
 	 * @param args les mots clés à rechercher
-	 * @param getConnection() la getConnection() utilsée pour les requêtes
-	 * @param debug afficher ou non les fenêtres
-	 * @return s'il a trouvé des modèles et a pu affiché la fenêtre
+	 * @param mainFenetre
+	 * @return le {@link BDDPanel} contenant les modèles ayant les mots cles ou null.
 	 */
-	private static BDDPanel find(int i, String[] args, boolean debug) {
+	private static BDDPanel find(String[] args, MainFenetre mainFenetre) {
+		ResultSet rsCount;
 		ResultSet rs;
-		ResultSet rs2;
 		int nbLikes = 0;
 		int nbTreated = 0;
 		for (int j = 0; j < args.length; j++) {
@@ -440,11 +334,10 @@ public class BaseDeDonneesNew {
 			}
 		}
 		if (nbLikes > 0) {
-			boolean success = false;
 			try {
 				String queryString = "select * from PLY where DESCRIPTION like";
-				String queryCount = "select COUNT(*) from PLY where DESCRIPTION like";
-				for (int j = i + 1; j < args.length; j++) {
+				String queryCount = "select * from PLY where DESCRIPTION like";
+				for (int j = 0; j < args.length; j++) {
 					if (!isDBOption(args[j])) {
 						nbTreated++;
 						if (nbTreated == 1) {
@@ -460,202 +353,132 @@ public class BaseDeDonneesNew {
 						}
 					}
 				}
-				PreparedStatement statement = BDDUtilities.getConnection().prepareStatement(queryCount);
+				PreparedStatement stCount = BDDUtilities.getConnection().prepareStatement(queryCount);
 				PreparedStatement statement2 = BDDUtilities.getConnection().prepareStatement(queryString);
-				for (int j = i + 1; j < args.length; j++) {
+				for (int j = 0; j < args.length; j++) {
 					if (!args[j].startsWith("--")) {
-						statement.setString(j, "%" + args[j] + "%");
+						stCount.setString(j, "%" + args[j] + "%");
 						statement2.setString(j, "%" + args[j] + "%");
 					}
 				}
-				rs = statement.executeQuery();
-				if (rs.next()) {
-					int totalLines = Integer.parseInt(rs.getString(1));
-					if (totalLines > 0) {
-						if (!debug) {
-							rs2 = statement2.executeQuery();
-							return new BDDPanel(totalLines, rs2, columnNames, new int[] { 1, 2, 3, 4 });
-						}
-						success = true;
-						// return new BDDResult(BDDResultEnum.FIND_SUCCESSFUL);
-					} else {
-						if (!debug) {
-							String message = "Aucun modèle trouvé comportant ces mot clés";
-							JOptionPane.showMessageDialog(null, message, "Mauvais arguments", JOptionPane.ERROR_MESSAGE);
-						}
-						// System.exit(1);
-						success = true;
-						// return new BDDResult(BDDResultEnum.MODEL_NOT_FOUND);
-					}
+				rsCount = stCount.executeQuery();
+				if (rsCount.next()) {
+					rs = statement2.executeQuery();
+					BDDPanel result = new BDDPanel(mainFenetre, rs, columnNames, buttonColumns, primaryButtons);
+					result.setEditableColumns(new int[] { 0, 1, 3 }, true);
+					BDDUtilities.closeConnection();
+					return result;
+				} else {
+					String message = "Aucun modèle trouvé comportant ces mot clés";
+					JOptionPane.showMessageDialog(null, message, "Modelisationator", JOptionPane.ERROR_MESSAGE);
 				}
-
-				success = true;
-
 			} catch (SQLException e) {
 				e.printStackTrace();
-			} finally {
-				if (!success) {
-					BDDUtilities.closeConnection();
-				}
 			}
 		} else {
-			if (!debug) {
-				String message = "Pas de mots clés spécifiés\nUtilisation: basededonneés --find <mots clés>..";
-				JOptionPane.showMessageDialog(null, message, "Mauvais arguments", JOptionPane.ERROR_MESSAGE);
-			}
-			// System.exit(1);
-			// return new BDDResult(BDDResultEnum.NO_DESC_SPECIFIED);
+			String message = "Pas de mots clés spécifiés\nUtilisation: basededonneés --find <mots clés>..";
+			JOptionPane.showMessageDialog(null, message, "Modelisationator", JOptionPane.ERROR_MESSAGE);
 		}
-		// return new BDDResult(BDDResultEnum.FIND_NOT_SUCCESSFUL);
 		return null;
 	}
 
 	/**
-	 * Crée la fenêtre d'insertion de modèle
+	 * Crée la fenêtre d'insertion de modèle.
 	 * 
-	 * @param getConnection() la getConnection() utilsée pour les requêtes
+	 * @param mainFenetre
 	 * @return si fenêtre crée. Pour savoir si requête sql éxecutée, voir {@link FenetreTable}
 	 */
-	private static BDDPanel add() {
-		return new BDDPanel(1, columnNames, new int[] { 3 });
-		// return new BasicResult(BasicResultEnum.ALL_OK);
+	private static BDDPanel add(MainFenetre mainFenetre) {
+		BDDPanel result = new BDDPanel(mainFenetre, null, columnNames, buttonColumns, primaryButtons);
+		result.setCanAddRow(false);
+		result.setEditable(true); // tout est editable dans --edit
+		return result;
 	}
 
 	/**
 	 * Vérifie les argumuments et puis crée la fenetre de modification du modèle précisé s'ils sont valides
 	 * 
-	 * @param i la place de "--edit" dans les arguments. Servira à parcourir la liste si on aura besoin de modifier de multiples modèles
-	 * @param args le modèle à supprimer
-	 * @param getConnection() la getConnection() utilsée pour les requêtes
+	 * @param args le modèle à éditer
+	 * @param mainFenetre
 	 * @return si fenêtre bien crée. Pour savoir si requête sql éxecutée, voir {@link FenetreTable}
 	 */
-	private static BDDPanel edit(int i, String[] args) {
-
-		boolean success = false;
-		int modelNames = 0;
-		for (int j = 0; j < args.length; j++) {
-			if (!args[j].startsWith("--")) {
-				modelNames++;
-			}
-		}
-		if (modelNames == 1) {
-			try {
-				String firstFile = args[i + 1];
-				PreparedStatement statement = BDDUtilities.getConnection().prepareStatement("select COUNT(*) from PLY where NOM = ?");
-				statement.setString(1, firstFile);
-				ResultSet rs = statement.executeQuery();
-				if (rs.next()) {
-					int totalLines = rs.getInt(1);
-					if (totalLines == 1) {
-						PreparedStatement st = BDDUtilities.getConnection().prepareStatement("select * from ply where nom = ?");
-						st.setString(1, firstFile);
-						ResultSet rs2 = st.executeQuery();
-						success = true;
-						return new BDDPanel(totalLines, rs2, columnNames, new int[] { 3 });
-						// return new BasicResult(BasicResultEnum.ALL_OK);
-					} else {
-						String message = "Le modèle " + firstFile + " n'existe pas";
-						JOptionPane.showMessageDialog(null, message, "Mauvais arguments", JOptionPane.ERROR_MESSAGE);
-						// System.exit(1);
-						success = true;
-						// return new BDDResult(BDDResultEnum.MODEL_NOT_FOUND);
-					}
-				}
-				success = true;
-			} catch (SQLException e) {
-				e.printStackTrace();
-			} finally {
-				if (!success) {
-					BDDUtilities.closeConnection();
+	private static BDDPanel edit(String[] args, MainFenetre mainFenetre) {
+		try {
+			String modelName = "";
+			for (int i = 0; i < args.length; i++) {
+				if (!isDBOption(args[i]) && !isExecutableArg(args[i])) {
+					modelName = args[i];
 				}
 			}
-		} else if (args.length > i + 1) {
-			String message = "Trop d'arguments\nUtilisation: basededonneés --name <name>";
-			JOptionPane.showMessageDialog(null, message, "Mauvais arguments", JOptionPane.ERROR_MESSAGE);
-			// System.exit(1);
-			// return new BDDResult(BDDResultEnum.TOO_MANY_ARGS);
-		} else {
-			String message = "Pas de nom précisé\nUtilisation: basededonneés --name <name>";
-			JOptionPane.showMessageDialog(null, message, "Mauvais arguments", JOptionPane.ERROR_MESSAGE);
-			// System.exit(1);
-			// return new BDDResult(BDDResultEnum.NAME_NOT_SPECIFIED);
+			PreparedStatement stCount = BDDUtilities.getConnection().prepareStatement("select * from PLY where NOM = ?");
+			stCount.setString(1, modelName);
+			ResultSet rsCount = stCount.executeQuery();
+			if (rsCount.next()) {
+				PreparedStatement st = BDDUtilities.getConnection().prepareStatement("select * from ply where nom = ?");
+				st.setString(1, modelName);
+				ResultSet rs = st.executeQuery();
+				BDDPanel result = new BDDPanel(mainFenetre, rs, columnNames, buttonColumns, primaryButtons);
+				result.setEditable(true); // tout est editable dans --edit
+				BDDUtilities.closeConnection();
+				return result;
+			} else {
+				String message = "Le modèle " + modelName + " n'existe pas";
+				JOptionPane.showMessageDialog(null, message, "Modelisationator", JOptionPane.ERROR_MESSAGE);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
-		// return new BDDResult(BDDResultEnum.EDIT_NOT_SUCCESSFUL);
 		return null;
 	}
 
 	/**
-	 * @param i la place de "--delete" dans les arguments. Servira à parcourir la liste si on aura besoin de supprimer de multiples modèles
+	 * Vérifie que le modèle existe dans la base et la supprime.
+	 * 
 	 * @param args le modèle à supprimer
-	 * @param getConnection() la getConnection() utilsée pour les requêtes
-	 * @param debug afficher ou non les fenêtres
-	 * @return si modèle a bien été supprimé
+	 * @param quiet afficher ou non les fenêtres
+	 * @return un {@link MethodResult} décrivant le résultat de la requête ou si le modèle existait pas.
 	 */
-	private static MethodResult delete(int i, String[] args, boolean debug) {
-		boolean success = false;
-		if (args.length > 1) {
-			try {
-				String firstFile = args[i + 1];
-				PreparedStatement stExists = BDDUtilities.getConnection().prepareStatement("select COUNT(*) from PLY where NOM = ?");
-				stExists.setString(1, firstFile);
-				ResultSet rs = stExists.executeQuery();
-				if (rs.next()) {
-					int totalLines = rs.getInt(1);
-					if (totalLines == 1) {
-						PreparedStatement stDelete = BDDUtilities.getConnection().prepareStatement("delete from PLY where NOM = ?");
-						stDelete.setString(1, firstFile);
-						int result = stDelete.executeUpdate(); // result = nombre de
-																// lignes affectés
-																// par le delete
-						if (!debug && result > 0) {
-							String message = "Le modèle " + firstFile + " a été supprimé avec succès!";
-							JOptionPane.showMessageDialog(null, message);
-						} else if (!debug && result <= 0) {
-							String message = "Le modèle " + firstFile + " n'a pas pu être supprimé!";
-							JOptionPane.showMessageDialog(null, message);
-						}
-						// System.exit(0);
-						// ICI REMPLACER PAR LE RESULTAT DU DELETE
-						success = true;
-						if (result > 0) {
-							return new BDDResult(BDDResultEnum.DELETE_SUCCESSFUL);
-						}
-					} else {
-						if (!debug) {
-							String message = "Le modèle " + firstFile + " n'existe pas";
-							JOptionPane.showMessageDialog(null, message, "Erreur", JOptionPane.ERROR_MESSAGE);
-						}
-						// System.exit(1);
-						success = true;
-						return new BDDResult(BDDResultEnum.MODEL_NOT_FOUND);
-					}
-				} else {
-					if (!debug) {
-						String message = "Le modèle " + firstFile + " n'existe pas";
-						JOptionPane.showMessageDialog(null, message, "Erreur", JOptionPane.ERROR_MESSAGE);
-					}
-					// System.exit(1);
-					success = true;
-					return new BDDResult(BDDResultEnum.MODEL_NOT_FOUND);
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-			} finally {
-				if (!success) {
-					BDDUtilities.closeConnection();
+	private static MethodResult delete(String[] args, boolean quiet) {
+		try {
+			String modelName = "";
+			for (int i = 0; i < args.length; i++) {
+				if (!isDBOption(args[i]) && !isExecutableArg(args[i])) {
+					modelName = args[i];
 				}
 			}
-		} else {
-			if (!debug) {
-				JOptionPane.showMessageDialog(null, "Vous n'avez pas spécifié de modèle à supprimer", "Erreur", JOptionPane.ERROR_MESSAGE);
+			PreparedStatement stExists = BDDUtilities.getConnection().prepareStatement("select * from PLY where NOM = ?");
+			stExists.setString(1, modelName);
+			ResultSet rs = stExists.executeQuery();
+			if (rs.next()) {
+				PreparedStatement stDelete = BDDUtilities.getConnection().prepareStatement("delete from PLY where NOM = ?");
+				stDelete.setString(1, modelName);
+				int result = stDelete.executeUpdate(); // result = nombre de lignes affectés par le delete
+				BDDUtilities.closeConnection();
+
+				if (result > 0) {
+					if (!quiet) {
+						String message = "Le modèle " + modelName + " a été supprimé avec succès!";
+						JOptionPane.showMessageDialog(null, message);
+					}
+					return new BDDResult(BDDResultEnum.DELETE_SUCCESSFUL);
+				}
+				if (!quiet) {
+					String message = "Le modèle " + modelName + " n'a pas pu être supprimé!";
+					JOptionPane.showMessageDialog(null, message);
+				}
+				return new BDDResult(BDDResultEnum.DELETE_NOT_SUCCESSFUL);
+			} else {
+				if (!quiet) {
+					String message = "Le modèle " + modelName + " n'existe pas";
+					JOptionPane.showMessageDialog(null, message, "Modelisationator", JOptionPane.ERROR_MESSAGE);
+				}
+				BDDUtilities.closeConnection();
+				return new BDDResult(BDDResultEnum.MODEL_NOT_FOUND);
 			}
-			return new BasicResult(BasicResultEnum.NO_ARGUMENTS);
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
 		return new BDDResult(BDDResultEnum.DELETE_NOT_SUCCESSFUL);
-	}
-
-	public static void closeUsedConnection() {
-		BDDUtilities.closeConnection();
 	}
 
 }

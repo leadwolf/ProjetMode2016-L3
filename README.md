@@ -2,28 +2,41 @@
 ## Merging BDD and Model to same JFrame
 
 ### Recent Changes list
-This commit introduces the follwing changes :
+These are the most recent changes continuously updated until a reset :
   - Changed the database to incorporate number of points and number of faces for all figures and set the name as primary key.
   - You can now use options `--r` and `--f` to reset and fill the DB. They can be used together as in `--rf` but not with a normal command. For example `--rall` will not work. But you can use them even when using a 3D command so you can display a model and update the DB at the same time.
   - All commands can now be launched from the same program and they are parsed by the same method in `Modelisationator`.
-  - You can now open new models by double clicking a model in ModelBrowser.
-  - You can now quit a tab.
-  - All opened models are kept in memory. Now when the user quits a model, it can be reopened without re-reading the .ply file.
-  - Created a tool tip `toolLabel` at the bottom of MainFenetre.
-  - `ModelInfo` now updates accordingly when switching tab or when opening a new tab.
-  - `JTableBDD` will replace the operations in `BDDPanel`, can be used for all displays and will be able to be operated on directly through `ButtonColumn`.
-  - `BDDPanelNew` replaces `BDDPanel` and will now just be a simple panel
+  - Changed the whole behaviour of `MainFenetre`:
+    - You can now open new models by double clicking a model in `ModelBrowser`.
+    - You can now quit a tab (except the DB).
+     - All opened models are kept in memory. Now when the user quits a model, it can be reopened without re-reading the .ply file This will also save its 3D positioning.
+     - Created a tool tip `toolLabel` at the bottom of MainFenetre to update according to the user's actions.
+    - `ModelInfo` now updates accordingly when switching tab or when opening a new tab.
+  - `JTableBDDNew` will replace the operations in `BDDPanel`, can be used for all displays and all DB operations will be available directly through `ButtonColumn`.
+  - `BDDPanelNew` replaces `BDDPanel` and will now just be a simple panel instead of doing the SQL queries.
   - `JTableBDDNew` renamed to `Table` and `BDDPanelNew` to `BDDPanel`.
-  - `Table` now has working **confirm edit/insert**, **reset** and **delete** buttons for every row.
-  - You can also insert a new row and confirm its addition to the db.
-  - `toolLabel` updates accoring to these button actions.
-  - Refactored `TableDataModel` to use ArrayList instead of static arrays to be able to easily add and delete rows.
+  - `Table` uses `ButtonColumn`:
+    - **confirm edit/insert**, **reset** and **delete** buttons for every row.
+    - `toolLabel` updates accoring to these button actions.
+  - `BDDPanel` has a button to add a new row to the table. You can insert it into the DB using the **confirm edit/insert** button.
+  - Refactored `TableDataModel` : 
+    - Use ArrayList instead of static arrays to be able to easily add and delete rows.
+    - The methods corresponding to the **confirm edit/insert**, **reset** and **delete** buttons have been redone and seem to work properly (need to write tests).
+  - Refactored `BaseDeDonneesNew` :
+    - Removed useless code in the command methods.
+    - Refactored `verifArgs()` to verify the whole String[] for **all** of the commands.
+    - Now uses `Table` for **all** commands.
+    - Adding new line works properly, prevent insertion of `""` value for a model name.
+    - ToolTip updates more often for `ButtonColumn` actions.
+  - If launching a DB command, the syntax is verified right away in `Modelisationanator` instead of waiting to create `MainFenetre`.
   
 ### What's next
 Priority objectives :
-  - Display shadows
+  - Display shadows.
+  - Write tests for all `BaseDeDonnesNew` and the SQL query methods in `Table`.
 
 Non-Priority objectives :
+  - *Finally delete `FenetreTable` and `BaseDeDonnesOld` ?*
   - Update `toolLabel` according to state changes.
   - Try to use more patterns for cleaner code.
   - Try to refactor using more MVC ?

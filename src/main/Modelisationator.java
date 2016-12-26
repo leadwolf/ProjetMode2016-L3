@@ -13,6 +13,12 @@ import result.BasicResult;
 import result.BasicResultEnum;
 import result.MethodResult;
 
+/**
+ * ¨Programme principale de modélisation.
+ * 
+ * @author L3
+ *
+ */
 public class Modelisationator {
 
 	private static boolean drawFaces = true;
@@ -26,10 +32,11 @@ public class Modelisationator {
 	private static boolean executeDB = false;
 	private static boolean foundFile = false;
 	private static boolean found3DOptions = false;
-	
+
 	private static Pattern singleMinus = Pattern.compile("^(\\-)\\w+");
 	private static Pattern doubleMinus = Pattern.compile("^(\\-\\-)\\w+");
 
+	@SuppressWarnings("javadoc")
 	public static void main(String[] args) {
 		parseArgs(args, false);
 	}
@@ -37,18 +44,18 @@ public class Modelisationator {
 	/**
 	 * Méthode principale pour éxécuter le programme en fonction des arguments
 	 * 
-	 * @param args
-	 * @param noPrint
+	 * @param args la commande.
+	 * @param quiet true pour empecher affichage.
 	 * @return soit un erreur dans les arguments, soit le résultat de l'éxécution de la méthode pertinent aux arguments
 	 */
-	public static MethodResult parseArgs(String[] args, boolean noPrint) {
+	public static MethodResult parseArgs(String[] args, boolean quiet) {
 		if (args.length > 0) {
 			MethodResult verifArgsResult = verifArgs(args, false);
 			if (verifArgsResult.getCode().equals(BasicResultEnum.ALL_OK)) {
 				return execute(args, false);
 			}
 		} else {
-			if (!noPrint) {
+			if (!quiet) {
 				System.out.println("Aucun paramètre précisé");
 			}
 			return new BasicResult(BasicResultEnum.NO_ARGUMENTS);
@@ -58,23 +65,25 @@ public class Modelisationator {
 
 	/**
 	 * Vérifie tous les options qu'ils soient pour un modèle 3D ou une commande bdd
-	 * @param args
-	 * @param noPrint
-	 * @return
+	 * 
+	 * @param args la commande.
+	 * @param quiet true pour empecher affichage.
+	 * @return si les arguments sont corrects.
 	 */
-	private static MethodResult verifArgs(String[] args, boolean noPrint) {
+	private static MethodResult verifArgs(String[] args, boolean quiet) {
+		// VERFIE UN A UN LES ARGUMENTS
 		for (int i = 0; i < args.length; i++) {
 			String extension = args[i].substring(args[i].lastIndexOf(".") + 1, args[i].length());
-			if (isExecutableArg(args[i])) {
+			if (BaseDeDonneesNew.isExecutableArg(args[i])) {
 				executeDB = true;
 			}
 			if (singleMinus.matcher(args[i]).find()) {
-				MethodResult plyResult = parse3Dargs(args[i], noPrint);
+				MethodResult plyResult = verif3Darg(args[i], quiet);
 				if (!plyResult.getCode().equals(BasicResultEnum.ALL_OK)) {
 					return plyResult;
 				}
 			} else if (doubleMinus.matcher(args[i]).find()) {
-				MethodResult dbResult = parseDBArg(args[i], noPrint);
+				MethodResult dbResult = verifDBArg(args[i], quiet);
 				if (!dbResult.getCode().equals(BasicResultEnum.ALL_OK)) {
 					return dbResult;
 				}
@@ -83,29 +92,54 @@ public class Modelisationator {
 					foundFile = true;
 					plyPath = Paths.get(args[i]);
 				} else {
-					if (!noPrint) {
-						System.out.println("Vous avez spécifié deux fichiers ply");
+					if (!quiet) {
+						System.out.println("Erreur : Vous avez spécifié deux fichiers ply");
 					}
 					return new BasicResult(BasicResultEnum.MULTIPLE_PLY_ARGS);
 				}
 			}
 		}
+
+		// VERIFIE LA VALIDITE DE LA COMMANDE ENTIERE
+		if (executeDB && foundFile) {
+			if (!quiet) {
+				System.out.println("Erreur : Vous avez tenté de lancer une commande bdd et lancer un modèle spécifique en même temps.");
+			}
+			return new BasicResult(BasicResultEnum.CONFLICTING_ARGUMENTS);
+		}
+
+		if (executeDB) {
+			// On vérifie la commande ici même si on le fait dans execute() quand MainFenetre va créer un BDDPanel car s'il y a une erreur, autant arrêter le
+			// programme le plus tôt possible.
+			MethodResult verifResult = BaseDeDonneesNew.verifArgs(args, quiet);
+			if (!verifResult.getCode().equals(BasicResultEnum.ALL_OK)) {
+				return verifResult;
+			}
+		}
+		if (!executeDB && !foundFile) {
+			if (!quiet) {
+				System.out.println("Erreur : Vous n'avez pas précisé de commande ni de fichier .ply");
+			}
+			return new BasicResult(BasicResultEnum.NO_ARGUMENTS);
+		}
+
 		if (found3DOptions && !foundFile) {
-			if (!noPrint) {
-				System.out.println("Vous avez tenté d'éxécuter une commande 3D mais vous n'avez pas spécifié de fichier .ply");
+			if (!quiet) {
+				System.out.println("Erreur : Vous avez tenté d'éxécuter une commande 3D mais vous n'avez pas spécifié de fichier .ply");
 			}
 			return new BasicResult(BasicResultEnum.NO_PLY_FILE_IN_ARG);
 		}
 		return new BasicResult(BasicResultEnum.ALL_OK);
 	}
-	
+
 	/**
 	 * Crée le {@link MainFenetre} adapté.
-	 * @param args
-	 * @param noPrint
-	 * @return
+	 * 
+	 * @param args la commande.
+	 * @param quiet true pour empecher affichage.
+	 * @return s'il a pu créer la fenêtre
 	 */
-	private static MethodResult execute(String[] args, boolean noPrint) {
+	private static MethodResult execute(String[] args, boolean quiet) {
 		if (foundFile) {
 			FigureModel figureModel = new FigureModel(plyPath, false);
 			if (figureModel != null && !figureModel.getErreurLecture()) {
@@ -119,7 +153,7 @@ public class Modelisationator {
 		} else if (executeDB) {
 			boolean options[] = new boolean[] { reset, fill };
 			if (delete) {
-				return BaseDeDonneesNew.executeCommand(args, null, new boolean[]{options[0], options[1], noPrint});
+				return BaseDeDonneesNew.executeCommand(args, null, new boolean[] { options[0], options[1], quiet });
 			} else {
 				MainFenetre mainFrame = new MainFenetre(args, options);
 				mainFrame.setTitle("Modelisationator");
@@ -128,14 +162,15 @@ public class Modelisationator {
 		}
 		return new BasicResult(BasicResultEnum.UNKNOWN_ERROR);
 	}
-	
+
 	/**
-	 * Vérifie un argument destiné pour un modèle
-	 * @param arg
-	 * @param noPrint
-	 * @return
+	 * Vérifie un seul argument commentcant par un "-".
+	 * 
+	 * @param arg l'agument à vérifier.
+	 * @param quiet true pour empecher affichage.
+	 * @return si l'argument correspond aux options de lancement 3D.
 	 */
-	private static MethodResult parse3Dargs(String arg, boolean noPrint) {
+	private static MethodResult verif3Darg(String arg, boolean quiet) {
 		for (int j = 1; j < arg.length(); j++) { // start comparing after "-"
 			char c = arg.charAt(j);
 			if (c == 'f') {
@@ -148,29 +183,30 @@ public class Modelisationator {
 				drawPoints = true;
 				found3DOptions = true;
 			} else {
-				if (!noPrint) {
-					System.out.println("Paramètre non reconnu : " + arg);
+				if (!quiet) {
+					System.out.println("Erreur : Paramètre non reconnu : " + arg);
 				}
 				return new BasicResult(BasicResultEnum.UNKNOWN_ARG);
 			}
 		}
 		return new BasicResult(BasicResultEnum.ALL_OK);
 	}
-	
+
 	/**
-	 * Vérifie un argument destiné pour la base de données
-	 * @param arg
-	 * @param noPrint
-	 * @return
+	 * Vérifie un seul argument destiné pour la base de données.
+	 * 
+	 * @param arg l'agument à vérifier.
+	 * @param quiet true pour empecher affichage.
+	 * @return si l'argument correspond aux options BDD.
 	 */
-	private static MethodResult parseDBArg(String arg, boolean noPrint) {
+	private static MethodResult verifDBArg(String arg, boolean quiet) {
 		if (arg.equalsIgnoreCase("--reset")) {
 			reset = true;
 		} else if (arg.equalsIgnoreCase("--fill")) {
 			fill = true;
 		} else if (arg.equals("--delete")) {
 			delete = true;
-		} else if (!isExecutableArg(arg)) { // if neither a command to reset/fill db, neither a direct command for the db, check for single letter options 
+		} else if (!BaseDeDonneesNew.isExecutableArg(arg)) { // if not a direct command for the db, check for single letter options
 			for (int j = 2; j < arg.length(); j++) { // start comparing after "--"
 				char c = arg.charAt(j);
 				if (c == 'r') {
@@ -178,33 +214,25 @@ public class Modelisationator {
 				} else if (c == 'f') {
 					fill = true;
 				} else {
-					if (!noPrint) {
-						System.out.println("Paramètre non reconnu : " + arg);
+					if (!quiet) {
+						System.out.println("Erreur : Paramètre non reconnu : " + arg);
 					}
 					return new BasicResult(BasicResultEnum.UNKNOWN_ARG);
 				}
 			}
 		}
 		if (reset && !fill) {
-			if (!noPrint) {
-				System.out.println("Vous avez précisé de vider la base sans la ré-remplir.");
+			if (!quiet) {
+				System.out.println("Erreur : Vous avez précisé de vider la base sans la ré-remplir.");
 			}
 			return new BDDResult(BDDResultEnum.EMPTY_DB);
 		} else if (fill && !reset) {
-			if (!noPrint) {
-				System.out.println("Vous avez précisé de remplir la base sans qu'elle soit vide au départ.");
+			if (!quiet) {
+				System.out.println("Erreur : Vous avez précisé de remplir la base sans qu'elle soit vide au départ.");
 			}
 			return new BDDResult(BDDResultEnum.INCORRECT_FILL);
 		}
 		return new BasicResult(BasicResultEnum.ALL_OK);
-	}
-	
-	/**
-	 * @param arg
-	 * @return si l'arg correspond à une option d'éxécution de bdd
-	 */
-	public static boolean isExecutableArg(String arg) {
-		return arg.equals("--name") || arg.equals("--all") || arg.equals("--find") || arg.equals("--add") || arg.equals("--delete") || arg.equals("--edit");
 	}
 
 }

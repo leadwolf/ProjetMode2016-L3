@@ -210,33 +210,37 @@ public class TableDataModel extends AbstractTableModel {
 		fireTableCellUpdated(rowIndex, columnIndex);
 	}
 
-	public Object[] getRow(int rowndex) {
-		return data.get(rowndex);
-	}
-	
 	/**
-	 * Ajoute une ligne à la table. Elle hérite les permisisons d'édition de la ligne au dessus sinon tout est modifiable.
+	 * @param rowIndex
+	 * @return le ligne d'Object[] à l'index précisé
+	 */
+	public String[] getRow(int rowIndex) {
+		String[] row = new String[data.get(0).length];
+		for (int i=0;i<row.length;i++) {
+			row[i] = data.get(rowIndex)[i].toString();
+		}
+		return row;
+	}
+
+	/**
+	 * Ajoute une ligne à la table. Tout ses colonnes sont modifiables car toutes les informations sont renseignés par l'utilisateur et le boutons doivent être
+	 * modifiables de toute facon.
 	 * 
 	 * @param newRow
 	 */
 	public void addRow(String[] newRow) {
 		data.add(newRow);
 		boolean[] newEditableRow = new boolean[newRow.length];
-//		if (editable.size() > 0) {
-//			for (int col = 0; col < newRow.length; col++) {
-//				newEditableRow[col] = editable.get(editable.size()-1)[col]; // new row inheris tpermissions from row above.
-//			}
-//		} else {
-			for (int col = 0; col < newRow.length; col++) {
-				newEditableRow[col] = true;
-			}
-//		}
+		for (int col = 0; col < newRow.length; col++) {
+			newEditableRow[col] = true;
+		}
 		editable.add(newEditableRow);
 		fireTableRowsInserted(data.size(), data.size());
 	}
 
 	/**
 	 * Supprime une ligne de la table.
+	 * 
 	 * @param rowIndex
 	 */
 	public void removeRow(int rowIndex) {

@@ -2,6 +2,7 @@ package ply.bdd.modeles;
 
 import java.awt.event.ActionEvent;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
@@ -10,7 +11,6 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
-import javax.swing.table.TableModel;
 
 import main.vues.MainFenetre;
 import ply.bdd.other.BDDUtilities;
@@ -20,13 +20,17 @@ import result.BDDResultEnum;
 import result.MethodResult;
 
 /**
- * Modèle de JTable, éxécute les requêtes sql
+ * Modèle de JTable, éxécute les requêtes sql.
  * 
  * @author L3
  *
  */
 public class Table extends JTable {
 
+	/**
+	 * Generated ID.
+	 */
+	private static final long serialVersionUID = 3437754753518654239L;
 	/**
 	 * On sauvegarde les données initiales.
 	 */
@@ -38,7 +42,11 @@ public class Table extends JTable {
 	/**
 	 * Si la dernière ligne crée a été ajouté à la base, on pourra ajouter une nouvelle ligne à insérer.
 	 */
-	private boolean newRowAddedToBDD = true;
+	private boolean lastRowIsInDB = true;
+
+	/**
+	 * La fenête à laquelle ceci est attaché. Utilisé pour indiquer à l'utilisateur que fait l'application.
+	 */
 	private MainFenetre mainFenetre;
 
 	/**
@@ -59,7 +67,14 @@ public class Table extends JTable {
 	}
 
 	/**
-	 * Ajoute deux boutons "confirmer", "reset" et "delete"
+	 * @param lastRowIsInDB the lastRowIsInDB to set
+	 */
+	public void setLastRowIsInDB(boolean lastRowIsInDB) {
+		this.lastRowIsInDB = lastRowIsInDB;
+	}
+
+	/**
+	 * Ajoute les boutons "confirmer", "reset" et "delete"
 	 */
 	@SuppressWarnings({ "serial", "unused" })
 	private void setButtons() {
@@ -68,9 +83,9 @@ public class Table extends JTable {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				int modelRow = Integer.valueOf(e.getActionCommand());
-				boolean update = !((modelRow == getRowCount() - 1) && !newRowAddedToBDD);
+				boolean updateOrInsert = !((modelRow == getRowCount() - 1) && !lastRowIsInDB);
 				if (modelRow != -1) {
-					modifyTableDirect(modelRow, update, false);
+					modifyTableDirect(modelRow, updateOrInsert, false);
 				}
 			}
 		};
@@ -113,29 +128,30 @@ public class Table extends JTable {
 	 * 
 	 * @param rowIndex l'index de la ligne où le bouton a été appuyé
 	 * @param updateOrInsert true = update, false = insert
-	 * @param noPrint
+	 * @param quiet
 	 * @return le résultat de l'opération sql ou si il n'a pas de valeurs différentes sur lesquelles opérer
 	 */
-	public MethodResult modifyTableDirect(int rowIndex, boolean updateOrInsert, boolean noPrint) {
+	public MethodResult modifyTableDirect(int rowIndex, boolean updateOrInsert, boolean quiet) {
 		// GET SELECTED ROW DATA
 		int colCount = getModel().getColumnCount();
 		boolean differentValues = false;
 		String[] rowData = (String[]) ((TableDataModel) getModel()).getRow(rowIndex);
 		for (int colIndex = 0; colIndex < colCount; colIndex++) {
-			if (isDifferent(rowIndex, colIndex)) {
+			if (isCellDifferent(rowIndex, colIndex)) {
 				differentValues = true;
 			}
 		}
 
 		// CHECK IF UPDATE POSSIBLE
 		if (!differentValues) {
-			if (!noPrint) {
-				JOptionPane.showMessageDialog(null, "Vous n'avez rien saisi.", "Action impossible", JOptionPane.ERROR_MESSAGE);
+			if (!quiet) {
+				JOptionPane.showMessageDialog(null, "Vous n'avez pas changé les donnes.", "Modelisationator : Mise à jour",
+						JOptionPane.ERROR_MESSAGE);
 			}
 			return new BDDResult(BDDResultEnum.NO_DIFFERENT_VALUES);
 		} else {
 			if (!checkTypes(rowData)) {
-				if (!noPrint) {
+				if (!quiet) {
 					String message = "Vous avez saisi une valeur(s) ne correpondant(s) pas au(x) type(s) attendu(s).";
 					message += "\nVeuillez vérifier les donnnées.";
 					JOptionPane.showMessageDialog(null, message, "Echec", JOptionPane.ERROR_MESSAGE);
@@ -144,9 +160,9 @@ public class Table extends JTable {
 			}
 			// UPDATE
 			if (updateOrInsert) {
-				return updateTableBypass(rowData, rowIndex, noPrint);
+				return updateTableBypass(rowData, rowIndex, quiet);
 			}
-			return insertTableBypass(rowData, rowIndex, noPrint);
+			return insertTableBypass(rowData, quiet);
 		}
 	}
 
@@ -155,29 +171,34 @@ public class Table extends JTable {
 	 * 
 	 * @param rowData les valeurs des champs à mettre à jour
 	 * @param rowIndex la ligne dans la jtable ou se situent ces valeurs
-	 * @param noPrint true = empecher affichage
+	 * @param quiet true = empecher affichage
 	 * @return le résultat de la requête
 	 */
-	public MethodResult updateTableBypass(String[] rowData, int rowIndex, boolean noPrint) {
+	public MethodResult updateTableBypass(String[] rowData, int rowIndex, boolean quiet) {
+		String modelName = getModel().getValueAt(getRowCount() - 1, 0).toString();
+		mainFenetre.setToolTip("Mise à jour de " + modelName + " en cours.");
+
 		try {
 			Class.forName("org.sqlite.JDBC");
+			String[] dbColNames = BDDUtilities.getColumnNames();
+
 			// CREATE STRING
 			String updateString = "update PLY set";
 			for (int colIndex = 0; colIndex < rowData.length; colIndex++) {
-				if (isDifferent(rowIndex, colIndex)) {
-					String colName = getModel().getColumnName(colIndex);
+				if (isCellDifferent(rowIndex, colIndex)) {
+					String colName = dbColNames[colIndex];
 					updateString += " " + colName + " = ?,";
 				}
 			}
 			updateString = updateString.substring(0, updateString.length() - 1); // remove last comma
-			updateString += " where nom = ?";
+			updateString += " where " + dbColNames[0] + " = ?";
 
 			// CREATE STATEMENT
 			PreparedStatement statement = BDDUtilities.getConnection().prepareStatement(updateString);
 			String[] colTypes = BDDUtilities.getColumnTypes();
 			int stIndex = 1;
 			for (int colIndex = 0; colIndex < rowData.length; colIndex++) {
-				if (isDifferent(rowIndex, colIndex)) {
+				if (isCellDifferent(rowIndex, colIndex)) {
 					if (colTypes[colIndex].equalsIgnoreCase("integer")) {
 						statement.setInt(stIndex, Integer.parseInt(rowData[colIndex].toString()));
 					} else if (colTypes[colIndex].equalsIgnoreCase("text")) {
@@ -189,12 +210,12 @@ public class Table extends JTable {
 			statement.setString(stIndex, orignalData.get(0)[0]); // WHERE clause
 			if (statement.executeUpdate() > 0) {
 				// REUSSITE
-				if (!noPrint) {
+				updateOriginal(rowIndex, rowData);
+				mainFenetre.setToolTip("Mise à jour réussie.");
+				if (!quiet) {
 					JOptionPane.showMessageDialog(null, "Mise à jour réussie", "Succès", JOptionPane.INFORMATION_MESSAGE);
 				}
-				updateOriginal(rowIndex, rowData);
 				BDDUtilities.closeConnection();
-				mainFenetre.setToolTip("Mise à jour réussie.");
 				return new BDDResult(BDDResultEnum.UPDATE_SUCCESSFUL);
 			}
 		} catch (ClassNotFoundException e) {
@@ -204,7 +225,7 @@ public class Table extends JTable {
 		}
 
 		// ECHEC
-		if (!noPrint) {
+		if (!quiet) {
 			JOptionPane.showMessageDialog(null, "Echec de la mise à jour", "Echec", JOptionPane.ERROR_MESSAGE);
 		}
 		// resetRow(rowIndex); // reset ou pas si erreur d'insertion? sinon perte des données. de toute facon l'utilisateur peut appuyer sur le bouton reset
@@ -214,50 +235,81 @@ public class Table extends JTable {
 	}
 
 	/**
-	 * Exécute l'insertion avec les valeurs de rowData
+	 * Vérifie si la valeur à insérer n'existe pas déja et exécute l'insertion avec les valeurs de rowData.
 	 * 
 	 * @param rowData les valeurs des champs à insérer
-	 * @param rowIndex la ligne dans la jtable ou se situent ces valeurs
-	 * @param noPrint true = empecher affichage
+	 * @param quiet true = empecher affichage
 	 * @return le résultat de la requête
 	 */
-	public MethodResult insertTableBypass(Object[] rowData, int rowIndex, boolean noPrint) {
+	public MethodResult insertTableBypass(String[] rowData, boolean quiet) {
+		String modelName = getModel().getValueAt(getRowCount() - 1, 0).toString();
+		mainFenetre.setToolTip("Insertion de " + modelName + " en cours.");
+
+		if (rowData[0].toString().equalsIgnoreCase("")) {
+			mainFenetre.setToolTip("Insertion impossible.");
+			if (!quiet) {
+				JOptionPane.showMessageDialog(null, "Vous ne pouvez pas insérer un nom de modèle nulle.", "Modelisationator : Insertion",
+						JOptionPane.ERROR_MESSAGE);
+			}
+			return new BDDResult(BDDResultEnum.NAME_NOT_SPECIFIED);
+		}
+
 		try {
 			Class.forName("org.sqlite.JDBC");
-			String insertString = "insert into PLY values(";
-			// question marks
-			for (int colIndex = 0; colIndex < dataWidth; colIndex++) {
-				insertString += " ?,";
-			}
-			insertString = insertString.substring(0, insertString.length() - 1); // remove last comma
-			insertString += ")";
+			String[] dbColTypes = BDDUtilities.getColumnTypes();
+			String[] dbColNames = BDDUtilities.getColumnNames();
 
-			// CREATE STATEMENT
-			System.out.println(insertString);
-			PreparedStatement statement = BDDUtilities.getConnection().prepareStatement(insertString);
-			String[] colTypes = BDDUtilities.getColumnTypes();
-			for (int colIndex = 0; colIndex < dataWidth; colIndex++) {
-				if (colTypes[colIndex].equalsIgnoreCase("integer")) {
-					statement.setInt(colIndex + 1, Integer.parseInt(rowData[colIndex].toString())); // setString starts at 1
-				} else if (colTypes[colIndex].equalsIgnoreCase("text")) {
-					statement.setString(colIndex + 1, rowData[colIndex].toString()); // setString starts at 1
+			// VERIF PRE EXISTING
+			String verifString = "select * from PLY where " + dbColNames[0] + " = ?";
+			PreparedStatement verifSt = BDDUtilities.getConnection().prepareStatement(verifString);
+			verifSt.setString(1, rowData[0].toString());
+			ResultSet verifRs = verifSt.executeQuery();
+
+			if (!verifRs.next()) { // le modèle existe pas
+				String insertString = "insert into PLY values(";
+				// question marks
+				for (int colIndex = 0; colIndex < dataWidth; colIndex++) {
+					insertString += " ?,";
 				}
-			}
+				insertString = insertString.substring(0, insertString.length() - 1); // remove last comma
+				insertString += ")";
 
-			if (statement.executeUpdate() > 0) {
-				if (!noPrint) {
-					JOptionPane.showMessageDialog(null, "Insertion réussie", "Succès", JOptionPane.INFORMATION_MESSAGE);
+				// CREATE STATEMENT
+				PreparedStatement statement = null;
+				statement = BDDUtilities.getConnection().prepareStatement(insertString);
+				for (int colIndex = 0; colIndex < dataWidth; colIndex++) {
+					if (dbColTypes[colIndex].equalsIgnoreCase("integer")) {
+						statement.setInt(colIndex + 1, Integer.parseInt(rowData[colIndex].toString())); // setString starts at 1
+					} else if (dbColTypes[colIndex].equalsIgnoreCase("text")) {
+						statement.setString(colIndex + 1, rowData[colIndex].toString()); // setString starts at 1
+					}
+				}
+
+				// REUSSITE
+				if (statement.executeUpdate() > 0) {
+					updateOriginal(getRowCount() - 1, rowData);
+					mainFenetre.setToolTip("Insertion réussie.");
+					lastRowIsInDB = true;
+					if (!quiet) {
+						JOptionPane.showMessageDialog(null, "Insertion réussie", "Succès", JOptionPane.INFORMATION_MESSAGE);
+					}
+					BDDUtilities.closeConnection();
+					return new BDDResult(BDDResultEnum.INSERT_SUCCESSFUL);
+				}
+			} else {
+				mainFenetre.setToolTip("Ce nom existe déja dans la base");
+				if (!quiet) {
+					JOptionPane.showMessageDialog(null, "Le nom " + rowData[0].toString() + " existe déja", "Echec", JOptionPane.ERROR_MESSAGE);
 				}
 				BDDUtilities.closeConnection();
-				mainFenetre.setToolTip("Insertion réussie.");
-				return new BDDResult(BDDResultEnum.INSERT_SUCCESSFUL);
+				return new BDDResult(BDDResultEnum.PRE_EXISTING_MODEL);
 			}
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		if (!noPrint) {
+		if (!quiet) {
 			JOptionPane.showMessageDialog(null, "Echec de l'insertion", "Echec", JOptionPane.ERROR_MESSAGE);
 		}
 		// resetRow(rowIndex); // reset ou pas si erreur d'insertion? sinon perte des données. de toute facon l'utilisateur peut appuyer sur le bouton reset
@@ -270,17 +322,18 @@ public class Table extends JTable {
 	 * Supprime une ligne
 	 * 
 	 * @param rowIndex la ligne dans la jtable à supprimer dans la base
-	 * @param noPrint true = empecher affichage
+	 * @param quiet true = empecher affichage
 	 * @return le résultat de la requête
 	 */
-	public MethodResult deleteRow(int rowIndex, boolean noPrint) {
+	public MethodResult deleteRow(int rowIndex, boolean quiet) {
 		String modelName = getModel().getValueAt(rowIndex, 0).toString();
 		mainFenetre.setToolTip("Suppression de " + modelName + " en cours.");
-		if (true) {
-			if (!noPrint) {
+		if (true) { // TODO choisir si toujours garder une alerte avant suppression
+			if (!quiet) {
 				String message = "Voulez vous vraiment supprimer le modèle de la base de données?";
-				String[] options = new String[]{"Oui, je sais ce que je fais", "Non, je n'ai plus envie"};
-				int n = JOptionPane.showOptionDialog(null, message, "Confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1] );
+				String[] options = new String[] { "Oui, je sais ce que je fais", "Non, je n'ai plus envie" };
+				int n = JOptionPane.showOptionDialog(null, message, "Confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null,
+						options, options[1]);
 				if (n == JOptionPane.NO_OPTION) {
 					mainFenetre.setToolTip("Suppresion de " + modelName + " avortée.");
 					return new BDDResult(BDDResultEnum.CANCEL_DELETE);
@@ -293,17 +346,17 @@ public class Table extends JTable {
 			statement.setString(1, modelName);
 			if (statement.executeUpdate() > 0) {
 				((TableDataModel) getModel()).removeRow(rowIndex);
-				if (!noPrint) {
+				mainFenetre.setToolTip("Suppresion de " + modelName + " réussie.");
+				if (!quiet) {
 					JOptionPane.showMessageDialog(null, "Suppression réussie", "Succès", JOptionPane.INFORMATION_MESSAGE);
 				}
-				mainFenetre.setToolTip("Suppresion de " + modelName + " réussie.");
 				BDDUtilities.closeConnection();
 				return new BDDResult(BDDResultEnum.DELETE_SUCCESSFUL);
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		if (!noPrint) {
+		if (!quiet) {
 			JOptionPane.showMessageDialog(null, "Echec de la suppression.", "Echec", JOptionPane.ERROR_MESSAGE);
 		}
 		mainFenetre.setToolTip("Echec de la suppression de " + modelName + ".");
@@ -318,12 +371,12 @@ public class Table extends JTable {
 	 * @param column la colonne à laquelle la valeur se trouve dans la table
 	 * @return true si elle est différente
 	 */
-	private boolean isDifferent(int row, int column) {
+	private boolean isCellDifferent(int row, int column) {
 		return getModel().isCellEditable(row, column) && !orignalData.get(row)[column].equals(getModel().getValueAt(row, column));
 	}
 
 	/**
-	 * Vérifie que les valeurs saisies sont correctes d'apres les types dans la base de donénes.
+	 * Vérifie que les valeurs saisies sont correctes d'apres les types dans la base de données.
 	 * 
 	 * @param rowData
 	 * @return true si les donneés respectent les types
@@ -373,18 +426,19 @@ public class Table extends JTable {
 	private void updateOriginal(int rowIndex, String[] rowData) {
 		String[] originalRow = orignalData.get(rowIndex);
 		for (int col = 0; col < rowData.length; col++) {
-			originalRow[col] = rowData[col]; // strings are immutable so the string in orignalRow won't change even if rowData (table model) eventually changes.
+			originalRow[col] = rowData[col]; // strings are immutable so the string in orignalRow[col] won't change even if rowData[col] (table model)
+												// eventually changes.
 		}
 	}
 
 	/**
-	 * Ajoute une ligne dans la table qui sera ensuite inséré dans la base.
+	 * Crée une ligne vide avec les boutons s'il y en avait et l'ajoute à son modèle.
 	 * 
 	 * @param buttonColumns
 	 */
 	public void addRow(String[] buttonColumns) {
 		// CREATE NEW ROW
-		if (newRowAddedToBDD) {
+		if (lastRowIsInDB) {
 			String[] newRow = new String[getColumnCount()];
 			String[] newRowKeep = new String[getColumnCount()];
 			int buttonIndex = 0;
@@ -410,8 +464,10 @@ public class Table extends JTable {
 					((TableDataModel) getModel()).setCellEditable(orignalData.size() - 1, i, false);
 				}
 			}
-			newRowAddedToBDD = false;
-			mainFenetre.setToolTip("Saisissez vos valeurs à insérer dans la base.");
+			lastRowIsInDB = false;
+			mainFenetre.setToolTip("Nouvelle ligne crée. Saisissez les valeurs que vous voulez insérer dans la base.");
+		} else {
+			mainFenetre.setToolTip("Vous ne pouvez pas ajouter une ligne tant que vous n'avez pas inséré la dernière dans la base.");
 		}
 	}
 }

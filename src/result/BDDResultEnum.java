@@ -24,28 +24,44 @@ public enum BDDResultEnum {
 	 */
 	EMPTY_DB,
 	/**
+	 * La table PLY n'existe pas.
+	 */
+	TABLE_NOT_FOUND,
+	/**
+	 * La base n'est PAS vide.
+	 */
+	DB_NOT_EMPTY,
+	/**
 	 * Aucun modèle comportant ces mot clés n'a été retrouvé dans la base.
 	 */
-	NONE_FOUND_WITH_DESC,
+	NONE_FOUND_WITH_KEYWORDS,
 	/**
 	 * Il n'y a pas de description recherché en argument.
 	 */
-	NO_DESC_SPECIFIED,
+	NO_KEYWORDS_SPECIFIED,
+	/**
+	 * Il n'y a pas de description recherché en argument.
+	 */
+	TOO_MANY_KEYWORDS_SPECIFIED,
+	
+
+	/* ICI CODES D'ECHEC CONCERNANTS REQUETES SQL */
+
+
 	/**
 	 * Aucun champ n'est différent de l'original. Dans update SQL.
 	 */
 	NO_DIFFERENT_VALUES,
-	
 	/**
 	 * L'update SQl n'a pas réussi.
 	 */
 	UPDATE_NOT_SUCCESSFUL,
 	/**
-	 * Le modèle existe déja. Quand on éxécute une insertion SQL. N'utiliser que quand l'erreur ne peut pas être précisé.
+	 * Le modèle existe déja dans la base. Quand on éxécute une insertion SQL.
 	 */
 	PRE_EXISTING_MODEL,
 	/**
-	 * Aucune valeur renseigné pour une insetion SQL.
+	 * Aucune valeur renseigné pour une insertion SQL.
 	 */
 	NO_VALUES_SPECIFIED,
 	/**
@@ -85,8 +101,7 @@ public enum BDDResultEnum {
 	 */
 	CANCEL_DELETE,
 	
-	/* ICI CODE DE SUCCES */
-
+	/* ICI CODES DE SUCCES CONCERNANTS REQUETES SQL */
 
 	/**
 	 * On a pu trouver le modèle et afficher ses métadonnées.

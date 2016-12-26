@@ -5,6 +5,7 @@ import java.io.FilenameFilter;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -65,39 +66,43 @@ public class BDDUtilities {
 		try {
 			if (connection == null || (connection != null && connection.isClosed())) {
 				initConnection(previousPath);
-				setColumnInfo();
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return connection;
 	}
-	
-	private static void setColumnInfo() {
-		try {
-			Statement st = getConnection().createStatement();
-			ResultSet rs = st.executeQuery("PRAGMA table_info(PLY)");
-			int colIndex = 0;
-			columnTypes = new String[rs.getMetaData().getColumnCount()];
-			columnNames = new String[rs.getMetaData().getColumnCount()];
-			while (rs.next()) {
-				columnNames[colIndex] = rs.getString(2);
-				columnTypes[colIndex] = rs.getString(3);
-				colIndex++;
+
+	/**
+	 * Sauvegarde les noms des colonnes et leurs types.
+	 */
+	public static void setColumnInfo() {
+		if (checkTable().getCode().equals(BDDResultEnum.DB_NOT_EMPTY)) {
+			try {
+				Statement st = getConnection().createStatement();
+				ResultSet rs = st.executeQuery("PRAGMA table_info(PLY)");
+				int colIndex = 0;
+				columnTypes = new String[rs.getMetaData().getColumnCount()];
+				columnNames = new String[rs.getMetaData().getColumnCount()];
+				while (rs.next()) {
+					columnNames[colIndex] = rs.getString(2);
+					columnTypes[colIndex] = rs.getString(3);
+					colIndex++;
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
 			}
-		} catch (SQLException e) {
-			e.printStackTrace();
 		}
 	}
-	
+
 	public static String[] getColumnTypes() {
 		return columnTypes;
 	}
-	
+
 	public static String[] getColumnNames() {
 		return columnNames;
 	}
-
+	
 	/**
 	 * Initalise la connection vers un fichier .sqlite précis ou le fichier par défaut
 	 * 
@@ -111,7 +116,6 @@ public class BDDUtilities {
 				Class.forName("org.sqlite.JDBC");
 				connection = DriverManager.getConnection("jdbc:sqlite:data/test.sqlite");
 				success = true;
-				setColumnInfo();
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			} catch (SQLException e) {
@@ -127,7 +131,6 @@ public class BDDUtilities {
 				Class.forName("org.sqlite.JDBC");
 				connection = DriverManager.getConnection("jdbc:sqlite:" + dbPath.toAbsolutePath().toString());
 				success = true;
-				setColumnInfo();
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			} catch (SQLException e) {
@@ -160,10 +163,10 @@ public class BDDUtilities {
 		boolean success = false;
 		try {
 
-			PreparedStatement firstStatement = connection.prepareStatement("drop table PLY");
+			PreparedStatement firstStatement = getConnection().prepareStatement("DROP TABLE IF EXISTS PLY");
 			firstStatement.executeUpdate();
-			PreparedStatement secondStatement = connection.prepareStatement(
-					"create table PLY(NOM text PRIMARY KEY, CHEMIN text, DATE text, DESCRIPTION text, NOMBRE_POINTS integer, NOMBRE_FACES integer)");
+			PreparedStatement secondStatement = getConnection().prepareStatement(
+					"create table PLY(NOM text PRIMARY KEY NOT NULL, CHEMIN text, DATE text, DESCRIPTION text, NOMBRE_POINTS integer, NOMBRE_FACES integer)");
 			secondStatement.executeUpdate();
 			success = true;
 		} catch (SQLException e) {
@@ -173,11 +176,10 @@ public class BDDUtilities {
 				closeConnection();
 			}
 		}
-
 	}
 
 	/**
-	 * Remplit la table PLY avec les fichiers dans le dossier ply/
+	 * Remplit la table PLY avec les fichiers dans le dossier data/
 	 * 
 	 */
 	public static void fillTable() {
@@ -193,7 +195,7 @@ public class BDDUtilities {
 
 				insertStatement = "insert into PLY values (?, ?, ?, ?, ?, ?)";
 				PreparedStatement firstStatement;
-				firstStatement = connection.prepareStatement(insertStatement);
+				firstStatement = getConnection().prepareStatement(insertStatement);
 				firstStatement.setString(1, nom);
 				firstStatement.setString(2, files[i].getAbsolutePath().toString());
 				firstStatement.setString(3, LocalDate.now().toString());
@@ -215,30 +217,28 @@ public class BDDUtilities {
 	/**
 	 * Vérifie si la table est vide
 	 * 
-	 * @param connection
-	 * @return
+	 * @return un {@link MethodResult décrivant l'état de la base}
 	 */
 	public static MethodResult checkTable() {
-		boolean success = false;
 		try {
-			PreparedStatement statement;
-			statement = connection.prepareStatement("select COUNT(*) from PLY");
-			ResultSet rs = statement.executeQuery();
-			if (rs.next()) {
-				int totalLines = rs.getInt(1);
-				if (totalLines > 0) {
-					success = true;
-					return new BasicResult(BasicResultEnum.ALL_OK);
+			DatabaseMetaData md = connection.getMetaData();
+			ResultSet rsTable = md.getTables(null, null, "PLY", null);
+			if (rsTable.next()) {
+				PreparedStatement statement;
+				statement = connection.prepareStatement("select COUNT(*) from PLY");
+				ResultSet rs = statement.executeQuery();
+				if (rs.next()) {
+					int totalLines = rs.getInt(1);
+					if (totalLines > 0) {
+						return new BDDResult(BDDResultEnum.DB_NOT_EMPTY);
+					}
 				}
+				return new BDDResult(BDDResultEnum.EMPTY_DB);
+			} else {
+				return new BDDResult(BDDResultEnum.TABLE_NOT_FOUND);
 			}
-			success = true;
-			return new BDDResult(BDDResultEnum.EMPTY_DB);
 		} catch (SQLException e) {
 			e.printStackTrace();
-		} finally {
-			if (!success) {
-				closeConnection();
-			}
 		}
 		return new BasicResult(BasicResultEnum.UNKNOWN_ERROR);
 	}

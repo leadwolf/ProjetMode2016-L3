@@ -53,12 +53,10 @@ public class Table extends JTable {
 	 * @param dm
 	 * @param originalData
 	 * @param buttonColumns
-	 * @param mainFenetre
 	 */
-	public Table(TableDataModel dm, List<String[]> originalData, String[] buttonColumns, MainFenetre mainFenetre) {
+	public Table(TableDataModel dm, List<String[]> originalData, String[] buttonColumns) {
 		super(dm);
 		this.orignalData = originalData;
-		this.mainFenetre = mainFenetre;
 		dataWidth = orignalData.get(0).length - 3;
 
 		if (buttonColumns != null && buttonColumns.length > 0) {
@@ -83,9 +81,11 @@ public class Table extends JTable {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				int modelRow = Integer.valueOf(e.getActionCommand());
-				boolean updateOrInsert = !((modelRow == getRowCount() - 1) && !lastRowIsInDB);
+				// the only situation that we insert data is if last row is source of action and its data is NOT in the db
+				// therefore we update of those conditions are not verified
+				boolean updateInsteadOfInsert = !((modelRow == getRowCount() - 1) && !lastRowIsInDB);
 				if (modelRow != -1) {
-					modifyTableDirect(modelRow, updateOrInsert, false);
+					modifyTableDirect(modelRow, updateInsteadOfInsert, false);
 				}
 			}
 		};
@@ -127,11 +127,11 @@ public class Table extends JTable {
 	 * Exécute indirectement la mise à jour de la table. Cette méthode est appelé par le contrôleur
 	 * 
 	 * @param rowIndex l'index de la ligne où le bouton a été appuyé
-	 * @param updateOrInsert true = update, false = insert
+	 * @param updateInsteadOfInsert true = update, false = insert
 	 * @param quiet
 	 * @return le résultat de l'opération sql ou si il n'a pas de valeurs différentes sur lesquelles opérer
 	 */
-	public MethodResult modifyTableDirect(int rowIndex, boolean updateOrInsert, boolean quiet) {
+	public MethodResult modifyTableDirect(int rowIndex, boolean updateInsteadOfInsert, boolean quiet) {
 		// GET SELECTED ROW DATA
 		int colCount = getModel().getColumnCount();
 		boolean differentValues = false;
@@ -159,7 +159,7 @@ public class Table extends JTable {
 				return new BDDResult(BDDResultEnum.INCORRECT_TYPES);
 			}
 			// UPDATE
-			if (updateOrInsert) {
+			if (updateInsteadOfInsert) {
 				return updateTableBypass(rowData, rowIndex, quiet);
 			}
 			return insertTableBypass(rowData, quiet);
@@ -469,5 +469,12 @@ public class Table extends JTable {
 		} else {
 			mainFenetre.setToolTip("Vous ne pouvez pas ajouter une ligne tant que vous n'avez pas inséré la dernière dans la base.");
 		}
+	}
+
+	/**
+	 * @param mainFenetre the mainFenetre to set
+	 */
+	public void setMainFenetre(MainFenetre mainFenetre) {
+		this.mainFenetre = mainFenetre;
 	}
 }

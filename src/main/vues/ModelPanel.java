@@ -31,6 +31,12 @@ import ply.plyModel.vues.SensitivityViewPanel;
 import ply.plyModel.vues.TranslationPanel;
 import ply.plyModel.vues.VisualisationPanel;
 
+/**
+ *JPanel contenant {@link VisualisationPanel} et tous les panneaux de contrôle du modèle.
+ *
+ * @author L3
+ *
+ */
 public class ModelPanel extends JPanel {
 
 	private static final long serialVersionUID = 2549833609496985257L;
@@ -53,6 +59,8 @@ public class ModelPanel extends JPanel {
 	/**
 	 * Crée une fenêtre de visualisation du modèle
 	 * 
+	 * @param figureModel 
+	 * @param mainPanelDim 
 	 * @param drawPoints dessinner les points au départ
 	 * @param drawSegments dessiner les segments au départ
 	 * @param drawFaces dessiner les faces au départ

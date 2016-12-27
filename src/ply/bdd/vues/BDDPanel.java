@@ -43,7 +43,7 @@ public class BDDPanel extends JPanel {
 	 *            d'un modèle.
 	 * @param primaryButtons des JButtons à ajouter au panel
 	 */
-	public BDDPanel(MainFenetre mainFenetre, ResultSet rs, String[] columnNames, String[] buttonColumns, String[] primaryButtons) {
+	public BDDPanel(ResultSet rs, String[] columnNames, String[] buttonColumns, String[] primaryButtons) {
 		super();
 		this.buttonColumns = buttonColumns;
 
@@ -54,7 +54,7 @@ public class BDDPanel extends JPanel {
 		// CREATE TABLE MODEL
 		TableDataModel dataModel = new TableDataModel(columnNames, data);
 		dataModel.setEditable(false);
-		table = new Table(dataModel, data, buttonColumns, mainFenetre);
+		table = new Table(dataModel, data, buttonColumns);
 
 		// CREATE THIS PANEL
 		setupPanel(primaryButtons);
@@ -239,4 +239,11 @@ public class BDDPanel extends JPanel {
 		return false;
 	}
 
+
+	/**
+	 * @param mainFenetre the mainFenetre to set
+	 */
+	public void setMainFenetre(MainFenetre mainFenetre) {
+		table.setMainFenetre(mainFenetre);
+	}
 }

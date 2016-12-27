@@ -39,11 +39,10 @@ public class BaseDeDonnees {
 	 * 
 	 * @param args
 	 * @param dbPath path to the db.sqlite, leave null for default data/test.sqlite
-	 * @param mainFenetre
 	 * @param options [0] = reset, [1] = fill, [2] = quiet true pour empecher affichage
 	 * @return le panel correspondant à la commande.
 	 */
-	public static BDDPanel getPanel(String[] args, Path dbPath, MainFenetre mainFenetre, boolean[] options) {
+	public static BDDPanel getPanel(String[] args, Path dbPath, boolean[] options) {
 		// VERIF ARGS
 		if (options == null) {
 			// Vous devez au moins spécifier l'option quiet, donc l'array doit exister
@@ -57,7 +56,7 @@ public class BaseDeDonnees {
 		initConnection(dbPath, options[0], options[1]);
 		MethodResult checkResult = BDDUtilities.checkTable();
 		if (checkResult.getCode().equals(BDDResultEnum.DB_NOT_EMPTY)) {
-			return getSpecificPanel(args, mainFenetre, options[2]);
+			return getSpecificPanel(args, options[2]);
 		} else {
 			if (!options[2]) {
 				JOptionPane.showMessageDialog(null, "La base de données est vide.", programName, JOptionPane.ERROR_MESSAGE);
@@ -230,22 +229,22 @@ public class BaseDeDonnees {
 	 * @param quiet true pour empecher affichage
 	 * @return si la requête était correcte et que l'interface, si besoin, a été éxecutée
 	 */
-	private static BDDPanel getSpecificPanel(String[] args, MainFenetre mainFenetre, boolean quiet) {
+	private static BDDPanel getSpecificPanel(String[] args, boolean quiet) {
 		for (int i = 0; i < args.length; i++) {
 			if (args[i].equals("--name")) {
-				return showName(args, mainFenetre, quiet);
+				return showName(args, quiet);
 			}
 			if (args[i].equals("--all")) {
-				return showAll(mainFenetre);
+				return showAll();
 			}
 			if (args[i].equals("--find")) {
-				return find(args, mainFenetre, quiet);
+				return find(args, quiet);
 			}
 			if (args[i].equals("--add")) {
-				return add(mainFenetre);
+				return add();
 			}
 			if (args[i].equals("--edit")) {
-				return edit(args, mainFenetre, quiet);
+				return edit(args, quiet);
 			}
 		}
 		return null;
@@ -293,7 +292,7 @@ public class BaseDeDonnees {
 	 * @param mainFenetre
 	 * @return le {@link BDDPanel} contenant les données du modèle précisé ou null.
 	 */
-	private static BDDPanel showName(String[] args, MainFenetre mainFenetre, boolean quiet) {
+	private static BDDPanel showName(String[] args, boolean quiet) {
 		ResultSet rsCount;
 		ResultSet rs;
 		try {
@@ -310,7 +309,7 @@ public class BaseDeDonnees {
 				PreparedStatement statement2 = BDDUtilities.getConnection().prepareStatement("select * from PLY where NOM = ?");
 				statement2.setString(1, modelName);
 				rs = statement2.executeQuery();
-				BDDPanel result = new BDDPanel(mainFenetre, rs, columnNames, buttonColumns, primaryButtons);
+				BDDPanel result = new BDDPanel(rs, columnNames, buttonColumns, primaryButtons);
 				result.setEditableColumns(new int[] { 0, 1, 3 }, true);
 				BDDUtilities.closeConnection();
 				return result;
@@ -332,13 +331,13 @@ public class BaseDeDonnees {
 	 * @param mainFenetre
 	 * @return s'il a pu créer la fenêtre
 	 */
-	private static BDDPanel showAll(MainFenetre mainFenetre) {
+	private static BDDPanel showAll() {
 		ResultSet rs;
 		// no need for statement to check because its done before this method is executed
 		try {
 			PreparedStatement st = BDDUtilities.getConnection().prepareStatement("select * from PLY");
 			rs = st.executeQuery();
-			BDDPanel result = new BDDPanel(mainFenetre, rs, columnNames, buttonColumns, primaryButtons);
+			BDDPanel result = new BDDPanel(rs, columnNames, buttonColumns, primaryButtons);
 			result.setEditableColumns(new int[] { 0, 1, 3 }, true);
 			BDDUtilities.closeConnection();
 			return result;
@@ -356,7 +355,7 @@ public class BaseDeDonnees {
 	 * @param mainFenetre
 	 * @return le {@link BDDPanel} contenant les modèles ayant les mots cles ou null.
 	 */
-	private static BDDPanel find(String[] args, MainFenetre mainFenetre, boolean quiet) {
+	private static BDDPanel find(String[] args, boolean quiet) {
 		ResultSet rsCount;
 		ResultSet rs;
 		int nbLikes = 0;
@@ -396,7 +395,7 @@ public class BaseDeDonnees {
 			rsCount = stCount.executeQuery();
 			if (rsCount.next()) {
 				rs = statement2.executeQuery();
-				BDDPanel result = new BDDPanel(mainFenetre, rs, columnNames, buttonColumns, primaryButtons);
+				BDDPanel result = new BDDPanel(rs, columnNames, buttonColumns, primaryButtons);
 				result.setEditableColumns(new int[] { 0, 1, 3 }, true);
 				BDDUtilities.closeConnection();
 				return result;
@@ -418,8 +417,8 @@ public class BaseDeDonnees {
 	 * @param mainFenetre
 	 * @return si fenêtre crée. Pour savoir si requête sql éxecutée, voir {@link FenetreTable}
 	 */
-	private static BDDPanel add(MainFenetre mainFenetre) {
-		BDDPanel result = new BDDPanel(mainFenetre, null, columnNames, buttonColumns, primaryButtons);
+	private static BDDPanel add() {
+		BDDPanel result = new BDDPanel(null, columnNames, buttonColumns, primaryButtons);
 		result.setCanAddRow(false);
 		result.setEditable(true); // tout est editable dans --edit
 		return result;
@@ -432,7 +431,7 @@ public class BaseDeDonnees {
 	 * @param mainFenetre
 	 * @return si fenêtre bien crée. Pour savoir si requête sql éxecutée, voir {@link FenetreTable}
 	 */
-	private static BDDPanel edit(String[] args, MainFenetre mainFenetre, boolean quiet) {
+	private static BDDPanel edit(String[] args, boolean quiet) {
 		try {
 			String modelName = "";
 			for (int i = 0; i < args.length; i++) {
@@ -447,7 +446,7 @@ public class BaseDeDonnees {
 				PreparedStatement st = BDDUtilities.getConnection().prepareStatement("select * from ply where nom = ?");
 				st.setString(1, modelName);
 				ResultSet rs = st.executeQuery();
-				BDDPanel result = new BDDPanel(mainFenetre, rs, columnNames, buttonColumns, primaryButtons);
+				BDDPanel result = new BDDPanel(rs, columnNames, buttonColumns, primaryButtons);
 				result.setEditable(true); // tout est editable dans --edit
 				BDDUtilities.closeConnection();
 				return result;

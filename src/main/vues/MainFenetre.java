@@ -25,7 +25,7 @@ import javax.swing.event.ChangeListener;
 
 import main.controlers.MenuControler;
 import ply.bdd.controlers.JListControler;
-import ply.bdd.other.BaseDeDonneesNew;
+import ply.bdd.other.BaseDeDonnees;
 import ply.bdd.vues.BDDPanel;
 import ply.bdd.vues.ModelInfo;
 import ply.plyModel.modeles.FigureModel;
@@ -68,7 +68,7 @@ public class MainFenetre extends JFrame {
 
 		/* BDD PANEL */
 		// par défaut on veut afficher toute la base
-		BDDPanel bddPanel = BaseDeDonneesNew.getPanel(new String[] { "--all" }, null, this, new boolean[]{options[3], options[4], false});
+		BDDPanel bddPanel = BaseDeDonnees.getPanel(new String[] { "--all" }, null, this, new boolean[]{options[3], options[4], false});
 		if (bddPanel == null) {
 			System.exit(1);
 		}
@@ -115,7 +115,7 @@ public class MainFenetre extends JFrame {
 		frameDim = new Dimension(800, 500);
 
 		/* BDD PANEL */
-		BDDPanel bddPanel = BaseDeDonneesNew.getPanel(command, null, this, new boolean[]{options[0], options[1], false});
+		BDDPanel bddPanel = BaseDeDonnees.getPanel(command, null, this, new boolean[]{options[0], options[1], false});
 		if (bddPanel == null) {
 			System.exit(1);
 		}

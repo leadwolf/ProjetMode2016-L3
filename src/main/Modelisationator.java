@@ -5,7 +5,7 @@ import java.nio.file.Paths;
 import java.util.regex.Pattern;
 
 import main.vues.MainFenetre;
-import ply.bdd.other.BaseDeDonneesNew;
+import ply.bdd.other.BaseDeDonnees;
 import ply.plyModel.modeles.FigureModel;
 import result.BDDResult;
 import result.BDDResultEnum;
@@ -74,7 +74,7 @@ public class Modelisationator {
 		// VERFIE UN A UN LES ARGUMENTS
 		for (int i = 0; i < args.length; i++) {
 			String extension = args[i].substring(args[i].lastIndexOf(".") + 1, args[i].length());
-			if (BaseDeDonneesNew.isExecutableArg(args[i])) {
+			if (BaseDeDonnees.isExecutableArg(args[i])) {
 				executeDB = true;
 			}
 			if (singleMinus.matcher(args[i]).find()) {
@@ -111,7 +111,7 @@ public class Modelisationator {
 		if (executeDB) {
 			// On vérifie la commande ici même si on le fait dans execute() quand MainFenetre va créer un BDDPanel car s'il y a une erreur, autant arrêter le
 			// programme le plus tôt possible.
-			MethodResult verifResult = BaseDeDonneesNew.verifArgs(args, quiet);
+			MethodResult verifResult = BaseDeDonnees.verifArgs(args, quiet);
 			if (!verifResult.getCode().equals(BasicResultEnum.ALL_OK)) {
 				return verifResult;
 			}
@@ -153,7 +153,7 @@ public class Modelisationator {
 		} else if (executeDB) {
 			boolean options[] = new boolean[] { reset, fill };
 			if (delete) {
-				return BaseDeDonneesNew.executeCommand(args, null, new boolean[] { options[0], options[1], quiet });
+				return BaseDeDonnees.executeCommand(args, null, new boolean[] { options[0], options[1], quiet });
 			} else {
 				MainFenetre mainFrame = new MainFenetre(args, options);
 				mainFrame.setTitle("Modelisationator");
@@ -206,7 +206,7 @@ public class Modelisationator {
 			fill = true;
 		} else if (arg.equals("--delete")) {
 			delete = true;
-		} else if (!BaseDeDonneesNew.isExecutableArg(arg)) { // if not a direct command for the db, check for single letter options
+		} else if (!BaseDeDonnees.isExecutableArg(arg)) { // if not a direct command for the db, check for single letter options
 			for (int j = 2; j < arg.length(); j++) { // start comparing after "--"
 				char c = arg.charAt(j);
 				if (c == 'r') {

@@ -33,21 +33,23 @@ public class BDDUtilities {
 	private static String[] columnTypes;
 	private static String[] columnNames;
 	/**
-	 * Le chemin vers le fichiers .ply
+	 * Liste de fichiers .ply
 	 */
 	private static File[] files;
-
+	
 	/**
-	 * @param dbPath
+	 * Initialise la liste de fichier .ply dans files.
+	 * 
+	 * @param dbPath le chemin vers le dossier contenant les fichier .ply
 	 */
-	public BDDUtilities(Path dbPath) {
+	private static void initModelFolder(Path dbPath) {
 		files = dbPath.toFile().listFiles(new FilenameFilter() {
 			@Override
 			public boolean accept(File dir, String name) {
 				if (name.lastIndexOf('.') > 0) {
 					String str = name.substring(name.lastIndexOf("."));
 					// match path name extension
-					if (str.equals(".ply")) {
+					if (str.equals(".ply")) { // on accepte que le fichiers .ply dans ce dossier
 						return true;
 					}
 				}
@@ -55,14 +57,14 @@ public class BDDUtilities {
 			}
 		});
 	}
+	
 
 	/**
-	 * We don't need dbPath as parameter here because if we are using this method, we must have initialized a connection beforehand. Therefore we use the same
-	 * file.
+	 * Donne la connection qui a été intialisé auparavant.
 	 * 
-	 * @return
+	 * @return la connection qui a été initialisé précedemment.
 	 */
-	public static Connection getConnection() {
+	public static synchronized Connection getConnection() {
 		try {
 			if (connection == null || (connection != null && connection.isClosed())) {
 				initConnection(previousPath);
@@ -102,7 +104,7 @@ public class BDDUtilities {
 	public static String[] getColumnNames() {
 		return columnNames;
 	}
-	
+
 	/**
 	 * Initalise la connection vers un fichier .sqlite précis ou le fichier par défaut
 	 * 
@@ -184,7 +186,7 @@ public class BDDUtilities {
 	 */
 	public static void fillTable() {
 		boolean success = false;
-		BDDUtilities utilities = new BDDUtilities(Paths.get("data/"));
+		initModelFolder(Paths.get("data/"));
 		try {
 
 			String insertStatement = "";

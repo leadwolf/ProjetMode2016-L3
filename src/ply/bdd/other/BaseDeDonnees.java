@@ -8,7 +8,6 @@ import java.sql.SQLException;
 import javax.swing.JOptionPane;
 
 import main.vues.MainFenetre;
-import ply.bdd.legacy.FenetreTable;
 import ply.bdd.vues.BDDPanel;
 import result.BDDResult;
 import result.BDDResultEnum;
@@ -17,19 +16,21 @@ import result.BasicResultEnum;
 import result.MethodResult;
 
 /**
- * Cette classe est pareil que BaseDeDonnesOld mais donne une JPanel au lieu d'éxécuter directement les commandes/ Elle ne contient plus les méthodes de
- * manipulation de base, qui sont maintenant dans {@link BDDUtilities}
+ * Cette classe est pareil que BaseDeDonnesOld mais donne une JPanel au lieu d'éxécuter directement les commandes sauf pour --delete. Elle ne contient plus les
+ * méthodes d'initialisation dela base, qui sont maintenant dans {@link BDDUtilities}.
  * 
  * @author L3
  *
  */
-public class BaseDeDonneesNew {
+public class BaseDeDonnees {
+
+	private static String programName = "Modelisationator";
 
 	private static String[] columnNames = new String[] { "Nom", "Chemin", "Date", "Mot Clés", "Nombre de Points", "Nombre de Faces" };
 	private static String[] buttonColumns = new String[] { "Confirmer insertion/edition", "Reset", "Supprimer" };
 	private static String[] primaryButtons = new String[] { "Ajouter une ligne", "Reset" };
 	/**
-	 * Le nombre de mots clés qu'on peut chercher avec --find.
+	 * Le nombre de mots clés max qu'on peut chercher avec --find.
 	 */
 	private static int nbKeywordsLimit = 10;
 
@@ -44,6 +45,10 @@ public class BaseDeDonneesNew {
 	 */
 	public static BDDPanel getPanel(String[] args, Path dbPath, MainFenetre mainFenetre, boolean[] options) {
 		// VERIF ARGS
+		if (options == null) {
+			// Vous devez au moins spécifier l'option quiet, donc l'array doit exister
+			return null;
+		}
 		MethodResult testArgs = verifArgs(args, options[2]);
 		if (!testArgs.getCode().equals(BasicResultEnum.ALL_OK)) {
 			return null;
@@ -52,10 +57,10 @@ public class BaseDeDonneesNew {
 		initConnection(dbPath, options[0], options[1]);
 		MethodResult checkResult = BDDUtilities.checkTable();
 		if (checkResult.getCode().equals(BDDResultEnum.DB_NOT_EMPTY)) {
-			return parseArgsForPanel(args, mainFenetre);
+			return getSpecificPanel(args, mainFenetre, options[2]);
 		} else {
 			if (!options[2]) {
-				JOptionPane.showMessageDialog(null, "La base de données est vide.", "Modelisationator", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null, "La base de données est vide.", programName, JOptionPane.ERROR_MESSAGE);
 			}
 			return null;
 		}
@@ -71,6 +76,10 @@ public class BaseDeDonneesNew {
 	 */
 	public static MethodResult executeCommand(String[] args, Path dbPath, boolean[] options) {
 		// VERIF ARGS
+		if (options == null) {
+			// Vous devez au moins spécifier l'option quiet, donc l'array doit exister
+			return new BasicResult(BasicResultEnum.MISSING_OPTIONS);
+		}
 		MethodResult verifResult = verifArgs(args, options[2]);
 		if (!verifResult.getCode().equals(BasicResultEnum.ALL_OK)) {
 			return verifResult;
@@ -96,7 +105,7 @@ public class BaseDeDonneesNew {
 	 * @param reset
 	 * @param fill
 	 */
-	private static void initConnection(Path dbPath, boolean reset, boolean fill) {
+	private static synchronized void initConnection(Path dbPath, boolean reset, boolean fill) {
 		BDDUtilities.initConnection(dbPath);
 		if (reset) {
 			BDDUtilities.resetTable();
@@ -118,7 +127,19 @@ public class BaseDeDonneesNew {
 
 		if (args == null || (args != null && args.length <= 0)) {
 			if (!quiet) {
-				JOptionPane.showMessageDialog(null, "Vous n'avez pas donné de commande", "Modelisationator", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null, "Vous n'avez pas donné de commande", programName, JOptionPane.ERROR_MESSAGE);
+			}
+			return new BasicResult(BasicResultEnum.NO_ARGUMENTS);
+		}
+		boolean empty = true;
+		for (int i = 0; i < args.length; i++) {
+			if (!args[i].equals("")) {
+				empty = false;
+			}
+		}
+		if (empty) {
+			if (!quiet) {
+				JOptionPane.showMessageDialog(null, "Vous n'avez pas donné de commande", programName, JOptionPane.ERROR_MESSAGE);
 			}
 			return new BasicResult(BasicResultEnum.NO_ARGUMENTS);
 		}
@@ -150,7 +171,7 @@ public class BaseDeDonneesNew {
 				} else { // on a trouvé plus qu'une commande.
 					if (!quiet) {
 						JOptionPane.showMessageDialog(null, "Vous n'avez précisé plusieurs commandes incompatibles.\nVeuillez réessayer.",
-								"Modelisationator", JOptionPane.ERROR_MESSAGE);
+								programName, JOptionPane.ERROR_MESSAGE);
 					}
 					return new BasicResult(BasicResultEnum.CONFLICTING_ARGUMENTS);
 				}
@@ -158,15 +179,26 @@ public class BaseDeDonneesNew {
 				normalStringsFound++;
 			}
 		}
+		if (!foundExecutableArg) {
+			if (!quiet) {
+				JOptionPane.showMessageDialog(null, "Vous n'avez pas donné de commande", programName, JOptionPane.ERROR_MESSAGE);
+			}
+			return new BasicResult(BasicResultEnum.NO_COMMAND_GIVEN);
+		}
 		if (!findCommand && normalStringsFound != normalStringsNeeded) {
 			if (!quiet) {
-				JOptionPane.showMessageDialog(null, "Vous n'avez pas précisé de modèle", "Modelisationator", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null, "Vous n'avez pas précisé de modèle", programName, JOptionPane.ERROR_MESSAGE);
 			}
 			return new BDDResult(BDDResultEnum.NAME_NOT_SPECIFIED);
+		} else if (findCommand && normalStringsFound == 0) {
+			if (!quiet) {
+				JOptionPane.showMessageDialog(null, "Vous n'avez pas précisé de modèle", programName, JOptionPane.ERROR_MESSAGE);
+			}
+			return new BDDResult(BDDResultEnum.NO_KEYWORDS_SPECIFIED);
 		} else if (findCommand && normalStringsFound > normalStringsNeeded) {
 			if (!quiet) {
-				JOptionPane.showMessageDialog(null, "Vous avez mis plus de mots clés que la limite.\nLa limite est de " + nbKeywordsLimit, "Erreur",
-						JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null, "Vous avez mis plus de mots clés que la limite.\nLa limite est de " + nbKeywordsLimit,
+						programName, JOptionPane.ERROR_MESSAGE);
 			}
 			return new BDDResult(BDDResultEnum.TOO_MANY_KEYWORDS_SPECIFIED);
 		}
@@ -187,33 +219,33 @@ public class BaseDeDonneesNew {
 	 * @return si c'est une option (--rf) et non une commande à lancer (--all/--find/...).
 	 */
 	private static boolean isDBOption(String arg) {
-		return arg.equals("--r") || arg.equals("--r") || arg.equals("--rf");
+		return arg.equals("--r") || arg.equals("--r") || arg.equals("--rf") || arg.equals("--reset") || arg.equals("--fill");
 	}
 
 	/**
-	 * Récupère les données pertientes pour l'affichage en question.
+	 * Donne un {@link BDDPanel} correspondant à la commande dans args.
 	 * 
 	 * @param args la commande de l'utlisateur
 	 * @param mainFenetre
 	 * @param quiet true pour empecher affichage
 	 * @return si la requête était correcte et que l'interface, si besoin, a été éxecutée
 	 */
-	private static BDDPanel parseArgsForPanel(String[] args, MainFenetre mainFenetre) {
+	private static BDDPanel getSpecificPanel(String[] args, MainFenetre mainFenetre, boolean quiet) {
 		for (int i = 0; i < args.length; i++) {
 			if (args[i].equals("--name")) {
-				return showName(args, mainFenetre);
+				return showName(args, mainFenetre, quiet);
 			}
 			if (args[i].equals("--all")) {
 				return showAll(mainFenetre);
 			}
 			if (args[i].equals("--find")) {
-				return find(args, mainFenetre);
+				return find(args, mainFenetre, quiet);
 			}
 			if (args[i].equals("--add")) {
 				return add(mainFenetre);
 			}
 			if (args[i].equals("--edit")) {
-				return edit(args, mainFenetre);
+				return edit(args, mainFenetre, quiet);
 			}
 		}
 		return null;
@@ -242,8 +274,7 @@ public class BaseDeDonneesNew {
 				return nameInfo;
 			} else {
 				if (!quiet) {
-					JOptionPane.showMessageDialog(null, "Le modèle " + name + " n'est pas dans la base", "Modelisationator",
-							JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(null, "Le modèle " + name + " n'est pas dans la base", programName, JOptionPane.ERROR_MESSAGE);
 				}
 				BDDUtilities.closeConnection();
 				return null;
@@ -262,7 +293,7 @@ public class BaseDeDonneesNew {
 	 * @param mainFenetre
 	 * @return le {@link BDDPanel} contenant les données du modèle précisé ou null.
 	 */
-	private static BDDPanel showName(String[] args, MainFenetre mainFenetre) {
+	private static BDDPanel showName(String[] args, MainFenetre mainFenetre, boolean quiet) {
 		ResultSet rsCount;
 		ResultSet rs;
 		try {
@@ -279,13 +310,15 @@ public class BaseDeDonneesNew {
 				PreparedStatement statement2 = BDDUtilities.getConnection().prepareStatement("select * from PLY where NOM = ?");
 				statement2.setString(1, modelName);
 				rs = statement2.executeQuery();
-				BDDUtilities.closeConnection();
 				BDDPanel result = new BDDPanel(mainFenetre, rs, columnNames, buttonColumns, primaryButtons);
 				result.setEditableColumns(new int[] { 0, 1, 3 }, true);
+				BDDUtilities.closeConnection();
 				return result;
 			} else {
-				String message = "Le modèle " + modelName + " n'existe pas\nUtilisation: basededonneés --name <name>";
-				JOptionPane.showMessageDialog(null, message, "Modelisationator", JOptionPane.ERROR_MESSAGE);
+				if (!quiet) {
+					String message = "Le modèle " + modelName + " n'existe pas\nUtilisation: basededonneés --name <name>";
+					JOptionPane.showMessageDialog(null, message, programName, JOptionPane.ERROR_MESSAGE);
+				}
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -323,7 +356,7 @@ public class BaseDeDonneesNew {
 	 * @param mainFenetre
 	 * @return le {@link BDDPanel} contenant les modèles ayant les mots cles ou null.
 	 */
-	private static BDDPanel find(String[] args, MainFenetre mainFenetre) {
+	private static BDDPanel find(String[] args, MainFenetre mainFenetre, boolean quiet) {
 		ResultSet rsCount;
 		ResultSet rs;
 		int nbLikes = 0;
@@ -333,51 +366,48 @@ public class BaseDeDonneesNew {
 				nbLikes++;
 			}
 		}
-		if (nbLikes > 0) {
-			try {
-				String queryString = "select * from PLY where DESCRIPTION like";
-				String queryCount = "select * from PLY where DESCRIPTION like";
-				for (int j = 0; j < args.length; j++) {
-					if (!isDBOption(args[j])) {
-						nbTreated++;
-						if (nbTreated == 1) {
-							queryString += " ?";
-							queryCount += " ?";
+		try {
+			String queryString = "select * from PLY where DESCRIPTION like";
+			String queryCount = "select * from PLY where DESCRIPTION like";
+			for (int j = 0; j < args.length; j++) {
+				if (!isDBOption(args[j])) {
+					if (nbTreated == 0) {
+						queryString += " ?";
+						queryCount += " ?";
+					} else {
+						if (nbTreated < nbLikes) {
+							queryString += " union select * from PLY where DESCRIPTION LIKE ?";
 						} else {
-							if (nbTreated < nbLikes) {
-								queryString += " union select * from PLY where DESCRIPTION LIKE ?,";
-							} else {
-								queryString += " union select * from PLY where DESCRIPTION LIKE ?";
-							}
-							queryCount += " OR DESCRIPTION LIKE ?";
+							queryString += " union select * from PLY where DESCRIPTION LIKE ?";
 						}
+						queryCount += " OR DESCRIPTION LIKE ?";
 					}
+					nbTreated++;
 				}
-				PreparedStatement stCount = BDDUtilities.getConnection().prepareStatement(queryCount);
-				PreparedStatement statement2 = BDDUtilities.getConnection().prepareStatement(queryString);
-				for (int j = 0; j < args.length; j++) {
-					if (!args[j].startsWith("--")) {
-						stCount.setString(j, "%" + args[j] + "%");
-						statement2.setString(j, "%" + args[j] + "%");
-					}
-				}
-				rsCount = stCount.executeQuery();
-				if (rsCount.next()) {
-					rs = statement2.executeQuery();
-					BDDPanel result = new BDDPanel(mainFenetre, rs, columnNames, buttonColumns, primaryButtons);
-					result.setEditableColumns(new int[] { 0, 1, 3 }, true);
-					BDDUtilities.closeConnection();
-					return result;
-				} else {
-					String message = "Aucun modèle trouvé comportant ces mot clés";
-					JOptionPane.showMessageDialog(null, message, "Modelisationator", JOptionPane.ERROR_MESSAGE);
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
 			}
-		} else {
-			String message = "Pas de mots clés spécifiés\nUtilisation: basededonneés --find <mots clés>..";
-			JOptionPane.showMessageDialog(null, message, "Modelisationator", JOptionPane.ERROR_MESSAGE);
+			PreparedStatement stCount = BDDUtilities.getConnection().prepareStatement(queryCount);
+			PreparedStatement statement2 = BDDUtilities.getConnection().prepareStatement(queryString);
+			for (int j = 0; j < args.length; j++) {
+				if (!args[j].startsWith("--")) {
+					stCount.setString(j, "%" + args[j] + "%");
+					statement2.setString(j, "%" + args[j] + "%");
+				}
+			}
+			rsCount = stCount.executeQuery();
+			if (rsCount.next()) {
+				rs = statement2.executeQuery();
+				BDDPanel result = new BDDPanel(mainFenetre, rs, columnNames, buttonColumns, primaryButtons);
+				result.setEditableColumns(new int[] { 0, 1, 3 }, true);
+				BDDUtilities.closeConnection();
+				return result;
+			} else {
+				if (!quiet) {
+					String message = "Aucun modèle trouvé comportant ces mot clés";
+					JOptionPane.showMessageDialog(null, message, programName, JOptionPane.ERROR_MESSAGE);
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
 		return null;
 	}
@@ -402,7 +432,7 @@ public class BaseDeDonneesNew {
 	 * @param mainFenetre
 	 * @return si fenêtre bien crée. Pour savoir si requête sql éxecutée, voir {@link FenetreTable}
 	 */
-	private static BDDPanel edit(String[] args, MainFenetre mainFenetre) {
+	private static BDDPanel edit(String[] args, MainFenetre mainFenetre, boolean quiet) {
 		try {
 			String modelName = "";
 			for (int i = 0; i < args.length; i++) {
@@ -422,8 +452,10 @@ public class BaseDeDonneesNew {
 				BDDUtilities.closeConnection();
 				return result;
 			} else {
-				String message = "Le modèle " + modelName + " n'existe pas";
-				JOptionPane.showMessageDialog(null, message, "Modelisationator", JOptionPane.ERROR_MESSAGE);
+				if (!quiet) {
+					String message = "Le modèle " + modelName + " n'existe pas";
+					JOptionPane.showMessageDialog(null, message, programName, JOptionPane.ERROR_MESSAGE);
+				}
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -470,7 +502,7 @@ public class BaseDeDonneesNew {
 			} else {
 				if (!quiet) {
 					String message = "Le modèle " + modelName + " n'existe pas";
-					JOptionPane.showMessageDialog(null, message, "Modelisationator", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(null, message, programName, JOptionPane.ERROR_MESSAGE);
 				}
 				BDDUtilities.closeConnection();
 				return new BDDResult(BDDResultEnum.MODEL_NOT_FOUND);

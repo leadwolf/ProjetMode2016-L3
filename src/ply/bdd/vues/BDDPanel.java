@@ -18,6 +18,7 @@ import main.vues.MainFenetre;
 import ply.bdd.controlers.ButtonControler;
 import ply.bdd.modeles.Table;
 import ply.bdd.modeles.TableDataModel;
+import ply.bdd.other.BDDUtilities;
 
 /**
  * Cette classe donne un panel complet d'une JTable ainsi que les boutons nécessaires à l'opération de la base.
@@ -187,12 +188,13 @@ public class BDDPanel extends JPanel {
 
 	/**
 	 * Modifie la valeur de la table qui autorise à ajouter une nouvelle ligne.
+	 * 
 	 * @param b
 	 */
 	public void setCanAddRow(boolean b) {
 		table.setLastRowIsInDB(b);
 	}
-	
+
 	/**
 	 * Ajoute une ligne vide à la table.
 	 */

@@ -8,23 +8,22 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import main.vues.ModelPanel;
-import math.Calculations;
 import ply.plyModel.modeles.FigureModel;
 import ply.plyModel.vues.VisualisationPanel;
-import sun.net.www.content.text.plain;
 
 /**
- * Cette classe permet d'agir à travers les clics de boutons que ce soit la rotation, translation, centrage, etc...
- * sur le modèle {@link FigureModel}  grâce à ses méthodes. Celle-ci notifie alors ses observers
+ * Cette classe permet d'agir à travers les clics de boutons que ce soit la rotation, translation, centrage, etc... sur
+ * le modèle {@link FigureModel} grâce à ses méthodes. Celle-ci notifie alors ses observers
+ * 
  * @author Master
  *
  */
-public class CommandControler implements ActionListener{
-	
+public class CommandControler implements ActionListener {
+
 	private double translationSens = 10;
 	private ModelPanel fenetre;
 	private FigureModel figureModel;
-	
+
 	public CommandControler(ModelPanel fenetre) {
 		super();
 		this.fenetre = fenetre;
@@ -36,10 +35,10 @@ public class CommandControler implements ActionListener{
 		JPanel panel = new JPanel();
 		// TODO
 	}
-	
+
 	/**
-	 * Ici voir quel bouton a été actionnée et en agir en conséquence sur la figure de visPanel.
-	 * Elle est aussi appelé par timer.start()
+	 * Ici voir quel bouton a été actionnée et en agir en conséquence sur la figure de visPanel. Elle est aussi appelé
+	 * par timer.start()
 	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -49,7 +48,7 @@ public class CommandControler implements ActionListener{
 			checkbox = (JCheckBox) e.getSource();
 		}
 		VisualisationPanel panel = fenetre.getVisPanel();
-		
+
 		switch (e.getActionCommand()) {
 		case "controles":
 			showControls();

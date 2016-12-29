@@ -214,7 +214,7 @@ public class TableDataModel extends AbstractTableModel {
 	 * @param rowIndex
 	 * @return le ligne d'Object[] à l'index précisé
 	 */
-	public String[] getRow(int rowIndex) {
+	public String[] getRowData(int rowIndex) {
 		String[] row = new String[data.get(0).length];
 		for (int i=0;i<row.length;i++) {
 			row[i] = data.get(rowIndex)[i].toString();

@@ -14,8 +14,8 @@ import result.BDDResultEnum;
 import result.BasicResultEnum;
 
 /**
- * Teste la classe {@link BaseDeDonnees} avec EclEmma. Taux de couverture de branches à 83.7%. Impossible d'avoir plus car sinon il faut tester affichage des
- * JOptionPane, qui va contre l'objectif des tests automatisés.
+ * Teste la classe {@link BaseDeDonnees} avec EclEmma. Taux de couverture de branches à 83.7%. Impossible d'avoir plus
+ * car sinon il faut tester affichage des JOptionPane, qui va contre l'objectif des tests automatisés.
  * 
  * @author L3
  *
@@ -61,13 +61,15 @@ public class BaseDeDonnesTest {
 	@Test
 	public void test_empty_args_execute_command() {
 		String[] args = new String[] { "" };
-		assertEquals(BasicResultEnum.NO_ARGUMENTS, BaseDeDonnees.executeCommand(args, null, new boolean[] { true, true, true }).getCode());
+		assertEquals(BasicResultEnum.NO_ARGUMENTS,
+				BaseDeDonnees.executeCommand(args, null, new boolean[] { true, true, true }).getCode());
 	}
 
 	@Test
 	public void test_db_is_empty_execute_command() {
 		String[] args = new String[] { "--all" };
-		assertEquals(BDDResultEnum.EMPTY_DB, BaseDeDonnees.executeCommand(args, null, new boolean[] { true, false, true }).getCode());
+		assertEquals(BDDResultEnum.EMPTY_DB,
+				BaseDeDonnees.executeCommand(args, null, new boolean[] { true, false, true }).getCode());
 	}
 
 	/* VERIF ARGS */
@@ -75,7 +77,8 @@ public class BaseDeDonnesTest {
 	@Test
 	public void test_no_executable_arg() {
 		String[] args = new String[] { "--lol", "hello", "--rf" };
-		assertEquals(BasicResultEnum.NO_COMMAND_GIVEN, BaseDeDonnees.executeCommand(args, null, new boolean[] { true, true, true }).getCode());
+		assertEquals(BasicResultEnum.NO_COMMAND_GIVEN,
+				BaseDeDonnees.executeCommand(args, null, new boolean[] { true, true, true }).getCode());
 	}
 
 	@Test
@@ -88,25 +91,28 @@ public class BaseDeDonnesTest {
 	@Test
 	public void testname_edit_modelName_not_specified() {
 		String[] args = new String[] { "--edit", "--rf" };
-		assertEquals(BDDResultEnum.NAME_NOT_SPECIFIED, BaseDeDonnees.executeCommand(args, null, new boolean[] { true, true, true }).getCode());
+		assertEquals(BDDResultEnum.NAME_NOT_SPECIFIED,
+				BaseDeDonnees.executeCommand(args, null, new boolean[] { true, true, true }).getCode());
 	}
 
 	@Test
 	public void testname_name_modelName_not_specified() {
 		String[] args = new String[] { "--name", "--rf" };
-		assertEquals(BDDResultEnum.NAME_NOT_SPECIFIED, BaseDeDonnees.executeCommand(args, null, new boolean[] { true, true, true }).getCode());
+		assertEquals(BDDResultEnum.NAME_NOT_SPECIFIED,
+				BaseDeDonnees.executeCommand(args, null, new boolean[] { true, true, true }).getCode());
 	}
 
 	@Test
 	public void test_find_no_keywords() {
 		String[] args = new String[] { "--find", "--rf" };
-		assertEquals(BDDResultEnum.NO_KEYWORDS_SPECIFIED, BaseDeDonnees.executeCommand(args, null, new boolean[] { true, true, true }).getCode());
+		assertEquals(BDDResultEnum.NO_KEYWORDS_SPECIFIED,
+				BaseDeDonnees.executeCommand(args, null, new boolean[] { true, true, true }).getCode());
 	}
 
 	@Test
 	public void test_find_too_many_keywords() {
-		String[] args =
-				new String[] { "--find", "hello", "this", "find", "command", "array", "goes", "over", "then", "10", "length", "limit", "--rf" };
+		String[] args = new String[] { "--find", "hello", "this", "find", "command", "array", "goes", "over", "then",
+				"10", "length", "limit", "--rf" };
 		assertEquals(BDDResultEnum.TOO_MANY_KEYWORDS_SPECIFIED,
 				BaseDeDonnees.executeCommand(args, null, new boolean[] { true, true, true }).getCode());
 	}
@@ -116,13 +122,15 @@ public class BaseDeDonnesTest {
 	@Test
 	public void test_delete_success() {
 		String[] args = new String[] { "--delete", "weathervane", "--rf" };
-		assertEquals(BDDResultEnum.DELETE_SUCCESSFUL, BaseDeDonnees.executeCommand(args, null, new boolean[] { true, true, true }).getCode());
+		assertEquals(BDDResultEnum.DELETE_SUCCESSFUL,
+				BaseDeDonnees.executeCommand(args, null, new boolean[] { true, true, true }).getCode());
 	}
 
 	@Test
 	public void test_delete_model_not_found() {
 		String[] args = new String[] { "--delete", "FAKE_MODEL_NAME", "--rf" };
-		assertEquals(BDDResultEnum.MODEL_NOT_FOUND, BaseDeDonnees.executeCommand(args, null, new boolean[] { true, true, true }).getCode());
+		assertEquals(BDDResultEnum.MODEL_NOT_FOUND,
+				BaseDeDonnees.executeCommand(args, null, new boolean[] { true, true, true }).getCode());
 	}
 
 	/* EDIT */
@@ -136,7 +144,7 @@ public class BaseDeDonnesTest {
 	@Test
 	public void test_edit_model_exists() {
 		String[] args = new String[] { "--edit", "galleon", "--rf" };
-		assertNotEquals(null, BaseDeDonnees.getPanel(args, null,new boolean[] { true, true, true }));
+		assertNotEquals(null, BaseDeDonnees.getPanel(args, null, new boolean[] { true, true, true }));
 	}
 
 	/* ADD */
@@ -144,7 +152,7 @@ public class BaseDeDonnesTest {
 	@Test
 	public void test_add() {
 		String[] args = new String[] { "--add", "--rf" };
-		assertNotEquals(null, BaseDeDonnees.getPanel(args, null,new boolean[] { true, true, true }));
+		assertNotEquals(null, BaseDeDonnees.getPanel(args, null, new boolean[] { true, true, true }));
 	}
 
 	/* FIND */
@@ -171,9 +179,8 @@ public class BaseDeDonnesTest {
 
 	@Test
 	public void test_name_model_exists() {
-		System.out.println("start test");
 		String[] args = new String[] { "--name", "galleon", "--rf" };
-		assertNotEquals(null, BaseDeDonnees.getPanel(args, null,new boolean[] { true, true, true }));
+		assertNotEquals(null, BaseDeDonnees.getPanel(args, null, new boolean[] { true, true, true }));
 	}
 
 	/* MODEL INFO */

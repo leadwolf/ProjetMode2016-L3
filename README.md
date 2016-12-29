@@ -29,6 +29,7 @@ These are the most recent changes continuously updated until a reset :
     - Adding new line works properly, prevent insertion of `""` value for a model name.
     - ToolTip updates more often for `ButtonColumn` actions.
   - If launching a DB command, the syntax is verified right away in `Modelisationanator` instead of waiting to create `MainFenetre`.
+  - Comprehensive tests for `BDDPanel` and `Table` with verifications done in the DB.
   
 ### What's next
 Priority objectives :

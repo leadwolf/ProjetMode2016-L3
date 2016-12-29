@@ -6,7 +6,6 @@ import java.awt.event.MouseWheelEvent;
 
 import javax.swing.SwingUtilities;
 
-import math.Calculations;
 import ply.plyModel.modeles.FigureModel;
 import ply.plyModel.modeles.SensitivityModel;
 import ply.plyModel.vues.VisualisationPanel;
@@ -26,7 +25,7 @@ public class MouseControler extends MouseAdapter {
 	private FigureModel figureModel;
 
 	private SensitivityModel sens;
-	
+
 	/**
 	 * Valeur pour stocker le point X original de la souris lors d'un drag.
 	 */
@@ -49,7 +48,8 @@ public class MouseControler extends MouseAdapter {
 
 	/**
 	 * 
-	 * @param visualisationPanel On a besoin de sa Figure et après transformation du modèle, de rafraîchir le panel.
+	 * @param visualisationPanel
+	 *            On a besoin de sa Figure et après transformation du modèle, de rafraîchir le panel.
 	 */
 	public MouseControler(VisualisationPanel visualisationPanel, SensitivityModel sens) {
 		super();
@@ -161,9 +161,12 @@ public class MouseControler extends MouseAdapter {
 	/**
 	 * Translation d'après ces paramètres
 	 * 
-	 * @param nextMouseX le point X qui correspond au point actuel de la souris
-	 * @param nextMouseY le point Y qui correspond au point actuel de la souris
-	 * @param localReduceTransSens la sensitivité à appliquer
+	 * @param nextMouseX
+	 *            le point X qui correspond au point actuel de la souris
+	 * @param nextMouseY
+	 *            le point Y qui correspond au point actuel de la souris
+	 * @param localReduceTransSens
+	 *            la sensitivité à appliquer
 	 */
 	private void translate(int nextMouseX, int nextMouseY, double localReduceTransSens) {
 		double moveX = (originalMouseX - nextMouseX) * -1 * localReduceTransSens;
@@ -174,9 +177,12 @@ public class MouseControler extends MouseAdapter {
 	/**
 	 * Translation d'après ces paramètres
 	 * 
-	 * @param nextMouseX le point X qui correspond au point actuel de la souris
-	 * @param nextMouseY le point Y qui correspond au point actuel de la souris
-	 * @param localReduceRotationSens la sensitivité à appliquer
+	 * @param nextMouseX
+	 *            le point X qui correspond au point actuel de la souris
+	 * @param nextMouseY
+	 *            le point Y qui correspond au point actuel de la souris
+	 * @param localReduceRotationSens
+	 *            la sensitivité à appliquer
 	 */
 	private void rotate(int nextMouseX, int nextMouseY, double localReduceRotationSens) {
 		// si le mouvement Y est plus important que le mouvement X de la souris

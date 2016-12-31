@@ -30,6 +30,8 @@ These are the most recent changes continuously updated until a reset :
     - ToolTip updates more often for `ButtonColumn` actions.
   - If launching a DB command, the syntax is verified right away in `Modelisationanator` instead of waiting to create `MainFenetre`.
   - Comprehensive tests for `BDDPanel` and `Table` with verifications done in the DB.
+  - Test for `Modelisationanator`.
+  - Project coverage at 71.7% for branch coverage.
   
 ### What's next
 Priority objectives :

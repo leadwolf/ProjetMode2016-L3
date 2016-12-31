@@ -29,17 +29,19 @@ public class FigureModel extends Observable {
 	private Matrice ptsMat;
 	private double heightFig, widthFig, depthFig;
 
-	private boolean noPrint;
+	private boolean quiet;
 
 	/**
 	 * Cree une figure en lisant un fichier <b>file</b> avec {@link Lecture}
 	 * 
-	 * @param file le <b>Path</b> de l'objet .ply
-	 * @param noPrint false si on veut empêcher les System.out.println
+	 * @param file
+	 *            le <b>Path</b> de l'objet .ply
+	 * @param quiet
+	 *            true si on veut empêcher les System.out.println
 	 */
-	public FigureModel(Path file, boolean noPrint) {
+	public FigureModel(Path file, boolean quiet) {
 		this.path = file;
-		this.noPrint = noPrint;
+		this.quiet = quiet;
 
 		readFile();
 	}
@@ -48,7 +50,7 @@ public class FigureModel extends Observable {
 	 * Initialise tous les nombres de points, faces et listes de ceux cis à ceux lus avec {@link Lecture}
 	 */
 	private void readFile() {
-		lecture = new Lecture(path, noPrint);
+		lecture = new Lecture(path, quiet);
 		nbPoints = lecture.getNbPoints();
 		nbFaces = lecture.getNbFaces();
 		points = lecture.getPoints();
@@ -212,14 +214,16 @@ public class FigureModel extends Observable {
 		widthFig = right - left;
 		heightFig = bottom - top;
 		depthFig = front - back;
-		center.setCoords(left + (widthFig / 2), top + (heightFig / 2), back + (depthFig / 2)); // ajout pour donner vrai coord dessiné
+		center.setCoords(left + (widthFig / 2), top + (heightFig / 2), back + (depthFig / 2)); // ajout pour donner vrai
+																								// coord dessiné
 	}
 
 	/**
 	 * Centre la figure par rapport au centre de ce Panel
 	 * 
 	 * @param panel
-	 * @param refresh true if want to refresh model and notify its observers
+	 * @param refresh
+	 *            true if want to refresh model and notify its observers
 	 */
 	private void centrerFigure(VisualisationPanel panel) {
 		refreshFigDims(panel);
@@ -235,11 +239,13 @@ public class FigureModel extends Observable {
 	}
 
 	/**
-	 * Applique une homothétie pour que la plus grande dimensions (largeur ou longueur) de la figure prenne <b>maxSize</b> de l'écran
+	 * Applique une homothétie pour que la plus grande dimensions (largeur ou longueur) de la figure prenne
+	 * <b>maxSize</b> de l'écran
 	 * 
 	 * @param panel
 	 * @param maxSize
-	 * @param refresh true if want to refresh model and notify its observers
+	 * @param refresh
+	 *            true if want to refresh model and notify its observers
 	 */
 	private void fitFigureToWindow(VisualisationPanel panel, double maxSize) {
 		// scale by height
@@ -313,8 +319,10 @@ public class FigureModel extends Observable {
 	/**
 	 * Met la figure à la bonne échelle pour le panel concerné et la centre.
 	 * 
-	 * @param visPanel le panel concerné
-	 * @param zoom le niveau de zoom qu'on veut au départ
+	 * @param visPanel
+	 *            le panel concerné
+	 * @param zoom
+	 *            le niveau de zoom qu'on veut au départ
 	 */
 	public void prepareForWindow(VisualisationPanel visPanel, double zoom) {
 		if (zoom != 1.0) {

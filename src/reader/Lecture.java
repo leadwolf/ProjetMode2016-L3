@@ -19,8 +19,8 @@ import result.ReaderResult;
 import result.ReaderResultEnum;
 
 /**
- * Cette classe donne accès à la liste des Points et de Faces de l'objet .ply dont on veut modéliser à  travers les méthodes {@link #getPoints()} et
- * {@link #getFaces()}
+ * Cette classe donne accès à la liste des Points et de Faces de l'objet .ply dont on veut modéliser à  travers les
+ * méthodes {@link #getPoints()} et {@link #getFaces()}
  * 
  * @author Groupe L3
  *
@@ -54,14 +54,15 @@ public class Lecture {
 	/**
 	 * Si on veut empêcher les System.out.println lors d'erreus
 	 */
-	private boolean noPrint;
+	private boolean quiet;
 	/**
 	 * Le résultat d'éxécution de Lecture();
 	 */
 	private MethodResult result;
 
 	/**
-	 * Retourne la <b>List&lt;Point&gt;</b> de l'objet .ply. Si celle n'est pas encore faite, on éxécute {@link #stockerPoints()}
+	 * Retourne la <b>List&lt;Point&gt;</b> de l'objet .ply. Si celle n'est pas encore faite, on éxécute
+	 * {@link #stockerPoints()}
 	 * 
 	 * @return la liste des points
 	 */
@@ -70,7 +71,8 @@ public class Lecture {
 	}
 
 	/**
-	 * Retourne la <b>List&lt;Face&gt;</b> de l'objet .ply. Si celle n'est pas encore faite, on éxécute {@link #stockerFaces()}
+	 * Retourne la <b>List&lt;Face&gt;</b> de l'objet .ply. Si celle n'est pas encore faite, on éxécute
+	 * {@link #stockerFaces()}
 	 * 
 	 * @return la liste des Faces
 	 */
@@ -93,12 +95,14 @@ public class Lecture {
 	/**
 	 * Initialise variables
 	 * 
-	 * @param file le <b>Path</b> de l'objet .ply
-	 * @param doPrint false si on veut empêcher les System.out.println
+	 * @param file
+	 *            le <b>Path</b> de l'objet .ply
+	 * @param quiet
+	 *            false si on veut empêcher les System.out.println
 	 */
-	public Lecture(Path file, boolean doPrint) {
+	public Lecture(Path file, boolean quiet) {
 		this.file = file;
-		this.noPrint = doPrint;
+		this.quiet = quiet;
 		result = null;
 		nbPoints = -1;
 		nbFaces = -1;
@@ -124,8 +128,9 @@ public class Lecture {
 					if (line.equals("ply")) {
 						return true;
 					} else {
-						if (!noPrint) {
-							System.out.println("Erreur dans fichier " + file.getFileName() + " : Fichier ne commence pas par \"ply\"");
+						if (!quiet) {
+							System.out.println("Erreur dans fichier " + file.getFileName()
+									+ " : Fichier ne commence pas par \"ply\"");
 						}
 						if (result == null) {
 							result = new ReaderResult(ReaderResultEnum.PLY_NOT_FOUND);
@@ -136,8 +141,9 @@ public class Lecture {
 					e.printStackTrace();
 				}
 			} else {
-				if (!noPrint) {
-					System.out.println("Erreur dans fichier " + file.getFileName() + " : Fichier n'a pas l'extension .ply");
+				if (!quiet) {
+					System.out.println(
+							"Erreur dans fichier " + file.getFileName() + " : Fichier n'a pas l'extension .ply");
 				}
 				if (result == null) {
 					result = new ReaderResult(ReaderResultEnum.BAD_EXTENSION);
@@ -145,7 +151,7 @@ public class Lecture {
 				return false;
 			}
 		}
-		if (!noPrint) {
+		if (!quiet) {
 			System.out.println("Fichier " + file.getFileName() + " inexistant");
 		}
 		result = new ReaderResult(ReaderResultEnum.FILE_NONEXISTING);
@@ -186,8 +192,9 @@ public class Lecture {
 				line = reader.readLine();
 				if (line == null) {
 					// Fin du fichier alors que cherchait nombre de points
-					if (!noPrint) {
-						System.out.println("Erreur dans fichier " + file.getFileName() + " : Nombre de points non indiqué");
+					if (!quiet) {
+						System.out.println(
+								"Erreur dans fichier " + file.getFileName() + " : Nombre de points non indiqué");
 					}
 					if (result == null) {
 						result = new ReaderResult(ReaderResultEnum.MISSING_ELEMENT_VERTEX);
@@ -203,8 +210,9 @@ public class Lecture {
 				line = reader.readLine();
 				if (line == null) {
 					// Fin du fichier alors que cherchait nombre de faces
-					if (!noPrint && nbPoints != -1) {
-						System.out.println("Erreur dans fichier " + file.getFileName() + " : Nombre de faces non indiqué");
+					if (!quiet && nbPoints != -1) {
+						System.out.println(
+								"Erreur dans fichier " + file.getFileName() + " : Nombre de faces non indiqué");
 					}
 					if (result == null) {
 						result = new ReaderResult(ReaderResultEnum.MISSING_ELEMENT_FACE);
@@ -234,18 +242,21 @@ public class Lecture {
 					String[] strArray = line.split(" ");
 					if (strArray.length != 3 && result == null) {
 						if (strArray.length < 3) {
-							if (!noPrint) {
-								System.out.println("line = " + line);
-								System.out.println("Erreur dans fichier " + file.getFileName() + " : pas assez de coordonnées dans un Point");
+							if (!quiet) {
+								// System.out.println("line = " + line);
+								System.out.println("Erreur dans fichier " + file.getFileName()
+										+ " : pas assez de coordonnées dans un Point");
 								System.out.println("Peut être causée par un Point(s) manquant");
 							}
 							if (result == null) {
 								result = new ReaderResult(ReaderResultEnum.MISSING_COORD);
 							}
 						} else if (strArray.length > 3) {
-							if (!noPrint) {
-								System.out.println("Erreur dans fichier " + file.getFileName() + " : trop de coordonnées dans un Point");
-								System.out.println("Peut être causée par un Point(s) manquant ou nombre de Points incorrects");
+							if (!quiet) {
+								System.out.println("Erreur dans fichier " + file.getFileName()
+										+ " : trop de coordonnées dans un Point");
+								System.out.println(
+										"Peut être causée par un Point(s) manquant ou nombre de Points incorrects");
 							}
 							if (result == null) {
 								result = new ReaderResult(ReaderResultEnum.TOO_MANY_COORDS);
@@ -270,8 +281,8 @@ public class Lecture {
 	}
 
 	/**
-	 * Lit le fichier .ply et sauvegarde la liste des faces dans une dans une <b>List&lt;Face&gt;</b> Si la liste des points n'est pas encore faite, elle éxécute
-	 * aussi {@link #stockerPoints()}
+	 * Lit le fichier .ply et sauvegarde la liste des faces dans une dans une <b>List&lt;Face&gt;</b> Si la liste des
+	 * points n'est pas encore faite, elle éxécute aussi {@link #stockerPoints()}
 	 */
 	private void stockerFaces() {
 		int nbLignesLus = 0;
@@ -295,7 +306,7 @@ public class Lecture {
 			} while (nbLignesLus < nbFaces && line != null);
 			if (nbLignesLus != nbFaces) {
 				// Fin du fichier alors que n'a pas lu tous les points spécifiés dans entête
-				if (!noPrint && result == null) {
+				if (!quiet && result == null) {
 					System.out.println("Erreur dans fichier " + file.getFileName() + " : Face(s) non trouvé(s)");
 					System.out.println("Peut être causée par une ligne supprimée ou nombre de faces incorrects");
 				}
@@ -305,8 +316,9 @@ public class Lecture {
 			}
 			if (line != null && !line.startsWith("{")) {
 				// Fichier comporte plus de lignes qu'attendu
-				if (!noPrint && result == null) {
-					System.out.println("Erreur dans fichier " + file.getFileName() + " : Entête ne correspond pas à la description");
+				if (!quiet && result == null) {
+					System.out.println("Erreur dans fichier " + file.getFileName()
+							+ " : Entête ne correspond pas à la description");
 					System.out.println("Trop de lignes par rapport au nombre de Faces");
 				}
 				if (result == null) {
@@ -321,16 +333,19 @@ public class Lecture {
 	/**
 	 * Sauvegarde la <b>List&lt;Point&gt;</b> pour chaque Face de <b>List&lt;Face&gt;</b>
 	 * 
-	 * @param line la ligne contenant la liste de Points composant la Face courante
-	 * @param faces la liste de faces
-	 * @param points la liste de points
+	 * @param line
+	 *            la ligne contenant la liste de Points composant la Face courante
+	 * @param faces
+	 *            la liste de faces
+	 * @param points
+	 *            la liste de points
 	 */
 	private void getPointsDeFace(String line, List<Face> faces, List<Point> points) {
 		int expectedPoints = getPremierNombre(line);
 		String[] strArray = line.split(" ");
 		if (strArray.length - 1 != expectedPoints) {
 			// Pas assez de point dans cette face ou lu point alors qu'attend face
-			if (!noPrint && result == null) {
+			if (!quiet && result == null) {
 				System.out.println("line = " + line);
 				System.out.println("Erreur dans fichier " + file.getFileName() + " : Face incomplet ou a trouvé point");
 			}
@@ -344,8 +359,9 @@ public class Lecture {
 			Integer element = Integer.parseInt(strArray[i]);
 			if (element < 0 || element > points.size()) {
 				// Face comporte point n=" + element + " alors qu'il est inexistant
-				if (!noPrint && result == null) {
-					System.out.println("Erreur dans fichier " + file.getFileName() + " : Face fait référence à point \"" + element + "\" inexistant");
+				if (!quiet && result == null) {
+					System.out.println("Erreur dans fichier " + file.getFileName() + " : Face fait référence à point \""
+							+ element + "\" inexistant");
 				}
 				if (result == null) {
 					result = new ReaderResult(ReaderResultEnum.POINT_NOT_FOUND);
@@ -359,15 +375,18 @@ public class Lecture {
 	/**
 	 * Remplis les coordonnes pour chaque Point dans <b>List&lt;Point&gt;</b>
 	 * 
-	 * @param line le string a extraire les coordonnes
-	 * @param points la liste des points dont on ajoute les coordonnees
+	 * @param line
+	 *            le string a extraire les coordonnes
+	 * @param points
+	 *            la liste des points dont on ajoute les coordonnees
 	 */
 	private void getDoubles(String line, List<Point> points) {
 		String[] strArray = line.split(" ");
 		if (strArray.length > 3) {
 			// Lu face alors qu'attend point
-			if (!noPrint && result == null) {
-				System.out.println("Erreur dans fichier " + file.getFileName() + " : Point comporte plus que 3 coordonnées");
+			if (!quiet && result == null) {
+				System.out.println(
+						"Erreur dans fichier " + file.getFileName() + " : Point comporte plus que 3 coordonnées");
 				System.out.println("Peut être causée si attendait Point mais trouvé Face");
 			}
 			if (result == null) {
@@ -383,8 +402,9 @@ public class Lecture {
 		}
 		if (!tmpPoint.complet()) {
 			// Point n=" + (points.size() - 1) + " pas complet
-			if (!noPrint && result == null) {
-				System.out.println("Erreur dans fichier " + file.getFileName() + " : Point ne comporte pas 3 coordonnées");
+			if (!quiet && result == null) {
+				System.out.println(
+						"Erreur dans fichier " + file.getFileName() + " : Point ne comporte pas 3 coordonnées");
 			}
 			if (result == null) {
 				result = new ReaderResult(ReaderResultEnum.MISSING_COORD);
@@ -395,7 +415,8 @@ public class Lecture {
 	/**
 	 * Donne un nombre a la fin d'un string
 	 * 
-	 * @param line la ligne a extraire le numero
+	 * @param line
+	 *            la ligne a extraire le numero
 	 * @return le numero
 	 */
 	private int getDernierNombre(String line) {

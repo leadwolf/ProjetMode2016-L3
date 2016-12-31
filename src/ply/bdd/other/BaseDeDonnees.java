@@ -7,7 +7,6 @@ import java.sql.SQLException;
 
 import javax.swing.JOptionPane;
 
-import main.vues.MainFenetre;
 import ply.bdd.vues.BDDPanel;
 import result.BDDResult;
 import result.BDDResultEnum;
@@ -16,8 +15,9 @@ import result.BasicResultEnum;
 import result.MethodResult;
 
 /**
- * Cette classe est pareil que BaseDeDonnesOld mais donne une JPanel au lieu d'éxécuter directement les commandes sauf pour --delete. Elle ne contient plus les
- * méthodes d'initialisation dela base, qui sont maintenant dans {@link BDDUtilities}.
+ * Cette classe est pareil que BaseDeDonnesOld mais donne une JPanel au lieu d'éxécuter directement les commandes sauf
+ * pour --delete. Elle ne contient plus les méthodes d'initialisation dela base, qui sont maintenant dans
+ * {@link BDDUtilities}.
  * 
  * @author L3
  *
@@ -26,7 +26,8 @@ public class BaseDeDonnees {
 
 	private static String programName = "Modelisationator";
 
-	private static String[] columnNames = new String[] { "Nom", "Chemin", "Date", "Mot Clés", "Nombre de Points", "Nombre de Faces" };
+	private static String[] columnNames = new String[] { "Nom", "Chemin", "Date", "Mot Clés", "Nombre de Points",
+			"Nombre de Faces" };
 	private static String[] buttonColumns = new String[] { "Confirmer insertion/edition", "Reset", "Supprimer" };
 	private static String[] primaryButtons = new String[] { "Ajouter une ligne", "Reset" };
 	/**
@@ -38,8 +39,10 @@ public class BaseDeDonnees {
 	 * Crée un {@link BDDPanel} d'après la commande dans args.
 	 * 
 	 * @param args
-	 * @param dbPath path to the db.sqlite, leave null for default data/test.sqlite
-	 * @param options [0] = reset, [1] = fill, [2] = quiet true pour empecher affichage
+	 * @param dbPath
+	 *            path to the db.sqlite, leave null for default data/test.sqlite
+	 * @param options
+	 *            [0] = reset, [1] = fill, [2] = quiet true pour empecher affichage
 	 * @return le panel correspondant à la commande.
 	 */
 	public static BDDPanel getPanel(String[] args, Path dbPath, boolean[] options) {
@@ -59,18 +62,22 @@ public class BaseDeDonnees {
 			return getSpecificPanel(args, options[2]);
 		} else {
 			if (!options[2]) {
-				JOptionPane.showMessageDialog(null, "La base de données est vide.", programName, JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null, "La base de données est vide.", programName,
+						JOptionPane.ERROR_MESSAGE);
 			}
 			return null;
 		}
 	}
 
 	/**
-	 * Execute une commande bdd sans interface. Vérifie que la base comporte des modèles et que le modèle à supprimer existe.
+	 * Execute une commande bdd sans interface. Vérifie que la base comporte des modèles et que le modèle à supprimer
+	 * existe.
 	 * 
 	 * @param args
-	 * @param dbPath path to the db.sqlite, leave null for default data/test.sqlite
-	 * @param options [0] = reset, [1] = fill, [2] = quiet true pour empecher affichage
+	 * @param dbPath
+	 *            path to the db.sqlite, leave null for default data/test.sqlite
+	 * @param options
+	 *            [0] = reset, [1] = fill, [2] = quiet true pour empecher affichage
 	 * @return le résultat de l'éxécution de la commande ou l'erreur empechant celle ci.
 	 */
 	public static MethodResult executeCommand(String[] args, Path dbPath, boolean[] options) {
@@ -90,8 +97,8 @@ public class BaseDeDonnees {
 			return delete(args, options[2]);
 		} else {
 			if (!options[2]) {
-				JOptionPane.showMessageDialog(null, "La base de données est vide. Impossible de supprimmer un modèle.", "Erreur",
-						JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null, "La base de données est vide. Impossible de supprimmer un modèle.",
+						"Erreur", JOptionPane.ERROR_MESSAGE);
 			}
 			return checkResult;
 		}
@@ -118,15 +125,18 @@ public class BaseDeDonnees {
 	/**
 	 * Verifie s'il y a une seule commande et qu'elle est bien écrite. Affiche l'erreur si !quiet.
 	 * 
-	 * @param args les arguments passés au programme.
-	 * @param quiet true pour empêcher affichge.
+	 * @param args
+	 *            les arguments passés au programme.
+	 * @param quiet
+	 *            true pour empêcher affichge.
 	 * @return un {@link MethodResult} décrivant la validité des arguments.
 	 */
 	public static MethodResult verifArgs(String[] args, boolean quiet) {
 
 		if (args == null || (args != null && args.length <= 0)) {
 			if (!quiet) {
-				JOptionPane.showMessageDialog(null, "Vous n'avez pas donné de commande", programName, JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null, "Vous n'avez pas donné de commande", programName,
+						JOptionPane.ERROR_MESSAGE);
 			}
 			return new BasicResult(BasicResultEnum.NO_ARGUMENTS);
 		}
@@ -138,20 +148,23 @@ public class BaseDeDonnees {
 		}
 		if (empty) {
 			if (!quiet) {
-				JOptionPane.showMessageDialog(null, "Vous n'avez pas donné de commande", programName, JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null, "Vous n'avez pas donné de commande", programName,
+						JOptionPane.ERROR_MESSAGE);
 			}
 			return new BasicResult(BasicResultEnum.NO_ARGUMENTS);
 		}
 
 		boolean foundExecutableArg = false; // switch to verify we only have one command.
 		boolean findCommand = false; // si la commande est --find
-		int normalStringsFound = 0; // the counter of how many normal strings have been found (Strings in args that are not a command and not an option).
+		int normalStringsFound = 0; // the counter of how many normal strings have been found (Strings in args that are
+									// not a command and not an option).
 		int normalStringsNeeded = 0; // the counter of how many normal strings should be found
 
 		for (int i = 0; i < args.length; i++) {
 			boolean currrentIsExecutable = isExecutableArg(args[i]);
 			if (currrentIsExecutable) {
-				if (!foundExecutableArg) { // si on a n'a pas encore trouvé une commande, vérifier cette commande à l'emplacement [i].
+				if (!foundExecutableArg) { // si on a n'a pas encore trouvé une commande, vérifier cette commande à
+											// l'emplacement [i].
 					foundExecutableArg = true;
 					if (args[i].equals("--name")) {
 						normalStringsNeeded = 1;
@@ -161,6 +174,7 @@ public class BaseDeDonnees {
 						findCommand = true;
 						normalStringsNeeded = nbKeywordsLimit; // limit find to 10;
 					} else if (args[i].equals("--add")) {
+						normalStringsNeeded = 0;
 						// no need to verify since the enclosing for verifies multiple commands.
 					} else if (args[i].equals("--delete")) {
 						normalStringsNeeded = 1;
@@ -169,7 +183,8 @@ public class BaseDeDonnees {
 					}
 				} else { // on a trouvé plus qu'une commande.
 					if (!quiet) {
-						JOptionPane.showMessageDialog(null, "Vous n'avez précisé plusieurs commandes incompatibles.\nVeuillez réessayer.",
+						JOptionPane.showMessageDialog(null,
+								"Vous n'avez précisé plusieurs commandes incompatibles.\nVeuillez réessayer.",
 								programName, JOptionPane.ERROR_MESSAGE);
 					}
 					return new BasicResult(BasicResultEnum.CONFLICTING_ARGUMENTS);
@@ -180,23 +195,27 @@ public class BaseDeDonnees {
 		}
 		if (!foundExecutableArg) {
 			if (!quiet) {
-				JOptionPane.showMessageDialog(null, "Vous n'avez pas donné de commande", programName, JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null, "Vous n'avez pas donné de commande", programName,
+						JOptionPane.ERROR_MESSAGE);
 			}
 			return new BasicResult(BasicResultEnum.NO_COMMAND_GIVEN);
 		}
 		if (!findCommand && normalStringsFound != normalStringsNeeded) {
 			if (!quiet) {
-				JOptionPane.showMessageDialog(null, "Vous n'avez pas précisé de modèle", programName, JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null, "Vous n'avez pas précisé de modèle", programName,
+						JOptionPane.ERROR_MESSAGE);
 			}
 			return new BDDResult(BDDResultEnum.NAME_NOT_SPECIFIED);
 		} else if (findCommand && normalStringsFound == 0) {
 			if (!quiet) {
-				JOptionPane.showMessageDialog(null, "Vous n'avez pas précisé de modèle", programName, JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null, "Vous n'avez pas précisé de modèle", programName,
+						JOptionPane.ERROR_MESSAGE);
 			}
 			return new BDDResult(BDDResultEnum.NO_KEYWORDS_SPECIFIED);
 		} else if (findCommand && normalStringsFound > normalStringsNeeded) {
 			if (!quiet) {
-				JOptionPane.showMessageDialog(null, "Vous avez mis plus de mots clés que la limite.\nLa limite est de " + nbKeywordsLimit,
+				JOptionPane.showMessageDialog(null,
+						"Vous avez mis plus de mots clés que la limite.\nLa limite est de " + nbKeywordsLimit,
 						programName, JOptionPane.ERROR_MESSAGE);
 			}
 			return new BDDResult(BDDResultEnum.TOO_MANY_KEYWORDS_SPECIFIED);
@@ -205,12 +224,13 @@ public class BaseDeDonnees {
 	}
 
 	/**
-	 * @param arg l'agument à vérifier.
+	 * @param arg
+	 *            l'agument à vérifier.
 	 * @return si l'arg correspond à une option d'<b>éxécution</b> de bdd.
 	 */
 	public static boolean isExecutableArg(String arg) {
-		return arg.equals("--name") || arg.equals("--all") || arg.equals("--find") || arg.equals("--add") || arg.equals("--delete")
-				|| arg.equals("--edit");
+		return arg.equals("--name") || arg.equals("--all") || arg.equals("--find") || arg.equals("--add")
+				|| arg.equals("--delete") || arg.equals("--edit");
 	}
 
 	/**
@@ -218,15 +238,18 @@ public class BaseDeDonnees {
 	 * @return si c'est une option (--rf) et non une commande à lancer (--all/--find/...).
 	 */
 	private static boolean isDBOption(String arg) {
-		return arg.equals("--r") || arg.equals("--r") || arg.equals("--rf") || arg.equals("--reset") || arg.equals("--fill");
+		return arg.equals("--r") || arg.equals("--r") || arg.equals("--f") || arg.equals("--rf") || arg.equals("--fr")
+				|| arg.equals("--reset") || arg.equals("--fill");
 	}
 
 	/**
 	 * Donne un {@link BDDPanel} correspondant à la commande dans args.
 	 * 
-	 * @param args la commande de l'utlisateur
+	 * @param args
+	 *            la commande de l'utlisateur
 	 * @param mainFenetre
-	 * @param quiet true pour empecher affichage
+	 * @param quiet
+	 *            true pour empecher affichage
 	 * @return si la requête était correcte et que l'interface, si besoin, a été éxecutée
 	 */
 	private static BDDPanel getSpecificPanel(String[] args, boolean quiet) {
@@ -253,8 +276,10 @@ public class BaseDeDonnees {
 	/**
 	 * Donne toutes les colonnes de la base de données
 	 * 
-	 * @param name the name of the model
-	 * @param quiet true pour empecher affichage.
+	 * @param name
+	 *            the name of the model
+	 * @param quiet
+	 *            true pour empecher affichage.
 	 * @return un String[] contentant toute la ligne de la base ou null s'il y a eu erreur.
 	 */
 	public static String[] getNameInfo(String name, boolean quiet) {
@@ -273,7 +298,8 @@ public class BaseDeDonnees {
 				return nameInfo;
 			} else {
 				if (!quiet) {
-					JOptionPane.showMessageDialog(null, "Le modèle " + name + " n'est pas dans la base", programName, JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(null, "Le modèle " + name + " n'est pas dans la base", programName,
+							JOptionPane.ERROR_MESSAGE);
 				}
 				BDDUtilities.closeConnection();
 				return null;
@@ -287,8 +313,11 @@ public class BaseDeDonnees {
 	/**
 	 * Execute la requête donnant les informations sur le modèle et crée le panel concerné.
 	 * 
-	 * @param i la place de "--name" dans les arguments. Servira à parcourir la liste si on aura besoin d'afficher de multiples modèles
-	 * @param args le modèle à afficher
+	 * @param i
+	 *            la place de "--name" dans les arguments. Servira à parcourir la liste si on aura besoin d'afficher de
+	 *            multiples modèles
+	 * @param args
+	 *            le modèle à afficher
 	 * @param mainFenetre
 	 * @return le {@link BDDPanel} contenant les données du modèle précisé ou null.
 	 */
@@ -302,11 +331,13 @@ public class BaseDeDonnees {
 					modelName = args[i];
 				}
 			}
-			PreparedStatement statement = BDDUtilities.getConnection().prepareStatement("select * from PLY where NOM = ?");
+			PreparedStatement statement = BDDUtilities.getConnection()
+					.prepareStatement("select * from PLY where NOM = ?");
 			statement.setString(1, modelName);
 			rsCount = statement.executeQuery();
 			if (rsCount.next()) {
-				PreparedStatement statement2 = BDDUtilities.getConnection().prepareStatement("select * from PLY where NOM = ?");
+				PreparedStatement statement2 = BDDUtilities.getConnection()
+						.prepareStatement("select * from PLY where NOM = ?");
 				statement2.setString(1, modelName);
 				rs = statement2.executeQuery();
 				BDDPanel result = new BDDPanel(rs, columnNames, buttonColumns, primaryButtons);
@@ -315,7 +346,8 @@ public class BaseDeDonnees {
 				return result;
 			} else {
 				if (!quiet) {
-					String message = "Le modèle " + modelName + " n'existe pas\nUtilisation: basededonneés --name <name>";
+					String message = "Le modèle " + modelName
+							+ " n'existe pas\nUtilisation: basededonneés --name <name>";
 					JOptionPane.showMessageDialog(null, message, programName, JOptionPane.ERROR_MESSAGE);
 				}
 			}
@@ -351,7 +383,8 @@ public class BaseDeDonnees {
 	/**
 	 * Vérifie les arguments et puis crée la fenetre listant les informations des modèles correspondants aux keywords
 	 * 
-	 * @param args les mots clés à rechercher
+	 * @param args
+	 *            les mots clés à rechercher
 	 * @param mainFenetre
 	 * @return le {@link BDDPanel} contenant les modèles ayant les mots cles ou null.
 	 */
@@ -427,7 +460,8 @@ public class BaseDeDonnees {
 	/**
 	 * Vérifie les argumuments et puis crée la fenetre de modification du modèle précisé s'ils sont valides
 	 * 
-	 * @param args le modèle à éditer
+	 * @param args
+	 *            le modèle à éditer
 	 * @param mainFenetre
 	 * @return si fenêtre bien crée. Pour savoir si requête sql éxecutée, voir {@link FenetreTable}
 	 */
@@ -439,7 +473,8 @@ public class BaseDeDonnees {
 					modelName = args[i];
 				}
 			}
-			PreparedStatement stCount = BDDUtilities.getConnection().prepareStatement("select * from PLY where NOM = ?");
+			PreparedStatement stCount = BDDUtilities.getConnection()
+					.prepareStatement("select * from PLY where NOM = ?");
 			stCount.setString(1, modelName);
 			ResultSet rsCount = stCount.executeQuery();
 			if (rsCount.next()) {
@@ -465,8 +500,10 @@ public class BaseDeDonnees {
 	/**
 	 * Vérifie que le modèle existe dans la base et la supprime.
 	 * 
-	 * @param args le modèle à supprimer
-	 * @param quiet afficher ou non les fenêtres
+	 * @param args
+	 *            le modèle à supprimer
+	 * @param quiet
+	 *            afficher ou non les fenêtres
 	 * @return un {@link MethodResult} décrivant le résultat de la requête ou si le modèle existait pas.
 	 */
 	private static MethodResult delete(String[] args, boolean quiet) {
@@ -477,11 +514,13 @@ public class BaseDeDonnees {
 					modelName = args[i];
 				}
 			}
-			PreparedStatement stExists = BDDUtilities.getConnection().prepareStatement("select * from PLY where NOM = ?");
+			PreparedStatement stExists = BDDUtilities.getConnection()
+					.prepareStatement("select * from PLY where NOM = ?");
 			stExists.setString(1, modelName);
 			ResultSet rs = stExists.executeQuery();
 			if (rs.next()) {
-				PreparedStatement stDelete = BDDUtilities.getConnection().prepareStatement("delete from PLY where NOM = ?");
+				PreparedStatement stDelete = BDDUtilities.getConnection()
+						.prepareStatement("delete from PLY where NOM = ?");
 				stDelete.setString(1, modelName);
 				int result = stDelete.executeUpdate(); // result = nombre de lignes affectés par le delete
 				BDDUtilities.closeConnection();

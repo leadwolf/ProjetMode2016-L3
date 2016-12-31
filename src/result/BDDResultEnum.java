@@ -2,6 +2,7 @@ package result;
 
 /**
  * Codes d'erreurs que peut retourner {@link BaseDeDonneesOld}
+ * 
  * @author L3
  *
  */
@@ -24,6 +25,14 @@ public enum BDDResultEnum {
 	 */
 	EMPTY_DB,
 	/**
+	 * On a souhaité remplir la base sans qu'elle soit vide au départ.
+	 */
+	INCORRECT_FILL,
+	/**
+	 * On a souhaité remplir la base sans qu'elle soit vide au départ.
+	 */
+	INCORRECT_RESET,
+	/**
 	 * La table PLY n'existe pas.
 	 */
 	TABLE_NOT_FOUND,
@@ -43,10 +52,8 @@ public enum BDDResultEnum {
 	 * Il n'y a pas de description recherché en argument.
 	 */
 	TOO_MANY_KEYWORDS_SPECIFIED,
-	
 
 	/* ICI CODES D'ECHEC CONCERNANTS REQUETES SQL */
-
 
 	/**
 	 * Aucun champ n'est différent de l'original. Dans update SQL.
@@ -89,10 +96,6 @@ public enum BDDResultEnum {
 	 */
 	EDIT_NOT_SUCCESSFUL,
 	/**
-	 * On a souhaité remplir la base sans qu'elle soit vide au départ.
-	 */
-	INCORRECT_FILL,
-	/**
 	 * On a renseigné des valeurs qui ne correspondent pas aux types de données que la base attend.
 	 */
 	INCORRECT_TYPES,
@@ -100,7 +103,7 @@ public enum BDDResultEnum {
 	 * On a pas voulu supprimer une ligne de la base.
 	 */
 	CANCEL_DELETE,
-	
+
 	/* ICI CODES DE SUCCES CONCERNANTS REQUETES SQL */
 
 	/**
@@ -127,5 +130,5 @@ public enum BDDResultEnum {
 	 * L'insertion SQl a réussi.
 	 */
 	INSERT_SUCCESSFUL;
-	
+
 }

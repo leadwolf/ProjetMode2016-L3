@@ -27,7 +27,8 @@ public class ModelInfo extends JPanel {
 	}
 	
 	public void initModelInfo(String name) {
-		String[] modelInfo = BaseDeDonnees.getNameInfo(name, false);
+		BaseDeDonnees bdd = BaseDeDonnees.getInstance();
+		String[] modelInfo = bdd.getNameInfo(name, false);
 		if (modelInfo != null) {
 			if (getComponentCount() > 0) {
 				removeAll();

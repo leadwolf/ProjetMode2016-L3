@@ -36,6 +36,12 @@ public class Modelisationator {
 	private Pattern singleMinus = Pattern.compile("^(\\-)\\w+");
 	private Pattern doubleMinus = Pattern.compile("^(\\-\\-)\\w+");
 
+	private BaseDeDonnees baseDeDonnes;
+	
+	public Modelisationator() {
+		baseDeDonnes = BaseDeDonnees.getInstance();
+	}
+	
 	@SuppressWarnings("javadoc")
 	public static void main(String[] args) {
 		Modelisationator modelisationator = new Modelisationator();
@@ -92,7 +98,7 @@ public class Modelisationator {
 		}
 		for (int i = 0; i < args.length; i++) {
 			String extension = args[i].substring(args[i].lastIndexOf(".") + 1, args[i].length());
-			if (BaseDeDonnees.isExecutableArg(args[i])) {
+			if (modelisationator.baseDeDonnes.isExecutableArg(args[i])) {
 				modelisationator.executeDB = true;
 			}
 			if (modelisationator.singleMinus.matcher(args[i]).find()) {
@@ -144,7 +150,7 @@ public class Modelisationator {
 			// On vérifie la commande ici même si on le fait dans execute() quand MainFenetre va créer un BDDPanel car
 			// s'il y a une erreur, autant arrêter le
 			// programme le plus tôt possible.
-			MethodResult verifResult = BaseDeDonnees.verifArgs(args, quiet);
+			MethodResult verifResult = modelisationator.baseDeDonnes.verifArgs(args, quiet);
 			if (!verifResult.getCode().equals(BasicResultEnum.ALL_OK)) {
 				return verifResult;
 			}
@@ -194,7 +200,7 @@ public class Modelisationator {
 		} else if (modelisationator.executeDB) {
 			boolean options[] = new boolean[] { modelisationator.reset, modelisationator.fill };
 			if (modelisationator.delete) {
-				return BaseDeDonnees.executeCommand(args, dbPath, new boolean[] { options[0], options[1], quiet });
+				return modelisationator.baseDeDonnes.executeCommand(args, dbPath, new boolean[] { options[0], options[1], quiet });
 			} else {
 				MainFenetre mainFrame = new MainFenetre(args, options);
 				mainFrame.setTitle("Modelisationator");
@@ -254,7 +260,7 @@ public class Modelisationator {
 			modelisationator.fill = true;
 		} else if (arg.equals("--delete")) {
 			modelisationator.delete = true;
-		} else if (!BaseDeDonnees.isExecutableArg(arg)) { // if not a direct command for the db, check for single letter
+		} else if (!modelisationator.baseDeDonnes.isExecutableArg(arg)) { // if not a direct command for the db, check for single letter
 															// options
 			for (int j = 2; j < arg.length(); j++) { // start comparing after "--"
 				char c = arg.charAt(j);

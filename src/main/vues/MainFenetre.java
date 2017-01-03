@@ -77,7 +77,7 @@ public class MainFenetre extends JFrame {
 
 		/* BDD PANEL */
 		// par défaut on veut afficher toute la base
-		BDDPanel bddPanel = BaseDeDonnees.getPanel(new String[] { "--all" }, null,
+		BDDPanel bddPanel = BaseDeDonnees.getInstance().getPanel(new String[] { "--all" }, null,
 				new boolean[] { options[3], options[4], false });
 		if (bddPanel == null) {
 			System.exit(1);
@@ -119,7 +119,7 @@ public class MainFenetre extends JFrame {
 		frameDim = new Dimension(800, 500);
 
 		/* BDD PANEL */
-		BDDPanel bddPanel = BaseDeDonnees.getPanel(command, null, new boolean[] { options[0], options[1], false });
+		BDDPanel bddPanel = BaseDeDonnees.getInstance().getPanel(command, null, new boolean[] { options[0], options[1], false });
 		if (bddPanel == null) {
 			System.exit(1);
 		}

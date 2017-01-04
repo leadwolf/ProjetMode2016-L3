@@ -24,12 +24,15 @@ public class FigureModel extends Observable {
 	private List<Point> points;
 	private List<Face> faces;
 	private List<Path2D> polygones;
+	private List<Path2D> ombrePolygones;
 	private Point center;
 	private Lecture lecture;
 	private Matrice ptsMat;
+	private Matrice ombre;
 	private double heightFig, widthFig, depthFig;
 
 	private boolean quiet;
+	private Vecteur lightVector;
 
 	/**
 	 * Cree une figure en lisant un fichier <b>file</b> avec {@link Lecture}
@@ -42,7 +45,8 @@ public class FigureModel extends Observable {
 	public FigureModel(Path file, boolean quiet) {
 		this.path = file;
 		this.quiet = quiet;
-
+		lightVector = new Vecteur(new double[] { 0, 0, -1 });
+		
 		readFile();
 	}
 
@@ -57,6 +61,7 @@ public class FigureModel extends Observable {
 		invertPoints();
 		faces = lecture.getFaces();
 		polygones = new ArrayList<>();
+		ombrePolygones = new ArrayList<>();
 		center = new Point();
 		ptsMat = new Matrice(points.size(), 4);
 		ptsMat.setHomogeneousCoords();
@@ -113,6 +118,13 @@ public class FigureModel extends Observable {
 	}
 
 	/**
+	 * @return the ombrePolygones
+	 */
+	public List<Path2D> getOmbrePolygones() {
+		return ombrePolygones;
+	}
+
+	/**
 	 * @return the polygones
 	 */
 	public List<Path2D> getPolygones() {
@@ -131,6 +143,10 @@ public class FigureModel extends Observable {
 	 */
 	public Matrice getPtsMat() {
 		return ptsMat;
+	}
+
+	public Vecteur getLightVector() {
+		return lightVector;
 	}
 
 	/**
@@ -179,7 +195,8 @@ public class FigureModel extends Observable {
 		heightFig = 0;
 		depthFig = 0;
 		double left = 0, right = 0, top = 0, bottom = 0, front = 0, back = 0;
-		// set all values to opposites of what they should be because of comparisons in if
+		// set all values to opposites of what they should be because of
+		// comparisons in if
 		if (panel.getHeight() == 0 || panel.getWidth() == 0) {
 			widthFig = heightFig = right = bottom = 0;
 			left = panel.getWidthWindow();
@@ -214,8 +231,12 @@ public class FigureModel extends Observable {
 		widthFig = right - left;
 		heightFig = bottom - top;
 		depthFig = front - back;
-		center.setCoords(left + (widthFig / 2), top + (heightFig / 2), back + (depthFig / 2)); // ajout pour donner vrai
-																								// coord dessiné
+		center.setCoords(left + (widthFig / 2), top + (heightFig / 2), back + (depthFig / 2)); // ajout
+																								// pour
+																								// donner
+																								// vrai
+																								// coord
+																								// dessiné
 	}
 
 	/**
@@ -350,6 +371,40 @@ public class FigureModel extends Observable {
 		refreshModel();
 	}
 
+	public void setProjection(Vecteur lightVector) {
+		//	@formatter:off
+			double[][] projection = new double[][] { 
+				{ 1, 0, 0.0, 0.0 }, 
+				{ 0, 1, 0.0, 0.0 }, 
+				{ 0.0, 0.0, 0, 0.0 }, 
+				{ 0.0, 0.0, 0.0, 1.0 } };
+		//	@formatter:on
+
+		final int distance = 100;
+
+		ptsMat.importPoints(points, 3);
+		ptsMat.setHomogeneousCoords();
+
+		ombre = new Matrice(Matrice.multiply(projection, ptsMat.getMatrice()));
+		ombre.zoom(0.75);
+		ombre.translateMatrix(200, 1, distance);
+
+		ombrePolygones.clear();
+		for (int i = 0; i < faces.size(); i++) {
+			Path2D ombrePath = new Path2D.Double();
+			List<Point> pt = faces.get(i).getList();
+			int pointNumber = Integer.parseInt(pt.get(0).nom);
+			ombrePath.moveTo(ombre.getMatrice()[0][pointNumber], ombre.getMatrice()[1][pointNumber]);
+			for (int j = 1; j < pt.size(); j++) {
+				pointNumber = Integer.parseInt(pt.get(j).nom);
+				ombrePath.lineTo(ombre.getMatrice()[0][pointNumber], ombre.getMatrice()[1][pointNumber]);
+			}
+
+			ombrePath.closePath();
+			ombrePolygones.add(ombrePath);
+		}
+	}
+
 	/**
 	 * Vide la liste de polygones. Trie les faces selon l'ordre d'apparence et re ajoute les polygones. <br>
 	 * Calls {@link FigureModel#notifyObservers()}
@@ -357,16 +412,20 @@ public class FigureModel extends Observable {
 	public void refreshModel() {
 		polygones.clear();
 		Collections.sort(faces);
+		setProjection(lightVector);
+
+		// FIGURE
 		for (int i = 0; i < faces.size(); i++) {
-			Path2D path = new Path2D.Double();
-			polygones.add(path);
+			Path2D figurePath = new Path2D.Double();
 			List<Point> pt = faces.get(i).getList();
-			path.moveTo(pt.get(0).getX(), pt.get(0).getY());
+			figurePath.moveTo(pt.get(0).getX(), pt.get(0).getY());
 			for (int j = 1; j < pt.size(); j++) {
-				path.lineTo(pt.get(j).getX(), pt.get(j).getY());
+				figurePath.lineTo(pt.get(j).getX(), pt.get(j).getY());
 			}
-			path.closePath();
+			figurePath.closePath();
+			polygones.add(figurePath);
 		}
+
 		setChanged();
 		notifyObservers();
 	}

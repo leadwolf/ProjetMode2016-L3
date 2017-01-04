@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.Stroke;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Path2D;
@@ -50,32 +51,54 @@ public class VisualisationPanel extends JPanel implements Observer {
 	}
 
 	@Override
-	public void paintComponent(Graphics gg) {
-		super.paintComponent(gg);
-		Graphics2D g = (Graphics2D) gg;
+	public void paintComponent(Graphics g) {
+		super.paintComponent(g);
+		drawFigure((Graphics2D) g);
+	}
 
+	/**
+	 * Dessine la figure et son ombre avec g
+	 * 
+	 * @param g
+	 */
+	private void drawFigure(Graphics2D g) {
 		/*
 		 * On met les segments et faces dans la meme boucle pour qu'on les dessine dans le meme ordre de leur moyenne de
 		 * Z
 		 */
-		if (figureModel != null && (drawSegments || drawFaces)) {
+		if (drawSegments || drawFaces) {
 
-			Stroke defaultStroke2 = new BasicStroke(1.5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
-			final float dash1[] = { 7.0f };
-			final Stroke dottedStroke = new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f,
-					dash1, 0.0f);
+			Stroke defaultStroke = new BasicStroke(2f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
+
+			// OMBRE
+			g.setColor(Color.BLACK);
+			for (Path2D p : figureModel.getOmbrePolygones()) {
+				if (drawSegments && !drawFaces) {
+					g.draw(p);
+				} else {
+					g.fill(p);
+				}
+			}
 
 			int i = 0;
+
+			// SEGMENTS
 			for (Path2D p : figureModel.getPolygones()) {
 				if (drawSegments) {
-					g.setStroke(defaultStroke2);
-					g.setColor(Color.BLACK);
+					g.setStroke(defaultStroke);
+					if (drawSegments && !drawFaces) {
+						g.setColor(Color.GRAY);
+					} else {
+						g.setColor(Color.BLACK);
+					}
 					g.draw(p);
 				}
+
+				// FACES
 				if (drawFaces) {
-					Vecteur lightVector = new Vecteur(new double[] { 0, 0, -1 });
 					if (directionalLight) {
-						double greyScale = FigureModel.getGreyScale(figureModel.getFaces().get(i), lightVector);
+						double greyScale =
+								FigureModel.getGreyScale(figureModel.getFaces().get(i), figureModel.getLightVector());
 						g.setColor(new Color((float) greyScale, (float) greyScale, (float) greyScale));
 					} else {
 						g.setColor(Color.GRAY);
@@ -87,13 +110,7 @@ public class VisualisationPanel extends JPanel implements Observer {
 			}
 		}
 
-		// g.setColor(Color.RED);
-		// double xCenter = figure.getCenter().getX() - (ptsDim.getWidth() / 2);
-		// double yCenter = figure.getCenter().getY() - (ptsDim.getHeight() / 2);
-		// Ellipse2D.Double shapeCenter = new Ellipse2D.Double(xCenter, yCenter, ptsDim.getWidth(), ptsDim.getHeight());
-		// g.fill(shapeCenter);
-
-		if (figureModel != null && drawPoints) {
+		if (drawPoints) {
 			g.setColor(Color.GRAY);
 			for (Point pt : figureModel.getPoints()) {
 				double x = pt.getX() - (ptsDim.getWidth() / 2);
@@ -102,6 +119,15 @@ public class VisualisationPanel extends JPanel implements Observer {
 				g.fill(shape);
 			}
 		}
+
+		// CENTER
+		// g.setColor(Color.RED);
+		// double xCenter = figure.getCenter().getX() - (ptsDim.getWidth() / 2);
+		// double yCenter = figure.getCenter().getY() - (ptsDim.getHeight() /
+		// 2);
+		// Ellipse2D.Double shapeCenter = new Ellipse2D.Double(xCenter, yCenter,
+		// ptsDim.getWidth(), ptsDim.getHeight());
+		// g.fill(shapeCenter);
 	}
 
 	public void setDirectionalLight(boolean directionalLight) {

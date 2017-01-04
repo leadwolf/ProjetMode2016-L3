@@ -5,6 +5,7 @@ import java.nio.file.Paths;
 import java.util.regex.Pattern;
 
 import main.vues.MainFenetre;
+import math.Vecteur;
 import ply.bdd.other.BaseDeDonnees;
 import ply.plyModel.modeles.FigureModel;
 import result.BDDResult;
@@ -190,6 +191,7 @@ public class Modelisationator {
 						modelisationator.drawFaces, modelisationator.reset, modelisationator.fill };
 				MainFenetre mainFrame = new MainFenetre(figureModel, options);
 				mainFrame.setTitle("Modelisationator");
+				figureModel.setProjection(new Vecteur(new double[]{0, 0, -1}));
 				if (!quiet) {
 					mainFrame.setVisible(true);
 				}

@@ -17,9 +17,8 @@ import result.BasicResultEnum;
 import result.MethodResult;
 
 /**
- * Cette classe est pareil que BaseDeDonnesOld mais donne une JPanel au lieu d'éxécuter directement les commandes sauf
- * pour --delete. Elle ne contient plus les méthodes d'initialisation dela base, qui sont maintenant dans
- * {@link BDDUtilities}.
+ * Cette classe est pareil que BaseDeDonnesOld mais donne une JPanel au lieu d'éxécuter directement les commandes sauf pour --delete. Elle ne contient plus les
+ * méthodes d'initialisation dela base, qui sont maintenant dans {@link BDDUtilities}.
  * 
  * @author L3
  *
@@ -35,7 +34,7 @@ public class BaseDeDonnees {
 	 */
 	private String[] buttonColumns;
 	/**
-	 * Noms des JButtons qu'on utilisera pour passer à la table crée. 
+	 * Noms des JButtons qu'on utilisera pour passer à la table crée.
 	 */
 	private String[] primaryButtons;
 	/**
@@ -62,10 +61,8 @@ public class BaseDeDonnees {
 	 * Crée un {@link BDDPanel} d'après la commande dans args.
 	 * 
 	 * @param args
-	 * @param dbPath
-	 *            path to the db.sqlite, leave null for default data/test.sqlite
-	 * @param options
-	 *            [0] = reset, [1] = fill, [2] = quiet true pour empecher affichage
+	 * @param dbPath path to the db.sqlite, leave null for default data/test.sqlite
+	 * @param options [0] = reset, [1] = fill, [2] = quiet true pour empecher affichage
 	 * @return le panel correspondant à la commande.
 	 */
 	public BDDPanel getPanel(String[] args, Path dbPath, boolean[] options) {
@@ -86,22 +83,18 @@ public class BaseDeDonnees {
 			return getSpecificPanel(args, options[2]);
 		} else {
 			if (!options[2]) {
-				JOptionPane.showMessageDialog(null, "La base de données est vide.", Modelisationator.NAME,
-						JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null, "La base de données est vide.", Modelisationator.NAME, JOptionPane.ERROR_MESSAGE);
 			}
 			return null;
 		}
 	}
 
 	/**
-	 * Execute une commande bdd sans interface. Vérifie que la base comporte des modèles et que le modèle à supprimer
-	 * existe.
+	 * Execute une commande bdd sans interface. Vérifie que la base comporte des modèles et que le modèle à supprimer existe.
 	 * 
 	 * @param args
-	 * @param dbPath
-	 *            path to the db.sqlite, leave null for default data/test.sqlite
-	 * @param options
-	 *            [0] = reset, [1] = fill, [2] = quiet true pour empecher affichage
+	 * @param dbPath path to the db.sqlite, leave null for default data/test.sqlite
+	 * @param options [0] = reset, [1] = fill, [2] = quiet true pour empecher affichage
 	 * @return le résultat de l'éxécution de la commande ou l'erreur empechant celle ci.
 	 */
 	public MethodResult executeCommand(String[] args, Path dbPath, boolean[] options) {
@@ -122,8 +115,8 @@ public class BaseDeDonnees {
 			return delete(args, options[2]);
 		} else {
 			if (!options[2]) {
-				JOptionPane.showMessageDialog(null, "La base de données est vide. Impossible de supprimmer un modèle.",
-						"Erreur", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null, "La base de données est vide. Impossible de supprimmer un modèle.", "Erreur",
+						JOptionPane.ERROR_MESSAGE);
 			}
 			return checkResult;
 		}
@@ -150,18 +143,15 @@ public class BaseDeDonnees {
 	/**
 	 * Verifie s'il y a une seule commande et qu'elle est bien écrite. Affiche l'erreur si !quiet.
 	 * 
-	 * @param args
-	 *            les arguments passés au programme.
-	 * @param quiet
-	 *            true pour empêcher affichge.
+	 * @param args les arguments passés au programme.
+	 * @param quiet true pour empêcher affichge.
 	 * @return un {@link MethodResult} décrivant la validité des arguments.
 	 */
 	public MethodResult verifArgs(String[] args, boolean quiet) {
 
 		if (args == null || (args != null && args.length <= 0)) {
 			if (!quiet) {
-				JOptionPane.showMessageDialog(null, "Vous n'avez pas donné de commande", Modelisationator.NAME,
-						JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null, "Vous n'avez pas donné de commande", Modelisationator.NAME, JOptionPane.ERROR_MESSAGE);
 			}
 			return new BasicResult(BasicResultEnum.NO_ARGUMENTS);
 		}
@@ -173,8 +163,7 @@ public class BaseDeDonnees {
 		}
 		if (empty) {
 			if (!quiet) {
-				JOptionPane.showMessageDialog(null, "Vous n'avez pas donné de commande", Modelisationator.NAME,
-						JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null, "Vous n'avez pas donné de commande", Modelisationator.NAME, JOptionPane.ERROR_MESSAGE);
 			}
 			return new BasicResult(BasicResultEnum.NO_ARGUMENTS);
 		}
@@ -216,8 +205,7 @@ public class BaseDeDonnees {
 					}
 				} else { // on a trouvé plus qu'une commande.
 					if (!quiet) {
-						JOptionPane.showMessageDialog(null,
-								"Vous n'avez précisé plusieurs commandes incompatibles.\nVeuillez réessayer.",
+						JOptionPane.showMessageDialog(null, "Vous n'avez précisé plusieurs commandes incompatibles.\nVeuillez réessayer.",
 								Modelisationator.NAME, JOptionPane.ERROR_MESSAGE);
 					}
 					return new BasicResult(BasicResultEnum.CONFLICTING_ARGUMENTS);
@@ -228,27 +216,23 @@ public class BaseDeDonnees {
 		}
 		if (!foundExecutableArg) {
 			if (!quiet) {
-				JOptionPane.showMessageDialog(null, "Vous n'avez pas donné de commande", Modelisationator.NAME,
-						JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null, "Vous n'avez pas donné de commande", Modelisationator.NAME, JOptionPane.ERROR_MESSAGE);
 			}
 			return new BasicResult(BasicResultEnum.NO_COMMAND_GIVEN);
 		}
 		if (!findCommand && normalStringsFound != normalStringsNeeded) {
 			if (!quiet) {
-				JOptionPane.showMessageDialog(null, "Vous n'avez pas précisé de modèle", Modelisationator.NAME,
-						JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null, "Vous n'avez pas précisé de modèle", Modelisationator.NAME, JOptionPane.ERROR_MESSAGE);
 			}
 			return new BDDResult(BDDResultEnum.NAME_NOT_SPECIFIED);
 		} else if (findCommand && normalStringsFound == 0) {
 			if (!quiet) {
-				JOptionPane.showMessageDialog(null, "Vous n'avez pas précisé de modèle", Modelisationator.NAME,
-						JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null, "Vous n'avez pas précisé de modèle", Modelisationator.NAME, JOptionPane.ERROR_MESSAGE);
 			}
 			return new BDDResult(BDDResultEnum.NO_KEYWORDS_SPECIFIED);
 		} else if (findCommand && normalStringsFound > normalStringsNeeded) {
 			if (!quiet) {
-				JOptionPane.showMessageDialog(null,
-						"Vous avez mis plus de mots clés que la limite.\nLa limite est de " + nbKeywordsLimit,
+				JOptionPane.showMessageDialog(null, "Vous avez mis plus de mots clés que la limite.\nLa limite est de " + nbKeywordsLimit,
 						Modelisationator.NAME, JOptionPane.ERROR_MESSAGE);
 			}
 			return new BDDResult(BDDResultEnum.TOO_MANY_KEYWORDS_SPECIFIED);
@@ -259,11 +243,9 @@ public class BaseDeDonnees {
 	/**
 	 * Donne un {@link BDDPanel} correspondant à la commande dans args.
 	 * 
-	 * @param args
-	 *            la commande de l'utlisateur
+	 * @param args la commande de l'utlisateur
 	 * @param mainFenetre
-	 * @param quiet
-	 *            true pour empecher affichage
+	 * @param quiet true pour empecher affichage
 	 * @return si la requête était correcte et que l'interface, si besoin, a été éxecutée
 	 */
 	private BDDPanel getSpecificPanel(String[] args, boolean quiet) {
@@ -290,19 +272,14 @@ public class BaseDeDonnees {
 	/**
 	 * Donne toutes les colonnes de la base de données
 	 * 
-	 * @param name
-	 *            the name of the model
-	 * @param quiet
-	 *            true pour empecher affichage.
+	 * @param name the name of the model
+	 * @param quiet true pour empecher affichage.
 	 * @return un String[] contentant toute la ligne de la base ou null s'il y a eu erreur.
 	 */
 	public String[] getNameInfo(String name, boolean quiet) {
-		ResultSet rs;
 		try {
 			name = name.toLowerCase();
-			PreparedStatement st = BDDUtilities.getConnection().prepareStatement("select * from PLY where NOM = ?");
-			st.setString(1, name);
-			rs = st.executeQuery();
+			ResultSet rs = DAO.INSTANCE.getName(name);
 			if (rs.next()) {
 				String[] nameInfo = new String[rs.getMetaData().getColumnCount()];
 				for (int i = 1; i <= rs.getMetaData().getColumnCount(); i++) {
@@ -312,8 +289,8 @@ public class BaseDeDonnees {
 				return nameInfo;
 			} else {
 				if (!quiet) {
-					JOptionPane.showMessageDialog(null, "Le modèle " + name + " n'est pas dans la base",
-							Modelisationator.NAME, JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(null, "Le modèle " + name + " n'est pas dans la base", Modelisationator.NAME,
+							JOptionPane.ERROR_MESSAGE);
 				}
 				BDDUtilities.closeConnection();
 				return null;
@@ -327,17 +304,12 @@ public class BaseDeDonnees {
 	/**
 	 * Execute la requête donnant les informations sur le modèle et crée le panel concerné.
 	 * 
-	 * @param i
-	 *            la place de "--name" dans les arguments. Servira à parcourir la liste si on aura besoin d'afficher de
-	 *            multiples modèles
-	 * @param args
-	 *            le modèle à afficher
-	 * @param mainFenetre
+	 * @param i la place de "--name" dans les arguments. Servira à parcourir la liste si on aura besoin d'afficher de multiples modèles
+	 * @param args le modèle à afficher
+	 * @param quiet 
 	 * @return le {@link BDDPanel} contenant les données du modèle précisé ou null.
 	 */
 	private BDDPanel showName(String[] args, boolean quiet) {
-		ResultSet rsCount;
-		ResultSet rs;
 		try {
 			String modelName = "";
 			for (int i = 0; i < args.length; i++) {
@@ -345,24 +317,17 @@ public class BaseDeDonnees {
 					modelName = args[i];
 				}
 			}
-			PreparedStatement statement =
-					BDDUtilities.getConnection().prepareStatement("select * from PLY where NOM = ?");
-			statement.setString(1, modelName);
-			rsCount = statement.executeQuery();
+			ResultSet rsCount = DAO.INSTANCE.getName(modelName);
 			if (rsCount.next()) {
-				PreparedStatement statement2 =
-						BDDUtilities.getConnection().prepareStatement("select * from PLY where NOM = ?");
-				statement2.setString(1, modelName);
-				rs = statement2.executeQuery();
+				ResultSet rs = DAO.INSTANCE.getName(modelName);
 				BDDPanel result = new BDDPanel(rs, columnNames, buttonColumns, primaryButtons);
-//				result.setEditableColumns(new int[] { 0, 1, 3 }, true);
+				// result.setEditableColumns(new int[] { 0, 1, 3 }, true);
 				result.setEditable(true);
 				BDDUtilities.closeConnection();
 				return result;
 			} else {
 				if (!quiet) {
-					String message =
-							"Le modèle " + modelName + " n'existe pas\nUtilisation: basededonneés --name <name>";
+					String message = "Le modèle " + modelName + " n'existe pas\nUtilisation: basededonneés --name <name>";
 					JOptionPane.showMessageDialog(null, message, Modelisationator.NAME, JOptionPane.ERROR_MESSAGE);
 				}
 			}
@@ -379,74 +344,28 @@ public class BaseDeDonnees {
 	 * @return s'il a pu créer la fenêtre
 	 */
 	private BDDPanel showAll() {
-		ResultSet rs;
-		// no need for statement to check because its done before this method is
-		// executed
-		try {
-			PreparedStatement st = BDDUtilities.getConnection().prepareStatement("select * from PLY");
-			rs = st.executeQuery();
-			BDDPanel result = new BDDPanel(rs, columnNames, buttonColumns, primaryButtons);
-//			result.setEditableColumns(new int[] { 0, 1, 3 }, true);
-			result.setEditable(true);
-			BDDUtilities.closeConnection();
-			return result;
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		ResultSet rs = DAO.INSTANCE.getAll();
+		BDDPanel result = new BDDPanel(rs, columnNames, buttonColumns, primaryButtons);
+		// result.setEditableColumns(new int[] { 0, 1, 3 }, true);
+		result.setEditable(true);
 		BDDUtilities.closeConnection();
-		return null;
+		return result;
 	}
 
 	/**
 	 * Vérifie les arguments et puis crée la fenetre listant les informations des modèles correspondants aux keywords
 	 * 
-	 * @param args
-	 *            les mots clés à rechercher
-	 * @param mainFenetre
+	 * @param args les mots clés à rechercher
+	 * @param quiet 
 	 * @return le {@link BDDPanel} contenant les modèles ayant les mots cles ou null.
 	 */
 	private BDDPanel find(String[] args, boolean quiet) {
-		ResultSet rsCount;
-		ResultSet rs;
-		int nbLikes = 0;
-		int nbTreated = 0;
-		for (int j = 0; j < args.length; j++) {
-			if (!args[j].startsWith("--")) {
-				nbLikes++;
-			}
-		}
 		try {
-			String queryString = "select * from PLY where DESCRIPTION like";
-			String queryCount = "select * from PLY where DESCRIPTION like";
-			for (int j = 0; j < args.length; j++) {
-				if (!BDDUtilities.isDBOption(args[j])) {
-					if (nbTreated == 0) {
-						queryString += " ?";
-						queryCount += " ?";
-					} else {
-						if (nbTreated < nbLikes) {
-							queryString += " union select * from PLY where DESCRIPTION LIKE ?";
-						} else {
-							queryString += " union select * from PLY where DESCRIPTION LIKE ?";
-						}
-						queryCount += " OR DESCRIPTION LIKE ?";
-					}
-					nbTreated++;
-				}
-			}
-			PreparedStatement stCount = BDDUtilities.getConnection().prepareStatement(queryCount);
-			PreparedStatement statement2 = BDDUtilities.getConnection().prepareStatement(queryString);
-			for (int j = 0; j < args.length; j++) {
-				if (!args[j].startsWith("--")) {
-					stCount.setString(j, "%" + args[j] + "%");
-					statement2.setString(j, "%" + args[j] + "%");
-				}
-			}
-			rsCount = stCount.executeQuery();
+			ResultSet rsCount = DAO.INSTANCE.find(args);
 			if (rsCount.next()) {
-				rs = statement2.executeQuery();
+				ResultSet rs = DAO.INSTANCE.find(args);
 				BDDPanel result = new BDDPanel(rs, columnNames, buttonColumns, primaryButtons);
-//				result.setEditableColumns(new int[] { 0, 1, 3 }, true);
+				// result.setEditableColumns(new int[] { 0, 1, 3 }, true);
 				result.setEditable(true);
 				BDDUtilities.closeConnection();
 				return result;
@@ -465,7 +384,6 @@ public class BaseDeDonnees {
 	/**
 	 * Crée la fenêtre d'insertion de modèle.
 	 * 
-	 * @param mainFenetre
 	 * @return si fenêtre crée. Pour savoir si requête sql éxecutée, voir {@link FenetreTable}
 	 */
 	private BDDPanel add() {
@@ -478,9 +396,8 @@ public class BaseDeDonnees {
 	/**
 	 * Vérifie les argumuments et puis crée la fenetre de modification du modèle précisé s'ils sont valides
 	 * 
-	 * @param args
-	 *            le modèle à éditer
-	 * @param mainFenetre
+	 * @param args le modèle à éditer
+	 * @param quiet 
 	 * @return si fenêtre bien crée. Pour savoir si requête sql éxecutée, voir {@link FenetreTable}
 	 */
 	private BDDPanel edit(String[] args, boolean quiet) {
@@ -491,14 +408,9 @@ public class BaseDeDonnees {
 					modelName = args[i];
 				}
 			}
-			PreparedStatement stCount =
-					BDDUtilities.getConnection().prepareStatement("select * from PLY where NOM = ?");
-			stCount.setString(1, modelName);
-			ResultSet rsCount = stCount.executeQuery();
+			ResultSet rsCount = DAO.INSTANCE.getName(modelName);
 			if (rsCount.next()) {
-				PreparedStatement st = BDDUtilities.getConnection().prepareStatement("select * from ply where nom = ?");
-				st.setString(1, modelName);
-				ResultSet rs = st.executeQuery();
+				ResultSet rs = DAO.INSTANCE.getName(modelName);
 				BDDPanel result = new BDDPanel(rs, columnNames, buttonColumns, primaryButtons);
 				result.setEditable(true); // tout est editable dans --edit
 				BDDUtilities.closeConnection();
@@ -518,10 +430,8 @@ public class BaseDeDonnees {
 	/**
 	 * Vérifie que le modèle existe dans la base et la supprime.
 	 * 
-	 * @param args
-	 *            le modèle à supprimer
-	 * @param quiet
-	 *            afficher ou non les fenêtres
+	 * @param args le modèle à supprimer
+	 * @param quiet afficher ou non les fenêtres
 	 * @return un {@link MethodResult} décrivant le résultat de la requête ou si le modèle existait pas.
 	 */
 	private MethodResult delete(String[] args, boolean quiet) {
@@ -532,13 +442,11 @@ public class BaseDeDonnees {
 					modelName = args[i];
 				}
 			}
-			PreparedStatement stExists =
-					BDDUtilities.getConnection().prepareStatement("select * from PLY where NOM = ?");
+			PreparedStatement stExists = BDDUtilities.getConnection().prepareStatement("select * from PLY where NOM = ?");
 			stExists.setString(1, modelName);
 			ResultSet rs = stExists.executeQuery();
 			if (rs.next()) {
-				PreparedStatement stDelete =
-						BDDUtilities.getConnection().prepareStatement("delete from PLY where NOM = ?");
+				PreparedStatement stDelete = BDDUtilities.getConnection().prepareStatement("delete from PLY where NOM = ?");
 				stDelete.setString(1, modelName);
 				int result = stDelete.executeUpdate(); // result = nombre de
 														// lignes affectés par

@@ -10,8 +10,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import ply.plyModel.modeles.Face;
-import ply.plyModel.modeles.Point;
+import ply.plyModel.other.Face;
+import ply.plyModel.other.Point;
 import result.BasicResult;
 import result.BasicResultEnum;
 import result.MethodResult;

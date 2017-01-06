@@ -7,7 +7,7 @@ import java.awt.event.MouseWheelEvent;
 import javax.swing.SwingUtilities;
 
 import ply.plyModel.modeles.FigureModel;
-import ply.plyModel.modeles.SensitivityModel;
+import ply.plyModel.other.SensitivityModel;
 import ply.plyModel.vues.VisualisationPanel;
 
 /**

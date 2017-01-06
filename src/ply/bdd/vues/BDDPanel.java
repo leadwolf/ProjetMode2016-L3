@@ -16,9 +16,9 @@ import javax.swing.JScrollPane;
 
 import main.vues.MainFenetre;
 import ply.bdd.controlers.ButtonControler;
-import ply.bdd.modeles.Table;
-import ply.bdd.modeles.TableDataModel;
 import ply.bdd.other.BDDUtilities;
+import ply.bdd.other.Table;
+import ply.bdd.other.TableDataModel;
 
 /**
  * Cette classe donne un panel complet d'une JTable ainsi que les boutons nécessaires à l'opération de la base.

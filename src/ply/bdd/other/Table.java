@@ -1,4 +1,4 @@
-package ply.bdd.modeles;
+package ply.bdd.other;
 
 import java.awt.event.ActionEvent;
 import java.sql.PreparedStatement;
@@ -13,7 +13,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JTable;
 
 import main.vues.MainFenetre;
-import ply.bdd.other.BDDUtilities;
 import res.ButtonColumn;
 import result.BDDResult;
 import result.BDDResultEnum;

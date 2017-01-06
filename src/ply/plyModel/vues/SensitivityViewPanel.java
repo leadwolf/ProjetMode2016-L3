@@ -9,7 +9,7 @@ import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import ply.plyModel.modeles.SensitivityModel;
+import ply.plyModel.other.SensitivityModel;
 
 /**
  * JPanel présentant deux JSliders pour changer la sensitvité de la rotation et du zoom.

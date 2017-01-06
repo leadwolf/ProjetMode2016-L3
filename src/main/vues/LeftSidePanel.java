@@ -11,7 +11,6 @@ import javax.swing.BoxLayout;
 import javax.swing.JList;
 import javax.swing.JPanel;
 
-import ply.bdd.controlers.JListControler;
 import ply.bdd.vues.ModelBrowser;
 import ply.bdd.vues.ModelInfo;
 
@@ -27,10 +26,11 @@ public class LeftSidePanel extends JPanel {
 	private ModelInfo modelInfo;
 
 	/**
-	 * @param path leave null for default data/
+	 * @param modelName 
 	 * @param dim
+	 * @param mainFenetre la fenêtre dans laquelle se situe ce panel. Utilisé pour renvoyer des commandes à partir d'ici. 
 	 */
-	public LeftSidePanel(Path path, String modelName, Dimension dim) {
+	public LeftSidePanel(String modelName, Dimension dim, MainFenetre mainFenetre) {
 		super();
 
 		/* MODEL INFO */
@@ -42,7 +42,7 @@ public class LeftSidePanel extends JPanel {
 		modelInfo.setPreferredSize(new Dimension(dim.width, 100));
 
 		/* MODEL BROWSER */
-		modelBrowser = new ModelBrowser(path);
+		modelBrowser = new ModelBrowser(mainFenetre);
 		modelBrowser.setBorder(BorderFactory.createLineBorder(Color.black));
 		modelBrowser.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK), "Model Browser :"));
 
@@ -61,8 +61,4 @@ public class LeftSidePanel extends JPanel {
 		modelInfo.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK), "Informations sur " + title + " : "));
 	}
 	
-	public void addMouseListenerToList(MouseListener listener) {
-		modelBrowser.addMouseListenerToList(listener);
-	}
-
 }

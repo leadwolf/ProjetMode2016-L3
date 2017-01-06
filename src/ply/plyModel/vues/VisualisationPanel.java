@@ -16,7 +16,7 @@ import javax.swing.JPanel;
 
 import math.Vecteur;
 import ply.plyModel.modeles.FigureModel;
-import ply.plyModel.modeles.Point;
+import ply.plyModel.other.Point;
 
 /**
  * Cette classe sert à afficher l'objet ply.
@@ -66,7 +66,7 @@ public class VisualisationPanel extends JPanel implements Observer {
 		while (drawHeight < getHeight()) {
 			while (drawWidth < getWidth()) {
 				g.setColor(Color.BLACK);
-				g.drawString("Chris", drawWidth, drawHeight);
+//				g.drawString("Chris", drawWidth, drawHeight);
 				if (grey) {
 					g.setColor(Color.LIGHT_GRAY);
 				} else {

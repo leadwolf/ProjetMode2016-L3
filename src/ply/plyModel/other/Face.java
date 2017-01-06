@@ -1,4 +1,4 @@
-package ply.plyModel.modeles;
+package ply.plyModel.other;
 import java.util.ArrayList;
 import java.util.List;
 

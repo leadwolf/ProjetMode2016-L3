@@ -8,6 +8,7 @@ import java.io.FilenameFilter;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.swing.JFrame;
@@ -24,7 +25,6 @@ import javax.swing.event.ChangeListener;
 
 import main.Modelisationator;
 import main.controlers.MenuControler;
-import ply.bdd.controlers.JListControler;
 import ply.bdd.other.BaseDeDonnees;
 import ply.bdd.vues.BDDPanel;
 import ply.bdd.vues.ModelBrowser;
@@ -34,11 +34,11 @@ import ply.plyModel.modeles.FigureModel;
 public class MainFenetre extends JFrame {
 
 	/**
-	 * Le Path vers le dossier contenant les modèles. Soit le dossier contenant le modèle précisé dans le premier
-	 * constructeur ou le dossier "data/".
+	 * Le Path vers le dossier contenant les modèles. Soit le dossier contenant le modèle précisé dans le premier constructeur ou
+	 * le dossier "data/".
 	 */
 	private Path parentPath;
-	private static File[] allFiles;
+	private static List<File> allFiles;
 	private List<ModelPanel> modelPanelList;
 	private JSplitPane mainPanel;
 	private JTabbedPane tabbedPane;
@@ -53,14 +53,11 @@ public class MainFenetre extends JFrame {
 	private int tabHeight = 23;
 
 	/**
-	 * Crée la fenêtre de l'application. Un JSplitPane contenant à gauche {@link ModelInfo} et {@link ModelBrowser} et à
-	 * droite, un {@link JTabbedPane} contenant un {@link ModelPanel} du FigureModel précisé en paramètre et un
-	 * {@link BDDPanel}.
+	 * Crée la fenêtre de l'application. Un JSplitPane contenant à gauche {@link ModelInfo} et {@link ModelBrowser} et à droite,
+	 * un {@link JTabbedPane} contenant un {@link ModelPanel} du FigureModel précisé en paramètre et un {@link BDDPanel}.
 	 * 
-	 * @param figureModel
-	 *            le modèle avec lequel créer le ModelPanel.
-	 * @param options
-	 *            [0] &gt; drawPoints, [1] &gt; drawSegments, [2] &gt; drawFaces, [3] &gt; resetBase, [4] &gt; fillBase,
+	 * @param figureModel le modèle avec lequel créer le ModelPanel.
+	 * @param options [0] &gt; drawPoints, [1] &gt; drawSegments, [2] &gt; drawFaces, [3] &gt; resetBase, [4] &gt; fillBase,
 	 */
 	public MainFenetre(FigureModel figureModel, boolean[] options) {
 		super();
@@ -70,16 +67,16 @@ public class MainFenetre extends JFrame {
 		frameDim = new Dimension(1200, 800);
 
 		/* ModelPanel */
-		Dimension modelPanelDim = new Dimension(frameDim.width - leftPanelWidth - (separatorWidth / 2),
-				frameDim.height - tabHeight);
+		Dimension modelPanelDim =
+				new Dimension(frameDim.width - leftPanelWidth - (separatorWidth / 2), frameDim.height - tabHeight);
 		ModelPanel modelPanel = new ModelPanel(figureModel, modelPanelDim, options[0], options[1], options[2]);
 		modelPanel.initModelForWindow();
 		modelPanelList.add(modelPanel);
 
 		/* BDD PANEL */
 		// par défaut on veut afficher toute la base
-		BDDPanel bddPanel = BaseDeDonnees.INSTANCE.getPanel(new String[] { "--all" }, null,
-				new boolean[] { options[3], options[4], false });
+		BDDPanel bddPanel =
+				BaseDeDonnees.INSTANCE.getPanel(new String[] { "--all" }, null, new boolean[] { options[3], options[4], false });
 		if (bddPanel == null) {
 			System.exit(1);
 		}
@@ -102,16 +99,15 @@ public class MainFenetre extends JFrame {
 
 		/* FENETRE */
 		setupFenetre(modelName);
+		tabbedPane.requestFocusInWindow();
 	}
 
 	/**
-	 * Crée la fenêtre de l'application. Un JSplitPane contenant à gauche {@link ModelInfo} et {@link ModelBrowser} et à
-	 * droite, un {@link JTabbedPane} contenant {@link BDDPanel} crée avec la commande précisée.
+	 * Crée la fenêtre de l'application. Un JSplitPane contenant à gauche {@link ModelInfo} et {@link ModelBrowser} et à droite,
+	 * un {@link JTabbedPane} contenant {@link BDDPanel} crée avec la commande précisée.
 	 * 
-	 * @param command
-	 *            la commande bdd avec laqelle on a lancé le programme et qu'on passe à BDDPanel.
-	 * @param options
-	 *            [0] &gt; resetBase, [1] &gt; fillBase
+	 * @param command la commande bdd avec laqelle on a lancé le programme et qu'on passe à BDDPanel.
+	 * @param options [0] &gt; resetBase, [1] &gt; fillBase
 	 */
 	public MainFenetre(String[] command, boolean[] options) {
 		super();
@@ -148,7 +144,8 @@ public class MainFenetre extends JFrame {
 	private void firstSetup() {
 		setupMenu();
 		setJMenuBar(menuBar);
-		allFiles = parentPath.toFile().listFiles(new FilenameFilter() {
+		allFiles = new ArrayList<>();
+		File[] tempFiles = parentPath.toFile().listFiles(new FilenameFilter() {
 			@Override
 			public boolean accept(File dir, String name) {
 				if (name.lastIndexOf('.') > 0) {
@@ -161,6 +158,8 @@ public class MainFenetre extends JFrame {
 				return false;
 			}
 		});
+		Collections.addAll(allFiles, tempFiles);
+		Collections.sort(allFiles);
 		modelPanelList = new ArrayList<>();
 	}
 
@@ -181,7 +180,7 @@ public class MainFenetre extends JFrame {
 	}
 
 	/**
-	 * @param title 
+	 * @param title
 	 * 
 	 */
 	private void setupFenetre(String title) {
@@ -196,6 +195,9 @@ public class MainFenetre extends JFrame {
 
 		this.setLocationRelativeTo(null);
 		this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+
+		// focus on tabbedPane to prevent the searchBar from being clear (when in focus, the tip is removed)
+		tabbedPane.requestFocusInWindow();
 	}
 
 	/**
@@ -218,41 +220,39 @@ public class MainFenetre extends JFrame {
 	}
 
 	/**
-	 * @param modelName
-	 *            le nom du premier modèle affiché. Sert à initialiser {@link ModelInfo}. Laisser null si on affiche la
-	 *            bdd en premier.
+	 * @param modelName le nom du premier modèle affiché. Sert à initialiser {@link ModelInfo}. Laisser null si on affiche la bdd
+	 *            en premier.
 	 */
 	private void createLeftPanel(String modelName) {
 		Dimension leftPanelDim = new Dimension(leftPanelWidth - (separatorWidth / 2), frameDim.height);
-		leftPanel = new LeftSidePanel(parentPath, modelName, leftPanelDim);
+		leftPanel = new LeftSidePanel(modelName, leftPanelDim, this);
 		leftPanel.setPreferredSize(leftPanelDim);
 		// leftPanel.setMinimumSize(leftPanelDim);
 		leftPanel.setMinimumSize(new Dimension(10, leftPanelDim.height));
-		leftPanel.addMouseListenerToList(new JListControler(this));
 	}
 
 	/**
 	 * Ajoute un ModelPanel à tabbedPane quand on double clique sur un nom de modèle dans ModelBrowser
 	 * 
-	 * @param clickIndex
-	 *            the index of the click in the JList
+	 * @param clickIndex the index of the click in the JList
 	 */
 	public void addNewModel(int clickIndex) {
-		Path newModelPath = allFiles[clickIndex].toPath();
+		Path newModelPath = allFiles.get(clickIndex).toPath();
 		String modelName = newModelPath.getFileName().toString();
 		modelName = modelName.substring(0, 1).toUpperCase() + modelName.substring(1, modelName.lastIndexOf("."));
 		FigureModel newFigureModel;
 
-		if (modelWasDisplayed(modelName)) { // on a déja affiché le modèle associé à newPath. Il est dans
-											// modelPanelList.
-			if (isModelInTabbedPane(modelName)) { // le modèle est dans tabbedPane et qu'il n'est pas actuellement
-													// sélectionné
-				int indexInTabbedPane = getModelPanelIndex(modelName);
+		// on a déja affiché le modèle associé à newPath. Il est dans modelPanelList.
+		if (modelWasDisplayed(modelName)) {
+			// le modèle est dans tabbedPane et qu'il n'est pas actuellement sélectionné
+			if (isModelInTabbedPane(modelName)) {
+				int indexInTabbedPane = getIndexInTabbedPane(modelName);
 				if (tabbedPane.getSelectedIndex() != indexInTabbedPane) {
 					ModelPanel modelPanel = (ModelPanel) tabbedPane.getComponentAt(indexInTabbedPane);
 					changeModelPanelFocus(modelPanel);
 				}
-			} else { // le modèle n'est pas dans tabbedPane, récupère le depuis modelPanelList
+			} else {
+				// le modèle n'est pas dans tabbedPane, récupère le depuis modelPanelList
 				ModelPanel newModelPanel = modelPanelList.get(getModelPanelIndex(modelName));
 				newModelPanel.initModelForWindow();
 
@@ -261,8 +261,8 @@ public class MainFenetre extends JFrame {
 			}
 		} else { // si on n'a jamais ouvert le modèle, crée le avec une ModelPanel associé
 			newFigureModel = new FigureModel(newModelPath, false);
-			Dimension modelPanelDim = new Dimension(frameDim.width - leftPanelWidth - (separatorWidth / 2),
-					frameDim.height - tabHeight);
+			Dimension modelPanelDim =
+					new Dimension(frameDim.width - leftPanelWidth - (separatorWidth / 2), frameDim.height - tabHeight);
 			ModelPanel newModelPanel = new ModelPanel(newFigureModel, modelPanelDim, false, false, true);
 			newModelPanel.initModelForWindow();
 			modelPanelList.add(newModelPanel);
@@ -277,7 +277,7 @@ public class MainFenetre extends JFrame {
 		String newTitle = Modelisationator.NAME + " - " + modelName;
 		setTitle(newTitle);
 	}
-	
+
 	/**
 	 * Change le focus de tabbedPane à newModelPanel, met à jour modelInfo et le titre de la fenêtre.
 	 * 
@@ -309,6 +309,19 @@ public class MainFenetre extends JFrame {
 	private int getModelPanelIndex(String modelName) {
 		for (int i = 0; i < modelPanelList.size(); i++) {
 			if (modelPanelList.get(i).getName().equalsIgnoreCase(modelName)) {
+				return i;
+			}
+		}
+		return -1;
+	}
+
+	/**
+	 * @param name
+	 * @return l'index du Panel ayant comme nom name dans tabbedPane
+	 */
+	private int getIndexInTabbedPane(String name) {
+		for (int i = 0; i < tabbedPane.getTabCount(); i++) {
+			if (tabbedPane.getComponentAt(i).getName().equalsIgnoreCase(name)) {
 				return i;
 			}
 		}

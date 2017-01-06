@@ -11,6 +11,8 @@ import javax.swing.JOptionPane;
 
 import math.Matrice;
 import math.Vecteur;
+import ply.plyModel.other.Face;
+import ply.plyModel.other.Point;
 import ply.plyModel.vues.VisualisationPanel;
 import reader.Lecture;
 import result.BasicResultEnum;
@@ -393,10 +395,10 @@ public class FigureModel extends Observable {
 		for (int i = 0; i < faces.size(); i++) {
 			Path2D ombrePath = new Path2D.Double();
 			List<Point> pt = faces.get(i).getList();
-			int pointNumber = Integer.parseInt(pt.get(0).nom);
+			int pointNumber = Integer.parseInt(pt.get(0).getNom());
 			ombrePath.moveTo(ombre.getMatrice()[0][pointNumber], ombre.getMatrice()[1][pointNumber]);
 			for (int j = 1; j < pt.size(); j++) {
-				pointNumber = Integer.parseInt(pt.get(j).nom);
+				pointNumber = Integer.parseInt(pt.get(j).getNom());
 				ombrePath.lineTo(ombre.getMatrice()[0][pointNumber], ombre.getMatrice()[1][pointNumber]);
 			}
 

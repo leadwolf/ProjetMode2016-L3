@@ -1,4 +1,4 @@
-package ply.bdd.modeles;
+package ply.bdd.other;
 
 import java.util.ArrayList;
 import java.util.List;

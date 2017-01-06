@@ -12,9 +12,9 @@ import java.util.List;
 import org.junit.After;
 import org.junit.Test;
 
-import ply.bdd.modeles.Table;
-import ply.bdd.modeles.TableDataModel;
 import ply.bdd.other.BDDUtilities;
+import ply.bdd.other.Table;
+import ply.bdd.other.TableDataModel;
 import result.BDDResultEnum;
 
 public class TableTest {

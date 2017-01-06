@@ -25,7 +25,7 @@ import ply.plyModel.controlers.KeyControler;
 import ply.plyModel.controlers.MouseControler;
 import ply.plyModel.controlers.TimerChangeListener;
 import ply.plyModel.modeles.FigureModel;
-import ply.plyModel.modeles.SensitivityModel;
+import ply.plyModel.other.SensitivityModel;
 import ply.plyModel.vues.OptionPanel;
 import ply.plyModel.vues.RotationPanel;
 import ply.plyModel.vues.SensitivityViewPanel;
@@ -103,16 +103,17 @@ public class ModelPanel extends JPanel {
 		bottomPanel.setBackground(Color.WHITE);
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		bottomPanel.setPreferredSize(new Dimension(mainPanelDim.width, buttonPanelDim.height + extraBottomPanelHeight));
-		bottomPanel.setMaximumSize(new Dimension(mainPanelDim.width, buttonPanelDim.height + extraBottomPanelHeight));
-		bottomPanel.setMinimumSize(new Dimension(mainPanelDim.width, buttonPanelDim.height + extraBottomPanelHeight));
+//		bottomPanel.setMaximumSize(new Dimension(mainPanelDim.width, buttonPanelDim.height + extraBottomPanelHeight));
+//		bottomPanel.setMinimumSize(new Dimension(mainPanelDim.width, buttonPanelDim.height + extraBottomPanelHeight));
+		// TODO réduire la taille des icones
 
 		/* PANNEAU PRINCIPAL */
-//		setPreferredSize(mainPanelDim);
-//		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-		setLayout(new BorderLayout());
-		add(new JSplitPane(JSplitPane.VERTICAL_SPLIT, visPanel, bottomPanel));
-//		add(visPanel);
-//		add(bottomPanel);
+		setPreferredSize(mainPanelDim);
+		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+//		setLayout(new BorderLayout());
+//		add(new JSplitPane(JSplitPane.VERTICAL_SPLIT, visPanel, bottomPanel));
+		add(visPanel);
+		add(bottomPanel);
 
 		setupControlers();
 	}

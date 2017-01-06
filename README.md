@@ -32,15 +32,14 @@ These are the most recent changes continuously updated until a reset :
   - Comprehensive tests for `BDDPanel` and `Table` with verifications done in the DB.
   - Test for `Modelisationanator`.
   - Project coverage at 71.7% for branch coverage.
+  - Shadows calculated in `FigureModel`.
+  - Searchbar in `ModelBrowser` with auto update on keypress (no need for enter).
   
 ### What's next
 Priority objectives :
-  - Display shadows.
-  - Write tests for all `BaseDeDonnesNew` and the SQL query methods in `Table`.
+  - Move `BDDPanel` either to a new JFrame or somewhere else instead of being in the same spot as `ModelPanel`.
 
 Non-Priority objectives :
-  - *Finally delete `FenetreTable` and `BaseDeDonnesOld` ?*
-  - Update `toolLabel` according to state changes.
   - Try to use more patterns for cleaner code.
   - Try to refactor using more MVC ?
   - Other ?

@@ -1,4 +1,4 @@
-package ply.plyModel.modeles;
+package ply.plyModel.other;
 
 /**
  * Cette classe regoupe les sensitivtés pour les tranformations du modèle

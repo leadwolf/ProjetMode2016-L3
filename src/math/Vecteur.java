@@ -2,7 +2,7 @@ package math;
 
 import java.util.Arrays;
 
-import ply.plyModel.modeles.Point;
+import ply.plyModel.other.Point;
 
 public class Vecteur {
 

@@ -176,6 +176,9 @@ public class BDDPanel extends JPanel {
 			for (int i = 0; i < primaryButtons.length; i++) {
 				JButton button = new JButton(primaryButtons[i]);
 				button.setActionCommand(primaryButtons[i]);
+				if (primaryButtons[i].toLowerCase().startsWith("reset")) {
+					button.setActionCommand("reset");
+				}
 				button.addActionListener(buttonControler);
 				buttonPanel.add(button, BorderLayout.SOUTH);
 			}

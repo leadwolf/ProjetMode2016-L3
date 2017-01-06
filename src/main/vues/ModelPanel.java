@@ -1,5 +1,6 @@
 package main.vues;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -102,13 +103,16 @@ public class ModelPanel extends JPanel {
 		bottomPanel.setBackground(Color.WHITE);
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		bottomPanel.setPreferredSize(new Dimension(mainPanelDim.width, buttonPanelDim.height + extraBottomPanelHeight));
-		bottomPanel.setMaximumSize(new Dimension((int) screenSize.getWidth(), buttonPanelDim.height + extraBottomPanelHeight));
+		bottomPanel.setMaximumSize(new Dimension(mainPanelDim.width, buttonPanelDim.height + extraBottomPanelHeight));
+		bottomPanel.setMinimumSize(new Dimension(mainPanelDim.width, buttonPanelDim.height + extraBottomPanelHeight));
 
 		/* PANNEAU PRINCIPAL */
-		setPreferredSize(mainPanelDim);
-		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-		add(visPanel);
-		add(bottomPanel);
+//		setPreferredSize(mainPanelDim);
+//		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+		setLayout(new BorderLayout());
+		add(new JSplitPane(JSplitPane.VERTICAL_SPLIT, visPanel, bottomPanel));
+//		add(visPanel);
+//		add(bottomPanel);
 
 		setupControlers();
 	}

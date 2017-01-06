@@ -54,7 +54,7 @@ public class BaseDeDonnees {
 	private BaseDeDonnees() {
 		columnNames = new String[] { "Nom", "Chemin", "Date", "Mot Clés", "Nombre de Points", "Nombre de Faces" };
 		buttonColumns = new String[] { "Confirmer insertion/edition", "Reset", "Supprimer" };
-		primaryButtons = new String[] { "Ajouter une ligne", "Reset" };
+		primaryButtons = new String[] { "Ajouter une ligne", "Reset table à base" };
 		nbKeywordsLimit = 10;
 	}
 
@@ -355,7 +355,8 @@ public class BaseDeDonnees {
 				statement2.setString(1, modelName);
 				rs = statement2.executeQuery();
 				BDDPanel result = new BDDPanel(rs, columnNames, buttonColumns, primaryButtons);
-				result.setEditableColumns(new int[] { 0, 1, 3 }, true);
+//				result.setEditableColumns(new int[] { 0, 1, 3 }, true);
+				result.setEditable(true);
 				BDDUtilities.closeConnection();
 				return result;
 			} else {
@@ -385,7 +386,8 @@ public class BaseDeDonnees {
 			PreparedStatement st = BDDUtilities.getConnection().prepareStatement("select * from PLY");
 			rs = st.executeQuery();
 			BDDPanel result = new BDDPanel(rs, columnNames, buttonColumns, primaryButtons);
-			result.setEditableColumns(new int[] { 0, 1, 3 }, true);
+//			result.setEditableColumns(new int[] { 0, 1, 3 }, true);
+			result.setEditable(true);
 			BDDUtilities.closeConnection();
 			return result;
 		} catch (SQLException e) {
@@ -444,7 +446,8 @@ public class BaseDeDonnees {
 			if (rsCount.next()) {
 				rs = statement2.executeQuery();
 				BDDPanel result = new BDDPanel(rs, columnNames, buttonColumns, primaryButtons);
-				result.setEditableColumns(new int[] { 0, 1, 3 }, true);
+//				result.setEditableColumns(new int[] { 0, 1, 3 }, true);
+				result.setEditable(true);
 				BDDUtilities.closeConnection();
 				return result;
 			} else {

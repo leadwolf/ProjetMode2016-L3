@@ -53,9 +53,34 @@ public class VisualisationPanel extends JPanel implements Observer {
 	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
+		drawBackground((Graphics2D) g);
 		drawFigure((Graphics2D) g);
 	}
 
+	private void drawBackground(Graphics2D g) {
+		int drawWidth = 0;
+		int drawHeight= 0;
+		int rectDim = 100;
+		boolean grey = true;
+		
+		while (drawHeight < getHeight()) {
+			while (drawWidth < getWidth()) {
+				g.setColor(Color.BLACK);
+				g.drawString("Chris", drawWidth, drawHeight);
+				if (grey) {
+					g.setColor(Color.LIGHT_GRAY);
+				} else {
+					g.setColor(Color.WHITE);
+				}
+				g.fillRect(drawWidth, drawHeight, rectDim, rectDim);
+				drawWidth += 100;
+				grey = !grey;
+			}
+			drawWidth = 0;
+			drawHeight += 100;
+		}
+	}
+	
 	/**
 	 * Dessine la figure et son ombre avec g
 	 * 

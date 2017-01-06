@@ -27,15 +27,13 @@ public class ModelInfo extends JPanel {
 	}
 	
 	public void initModelInfo(String name) {
-		BaseDeDonnees bdd = BaseDeDonnees.getInstance();
-		String[] modelInfo = bdd.getNameInfo(name, false);
+		String[] modelInfo = BaseDeDonnees.INSTANCE.getNameInfo(name, false);
 		if (modelInfo != null) {
 			if (getComponentCount() > 0) {
 				removeAll();
 			}
 			setLayout(new GridLayout(6, 2));
 			add(new JLabel("Chemin : "));
-//			add(new JLabel(modelInfo[1]));
 			JTextArea chemin = new JTextArea(modelInfo[1]);
 			chemin.setWrapStyleWord(true);
 			chemin.setLineWrap(true);

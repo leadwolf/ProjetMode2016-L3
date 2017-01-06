@@ -6,6 +6,7 @@ import java.awt.event.MouseListener;
 
 import javax.swing.JList;
 
+import main.Modelisationator;
 import main.vues.MainFenetre;
 
 public class JListControler extends MouseAdapter {

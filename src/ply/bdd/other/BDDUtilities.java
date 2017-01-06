@@ -245,4 +245,24 @@ public class BDDUtilities {
 		return new BasicResult(BasicResultEnum.UNKNOWN_ERROR);
 	}
 
+	/**
+	 * @param arg
+	 *            l'agument à vérifier.
+	 * @return si l'arg correspond à une option d'<b>éxécution</b> de bdd.
+	 */
+	public static boolean isExecutableArg(String arg) {
+		return arg.equals("--name") || arg.equals("--all") || arg.equals("--find") || arg.equals("--add") ||
+				arg.equals("--delete") || arg.equals("--edit");
+	}
+
+	/**
+	 * @param arg
+	 * @return si c'est une option (--rf) et non une commande à lancer
+	 *         (--all/--find/...).
+	 */
+	public static boolean isDBOption(String arg) {
+		return arg.equals("--r") || arg.equals("--r") || arg.equals("--f") || arg.equals("--rf") ||
+				arg.equals("--fr") || arg.equals("--reset") || arg.equals("--fill");
+	}
+
 }

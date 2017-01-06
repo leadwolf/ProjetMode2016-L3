@@ -22,6 +22,7 @@ import javax.swing.WindowConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import main.Modelisationator;
 import main.controlers.MenuControler;
 import ply.bdd.controlers.JListControler;
 import ply.bdd.other.BaseDeDonnees;
@@ -77,7 +78,7 @@ public class MainFenetre extends JFrame {
 
 		/* BDD PANEL */
 		// par défaut on veut afficher toute la base
-		BDDPanel bddPanel = BaseDeDonnees.getInstance().getPanel(new String[] { "--all" }, null,
+		BDDPanel bddPanel = BaseDeDonnees.INSTANCE.getPanel(new String[] { "--all" }, null,
 				new boolean[] { options[3], options[4], false });
 		if (bddPanel == null) {
 			System.exit(1);
@@ -88,10 +89,11 @@ public class MainFenetre extends JFrame {
 		String modelName = figureModel.getPath().getFileName().toString();
 		modelName = modelName.substring(0, modelName.lastIndexOf(".")); // capitalize first letter
 		createLeftPanel(modelName);
+		modelName = modelName.substring(0, 1).toUpperCase() + modelName.substring(1);
 
 		/* TABBED PANE */
 		tabbedPane = new JTabbedPane();
-		addTab(modelName.substring(0, 1).toUpperCase() + modelName.substring(1), modelPanel);
+		addTab(modelName, modelPanel);
 		addTab("Base", bddPanel);
 		addTabChangeListener();
 
@@ -99,7 +101,7 @@ public class MainFenetre extends JFrame {
 		mainPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftPanel, tabbedPane);
 
 		/* FENETRE */
-		setupFenetre();
+		setupFenetre(modelName);
 	}
 
 	/**
@@ -119,7 +121,7 @@ public class MainFenetre extends JFrame {
 		frameDim = new Dimension(800, 500);
 
 		/* BDD PANEL */
-		BDDPanel bddPanel = BaseDeDonnees.getInstance().getPanel(command, null, new boolean[] { options[0], options[1], false });
+		BDDPanel bddPanel = BaseDeDonnees.INSTANCE.getPanel(command, null, new boolean[] { options[0], options[1], false });
 		if (bddPanel == null) {
 			System.exit(1);
 		}
@@ -137,7 +139,7 @@ public class MainFenetre extends JFrame {
 		mainPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftPanel, tabbedPane);
 
 		/* FENETRE */
-		setupFenetre();
+		setupFenetre("Base");
 	}
 
 	/**
@@ -173,15 +175,17 @@ public class MainFenetre extends JFrame {
 					ModelPanel newFocus = (ModelPanel) tabbedPane.getSelectedComponent();
 					changeModelPanelFocus(newFocus);
 				}
+				changeTitle(tabbedPane.getSelectedComponent().getName());
 			}
 		});
 	}
 
 	/**
+	 * @param title 
 	 * 
 	 */
-	private void setupFenetre() {
-		this.setTitle("Modelisationator");
+	private void setupFenetre(String title) {
+		changeTitle(title);
 		setLayout(new BorderLayout());
 		setSize(frameDim);
 
@@ -269,8 +273,13 @@ public class MainFenetre extends JFrame {
 		}
 	}
 
+	private void changeTitle(String modelName) {
+		String newTitle = Modelisationator.NAME + " - " + modelName;
+		setTitle(newTitle);
+	}
+	
 	/**
-	 * Change le focus de tabbedPane à newModelPanel et met à jour modelInfo
+	 * Change le focus de tabbedPane à newModelPanel, met à jour modelInfo et le titre de la fenêtre.
 	 * 
 	 * @param newModelPanel
 	 */
@@ -290,7 +299,7 @@ public class MainFenetre extends JFrame {
 	private void addTab(String title, JPanel panel) {
 		tabbedPane.addTab(title, panel);
 		tabbedPane.setTabComponentAt(tabbedPane.getTabCount() - 1, new ButtonTabComponent(tabbedPane));
-		panel.setName(title.toLowerCase());
+		panel.setName(title);
 	}
 
 	/**

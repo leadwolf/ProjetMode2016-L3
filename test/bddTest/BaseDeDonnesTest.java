@@ -22,8 +22,6 @@ import result.BasicResultEnum;
  */
 public class BaseDeDonnesTest {
 
-	private BaseDeDonnees bdd = BaseDeDonnees.getInstance();
-	
 	@After
 	public void closeConnection() {
 		BDDUtilities.closeConnection();
@@ -33,45 +31,46 @@ public class BaseDeDonnesTest {
 	@Test
 	public void test_null_args_get_panel() {
 		String[] args = new String[0];
-		assertEquals(null, bdd.getPanel(null, null, null));
+		assertEquals(null, BaseDeDonnees.INSTANCE.getPanel(null, null, null));
 	}
 
 	@Test
 	public void test_empty_args_get_panel() {
 		String[] args = new String[0];
-		assertEquals(null, bdd.getPanel(args, null, null));
+		assertEquals(null, BaseDeDonnees.INSTANCE.getPanel(args, null, null));
 	}
 
 	@Test
 	public void test_no_args_with_options_get_panel() {
-		assertEquals(null, bdd.getPanel(null, null, new boolean[] { true, true, true }));
+		assertEquals(null, BaseDeDonnees.INSTANCE.getPanel(null, null, new boolean[] { true, true, true }));
 	}
 
 	@Test
 	public void test_db_is_empty_get_panel() {
 		String[] args = new String[] { "--all" };
-		assertEquals(null, bdd.getPanel(args, null, new boolean[] { true, false, true }));
+		assertEquals(null, BaseDeDonnees.INSTANCE.getPanel(args, null, new boolean[] { true, false, true }));
 	}
 
 	/* EXECUTE COMMAND */
 	@Test
 	public void test_null_args_execute_command() {
 		String[] args = new String[0];
-		assertEquals(BasicResultEnum.MISSING_OPTIONS, bdd.executeCommand(null, null, null).getCode());
+		assertEquals(BasicResultEnum.MISSING_OPTIONS,
+				BaseDeDonnees.INSTANCE.executeCommand(null, null, null).getCode());
 	}
 
 	@Test
 	public void test_empty_args_execute_command() {
 		String[] args = new String[] { "" };
 		assertEquals(BasicResultEnum.NO_ARGUMENTS,
-				bdd.executeCommand(args, null, new boolean[] { true, true, true }).getCode());
+				BaseDeDonnees.INSTANCE.executeCommand(args, null, new boolean[] { true, true, true }).getCode());
 	}
 
 	@Test
 	public void test_db_is_empty_execute_command() {
 		String[] args = new String[] { "--all" };
 		assertEquals(BDDResultEnum.EMPTY_DB,
-				bdd.executeCommand(args, null, new boolean[] { true, false, true }).getCode());
+				BaseDeDonnees.INSTANCE.executeCommand(args, null, new boolean[] { true, false, true }).getCode());
 	}
 
 	/* VERIF ARGS */
@@ -80,35 +79,35 @@ public class BaseDeDonnesTest {
 	public void test_no_executable_arg() {
 		String[] args = new String[] { "--lol", "hello", "--rf" };
 		assertEquals(BasicResultEnum.NO_COMMAND_GIVEN,
-				bdd.executeCommand(args, null, new boolean[] { true, true, true }).getCode());
+				BaseDeDonnees.INSTANCE.executeCommand(args, null, new boolean[] { true, true, true }).getCode());
 	}
 
 	@Test
 	public void test_more_than_one_command() {
 		String[] args = new String[] { "--all", "--delete", "--rf" };
 		assertEquals(BasicResultEnum.CONFLICTING_ARGUMENTS,
-				bdd.executeCommand(args, null, new boolean[] { true, true, true }).getCode());
+				BaseDeDonnees.INSTANCE.executeCommand(args, null, new boolean[] { true, true, true }).getCode());
 	}
 
 	@Test
 	public void testname_edit_modelName_not_specified() {
 		String[] args = new String[] { "--edit", "--rf" };
 		assertEquals(BDDResultEnum.NAME_NOT_SPECIFIED,
-				bdd.executeCommand(args, null, new boolean[] { true, true, true }).getCode());
+				BaseDeDonnees.INSTANCE.executeCommand(args, null, new boolean[] { true, true, true }).getCode());
 	}
 
 	@Test
 	public void testname_name_modelName_not_specified() {
 		String[] args = new String[] { "--name", "--rf" };
 		assertEquals(BDDResultEnum.NAME_NOT_SPECIFIED,
-				bdd.executeCommand(args, null, new boolean[] { true, true, true }).getCode());
+				BaseDeDonnees.INSTANCE.executeCommand(args, null, new boolean[] { true, true, true }).getCode());
 	}
 
 	@Test
 	public void test_find_no_keywords() {
 		String[] args = new String[] { "--find", "--rf" };
 		assertEquals(BDDResultEnum.NO_KEYWORDS_SPECIFIED,
-				bdd.executeCommand(args, null, new boolean[] { true, true, true }).getCode());
+				BaseDeDonnees.INSTANCE.executeCommand(args, null, new boolean[] { true, true, true }).getCode());
 	}
 
 	@Test
@@ -116,7 +115,7 @@ public class BaseDeDonnesTest {
 		String[] args = new String[] { "--find", "hello", "this", "find", "command", "array", "goes", "over", "then",
 				"10", "length", "limit", "--rf" };
 		assertEquals(BDDResultEnum.TOO_MANY_KEYWORDS_SPECIFIED,
-				bdd.executeCommand(args, null, new boolean[] { true, true, true }).getCode());
+				BaseDeDonnees.INSTANCE.executeCommand(args, null, new boolean[] { true, true, true }).getCode());
 	}
 
 	/* DELETE */
@@ -125,14 +124,14 @@ public class BaseDeDonnesTest {
 	public void test_delete_success() {
 		String[] args = new String[] { "--delete", "weathervane", "--rf" };
 		assertEquals(BDDResultEnum.DELETE_SUCCESSFUL,
-				bdd.executeCommand(args, null, new boolean[] { true, true, true }).getCode());
+				BaseDeDonnees.INSTANCE.executeCommand(args, null, new boolean[] { true, true, true }).getCode());
 	}
 
 	@Test
 	public void test_delete_model_not_found() {
 		String[] args = new String[] { "--delete", "FAKE_MODEL_NAME", "--rf" };
 		assertEquals(BDDResultEnum.MODEL_NOT_FOUND,
-				bdd.executeCommand(args, null, new boolean[] { true, true, true }).getCode());
+				BaseDeDonnees.INSTANCE.executeCommand(args, null, new boolean[] { true, true, true }).getCode());
 	}
 
 	/* EDIT */
@@ -140,13 +139,13 @@ public class BaseDeDonnesTest {
 	@Test
 	public void test_edit_model_not_found() {
 		String[] args = new String[] { "--edit", "FAKE_MODEL_NAME", "--rf" };
-		assertEquals(null, bdd.getPanel(args, null, new boolean[] { true, true, true }));
+		assertEquals(null, BaseDeDonnees.INSTANCE.getPanel(args, null, new boolean[] { true, true, true }));
 	}
 
 	@Test
 	public void test_edit_model_exists() {
 		String[] args = new String[] { "--edit", "galleon", "--rf" };
-		assertNotEquals(null, bdd.getPanel(args, null, new boolean[] { true, true, true }));
+		assertNotEquals(null, BaseDeDonnees.INSTANCE.getPanel(args, null, new boolean[] { true, true, true }));
 	}
 
 	/* ADD */
@@ -154,7 +153,7 @@ public class BaseDeDonnesTest {
 	@Test
 	public void test_add() {
 		String[] args = new String[] { "--add", "--rf" };
-		assertNotEquals(null, bdd.getPanel(args, null, new boolean[] { true, true, true }));
+		assertNotEquals(null, BaseDeDonnees.INSTANCE.getPanel(args, null, new boolean[] { true, true, true }));
 	}
 
 	/* FIND */
@@ -162,13 +161,13 @@ public class BaseDeDonnesTest {
 	@Test
 	public void test_find_keywords_not_found() {
 		String[] args = new String[] { "--find", "FAKE_KEYWORD", "FAKE_KEYWORD_2", "--rf" };
-		assertEquals(null, bdd.getPanel(args, null, new boolean[] { true, true, true }));
+		assertEquals(null, BaseDeDonnees.INSTANCE.getPanel(args, null, new boolean[] { true, true, true }));
 	}
 
 	@Test
 	public void test_find_keywords_exist() {
 		String[] args = new String[] { "--find", "mes", "mots", "--rf" };
-		assertNotEquals(null, bdd.getPanel(args, null, new boolean[] { true, true, true }));
+		assertNotEquals(null, BaseDeDonnees.INSTANCE.getPanel(args, null, new boolean[] { true, true, true }));
 	}
 
 	/* NAME */
@@ -176,32 +175,32 @@ public class BaseDeDonnesTest {
 	@Test
 	public void test_name_model_does_not_exist() {
 		String[] args = new String[] { "--name", "FAKE_MODEL_NAME", "--rf" };
-		assertEquals(null, bdd.getPanel(args, null, new boolean[] { true, true, true }));
+		assertEquals(null, BaseDeDonnees.INSTANCE.getPanel(args, null, new boolean[] { true, true, true }));
 	}
 
 	@Test
 	public void test_name_model_exists() {
 		String[] args = new String[] { "--name", "galleon", "--rf" };
-		assertNotEquals(null, bdd.getPanel(args, null, new boolean[] { true, true, true }));
+		assertNotEquals(null, BaseDeDonnees.INSTANCE.getPanel(args, null, new boolean[] { true, true, true }));
 	}
 
 	/* MODEL INFO */
 
 	@Test
 	public void test_nameInfo_fake_name() {
-		assertArrayEquals(null, bdd.getNameInfo("FAKE_MODEL_NAME", true));
+		assertArrayEquals(null, BaseDeDonnees.INSTANCE.getNameInfo("FAKE_MODEL_NAME", true));
 	}
 
 	@Test
 	public void test_nameInfo_real_name() {
-		assertFalse(bdd.getNameInfo("galleon", true).equals(null));
+		assertFalse(BaseDeDonnees.INSTANCE.getNameInfo("galleon", true).equals(null));
 	}
 
 	/* SHOW ALL */
 	@Test
 	public void test_show_all() {
 		String[] args = new String[] { "--all", "--rf" };
-		assertNotEquals(null, bdd.getPanel(args, null, new boolean[] { true, true, true }));
+		assertNotEquals(null, BaseDeDonnees.INSTANCE.getPanel(args, null, new boolean[] { true, true, true }));
 	}
 
 }

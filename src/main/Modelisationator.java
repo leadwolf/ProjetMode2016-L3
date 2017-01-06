@@ -6,6 +6,7 @@ import java.util.regex.Pattern;
 
 import main.vues.MainFenetre;
 import math.Vecteur;
+import ply.bdd.other.BDDUtilities;
 import ply.bdd.other.BaseDeDonnees;
 import ply.plyModel.modeles.FigureModel;
 import result.BDDResult;
@@ -22,6 +23,8 @@ import result.MethodResult;
  */
 public class Modelisationator {
 
+	public final static String NAME = "Modelisationator";
+
 	private boolean drawFaces = true;
 	private boolean drawSegments = false;
 	private boolean drawPoints = false;
@@ -34,13 +37,12 @@ public class Modelisationator {
 	private boolean foundFile = false;
 	private boolean found3DOptions = false;
 
-	private Pattern singleMinus = Pattern.compile("^(\\-)\\w+");
-	private Pattern doubleMinus = Pattern.compile("^(\\-\\-)\\w+");
+	private Pattern singleMinus;
+	private Pattern doubleMinus;
 
-	private BaseDeDonnees baseDeDonnes;
-	
 	public Modelisationator() {
-		baseDeDonnes = BaseDeDonnees.getInstance();
+		singleMinus = Pattern.compile("^(\\-)\\w+");
+		doubleMinus = Pattern.compile("^(\\-\\-)\\w+");
 	}
 	
 	@SuppressWarnings("javadoc")
@@ -99,7 +101,7 @@ public class Modelisationator {
 		}
 		for (int i = 0; i < args.length; i++) {
 			String extension = args[i].substring(args[i].lastIndexOf(".") + 1, args[i].length());
-			if (modelisationator.baseDeDonnes.isExecutableArg(args[i])) {
+			if (BDDUtilities.isExecutableArg(args[i])) {
 				modelisationator.executeDB = true;
 			}
 			if (modelisationator.singleMinus.matcher(args[i]).find()) {
@@ -151,7 +153,7 @@ public class Modelisationator {
 			// On vérifie la commande ici même si on le fait dans execute() quand MainFenetre va créer un BDDPanel car
 			// s'il y a une erreur, autant arrêter le
 			// programme le plus tôt possible.
-			MethodResult verifResult = modelisationator.baseDeDonnes.verifArgs(args, quiet);
+			MethodResult verifResult = BaseDeDonnees.INSTANCE.verifArgs(args, quiet);
 			if (!verifResult.getCode().equals(BasicResultEnum.ALL_OK)) {
 				return verifResult;
 			}
@@ -202,7 +204,7 @@ public class Modelisationator {
 		} else if (modelisationator.executeDB) {
 			boolean options[] = new boolean[] { modelisationator.reset, modelisationator.fill };
 			if (modelisationator.delete) {
-				return modelisationator.baseDeDonnes.executeCommand(args, dbPath, new boolean[] { options[0], options[1], quiet });
+				return BaseDeDonnees.INSTANCE.executeCommand(args, dbPath, new boolean[] { options[0], options[1], quiet });
 			} else {
 				MainFenetre mainFrame = new MainFenetre(args, options);
 				mainFrame.setTitle("Modelisationator");
@@ -262,7 +264,7 @@ public class Modelisationator {
 			modelisationator.fill = true;
 		} else if (arg.equals("--delete")) {
 			modelisationator.delete = true;
-		} else if (!modelisationator.baseDeDonnes.isExecutableArg(arg)) { // if not a direct command for the db, check for single letter
+		} else if (!BDDUtilities.isExecutableArg(arg)) { // if not a direct command for the db, check for single letter
 															// options
 			for (int j = 2; j < arg.length(); j++) { // start comparing after "--"
 				char c = arg.charAt(j);

@@ -6,7 +6,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -22,6 +21,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 
+import main.vues.LeftSidePanel;
 import main.vues.MainFenetre;
 import main.vues.ModelPanel;
 import ply.bdd.controlers.SearchListener;
@@ -53,6 +53,10 @@ public class ModelBrowser extends JPanel {
 	 */
 	private JPanel searchPanel;
 	/**
+	 * Dimension du {@link LeftSidePanel} qui a crée ceci. Utilisée pour savoir quelle taille mettre aux composants qu'on crée.
+	 */
+	private Dimension leftPanelDim;
+	/**
 	 * Le conseil qu'on affiche dans textField si l'utilisateur n'a rien saisi.
 	 */
 	private final String TIP;
@@ -61,10 +65,12 @@ public class ModelBrowser extends JPanel {
 	 * Constructeur par défaut.
 	 * 
 	 * @param mainFenetre
+	 * @param leftPanelDim
 	 */
-	public ModelBrowser(MainFenetre mainFenetre) {
+	public ModelBrowser(MainFenetre mainFenetre, Dimension leftPanelDim) {
 		super();
-		TIP = "Rechercher par mots clès";
+		this.leftPanelDim = leftPanelDim;
+		TIP = "Rechercher par nom ou mots clès";
 
 		/* JLIST */
 		listModel = new DefaultListModel<>();
@@ -98,15 +104,15 @@ public class ModelBrowser extends JPanel {
 	 */
 	private void createSearchBar() {
 		// SEARCH BAR
-		Dimension dim = new Dimension(250, 25);
+		int buttonDims = 25;
 		SearchListener searchListener = new SearchListener(this);
 
 		// TEXT FIELD
 		textField = new JTextField(TIP);
 		textField.getDocument().addDocumentListener(searchListener);
 		textField.addFocusListener(searchListener);
-		textField.setPreferredSize(dim);
-		textField.setMaximumSize(new Dimension(300, dim.height));
+		textField.setPreferredSize(new Dimension(leftPanelDim.width - buttonDims, buttonDims));
+		textField.setMaximumSize(new Dimension(300, buttonDims));
 
 		// BUTTON
 		JButton clearButton = new JButton("X");
@@ -117,8 +123,8 @@ public class ModelBrowser extends JPanel {
 			}
 		});
 		clearButton.setMargin(new Insets(0, 0, 0, 0));
-		clearButton.setPreferredSize(new Dimension(dim.height, dim.height));
-		clearButton.setMaximumSize(new Dimension(dim.height, dim.height));
+		clearButton.setPreferredSize(new Dimension(buttonDims, buttonDims));
+		clearButton.setMaximumSize(new Dimension(buttonDims, buttonDims));
 		clearButton.setToolTipText("Effacer la recherche");
 
 		searchPanel = new JPanel();

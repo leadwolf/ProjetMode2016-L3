@@ -2,13 +2,9 @@ package main.vues;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.event.MouseListener;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
-import javax.swing.JList;
 import javax.swing.JPanel;
 
 import ply.bdd.vues.ModelBrowser;
@@ -42,7 +38,7 @@ public class LeftSidePanel extends JPanel {
 		modelInfo.setPreferredSize(new Dimension(dim.width, 100));
 
 		/* MODEL BROWSER */
-		modelBrowser = new ModelBrowser(mainFenetre);
+		modelBrowser = new ModelBrowser(mainFenetre, dim);
 		modelBrowser.setBorder(BorderFactory.createLineBorder(Color.black));
 		modelBrowser.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK), "Model Browser :"));
 

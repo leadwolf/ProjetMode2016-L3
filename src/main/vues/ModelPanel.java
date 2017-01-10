@@ -8,14 +8,9 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.KeyboardFocusManager;
 import java.awt.Toolkit;
-import java.nio.file.Path;
 
 import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
-import javax.swing.JFrame;
-import javax.swing.JMenu;
 import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.Timer;
@@ -44,13 +39,16 @@ public class ModelPanel extends JPanel {
 
 	private FigureModel figureModel;
 	
+	private JSplitPane splitPane;
+	private boolean extended;
+
 	// PANELS
 	private VisualisationPanel visPanel;
 	private JPanel bottomPanel;
 	private TranslationPanel translationPanel;
 	private OptionPanel optionPanel;
 	private RotationPanel rotationPanel;
-	private GridBagConstraints gbc = new GridBagConstraints();
+	private GridBagConstraints gbc;
 	private JMenuBar menuBar;
 	// CONTROLERS
 
@@ -71,15 +69,22 @@ public class ModelPanel extends JPanel {
 
 		this.mainPanelDim = mainPanelDim;
 		this.figureModel = figureModel;
+		gbc = new GridBagConstraints();
+		extended = true;
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
 		Dimension buttonDim = new Dimension(50, 50);
 		Dimension buttonPanelDim = new Dimension(buttonDim.width * 3, buttonDim.height * 3);
 		int extraBottomPanelHeight = 100;
+		int maxVisPanelHeight = mainPanelDim.height - buttonPanelDim.height - extraBottomPanelHeight;
 
 		/* PANNEAU AFFICHAGE */
 		visPanel = new VisualisationPanel(figureModel, drawPoints, drawSegments, drawFaces);
-		visPanel.setTempDimensions(new Dimension(mainPanelDim.width, mainPanelDim.height - buttonPanelDim.height - extraBottomPanelHeight));
-		visPanel.setPreferredSize(mainPanelDim);
+		visPanel.setTempDimensions(new Dimension(mainPanelDim.width, maxVisPanelHeight));
+		visPanel.setPreferredSize(new Dimension(mainPanelDim.width, maxVisPanelHeight));
+
+		visPanel.setMinimumSize(new Dimension(mainPanelDim.width, maxVisPanelHeight));
+		visPanel.setMaximumSize(new Dimension(mainPanelDim.width, screenSize.height));
 		visPanel.setBackground(Color.WHITE);
 		
 		/* PANNEAUX BOUTONS */
@@ -99,21 +104,23 @@ public class ModelPanel extends JPanel {
 		bottomPanel.add(translationPanel, gbc);
 		bottomPanel.add(rotationPanel, gbc);
 		bottomPanel.add(optionPanel, gbc);
+
+		bottomPanel.setPreferredSize(new Dimension(mainPanelDim.width, buttonPanelDim.height + extraBottomPanelHeight));
+		bottomPanel.setMaximumSize(new Dimension(screenSize.width, buttonPanelDim.height + extraBottomPanelHeight));
+		bottomPanel.setMinimumSize(new Dimension(mainPanelDim.width, 0));
+
 		bottomPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		bottomPanel.setBackground(Color.WHITE);
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		bottomPanel.setPreferredSize(new Dimension(mainPanelDim.width, buttonPanelDim.height + extraBottomPanelHeight));
-//		bottomPanel.setMaximumSize(new Dimension(mainPanelDim.width, buttonPanelDim.height + extraBottomPanelHeight));
-//		bottomPanel.setMinimumSize(new Dimension(mainPanelDim.width, buttonPanelDim.height + extraBottomPanelHeight));
-		// TODO réduire la taille des icones
+
+		/* SPLIT PANE */
+		splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, visPanel, bottomPanel);
+		splitPane.setDividerSize(5);
+		
 
 		/* PANNEAU PRINCIPAL */
 		setPreferredSize(mainPanelDim);
-		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-//		setLayout(new BorderLayout());
-//		add(new JSplitPane(JSplitPane.VERTICAL_SPLIT, visPanel, bottomPanel));
-		add(visPanel);
-		add(bottomPanel);
+		setLayout(new BorderLayout());
+		add(splitPane);
 
 		setupControlers();
 	}
@@ -131,6 +138,7 @@ public class ModelPanel extends JPanel {
 
 		SensitivityViewPanel sensPanel = new SensitivityViewPanel(sensModel);
 		sensPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK), "Ajuster la sensitivité de la souris : "));
+//		sensPanel.setPreferredSize(new Dimension(200, 150));
 		bottomPanel.add(sensPanel, gbc);
 
 		// TIMER pour rester appuyé sur le bouton
@@ -155,6 +163,18 @@ public class ModelPanel extends JPanel {
 		optionPanel.getshowFaces().addActionListener(commandControler);
 		optionPanel.getshowSegments().addActionListener(commandControler);
 		optionPanel.getshowPoints().addActionListener(commandControler);
+	}
+
+	/**
+	 * Affiche/Cache les contrômes du modèle.
+	 */
+	public void toggleControls() {
+		// if divider between bottom and bottom-20px, set to normal size
+		if (splitPane.getDividerLocation() >= getHeight() - 20) {
+			splitPane.setDividerLocation(0.7);
+		} else {
+			splitPane.setDividerLocation(1.0);
+		}
 	}
 
 	/**

@@ -1,6 +1,9 @@
 package ply.plyModel.vues;
 
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Insets;
 import java.util.Hashtable;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -83,11 +86,17 @@ public class SensitivityViewPanel extends JPanel {
 			}
 		});
 		
-		setLayout(new GridLayout(4, 1));
-		add(new JLabel("Rotation :"));
-		add(rotationSensSlider);
-		add(new JLabel("Zoom :"));
-		add(zoomSensSlider);
+		GridBagConstraints gbc = new GridBagConstraints();
+		setLayout(new GridBagLayout());
+		gbc.insets = new Insets(10, 10, 10, 10);
+		add(new JLabel("Rotation :"), gbc);
+		gbc.gridx = 1;
+		add(rotationSensSlider, gbc);
+		gbc.gridx = 0;
+		gbc.gridy = 1;
+		add(new JLabel("Zoom :"), gbc);
+		gbc.gridx = 1;
+		add(zoomSensSlider, gbc);
 	}
 	
 }

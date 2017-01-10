@@ -61,7 +61,6 @@ public class DAO {
 			PreparedStatement st = BDDUtilities.getConnection().prepareStatement(queryString);
 			for (int j = 0; j < args.length; j++) {
 				if (!args[j].startsWith("--")) {
-					System.out.println("setting at " + (j + 1));
 					st.setString(j + 1, "%" + args[j] + "%");
 				}
 			}

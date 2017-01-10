@@ -62,6 +62,7 @@ public class VisualisationPanel extends JPanel implements Observer {
 		int drawHeight= 0;
 		int rectDim = 100;
 		boolean grey = true;
+		boolean firstGrey = true;
 		
 		while (drawHeight < getHeight()) {
 			while (drawWidth < getWidth()) {
@@ -75,6 +76,13 @@ public class VisualisationPanel extends JPanel implements Observer {
 				g.fillRect(drawWidth, drawHeight, rectDim, rectDim);
 				drawWidth += 100;
 				grey = !grey;
+			}
+			if (firstGrey) {
+				grey = false;
+				firstGrey = false;
+			} else {
+				grey = true;
+				firstGrey = true;
 			}
 			drawWidth = 0;
 			drawHeight += 100;

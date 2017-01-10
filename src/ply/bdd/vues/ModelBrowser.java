@@ -132,7 +132,7 @@ public class ModelBrowser extends JPanel {
 	 */
 	public void updateList() {
 		if (!textField.getText().matches("\\s*")) {
-			String[] keywords = textField.getText().split(" ");
+			String[] keywords = textField.getText().split("\\s+");
 			initListModel(keywords);
 		} else {
 			initListModel(null);
@@ -153,7 +153,7 @@ public class ModelBrowser extends JPanel {
 			if (keywords == null) {
 				rs = DAO.INSTANCE.getAll();
 			} else {
-				rs = DAO.INSTANCE.find(keywords);
+				rs = DAO.INSTANCE.findKeywordsAndName(keywords);
 			}
 
 			while (rs.next()) {

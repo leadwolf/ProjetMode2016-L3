@@ -88,7 +88,6 @@ public class Table extends JTable {
 				// therefore we update of those conditions are not verified
 				boolean updateInsteadOfInsert = !((modelRow == getRowCount() - 1) && !lastRowIsInDB);
 				if (modelRow != -1) {
-					System.out.println("pressed button at " + modelRow);
 					modifyTableDirect(modelRow, updateInsteadOfInsert, false);
 				}
 			}
@@ -232,10 +231,8 @@ public class Table extends JTable {
 				if (isCellDifferent(rowIndex, colIndex)) {
 					if (colTypes[colIndex].equalsIgnoreCase("integer")) {
 						statement.setInt(stIndex, Integer.parseInt(rowData[colIndex].toString()));
-						System.out.println("set " + stIndex + " to " + rowData[colIndex].toString());
 					} else if (colTypes[colIndex].equalsIgnoreCase("text")) {
 						statement.setString(stIndex, rowData[colIndex].toString());
-						System.out.println("set " + stIndex + " to " + rowData[colIndex].toString());
 					}
 					stIndex++;
 				}

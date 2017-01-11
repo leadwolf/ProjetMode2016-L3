@@ -39,16 +39,14 @@ public class FigureModel extends Observable {
 	/**
 	 * Cree une figure en lisant un fichier <b>file</b> avec {@link Lecture}
 	 * 
-	 * @param file
-	 *            le <b>Path</b> de l'objet .ply
-	 * @param quiet
-	 *            true si on veut empêcher les System.out.println
+	 * @param file le <b>Path</b> de l'objet .ply
+	 * @param quiet true si on veut empêcher les System.out.println
 	 */
 	public FigureModel(Path file, boolean quiet) {
 		this.path = file;
 		this.quiet = quiet;
 		lightVector = new Vecteur(new double[] { 0, 0, -1 });
-		
+
 		readFile();
 	}
 
@@ -245,8 +243,7 @@ public class FigureModel extends Observable {
 	 * Centre la figure par rapport au centre de ce Panel
 	 * 
 	 * @param panel
-	 * @param refresh
-	 *            true if want to refresh model and notify its observers
+	 * @param refresh true if want to refresh model and notify its observers
 	 */
 	private void centrerFigure(VisualisationPanel panel) {
 		refreshFigDims(panel);
@@ -262,13 +259,11 @@ public class FigureModel extends Observable {
 	}
 
 	/**
-	 * Applique une homothétie pour que la plus grande dimensions (largeur ou longueur) de la figure prenne
-	 * <b>maxSize</b> de l'écran
+	 * Applique une homothétie pour que la plus grande dimensions (largeur ou longueur) de la figure prenne <b>maxSize</b> de l'écran
 	 * 
 	 * @param panel
 	 * @param maxSize
-	 * @param refresh
-	 *            true if want to refresh model and notify its observers
+	 * @param refresh true if want to refresh model and notify its observers
 	 */
 	private void fitFigureToWindow(VisualisationPanel panel, double maxSize) {
 		// scale by height
@@ -342,10 +337,8 @@ public class FigureModel extends Observable {
 	/**
 	 * Met la figure à la bonne échelle pour le panel concerné et la centre.
 	 * 
-	 * @param visPanel
-	 *            le panel concerné
-	 * @param zoom
-	 *            le niveau de zoom qu'on veut au départ
+	 * @param visPanel le panel concerné
+	 * @param zoom le niveau de zoom qu'on veut au départ
 	 */
 	public void prepareForWindow(VisualisationPanel visPanel, double zoom) {
 		if (zoom != 1.0) {

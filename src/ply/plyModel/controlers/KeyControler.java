@@ -1,27 +1,22 @@
 package ply.plyModel.controlers;
 
 import java.awt.KeyEventDispatcher;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 
-import javax.swing.Timer;
-
+import main.vues.MainFenetre;
 import main.vues.ModelPanel;
 import ply.plyModel.modeles.FigureModel;
 
 public class KeyControler implements KeyEventDispatcher {
 
-	private ModelPanel fenetre;
-	private FigureModel figureModel;
+	private MainFenetre mainFenetre;
 	private double translationSens;
 	private long old;
 	private long now;
 
-	public KeyControler(ModelPanel fenetre) {
+	public KeyControler(MainFenetre mainFenetre) {
 		super();
-		this.fenetre = fenetre;
-		figureModel = fenetre.getFigure();
+		this.mainFenetre = mainFenetre;
 		translationSens = 10;
 		old = System.currentTimeMillis();
 		now = System.currentTimeMillis();
@@ -29,8 +24,11 @@ public class KeyControler implements KeyEventDispatcher {
 
 	@Override
 	public boolean dispatchKeyEvent(KeyEvent e) {
-		if (e.getID() == KeyEvent.KEY_PRESSED) {
-			figureModel.refreshFigDims(fenetre.getVisPanel());
+		if (mainFenetre.canControlFigure() && e.getID() == KeyEvent.KEY_PRESSED) {
+			ModelPanel modelPanel = mainFenetre.getCurrentModelPanel();
+			FigureModel figureModel = modelPanel.getFigure();
+			figureModel.refreshFigDims(modelPanel.getVisPanel());
+
 			switch (e.getKeyCode()) {
 			case KeyEvent.VK_DOWN:
 				figureModel.translatePoints(0, translationSens, 0);
@@ -57,17 +55,21 @@ public class KeyControler implements KeyEventDispatcher {
 				figureModel.rotateXByPoint(-5);
 				break;
 			case KeyEvent.VK_C:
-				figureModel.prepareForWindow(fenetre.getVisPanel(), 1.0);
+				figureModel.prepareForWindow(modelPanel.getVisPanel(), 1.0);
 				break;
 			case KeyEvent.VK_R:
 				now = System.currentTimeMillis();
 				if ((now - old) > 5000) {
-					fenetre.resetModel();
+					modelPanel.resetModel();
 					old = now;
 				}
 				break;
 			default:
 				break;
+			}
+		} else if (e.getID() == KeyEvent.KEY_PRESSED) {
+			if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+				mainFenetre.setCanControlFigure(true);
 			}
 		} else if (e.getID() == KeyEvent.KEY_RELEASED) {
 		} else if (e.getID() == KeyEvent.KEY_TYPED) {

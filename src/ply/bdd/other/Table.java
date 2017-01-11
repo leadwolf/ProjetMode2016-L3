@@ -67,8 +67,7 @@ public class Table extends JTable {
 	}
 
 	/**
-	 * @param lastRowIsInDB
-	 *            the lastRowIsInDB to set
+	 * @param lastRowIsInDB the lastRowIsInDB to set
 	 */
 	public void setLastRowIsInDB(boolean lastRowIsInDB) {
 		this.lastRowIsInDB = lastRowIsInDB;
@@ -89,6 +88,7 @@ public class Table extends JTable {
 				// therefore we update of those conditions are not verified
 				boolean updateInsteadOfInsert = !((modelRow == getRowCount() - 1) && !lastRowIsInDB);
 				if (modelRow != -1) {
+					System.out.println("pressed button at " + modelRow);
 					modifyTableDirect(modelRow, updateInsteadOfInsert, false);
 				}
 			}
@@ -130,10 +130,8 @@ public class Table extends JTable {
 	/**
 	 * Exécute indirectement la mise à jour de la table. Cette méthode est appelé par le contrôleur
 	 * 
-	 * @param rowIndex
-	 *            l'index de la ligne où le bouton a été appuyé
-	 * @param updateInsteadOfInsert
-	 *            true = update, false = insert
+	 * @param rowIndex l'index de la ligne où le bouton a été appuyé
+	 * @param updateInsteadOfInsert true = update, false = insert
 	 * @param quiet
 	 * @return le résultat de l'opération sql ou si il n'a pas de valeurs différentes sur lesquelles opérer
 	 */
@@ -161,9 +159,8 @@ public class Table extends JTable {
 	 */
 	private MethodResult checkRowData(String[] rowData, int rowIndex, boolean quiet) {
 		// GET SELECTED ROW DATA
-		int colCount = getModel().getColumnCount();
 		boolean differentValues = false;
-		for (int colIndex = 0; colIndex < colCount; colIndex++) {
+		for (int colIndex = 0; colIndex < dataWidth; colIndex++) {
 			if (isCellDifferent(rowIndex, colIndex)) {
 				differentValues = true;
 			}
@@ -172,8 +169,8 @@ public class Table extends JTable {
 		// CHECK IF UPDATE POSSIBLE
 		if (!differentValues) {
 			if (!quiet) {
-				JOptionPane.showMessageDialog(null, "Vous n'avez pas changé les donnes.",
-						"Modelisationator : Mise à jour", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null, "Vous n'avez pas changé les donnes.", "Modelisationator : Mise à jour",
+						JOptionPane.ERROR_MESSAGE);
 			}
 			return new BDDResult(BDDResultEnum.NO_DIFFERENT_VALUES);
 		}
@@ -182,8 +179,8 @@ public class Table extends JTable {
 		if (rowData[0].toString().matches("\\s*")) { // string is only 0 or more spaces
 			setToolTip("Insertion impossible.");
 			if (!quiet) {
-				JOptionPane.showMessageDialog(null, "Vous ne pouvez pas insérer un nom de modèle nulle.",
-						"Modelisationator : Insertion", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null, "Vous ne pouvez pas insérer un nom de modèle nulle.", "Modelisationator : Insertion",
+						JOptionPane.ERROR_MESSAGE);
 			}
 			return new BDDResult(BDDResultEnum.NAME_NOT_SPECIFIED);
 		}
@@ -203,12 +200,9 @@ public class Table extends JTable {
 	/**
 	 * Exécute la mise à jour SQL avec les champs rowData
 	 * 
-	 * @param rowData
-	 *            les valeurs des champs à mettre à jour
-	 * @param rowIndex
-	 *            la ligne dans la jtable ou se situent ces valeurs
-	 * @param quiet
-	 *            true = empecher affichage
+	 * @param rowData les valeurs des champs à mettre à jour
+	 * @param rowIndex la ligne dans la jtable ou se situent ces valeurs
+	 * @param quiet true = empecher affichage
 	 * @return le résultat de la requête
 	 */
 	private MethodResult updateTableBypass(String[] rowData, int rowIndex, boolean quiet) {
@@ -221,7 +215,7 @@ public class Table extends JTable {
 
 			// CREATE STRING
 			String updateString = "update PLY set";
-			for (int colIndex = 0; colIndex < rowData.length; colIndex++) {
+			for (int colIndex = 0; colIndex < dataWidth; colIndex++) {
 				if (isCellDifferent(rowIndex, colIndex)) {
 					String colName = dbColNames[colIndex];
 					updateString += " " + colName + " = ?,";
@@ -234,24 +228,25 @@ public class Table extends JTable {
 			PreparedStatement statement = BDDUtilities.getConnection().prepareStatement(updateString);
 			String[] colTypes = BDDUtilities.getColumnTypes();
 			int stIndex = 1;
-			for (int colIndex = 0; colIndex < rowData.length; colIndex++) {
+			for (int colIndex = 0; colIndex < dataWidth; colIndex++) {
 				if (isCellDifferent(rowIndex, colIndex)) {
 					if (colTypes[colIndex].equalsIgnoreCase("integer")) {
 						statement.setInt(stIndex, Integer.parseInt(rowData[colIndex].toString()));
+						System.out.println("set " + stIndex + " to " + rowData[colIndex].toString());
 					} else if (colTypes[colIndex].equalsIgnoreCase("text")) {
 						statement.setString(stIndex, rowData[colIndex].toString());
+						System.out.println("set " + stIndex + " to " + rowData[colIndex].toString());
 					}
 					stIndex++;
 				}
 			}
-			statement.setString(stIndex, orignalData.get(0)[0]); // WHERE clause
+			statement.setString(stIndex, orignalData.get(rowIndex)[0]); // WHERE clause
 			if (statement.executeUpdate() > 0) {
 				// REUSSITE
 				updateOriginal(rowIndex, rowData);
 				setToolTip("Mise à jour réussie.");
 				if (!quiet) {
-					JOptionPane.showMessageDialog(null, "Mise à jour réussie", "Succès",
-							JOptionPane.INFORMATION_MESSAGE);
+					JOptionPane.showMessageDialog(null, "Mise à jour réussie", "Succès", JOptionPane.INFORMATION_MESSAGE);
 				}
 				BDDUtilities.closeConnection();
 				return new BDDResult(BDDResultEnum.UPDATE_SUCCESSFUL);
@@ -276,10 +271,8 @@ public class Table extends JTable {
 	/**
 	 * Vérifie si la valeur à insérer n'existe pas déja et exécute l'insertion avec les valeurs de rowData.
 	 * 
-	 * @param rowData
-	 *            les valeurs des champs à insérer
-	 * @param quiet
-	 *            true = empecher affichage
+	 * @param rowData les valeurs des champs à insérer
+	 * @param quiet true = empecher affichage
 	 * @return le résultat de la requête
 	 */
 	private MethodResult insertTableBypass(String[] rowData, boolean quiet) {
@@ -324,8 +317,7 @@ public class Table extends JTable {
 					setToolTip("Insertion réussie.");
 					lastRowIsInDB = true;
 					if (!quiet) {
-						JOptionPane.showMessageDialog(null, "Insertion réussie", "Succès",
-								JOptionPane.INFORMATION_MESSAGE);
+						JOptionPane.showMessageDialog(null, "Insertion réussie", "Succès", JOptionPane.INFORMATION_MESSAGE);
 					}
 					BDDUtilities.closeConnection();
 					return new BDDResult(BDDResultEnum.INSERT_SUCCESSFUL);
@@ -333,8 +325,7 @@ public class Table extends JTable {
 			} else {
 				setToolTip("Ce nom existe déja dans la base");
 				if (!quiet) {
-					JOptionPane.showMessageDialog(null, "Le nom " + rowData[0].toString() + " existe déja", "Echec",
-							JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(null, "Le nom " + rowData[0].toString() + " existe déja", "Echec", JOptionPane.ERROR_MESSAGE);
 				}
 				BDDUtilities.closeConnection();
 				return new BDDResult(BDDResultEnum.PRE_EXISTING_MODEL);
@@ -357,10 +348,8 @@ public class Table extends JTable {
 	/**
 	 * Supprime une ligne
 	 * 
-	 * @param rowIndex
-	 *            la ligne dans la jtable à supprimer dans la base
-	 * @param quiet
-	 *            true = empecher affichage
+	 * @param rowIndex la ligne dans la jtable à supprimer dans la base
+	 * @param quiet true = empecher affichage
 	 * @return le résultat de la requête
 	 */
 	public MethodResult deleteRow(int rowIndex, boolean quiet) {
@@ -372,8 +361,8 @@ public class Table extends JTable {
 			if (!quiet) {
 				String message = "Voulez vous vraiment supprimer le modèle de la base de données?";
 				String[] options = new String[] { "Oui, je sais ce que je fais", "Non, je n'ai plus envie" };
-				int n = JOptionPane.showOptionDialog(null, message, "Confirmation", JOptionPane.YES_NO_OPTION,
-						JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
+				int n = JOptionPane.showOptionDialog(null, message, "Confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null,
+						options, options[1]);
 				if (n == JOptionPane.NO_OPTION) {
 					setToolTip("Suppresion de " + modelName + " avortée.");
 					return new BDDResult(BDDResultEnum.CANCEL_DELETE);
@@ -388,8 +377,7 @@ public class Table extends JTable {
 				((TableDataModel) getModel()).removeRow(rowIndex);
 				setToolTip("Suppresion de " + modelName + " réussie.");
 				if (!quiet) {
-					JOptionPane.showMessageDialog(null, "Suppression réussie", "Succès",
-							JOptionPane.INFORMATION_MESSAGE);
+					JOptionPane.showMessageDialog(null, "Suppression réussie", "Succès", JOptionPane.INFORMATION_MESSAGE);
 				}
 				BDDUtilities.closeConnection();
 				return new BDDResult(BDDResultEnum.DELETE_SUCCESSFUL);
@@ -408,15 +396,12 @@ public class Table extends JTable {
 	/**
 	 * Si une valeur est supposé être modifiable et qu'elle est différente que celle d'origine
 	 * 
-	 * @param row
-	 *            la ligne à laquelle la valeur se trouve dans la table
-	 * @param column
-	 *            la colonne à laquelle la valeur se trouve dans la table
+	 * @param row la ligne à laquelle la valeur se trouve dans la table
+	 * @param column la colonne à laquelle la valeur se trouve dans la table
 	 * @return true si elle est différente
 	 */
 	private boolean isCellDifferent(int row, int column) {
-		return getModel().isCellEditable(row, column)
-				&& !orignalData.get(row)[column].equals(getModel().getValueAt(row, column));
+		return getModel().isCellEditable(row, column) && !orignalData.get(row)[column].equals(getModel().getValueAt(row, column));
 	}
 
 	/**
@@ -442,10 +427,25 @@ public class Table extends JTable {
 	 * Remet toutes les valeurs à celles d'origine.
 	 */
 	public void resetAll() {
-		for (int i = 0; i < getRowCount(); i++) {
-			resetRow(i);
+		try {
+			ResultSet all = DAO.INSTANCE.getAll();
+			int i = 0;
+			while (all.next()) {
+				int length = all.getMetaData().getColumnCount();
+				String[] newOriginalRow = new String[length];
+				for (int j = 1; j <= length; j++) {
+					newOriginalRow[j - 1] = all.getString(j);
+				}
+				orignalData.set(i, newOriginalRow);
+				i++;
+			}
+			for (int j = 0; j < getRowCount(); j++) {
+				resetRow(j);
+			}
+			setToolTip("Toute la table à été remis à zéro.");
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
-		setToolTip("Toute la table à été remis à zéro.");
 	}
 
 	/**
@@ -454,7 +454,7 @@ public class Table extends JTable {
 	 * @param rowIndex
 	 */
 	public void resetRow(int rowIndex) {
-		for (int col = 0; col < getColumnCount(); col++) {
+		for (int col = 0; col < dataWidth; col++) {
 			getCellEditor(rowIndex, col).stopCellEditing(); // on désactive le mode "edition" de toutes le cases pour
 															// qu'on puisse mettre à jour leurs valeurs
 			((TableDataModel) getModel()).setValueAt(orignalData.get(rowIndex)[col], rowIndex, col);
@@ -469,12 +469,13 @@ public class Table extends JTable {
 	 * @param rowData
 	 */
 	private void updateOriginal(int rowIndex, String[] rowData) {
-		String[] originalRow = orignalData.get(rowIndex);
-		for (int col = 0; col < rowData.length; col++) {
-			originalRow[col] = rowData[col]; // strings are immutable so the string in orignalRow[col] won't change even
-												// if rowData[col] (table model)
-												// eventually changes.
-		}
+		orignalData.set(rowIndex, rowData);
+		// String[] originalRow = orignalData.get(rowIndex);
+		// for (int col = 0; col < rowData.length; col++) {
+		// originalRow[col] = rowData[col]; // strings are immutable so the string in orignalRow[col] won't change even
+		// // if rowData[col] (table model)
+		// // eventually changes.
+		// }
 	}
 
 	/**
@@ -513,8 +514,7 @@ public class Table extends JTable {
 			lastRowIsInDB = false;
 			setToolTip("Nouvelle ligne crée. Saisissez les valeurs que vous voulez insérer dans la base.");
 		} else {
-			setToolTip(
-					"Vous ne pouvez pas ajouter une ligne tant que vous n'avez pas inséré la dernière dans la base.");
+			setToolTip("Vous ne pouvez pas ajouter une ligne tant que vous n'avez pas inséré la dernière dans la base.");
 		}
 	}
 
@@ -525,8 +525,7 @@ public class Table extends JTable {
 	}
 
 	/**
-	 * @param mainFenetre
-	 *            the mainFenetre to set
+	 * @param mainFenetre the mainFenetre to set
 	 */
 	public void setMainFenetre(MainFenetre mainFenetre) {
 		this.mainFenetre = mainFenetre;

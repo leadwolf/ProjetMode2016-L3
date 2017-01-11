@@ -1,5 +1,7 @@
 package ply.bdd.other;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -115,11 +117,43 @@ public class DAO {
 	 * @param modelName
 	 * @return le modele correspondant à modelName
 	 */
-	public ResultSet getName(String modelName) {
+	public ResultSet getAllByName(String modelName) {
 		try {
 			PreparedStatement stCount = BDDUtilities.getConnection().prepareStatement("select * from PLY where NOM = ?");
 			stCount.setString(1, modelName);
 			return stCount.executeQuery();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	/**
+	 * @param columnName le nom de la colonne voulue
+	 * @return un ResultSet ayant comme seule colonne columnName
+	 */
+	public ResultSet getColumn(String columnName) {
+		try {
+			PreparedStatement st = BDDUtilities.getConnection().prepareStatement("select " + columnName + " from PLY");
+			return st.executeQuery();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	/**
+	 * @param modelName
+	 * @return le nom correspondant au chemin voulue
+	 */
+	public Path getPathByName(String modelName) {
+		Path result = null;
+		try {
+			PreparedStatement st = BDDUtilities.getConnection().prepareStatement("select CHEMIN from PLY where NOM = ?");
+			st.setString(1, modelName);
+			ResultSet rs = st.executeQuery();
+			result = Paths.get(rs.getString(1));
+			return result;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

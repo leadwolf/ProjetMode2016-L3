@@ -48,7 +48,9 @@ public class ModelInfo extends JPanel {
 			add(new JLabel("Nombre de faces : "));
 			add(new JLabel(modelInfo[5]));
 		} else {
-			add(new JLabel("Aucune information sur le modèle"));
+			removeAll();
+			add(new JLabel("Aucune information sur le modèle."));
+			add(new JLabel("Vérifiez dans que le modèle existe dans la base de donneés"));
 		}
 	}
 

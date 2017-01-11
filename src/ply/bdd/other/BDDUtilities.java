@@ -13,6 +13,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
 
+import javax.swing.JOptionPane;
+
 import ply.plyModel.modeles.FigureModel;
 import result.BDDResult;
 import result.BDDResultEnum;
@@ -36,7 +38,7 @@ public class BDDUtilities {
 	 * Liste de fichiers .ply
 	 */
 	private static File[] files;
-	
+
 	/**
 	 * Initialise la liste de fichier .ply dans files.
 	 * 
@@ -57,7 +59,6 @@ public class BDDUtilities {
 			}
 		});
 	}
-	
 
 	/**
 	 * Donne la connection qui a été intialisé auparavant.
@@ -217,6 +218,40 @@ public class BDDUtilities {
 	}
 
 	/**
+	 * Vérifie les chemins stockés dans la base de données. Si plus qu'une mene vers un chemin inexistant, on demande à l'utilisateur si on veut executer
+	 * resetTable() et fillTable().
+	 */
+	public static void checkPaths() {
+		double nbNotFiles = 0;
+		double totalModels = 0;
+		try {
+			ResultSet all = DAO.INSTANCE.getColumn("CHEMIN");
+			while (all.next()) {
+				totalModels++;
+				Path currentPath = Paths.get(all.getString(1));
+				if (!currentPath.toFile().exists()) {
+					nbNotFiles++;
+				}
+			}
+			// si plus de la moitie des paths ne sont pas des fichiers
+			if (nbNotFiles >= 1) {
+				String message = "" + (int) nbNotFiles + " sur " + (int) totalModels
+						+ " chemins dans la base conduisent vers de(s) fichier(s) .ply inexistant(s). \nVoulez vous réinitialiser la base en prenant les "
+						+ "informations des modèles dans le dossier data/ ?" + "\n(Pareil que l'option--rf)";
+				String[] options = new String[] { "Oui, merci", "Non merci, je comprend les risques" };
+				int n = JOptionPane.showOptionDialog(null, message, "Confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null,
+						options, options[1]);
+				if (n == JOptionPane.YES_OPTION) {
+					resetTable();
+					fillTable();
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
 	 * Vérifie si la table est vide
 	 * 
 	 * @return un {@link MethodResult décrivant l'état de la base}
@@ -246,23 +281,21 @@ public class BDDUtilities {
 	}
 
 	/**
-	 * @param arg
-	 *            l'agument à vérifier.
+	 * @param arg l'agument à vérifier.
 	 * @return si l'arg correspond à une option d'<b>éxécution</b> de bdd.
 	 */
 	public static boolean isExecutableArg(String arg) {
-		return arg.equals("--name") || arg.equals("--all") || arg.equals("--find") || arg.equals("--add") ||
-				arg.equals("--delete") || arg.equals("--edit");
+		return arg.equals("--name") || arg.equals("--all") || arg.equals("--find") || arg.equals("--add") || arg.equals("--delete")
+				|| arg.equals("--edit");
 	}
 
 	/**
 	 * @param arg
-	 * @return si c'est une option (--rf) et non une commande à lancer
-	 *         (--all/--find/...).
+	 * @return si c'est une option (--rf) et non une commande à lancer (--all/--find/...).
 	 */
 	public static boolean isDBOption(String arg) {
-		return arg.equals("--r") || arg.equals("--r") || arg.equals("--f") || arg.equals("--rf") ||
-				arg.equals("--fr") || arg.equals("--reset") || arg.equals("--fill");
+		return arg.equals("--r") || arg.equals("--r") || arg.equals("--f") || arg.equals("--rf") || arg.equals("--fr") || arg.equals("--reset")
+				|| arg.equals("--fill");
 	}
 
 }

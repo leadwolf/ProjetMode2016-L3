@@ -6,7 +6,6 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.KeyboardFocusManager;
 import java.awt.Toolkit;
 
 import javax.swing.BorderFactory;
@@ -16,7 +15,6 @@ import javax.swing.JSplitPane;
 import javax.swing.Timer;
 
 import ply.plyModel.controlers.CommandControler;
-import ply.plyModel.controlers.KeyControler;
 import ply.plyModel.controlers.MouseControler;
 import ply.plyModel.controlers.TimerChangeListener;
 import ply.plyModel.modeles.FigureModel;
@@ -28,7 +26,7 @@ import ply.plyModel.vues.TranslationPanel;
 import ply.plyModel.vues.VisualisationPanel;
 
 /**
- *JPanel contenant {@link VisualisationPanel} et tous les panneaux de contrôle du modèle.
+ * JPanel contenant {@link VisualisationPanel} et tous les panneaux de contrôle du modèle.
  *
  * @author L3
  *
@@ -38,7 +36,7 @@ public class ModelPanel extends JPanel {
 	private static final long serialVersionUID = 2549833609496985257L;
 
 	private FigureModel figureModel;
-	
+
 	private JSplitPane splitPane;
 	private boolean extended;
 
@@ -58,8 +56,8 @@ public class ModelPanel extends JPanel {
 	/**
 	 * Crée une fenêtre de visualisation du modèle
 	 * 
-	 * @param figureModel 
-	 * @param mainPanelDim 
+	 * @param figureModel
+	 * @param mainPanelDim
 	 * @param drawPoints dessinner les points au départ
 	 * @param drawSegments dessiner les segments au départ
 	 * @param drawFaces dessiner les faces au départ
@@ -86,7 +84,7 @@ public class ModelPanel extends JPanel {
 		visPanel.setMinimumSize(new Dimension(mainPanelDim.width, maxVisPanelHeight));
 		visPanel.setMaximumSize(new Dimension(mainPanelDim.width, screenSize.height));
 		visPanel.setBackground(Color.WHITE);
-		
+
 		/* PANNEAUX BOUTONS */
 		translationPanel = new TranslationPanel(buttonPanelDim, buttonDim);
 		translationPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK), "Translater le modèle"));
@@ -115,7 +113,6 @@ public class ModelPanel extends JPanel {
 		/* SPLIT PANE */
 		splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, visPanel, bottomPanel);
 		splitPane.setDividerSize(5);
-		
 
 		/* PANNEAU PRINCIPAL */
 		setPreferredSize(mainPanelDim);
@@ -134,11 +131,10 @@ public class ModelPanel extends JPanel {
 		sensModel = new SensitivityModel();
 		CommandControler commandControler = new CommandControler(this);
 		MouseControler mouseControler = new MouseControler(visPanel, sensModel);
-		KeyControler keyDispatcher = new KeyControler(this);
 
 		SensitivityViewPanel sensPanel = new SensitivityViewPanel(sensModel);
-		sensPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK), "Ajuster la sensitivité de la souris : "));
-//		sensPanel.setPreferredSize(new Dimension(200, 150));
+		sensPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK), "Ajuster la sensibilité de la souris : "));
+		// sensPanel.setPreferredSize(new Dimension(200, 150));
 		bottomPanel.add(sensPanel, gbc);
 
 		// TIMER pour rester appuyé sur le bouton
@@ -150,9 +146,6 @@ public class ModelPanel extends JPanel {
 
 		rotationPanel.addActionRotat(commandControler);
 		translationPanel.addActionTranslat(commandControler);
-
-		KeyboardFocusManager manager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
-		manager.addKeyEventDispatcher(keyDispatcher);
 
 		// SOURIS
 		visPanel.addMouseWheelListener(mouseControler);
@@ -184,15 +177,16 @@ public class ModelPanel extends JPanel {
 		figureModel.resetModel();
 		initModelForWindow();
 	}
-	
+
 	/**
-	 * Appelle {@link FigureModel#refreshModel()} pour rafraichir les données et appelle {@link FigureModel#notifyObservers()}.
+	 * Appelle {@link FigureModel#prepareForWindow(VisualisationPanel, double)} pour adapter le model à cette fenêtre par rapport aux dimensions de cette
+	 * fenêtre ou les dimesions qui lui ont été passés dans le constructeur si ses dimensions actuels sont nulles.
 	 */
 	public void initModelForWindow() {
 		figureModel.prepareForWindow(visPanel, 1.0);
-		repaint();
+		// repaint();
 	}
-	
+
 	public FigureModel getFigure() {
 		return this.figureModel;
 	}
@@ -217,6 +211,5 @@ public class ModelPanel extends JPanel {
 	public SensitivityModel getSensModel() {
 		return sensModel;
 	}
-	
 
 }

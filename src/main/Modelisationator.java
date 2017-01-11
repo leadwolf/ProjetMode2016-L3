@@ -23,28 +23,45 @@ import result.MethodResult;
  */
 public class Modelisationator {
 
+	/**
+	 * Le nom de base de ce programme.
+	 */
 	public final static String NAME = "Modelisationator";
 
-	private boolean drawFaces = true;
-	private boolean drawSegments = false;
-	private boolean drawPoints = false;
-	private boolean reset = false;
-	private boolean fill = false;
-	private boolean delete = false;
+	private boolean drawFaces;
+	private boolean drawSegments;
+	private boolean drawPoints;
+	private boolean reset;
+	private boolean fill;
+	private boolean delete;
 	private static Path plyPath;
 
-	private boolean executeDB = false;
-	private boolean foundFile = false;
-	private boolean found3DOptions = false;
+	private boolean executeDB;
+	private boolean foundFile;
+	private boolean found3DOptions;
 
 	private Pattern singleMinus;
 	private Pattern doubleMinus;
 
+	/**
+	 * 
+	 */
 	public Modelisationator() {
+		drawFaces = true;
+		drawSegments = false;
+		drawPoints = false;
+		reset = false;
+		fill = false;
+		delete = false;
+
+		executeDB = false;
+		foundFile = false;
+		found3DOptions = false;
+
 		singleMinus = Pattern.compile("^(\\-)\\w+");
 		doubleMinus = Pattern.compile("^(\\-\\-)\\w+");
 	}
-	
+
 	@SuppressWarnings("javadoc")
 	public static void main(String[] args) {
 		Modelisationator modelisationator = new Modelisationator();
@@ -54,10 +71,10 @@ public class Modelisationator {
 	/**
 	 * Méthode principale pour éxécuter le programme en fonction des arguments
 	 * 
-	 * @param args
-	 *            la commande.
-	 * @param quiet
-	 *            true pour empecher affichage.
+	 * @param args la commande.
+	 * @param modelisationator objet instancié qui contient les booleans options pour ce lancement
+	 * @param dbPath path to the db.sqlite, leave null for default data/test.sqlite
+	 * @param quiet true pour empecher affichage.
 	 * @return soit un erreur dans les arguments, soit le résultat de l'éxécution de la méthode pertinent aux arguments
 	 */
 	public static MethodResult parseArgs(String[] args, Modelisationator modelisationator, Path dbPath, boolean quiet) {
@@ -79,10 +96,9 @@ public class Modelisationator {
 	/**
 	 * Vérifie tous les options qu'ils soient pour un modèle 3D ou une commande bdd
 	 * 
-	 * @param args
-	 *            la commande.
-	 * @param quiet
-	 *            true pour empecher affichage.
+	 * @param args la commande.
+	 * @param modelisationator objet instancié qui contient les booleans options pour ce lancement
+	 * @param quiet true pour empecher affichage.
 	 * @return si les arguments sont corrects.
 	 */
 	private static MethodResult verifArgs(String[] args, Modelisationator modelisationator, boolean quiet) {
@@ -143,8 +159,7 @@ public class Modelisationator {
 
 		if (modelisationator.executeDB && modelisationator.foundFile) {
 			if (!quiet) {
-				System.out.println(
-						"Erreur : Vous avez tenté de lancer une commande bdd et lancer un modèle spécifique en même temps.");
+				System.out.println("Erreur : Vous avez tenté de lancer une commande bdd et lancer un modèle spécifique en même temps.");
 			}
 			return new BasicResult(BasicResultEnum.CONFLICTING_ARGUMENTS);
 		}
@@ -161,8 +176,7 @@ public class Modelisationator {
 
 		if (modelisationator.found3DOptions && !modelisationator.foundFile) {
 			if (!quiet) {
-				System.out.println(
-						"Erreur : Vous avez tenté d'éxécuter une commande 3D mais vous n'avez pas spécifié de fichier .ply");
+				System.out.println("Erreur : Vous avez tenté d'éxécuter une commande 3D mais vous n'avez pas spécifié de fichier .ply");
 			}
 			return new BasicResult(BasicResultEnum.NO_PLY_FILE_IN_ARG);
 		}
@@ -179,21 +193,23 @@ public class Modelisationator {
 	/**
 	 * Crée le {@link MainFenetre} adapté.
 	 * 
-	 * @param args
-	 *            la commande.
-	 * @param quiet
-	 *            true pour empecher affichage.
+	 * @param args la commande.
+	 * @param modelisationator objet instancié qui contient les booleans options pour ce lancement
+	 * @param dbPath path to the db.sqlite, leave null for default data/test.sqlite
+	 * @param quiet true pour empecher affichage.
 	 * @return s'il a pu créer la fenêtre
 	 */
 	private static MethodResult execute(String[] args, Modelisationator modelisationator, Path dbPath, boolean quiet) {
 		if (modelisationator.foundFile) {
 			FigureModel figureModel = new FigureModel(plyPath, quiet);
 			if (figureModel != null && !figureModel.getErreurLecture()) {
-				boolean[] options = new boolean[] { modelisationator.drawPoints, modelisationator.drawSegments,
-						modelisationator.drawFaces, modelisationator.reset, modelisationator.fill };
+				BDDUtilities.initConnection(dbPath);
+				BDDUtilities.checkPaths();
+				boolean[] options = new boolean[] { modelisationator.drawPoints, modelisationator.drawSegments, modelisationator.drawFaces,
+						modelisationator.reset, modelisationator.fill };
 				MainFenetre mainFrame = new MainFenetre(figureModel, options);
 				mainFrame.setTitle("Modelisationator");
-				figureModel.setProjection(new Vecteur(new double[]{0, 0, -1}));
+				figureModel.setProjection(new Vecteur(new double[] { 0, 0, -1 }));
 				if (!quiet) {
 					mainFrame.setVisible(true);
 				}
@@ -206,6 +222,8 @@ public class Modelisationator {
 			if (modelisationator.delete) {
 				return BaseDeDonnees.INSTANCE.executeCommand(args, dbPath, new boolean[] { options[0], options[1], quiet });
 			} else {
+				BDDUtilities.initConnection(dbPath);
+				BDDUtilities.checkPaths();
 				MainFenetre mainFrame = new MainFenetre(args, options);
 				mainFrame.setTitle("Modelisationator");
 				if (!quiet) {
@@ -220,10 +238,9 @@ public class Modelisationator {
 	/**
 	 * Vérifie un seul argument commentcant par un "-".
 	 * 
-	 * @param arg
-	 *            l'agument à vérifier.
-	 * @param quiet
-	 *            true pour empecher affichage.
+	 * @param arg l'agument à vérifier.
+	 * @param modelisationator objet instancié qui contient les booleans options pour ce lancement
+	 * @param quiet true pour empecher affichage.
 	 * @return si l'argument correspond aux options de lancement 3D.
 	 */
 	private static MethodResult verif3Darg(String arg, Modelisationator modelisationator, boolean quiet) {
@@ -251,10 +268,9 @@ public class Modelisationator {
 	/**
 	 * Vérifie un seul argument destiné pour la base de données.
 	 * 
-	 * @param arg
-	 *            l'agument à vérifier.
-	 * @param quiet
-	 *            true pour empecher affichage.
+	 * @param arg l'agument à vérifier.
+	 * @param modelisationator objet instancié qui contient les booleans options pour ce lancement
+	 * @param quiet true pour empecher affichage.
 	 * @return si l'argument correspond aux options BDD.
 	 */
 	private static MethodResult verifDBArg(String arg, Modelisationator modelisationator, boolean quiet) {

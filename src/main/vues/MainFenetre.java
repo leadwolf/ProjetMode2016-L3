@@ -3,6 +3,7 @@ package main.vues;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.KeyboardFocusManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -27,9 +28,11 @@ import javax.swing.event.ChangeListener;
 
 import main.Modelisationator;
 import ply.bdd.other.BaseDeDonnees;
+import ply.bdd.other.DAO;
 import ply.bdd.vues.BDDPanel;
 import ply.bdd.vues.ModelBrowser;
 import ply.bdd.vues.ModelInfo;
+import ply.plyModel.controlers.KeyControler;
 import ply.plyModel.modeles.FigureModel;
 
 /**
@@ -99,6 +102,8 @@ public class MainFenetre extends JFrame {
 	 * Hauteur des tabs. Utilisé pour calculer les tailles des panels qu'on ajoute par la suite.
 	 */
 	private int tabHeight = 23;
+
+	private boolean canControlFigure;
 
 	/**
 	 * Crée la fenêtre de l'application. Un JSplitPane contenant à gauche {@link ModelInfo} et {@link ModelBrowser} et à droite, un {@link JTabbedPane}
@@ -226,6 +231,7 @@ public class MainFenetre extends JFrame {
 		Collections.addAll(allFiles, tempFiles);
 		Collections.sort(allFiles);
 		modelPanelList = new ArrayList<>();
+		canControlFigure = true;
 	}
 
 	/**
@@ -241,6 +247,8 @@ public class MainFenetre extends JFrame {
 		createToolTip();
 		pack();
 		// setVisible(true); // dont set visible unless need to (bc of tests).
+		KeyboardFocusManager manager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
+		manager.addKeyEventDispatcher(new KeyControler(this));
 
 		this.setLocationRelativeTo(null);
 		this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -298,41 +306,41 @@ public class MainFenetre extends JFrame {
 	}
 
 	/**
-	 * Ajoute un ModelPanel à tabbedPane quand on double clique sur un nom de modèle dans ModelBrowser
+	 * Ajoute un ModelPanel à modelTabbedPane quand on double clique sur un nom de modèle dans ModelBrowser. Elle prend le path associé au nom dans la base.
 	 * 
-	 * @param clickIndex the index of the click in the JList
+	 * @param modelName le nom du modèle à ajouter SANS EXTENSION .PLY
 	 */
-	public void addNewModel(int clickIndex) {
-		Path newModelPath = allFiles.get(clickIndex).toPath();
-		String modelName = newModelPath.getFileName().toString();
-		modelName = modelName.substring(0, 1).toUpperCase() + modelName.substring(1, modelName.lastIndexOf("."));
-		FigureModel newFigureModel;
-
+	public void addNewModel(String modelName) {
 		// on a déja affiché le modèle associé à newPath. Il est dans modelPanelList.
 		if (modelWasDisplayed(modelName)) {
 			// le modèle est dans tabbedPane et qu'il n'est pas actuellement sélectionné
-			if (isModelInTabbedPane(modelName)) {
+			if (isModelInTabbedPane(modelName) && modelTabbedPane.getSelectedIndex() != getIndexInTabbedPane(modelName)) {
 				int indexInTabbedPane = getIndexInTabbedPane(modelName);
-				if (modelTabbedPane.getSelectedIndex() != indexInTabbedPane) {
-					ModelPanel modelPanel = (ModelPanel) modelTabbedPane.getComponentAt(indexInTabbedPane);
-					changeModelPanelFocus(modelPanel);
-				}
+				ModelPanel modelPanel = (ModelPanel) modelTabbedPane.getComponentAt(indexInTabbedPane);
+
+				// SET VIEW
+				changeModelPanelFocus(modelPanel);
 			} else {
 				// le modèle n'est pas dans tabbedPane, récupère le depuis modelPanelList
 				ModelPanel newModelPanel = modelPanelList.get(getModelPanelIndex(modelName));
 				newModelPanel.initModelForWindow();
 
+				// ADD AND SET VIEW
 				addModelTab(modelName, newModelPanel);
 				changeModelPanelFocus(newModelPanel);
 			}
 		} else { // si on n'a jamais ouvert le modèle, crée le avec une ModelPanel associé
-			newFigureModel = new FigureModel(newModelPath, false);
+
+			// GET
+			Path newModelPath = DAO.INSTANCE.getPathByName(modelName.toLowerCase());
+			FigureModel newFigureModel = new FigureModel(newModelPath, false);
 			Dimension modelPanelDim = new Dimension(frameDim.width - leftPanelDim.width - (dividerWidth / 2), frameDim.height - tabHeight);
 			ModelPanel newModelPanel = new ModelPanel(newFigureModel, modelPanelDim, false, false, true);
 			newModelPanel.setName(modelName);
 			newModelPanel.initModelForWindow();
 			modelPanelList.add(newModelPanel);
 
+			// ADD AND SET VIEW
 			addModelTab(modelName, newModelPanel);
 			changeModelPanelFocus(newModelPanel);
 
@@ -455,11 +463,11 @@ public class MainFenetre extends JFrame {
 		// Create the menu bar.
 		menuBar = new JMenuBar();
 
-		/* NOTHING */
-		menu = new JMenu("Nothing");
-		menuItem = new JMenuItem("More Nothing");
-		menu.add(menuItem);
-		menuBar.add(menu);
+		// /* NOTHING */
+		// menu = new JMenu("Nothing");
+		// menuItem = new JMenuItem("More Nothing");
+		// menu.add(menuItem);
+		// menuBar.add(menu);
 
 		/* FENETRE */
 		menu = new JMenu("Fenêtre");
@@ -514,11 +522,37 @@ public class MainFenetre extends JFrame {
 				toggleLeftPanel();
 				break;
 			case "controles":
-				setVisible(true);
+				controls.setVisible(true);
 				break;
 			default:
 				break;
 			}
+		}
+	}
+
+	public ModelPanel getCurrentModelPanel() {
+		if (modelTabbedPane.getComponentCount() > 0) {
+			return (ModelPanel) modelTabbedPane.getSelectedComponent();
+		}
+		return null;
+	}
+
+	/**
+	 * @return the controlFigure
+	 */
+	public boolean canControlFigure() {
+		return canControlFigure;
+	}
+
+	/**
+	 * Set la valeur de la possibilité de contrôle de la figure au lieu d'écriture. Si on lui passe <b>true</b> on force le focus au dernier {@link ModelPanel}.
+	 * 
+	 * @param controlFigure the controlFigure to set
+	 */
+	public void setCanControlFigure(boolean controlFigure) {
+		this.canControlFigure = controlFigure;
+		if (controlFigure) {
+			modelTabbedPane.getSelectedComponent().requestFocus();
 		}
 	}
 }

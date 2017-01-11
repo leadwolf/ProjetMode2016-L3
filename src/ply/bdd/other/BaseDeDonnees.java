@@ -279,7 +279,7 @@ public class BaseDeDonnees {
 	public String[] getNameInfo(String name, boolean quiet) {
 		try {
 			name = name.toLowerCase();
-			ResultSet rs = DAO.INSTANCE.getName(name);
+			ResultSet rs = DAO.INSTANCE.getAllByName(name);
 			if (rs.next()) {
 				String[] nameInfo = new String[rs.getMetaData().getColumnCount()];
 				for (int i = 1; i <= rs.getMetaData().getColumnCount(); i++) {
@@ -317,9 +317,9 @@ public class BaseDeDonnees {
 					modelName = args[i];
 				}
 			}
-			ResultSet rsCount = DAO.INSTANCE.getName(modelName);
+			ResultSet rsCount = DAO.INSTANCE.getAllByName(modelName);
 			if (rsCount.next()) {
-				ResultSet rs = DAO.INSTANCE.getName(modelName);
+				ResultSet rs = DAO.INSTANCE.getAllByName(modelName);
 				BDDPanel result = new BDDPanel(rs, columnNames, buttonColumns, primaryButtons);
 				// result.setEditableColumns(new int[] { 0, 1, 3 }, true);
 				result.setEditable(true);
@@ -408,9 +408,9 @@ public class BaseDeDonnees {
 					modelName = args[i];
 				}
 			}
-			ResultSet rsCount = DAO.INSTANCE.getName(modelName);
+			ResultSet rsCount = DAO.INSTANCE.getAllByName(modelName);
 			if (rsCount.next()) {
-				ResultSet rs = DAO.INSTANCE.getName(modelName);
+				ResultSet rs = DAO.INSTANCE.getAllByName(modelName);
 				BDDPanel result = new BDDPanel(rs, columnNames, buttonColumns, primaryButtons);
 				result.setEditable(true); // tout est editable dans --edit
 				BDDUtilities.closeConnection();

@@ -25,7 +25,7 @@ public class SensitivityModel {
 	/**
 	 * Valeur globale pour la sensitivité de rotation en degrés. Valeur conseillée 5
 	 */
-	private double rotationSens = 1.5;
+	private double rotationSens = 2.0;
 
 	/**
 	 * Valeur globale pour la sensitivté de zoom. Elle est ajouté à 1.0 car on refactorise le modèle par un facteur de 1.0+x. Valeur conseillée 0.08

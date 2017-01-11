@@ -2,9 +2,9 @@ package ply.plyModel.vues;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.Insets;
 import java.util.Hashtable;
+
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
@@ -36,7 +36,7 @@ public class SensitivityViewPanel extends JPanel {
 		
 		/* ROTATION SLIDER */
 		int fakeRotationSens = (int) (sens.getRotationSens() * 10);
-		JSlider rotationSensSlider = new JSlider(SwingConstants.HORIZONTAL, 5, 25, fakeRotationSens);
+		JSlider rotationSensSlider = new JSlider(SwingConstants.HORIZONTAL, 5, 55, fakeRotationSens);
 
 		// TICKS
 		rotationSensSlider.setMajorTickSpacing(10);
@@ -46,7 +46,7 @@ public class SensitivityViewPanel extends JPanel {
 		// LABELS
 		Hashtable<Integer, JLabel> labelTableRotation = new Hashtable<Integer, JLabel>();
 		labelTableRotation.put( new Integer( 5 ), new JLabel("Lent") );
-		labelTableRotation.put( new Integer( 25 ), new JLabel("Rapide") );
+		labelTableRotation.put(new Integer(55), new JLabel("Rapide"));
 		rotationSensSlider.setLabelTable( labelTableRotation );
 		rotationSensSlider.setPaintLabels(true);
 		

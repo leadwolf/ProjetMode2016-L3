@@ -4,8 +4,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JCheckBox;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
 
 import main.vues.ModelPanel;
 import ply.plyModel.modeles.FigureModel;
@@ -30,12 +28,6 @@ public class CommandControler implements ActionListener {
 		this.figureModel = fenetre.getFigure();
 	}
 
-	private void showControls() {
-		JFrame controls = new JFrame("Contrôles");
-		JPanel panel = new JPanel();
-		// TODO
-	}
-
 	/**
 	 * Ici voir quel bouton a été actionnée et en agir en conséquence sur la figure de visPanel. Elle est aussi appelé
 	 * par timer.start()
@@ -50,9 +42,6 @@ public class CommandControler implements ActionListener {
 		VisualisationPanel panel = fenetre.getVisPanel();
 
 		switch (e.getActionCommand()) {
-		case "controles":
-			showControls();
-			break;
 		case "directional_light":
 			fenetre.getVisPanel().setDirectionalLight(!fenetre.getVisPanel().isDirectionalLight());
 			figureModel.refreshModel();

@@ -4,6 +4,8 @@ import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.ResultSet;
@@ -20,16 +22,17 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 import main.vues.LeftSidePanel;
 import main.vues.MainFenetre;
 import main.vues.ModelPanel;
-import ply.bdd.controlers.SearchListener;
 import ply.bdd.other.DAO;
 
 /**
- * Cette classe propose une JList des modèles qu'on pourra afficher dans mainFenetre avec un {@link ModelPanel}.n peut double
- * cliquer sur un modele pour l'ouvrir dans mainFenetre et chercher un modele par ses mots cles dans la barre de recherche.
+ * Cette classe propose une JList des modèles qu'on pourra afficher dans mainFenetre avec un {@link ModelPanel}.n peut double cliquer sur un modele pour
+ * l'ouvrir dans mainFenetre et chercher un modele par ses mots cles dans la barre de recherche.
  * 
  * @author L3
  *
@@ -60,17 +63,23 @@ public class ModelBrowser extends JPanel {
 	 * Le conseil qu'on affiche dans textField si l'utilisateur n'a rien saisi.
 	 */
 	private final String TIP;
+	/**
+	 * Si la barre de recherche contient que le TIP.
+	 */
+	private boolean isTip;
 
 	/**
 	 * Constructeur par défaut.
 	 * 
-	 * @param mainFenetre
-	 * @param leftPanelDim
+	 * @param mainFenetre la fenetre à laquelle ce browser est attaché pour ajouter un modele ou notifie qu'on veut écrire au lieu de manipuler la figure.
+	 * @param leftPanelDim les dimensions du panel parent, utilisé pour les initialisations des dimensions.
 	 */
 	public ModelBrowser(MainFenetre mainFenetre, Dimension leftPanelDim) {
 		super();
 		this.leftPanelDim = leftPanelDim;
+		ControlFigureFocus controlFigureFocus = new ControlFigureFocus(mainFenetre);
 		TIP = "Rechercher par nom ou mots clès";
+		isTip = true;
 
 		/* JLIST */
 		listModel = new DefaultListModel<>();
@@ -83,15 +92,17 @@ public class ModelBrowser extends JPanel {
 			public void mouseClicked(MouseEvent e) {
 				// ouvre un modele sur un double-clic.
 				if (e.getClickCount() == 2 && e.getSource() instanceof JList<?>) {
-					mainFenetre.addNewModel(modelsList.getSelectedIndex());
+					mainFenetre.addNewModel(modelsList.getSelectedValue());
 				}
 			}
 		});
+		modelsList.addFocusListener(controlFigureFocus);
 
 		JScrollPane scrollPane = new JScrollPane(modelsList);
 
 		/* SEARCH BAR */
-		createSearchBar();
+		createSearchBar(mainFenetre);
+		textField.addFocusListener(controlFigureFocus);
 
 		/* THIS PANEL */
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -101,11 +112,13 @@ public class ModelBrowser extends JPanel {
 
 	/**
 	 * Décharge le constructeur. Crée textField et clearButton.
+	 * 
+	 * @param mainFenetre la fenetre qu'on notifie de l'écriture
 	 */
-	private void createSearchBar() {
+	private void createSearchBar(MainFenetre mainFenetre) {
 		// SEARCH BAR
 		int buttonDims = 25;
-		SearchListener searchListener = new SearchListener(this);
+		SearchListener searchListener = new SearchListener();
 
 		// TEXT FIELD
 		textField = new JTextField(TIP);
@@ -116,10 +129,12 @@ public class ModelBrowser extends JPanel {
 
 		// BUTTON
 		JButton clearButton = new JButton("X");
+		// controleur tout simple
 		clearButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				resetTip();
+				mainFenetre.setCanControlFigure(true);
 			}
 		});
 		clearButton.setMargin(new Insets(0, 0, 0, 0));
@@ -134,10 +149,11 @@ public class ModelBrowser extends JPanel {
 	}
 
 	/**
-	 * Initialise la JList soit avec les mots cles de la barre de recherche ou avec les modeles de la base.
+	 * Initialise la JList soit avec les modeles correspospondant aux mots cles dans textField ou le mot dans textField, soit avec tous modeles de la base.
 	 */
 	public void updateList() {
 		if (!textField.getText().matches("\\s*")) {
+			isTip = false;
 			String[] keywords = textField.getText().split("\\s+");
 			initListModel(keywords);
 		} else {
@@ -180,6 +196,7 @@ public class ModelBrowser extends JPanel {
 	 */
 	public void resetTip() {
 		textField.setText(TIP);
+		isTip = true;
 	}
 
 	/**
@@ -187,6 +204,71 @@ public class ModelBrowser extends JPanel {
 	 */
 	public void clearSearchBar() {
 		textField.setText("");
+	}
+
+	/**
+	 * DocumentListener et FocusListener pour le JTextField. On fait la recherhe sql à chaque caractère et on notifie {@link MainFenetre} s'il peut controler la
+	 * figure avec le clavier au lieu d'écrire..
+	 * 
+	 * @author Master
+	 *
+	 */
+	private class SearchListener implements DocumentListener, FocusListener {
+
+		@Override
+		public void insertUpdate(DocumentEvent e) {
+			updateList();
+		}
+
+		@Override
+		public void removeUpdate(DocumentEvent e) {
+			updateList();
+		}
+
+		@Override
+		public void changedUpdate(DocumentEvent e) {
+		}
+
+		@Override
+		public void focusGained(FocusEvent e) {
+			if (isTip) {
+				clearSearchBar();
+			}
+		}
+
+		@Override
+		public void focusLost(FocusEvent e) {
+			if (textField.getText().matches("\\s*")) {
+				resetTip();
+			}
+		}
+
+	}
+
+	/**
+	 * Simple controleur pour notifier {@link MainFenetre} s'il peut controler la figure avec le clavier au lieu d'écrire. Interne car trop petite et utilisée
+	 * qu'ici.
+	 * 
+	 * @author L3
+	 *
+	 */
+	private class ControlFigureFocus implements FocusListener {
+
+		private MainFenetre mainFenetre;
+
+		public ControlFigureFocus(MainFenetre mainFenetre) {
+			this.mainFenetre = mainFenetre;
+		}
+
+		@Override
+		public void focusLost(FocusEvent e) {
+			mainFenetre.setCanControlFigure(true);
+		}
+
+		@Override
+		public void focusGained(FocusEvent e) {
+			mainFenetre.setCanControlFigure(false);
+		}
 	}
 
 }

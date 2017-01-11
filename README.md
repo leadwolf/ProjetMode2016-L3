@@ -1,78 +1,131 @@
-# Current Big Changes
-## Merging BDD and Model to same JFrame
+Bienvenue à Modelesationator!
+===================
 
-### Recent Changes list
-These are the most recent changes continuously updated until a reset :
-  - Changed the database to incorporate number of points and number of faces for all figures and set the name as primary key.
-  - You can now use options `--r` and `--f` to reset and fill the DB. They can be used together as in `--rf` but not with a normal command. For example `--rall` will not work. But you can use them even when using a 3D command so you can display a model and update the DB at the same time.
-  - All commands can now be launched from the same program and they are parsed by the same method in `Modelisationator`.
-  - Changed the whole behaviour of `MainFenetre`:
-    - You can now open new models by double clicking a model in `ModelBrowser`.
-    - You can now quit a tab (except the DB).
-     - All opened models are kept in memory. Now when the user quits a model, it can be reopened without re-reading the .ply file This will also save its 3D positioning.
-     - Created a tool tip `toolLabel` at the bottom of MainFenetre to update according to the user's actions.
-    - `ModelInfo` now updates accordingly when switching tab or when opening a new tab.
-  - `JTableBDDNew` will replace the operations in `BDDPanel`, can be used for all displays and all DB operations will be available directly through `ButtonColumn`.
-  - `BDDPanelNew` replaces `BDDPanel` and will now just be a simple panel instead of doing the SQL queries.
-  - `JTableBDDNew` renamed to `Table` and `BDDPanelNew` to `BDDPanel`.
-  - `Table` uses `ButtonColumn`:
-    - **confirm edit/insert**, **reset** and **delete** buttons for every row.
-    - `toolLabel` updates accoring to these button actions.
-  - `BDDPanel` has a button to add a new row to the table. You can insert it into the DB using the **confirm edit/insert** button.
-  - Refactored `TableDataModel` : 
-    - Use ArrayList instead of static arrays to be able to easily add and delete rows.
-    - The methods corresponding to the **confirm edit/insert**, **reset** and **delete** buttons have been redone and seem to work properly (need to write tests).
-  - Refactored `BaseDeDonneesNew` :
-    - Removed useless code in the command methods.
-    - Refactored `verifArgs()` to verify the whole String[] for **all** of the commands.
-    - Now uses `Table` for **all** commands.
-    - Adding new line works properly, prevent insertion of `""` value for a model name.
-    - ToolTip updates more often for `ButtonColumn` actions.
-  - If launching a DB command, the syntax is verified right away in `Modelisationanator` instead of waiting to create `MainFenetre`.
-  - Comprehensive tests for `BDDPanel` and `Table` with verifications done in the DB.
-  - Test for `Modelisationanator`.
-  - Project coverage at 71.7% for branch coverage.
-  - Shadows calculated in `FigureModel`.
-  - Searchbar in `ModelBrowser` with auto update on keypress (no need for enter).
-  
-### What's next
-Priority objectives :
-  - Move `BDDPanel` either to a new JFrame or somewhere else instead of being in the same spot as `ModelPanel`.
+Modelesationator est un programme permettant de visualiser des modèles **.ply**[^.ply] (ASCII uniquement) ainsi que de gérer une base de données décrivant ces modèles.
 
-Non-Priority objectives :
-  - Try to use more patterns for cleaner code.
-  - Try to refactor using more MVC ?
-  - Other ?
 
-# Modelisationator
+----------
 
-Modelisationanator est un programme permettant de visualiser des modèles .ply (ASCII uniquement) ainsi que de gérer une base de données décrivant ces modèles. A l'instant, elle est séparé en deux parties, dont deux programmes distincts.
 
-Les fonctionnalités de la partie visualisation sont les suivantes :
-  - Faire des rotations autour du centre du modèle.
-  - Translater le modèle sur son écran.
-  - Zoomer ou dézoomer sur le modèle.
-  - Centrer le modèle sur son écran et la disposer de manière que tout le modèle soit visible
+# Présentation de Modelesationator
+## Comment lancer Modelesationator
+Modelesationator doit s'ouvrir avec une commande. Elle peut être l'un des suivants
 
-Les fonctionnalités de la partie base de données sont les suivantes :
-  - `--name <nom_modele>` : Afficher les données sur le modèle précisé.
-  - `--all` : Afficher tout le contenu de la base (nom du modèle, emplacement, date, mot clés).
-  - `--find <list mots cles>` : Afficher les données sur les modèles ayant au moins un de ces mots dans leur description
-  - `--add` : Ajouter un modèle dans la base.
-  - `--delete <nom_modele>` : supprimmer le modèle précisé de la base
-  - `--edit <nom_modele>` : Afficher les données sur le modèle avec la possibilité de les éditer.
+ - Une commande lancant directement la vue sur la base de données (avec options).
+ - Une commande lançant la visualisation du modèle en paramètre (avec options).
 
-### Utilisation
+Les utilisations de chacun sont détaillées par la suite : 
 
-Dans le dossier livrable *livrable* voulu, utiliser soit `L3-livrable-3D.jar` pour la partie visualisation 3D, soit `L3-livrable-BDD.jar` pour la partie base de données.
-Ceux-cis se lancent avec `java -jar programme.jar`
+### Base de données
+#### Commandes
+Une commande de la base de données peut être l'un des suivants :
+ - `--name <nom de modele>` : Affiche uniquement les données sur *nom de modele*.
+ -  `--all` : Affiche tout le contenu de la base (nom du modèle, chemin absolu...).
+ - `--find <liste mots cles>` : Affiche les données sur les modèles ayant au moins une partie d'un de ces mots dans leur description.
+ - `--add` : Formulaire d'ajout d'un modèle et ses informations dans la base.
+ - `--delete <nom modele>` : Supprimme *nom modele* de la base
+ - `--edit <nom_modele>` : Affiche les données sur le modèle avec la possibilité de les éditer... *(commande obsolète puiqu'on peut toujours éditer)*.
+> **Note:**
+> Toutes ces commandes sauf `--delete`lancent la même type de fenêtre : une table présentant pour chaque ligne une ligne de la base de données. Cette table est modifiable à tout moment et on peut sauvegarder les changements dans la base avec les boutons associés à l'insertion/mise à jour.
 
-#### Précisions sur L3-*livrable*-3D.jar
+#### Options
+Il n'y a qu'une option pour la base de données. Vous pouvez la lancer avec différentes méthodes :
 
-Il faut lancer `L3-*livrable*-3D.jar` avec un fichier .ply en paramètre comme la suivante  
-`java -jar L3-*livrable*-3D.jar fichier.ply`
-Le programme affiche par défaut uniquement les faces avec une lumière directionnelle. A savoir qu'il est possible de changer la mode d'affichage par la suite.
+ - `--rf`
+ - `--reset --fill`
+ - `--r --fill`
+ - ...
+ - et toute autre combinaison
 
-Les paramètres pour ce programme sont les suivants :
-  - `-s` : afficher les segments du modèle.
-  - `-f` afficher les faces du modèle.
+Cette option drop la table, la recrée et la remplit avec les modeles dans le dossier data/ dans la même racine que le **.jar**.
+ >**Attention!**
+ > Vous devez obligatoirement préciser `--reset` accompagné de `--fill`, de même avec leurs raccourcis.  
+ 
+
+
+----------
+
+
+### Visualisation de modèle
+#### Commandes
+Il suffit de préciser un chemin *(relatif ou absolu)* vers un fichier **.ply**.
+> **Exemple:**
+> `java -jar programme.jar data/galleon.ply`
+> Notez que le lancement de la **.jar** peut varier en fonction de votre système d'exploitation.
+#### Options
+Vous pouvez lancer la visualisation en choisissant directement le mode d'affichage avec les options suivantes
+
+ - `-f` : affiche les faces du modèle.
+ - `-p` : affiche les points du modèle.
+ - `-s` : affiche les segments du modèle.
+ 
+> **Note:**
+> Ces options ne sont pas exclusifs.
+> Le programme se lance par défaut avec uniquement `-f`.
+
+
+----------
+
+
+### Autres précisions de lancement
+On ne peut lancer une commande de base de données en même temps qu'une commande lançant la visualisation du modèle. Vous devez forcément choisir l'un ou l'autre.
+>**Attention!**
+>Il y a une exception à la règle : l'option `--rf` peut être spécifié à tout moment car la fenêtre principale propose de changer de modèles à tout moment. Or, ces modèles suivent le chemin décrit dans la base de données. On pourrait donc visualiser ses modèles en s'assurant que le ModelBrowser est correcte.
+
+---
+## Comment utiliser le Modelisationator
+### Fenêtre principale
+![Main window](https://git-iut.univ-lille1.fr/cantac/ProjetMode2016-L3/raw/6dbe7fc0a524a979ed3d7de540b39be4d8cf5ace/screenshots/main_window.PNG)
+
+Comme vous pouvez le voir, la fenêtre se compose de trois parties majeures : 
+
+ - A droite vous avez deux onglets principaux : la base et vos modèles. L'onglet des modèles propose des sous onglets avec chacun associé à une modèle **.ply**.
+ - En haut à gauche, vous avez les informations sur le modèle courant tirées de la base de données. Ainsi vous avez toute les données d'un modèle sous vos yeux à la fois.
+ - En bas à gauche il y a le Model Browser. Celui ci récupère les noms et chemins des modèles dans la base de données et propose une sorte de raccourci vers le chemin du modèle. Ainsi si vous double cliquez sur un nom de modèle, il ouvre un nouvel sou onglet dans l'onglet principal "Modèles".
+
+
+----------
+
+
+#### Onglet Modèles
+Cet onglet se compose de 0 ou plusieurs sous onglets, un sous onglet par modèle **.ply**. Dans chaque onglet de modèle, vous avez  d'une partie la visualisation du modèle en haut et d'autre partie, une barre dans la partie basse proposant des boutons de translation et de rotation ainsi que des options d'affichage et de contrôle du modèle.
+##### Partie visualisation
+La visualisation du modèle se contrôle soit par les touches du clavier soit par la souris
+
+ > Clavier 
+  - **WASD** pour la rotation.
+  - **HAUT**, **BAS**, **DROITE**, **GAUCHE** pour les translations.
+  - **R** recharger le modèle depuis le fichier **.ply**.
+  - **C** recentrer le modèle et l'adapter à ce que sa plus grand dimension prenne 65% de l'écran.
+
+> Souris
+  - **CLIC GAUCHE** pour translater le modèle.
+  - **CLIC DROITE** pour faire une rotation.
+
+
+##### Partie basse
+Cette partie est assez évidente, non?
+
+
+----------
+
+#### Onglet Base
+![Onglet base](https://git-iut.univ-lille1.fr/cantac/ProjetMode2016-L3/raw/6dbe7fc0a524a979ed3d7de540b39be4d8cf5ace/screenshots/base.PNG)
+La base se compose d'une table au centre avec à droite des lignes, des boutons pour opérer sur chaque ligne, et des boutons tout en bas de la table pour opérer sur la table entière.
+
+>Boutons de ligne
+ - **"Confirmation/Insertion"** permet soit de mettre à jour la ligne correspondante dans la base de données si on a réalisé des changements, soit d'insérer la ligne si on vient d'utiliser le bouton "Ajouter une ligne" tout en bas.
+ - **"Reset"** permet de remettre la ligne à ce qu'elle avait avant que vous aviez modifié ses valeurs. **Attention!** Si vous sauvgardez vos changements de ligne dans la base, vous ne pouvez pas remettre la ligne à sa valeur originelle. Elle ne fonctionne tant que vous n'avez pas mis à jour la ligne dans la base.
+ - **"Supprimer"** permet de supprimer la ligne à la fois dans la table ainsi que dans la base de donneés. Elle lance une fenêtre de confirmation afin d'éviter des erreurs éventuels.
+
+>Boutons en bas
+ - **"Ajouter une ligne"** permet d'ajouter une ligne dans la table. Celle ci pourra par la suite être insérée dans la base. **Attention!** Vous devez saisir des chiffres dans les colonnes **"Nombre de points"** et **"Nombre de faces"**.
+ - **"Reset table à base"** permet de mettre toutes les valeurs dans la table à celles dans la base.
+
+
+
+Voila tout ! j'espère que vous appréciez Modelisationator !
+
+ 
+
+[^.ply]: Regarder la description des fichiers **.ply** [ici](https://people.sc.fsu.edu/~jburkardt/data/ply/ply.html).

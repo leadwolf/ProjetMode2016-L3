@@ -506,10 +506,12 @@ public class MainFenetre extends JFrame {
 	private class MenuControler implements ActionListener {
 
 		private Controls controls;
+		private Credits credits;
 
 		@SuppressWarnings("javadoc")
 		public MenuControler() {
 			controls = new Controls();
+			credits = new Credits();
 		}
 
 		@Override
@@ -523,6 +525,9 @@ public class MainFenetre extends JFrame {
 				break;
 			case "controles":
 				controls.setVisible(true);
+				break;
+			case "credits":
+				credits.setVisible(true);
 				break;
 			default:
 				break;

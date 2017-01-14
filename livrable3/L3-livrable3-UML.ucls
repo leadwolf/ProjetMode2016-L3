@@ -2,16 +2,7 @@
 <class-diagram version="1.1.13" icons="true" automaticImage="PNG" always-add-relationships="false" 
   generalizations="true" realizations="true" associations="true" dependencies="false" nesting-relationships="true" 
   router="FAN">  
-  <enumeration id="1" language="java" name="result.BasicResultEnum" project="ProjetMode2016-L3" 
-    file="/ProjetMode2016-L3/src/result/BasicResultEnum.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="261" width="251" x="2625" y="37"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </enumeration>  
-  <enumeration id="2" language="java" name="result.BDDResultEnum" project="ProjetMode2016-L3" 
+  <enumeration id="1" language="java" name="result.BDDResultEnum" project="ProjetMode2016-L3" 
     file="/ProjetMode2016-L3/src/result/BDDResultEnum.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="603" width="289" x="2052" y="37"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -20,7 +11,7 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </enumeration>  
-  <class id="3" language="java" name="result.ReaderResult" project="ProjetMode2016-L3" 
+  <class id="2" language="java" name="result.ReaderResult" project="ProjetMode2016-L3" 
     file="/ProjetMode2016-L3/src/result/ReaderResult.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1725" y="3996"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -29,7 +20,7 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="4" language="java" name="result.BDDResult" project="ProjetMode2016-L3" 
+  <class id="3" language="java" name="result.BDDResult" project="ProjetMode2016-L3" 
     file="/ProjetMode2016-L3/src/result/BDDResult.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1721" y="3816"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -38,7 +29,7 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <enumeration id="5" language="java" name="result.ReaderResultEnum" project="ProjetMode2016-L3" 
+  <enumeration id="4" language="java" name="result.ReaderResultEnum" project="ProjetMode2016-L3" 
     file="/ProjetMode2016-L3/src/result/ReaderResultEnum.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1891" y="181"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -47,7 +38,7 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </enumeration>  
-  <class id="6" language="java" name="result.BasicResult" project="ProjetMode2016-L3" 
+  <class id="5" language="java" name="result.BasicResult" project="ProjetMode2016-L3" 
     file="/ProjetMode2016-L3/src/result/BasicResult.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1713" y="3670"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -56,7 +47,7 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="7" language="java" name="result.MethodResult" project="ProjetMode2016-L3" 
+  <class id="6" language="java" name="result.MethodResult" project="ProjetMode2016-L3" 
     file="/ProjetMode2016-L3/src/result/MethodResult.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="2035" y="3949"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -65,7 +56,7 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="8" language="java" name="reader.Lecture" project="ProjetMode2016-L3" 
+  <class id="7" language="java" name="reader.Lecture" project="ProjetMode2016-L3" 
     file="/ProjetMode2016-L3/src/reader/Lecture.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="2470" y="4001"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -74,7 +65,7 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="9" language="java" name="ply.plyModel.vues.RotationPanel" project="ProjetMode2016-L3" 
+  <class id="8" language="java" name="ply.plyModel.vues.RotationPanel" project="ProjetMode2016-L3" 
     file="/ProjetMode2016-L3/src/ply/plyModel/vues/RotationPanel.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="3356" y="2759"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -83,7 +74,7 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="10" language="java" name="ply.plyModel.vues.TranslationPanel" project="ProjetMode2016-L3" 
+  <class id="9" language="java" name="ply.plyModel.vues.TranslationPanel" project="ProjetMode2016-L3" 
     file="/ProjetMode2016-L3/src/ply/plyModel/vues/TranslationPanel.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="3743" y="2516"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -92,7 +83,7 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="11" language="java" name="ply.plyModel.vues.SensitivityViewPanel" project="ProjetMode2016-L3" 
+  <class id="10" language="java" name="ply.plyModel.vues.SensitivityViewPanel" project="ProjetMode2016-L3" 
     file="/ProjetMode2016-L3/src/ply/plyModel/vues/SensitivityViewPanel.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="3664" y="1425"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -101,7 +92,7 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="12" language="java" name="ply.plyModel.vues.VisualisationPanel" project="ProjetMode2016-L3" 
+  <class id="11" language="java" name="ply.plyModel.vues.VisualisationPanel" project="ProjetMode2016-L3" 
     file="/ProjetMode2016-L3/src/ply/plyModel/vues/VisualisationPanel.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="2423" y="2541"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -110,7 +101,7 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="13" language="java" name="ply.plyModel.vues.OptionPanel" project="ProjetMode2016-L3" 
+  <class id="12" language="java" name="ply.plyModel.vues.OptionPanel" project="ProjetMode2016-L3" 
     file="/ProjetMode2016-L3/src/ply/plyModel/vues/OptionPanel.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="3238" y="1582"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -119,7 +110,7 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="14" language="java" name="ply.plyModel.other.Face" project="ProjetMode2016-L3" 
+  <class id="13" language="java" name="ply.plyModel.other.Face" project="ProjetMode2016-L3" 
     file="/ProjetMode2016-L3/src/ply/plyModel/other/Face.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="2814" y="3722"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -128,7 +119,7 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="15" language="java" name="ply.plyModel.other.Point" project="ProjetMode2016-L3" 
+  <class id="14" language="java" name="ply.plyModel.other.Point" project="ProjetMode2016-L3" 
     file="/ProjetMode2016-L3/src/ply/plyModel/other/Point.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="3623" y="3705"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -137,7 +128,7 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="16" language="java" name="ply.plyModel.other.SensitivityModel" project="ProjetMode2016-L3" 
+  <class id="15" language="java" name="ply.plyModel.other.SensitivityModel" project="ProjetMode2016-L3" 
     file="/ProjetMode2016-L3/src/ply/plyModel/other/SensitivityModel.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="3616" y="1778"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -146,7 +137,7 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="17" language="java" name="ply.plyModel.modeles.FigureModel" project="ProjetMode2016-L3" 
+  <class id="16" language="java" name="ply.plyModel.modeles.FigureModel" project="ProjetMode2016-L3" 
     file="/ProjetMode2016-L3/src/ply/plyModel/modeles/FigureModel.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="2965" y="3173"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -155,7 +146,7 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="18" language="java" name="ply.plyModel.controlers.CommandControler" project="ProjetMode2016-L3" 
+  <class id="17" language="java" name="ply.plyModel.controlers.CommandControler" project="ProjetMode2016-L3" 
     file="/ProjetMode2016-L3/src/ply/plyModel/controlers/CommandControler.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="2479" y="2956"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -164,7 +155,7 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="19" language="java" name="ply.plyModel.controlers.TimerChangeListener" project="ProjetMode2016-L3" 
+  <class id="18" language="java" name="ply.plyModel.controlers.TimerChangeListener" project="ProjetMode2016-L3" 
     file="/ProjetMode2016-L3/src/ply/plyModel/controlers/TimerChangeListener.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="135" width="188" x="2916" y="37"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -173,7 +164,7 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="20" language="java" name="ply.plyModel.controlers.KeyControler" project="ProjetMode2016-L3" 
+  <class id="19" language="java" name="ply.plyModel.controlers.KeyControler" project="ProjetMode2016-L3" 
     file="/ProjetMode2016-L3/src/ply/plyModel/controlers/KeyControler.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="2238" y="1130"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -182,7 +173,7 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="21" language="java" name="ply.plyModel.controlers.MouseControler" project="ProjetMode2016-L3" 
+  <class id="20" language="java" name="ply.plyModel.controlers.MouseControler" project="ProjetMode2016-L3" 
     file="/ProjetMode2016-L3/src/ply/plyModel/controlers/MouseControler.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="3784" y="2124"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -191,7 +182,7 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="22" language="java" name="ply.bdd.vues.ModelInfo" project="ProjetMode2016-L3" 
+  <class id="21" language="java" name="ply.bdd.vues.ModelInfo" project="ProjetMode2016-L3" 
     file="/ProjetMode2016-L3/src/ply/bdd/vues/ModelInfo.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="3378" y="1160"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -200,7 +191,7 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="23" language="java" name="ply.bdd.vues.ModelBrowser.ControlFigureFocus" project="ProjetMode2016-L3" 
+  <class id="22" language="java" name="ply.bdd.vues.ModelBrowser.ControlFigureFocus" project="ProjetMode2016-L3" 
     file="/ProjetMode2016-L3/src/ply/bdd/vues/ModelBrowser.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="2496" y="1120"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -209,7 +200,7 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="24" language="java" name="ply.bdd.vues.BDDPanel" project="ProjetMode2016-L3" 
+  <class id="23" language="java" name="ply.bdd.vues.BDDPanel" project="ProjetMode2016-L3" 
     file="/ProjetMode2016-L3/src/ply/bdd/vues/BDDPanel.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1416" y="1340"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -218,7 +209,7 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="25" language="java" name="ply.bdd.vues.ModelBrowser" project="ProjetMode2016-L3" 
+  <class id="24" language="java" name="ply.bdd.vues.ModelBrowser" project="ProjetMode2016-L3" 
     file="/ProjetMode2016-L3/src/ply/bdd/vues/ModelBrowser.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="2907" y="844"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -227,7 +218,7 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="26" language="java" name="ply.bdd.vues.ModelBrowser.SearchListener" project="ProjetMode2016-L3" 
+  <class id="25" language="java" name="ply.bdd.vues.ModelBrowser.SearchListener" project="ProjetMode2016-L3" 
     file="/ProjetMode2016-L3/src/ply/bdd/vues/ModelBrowser.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="3306" y="881"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -236,8 +227,8 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="27" language="java" name="ply.bdd.other.BDDUtilities" project="ProjetMode2016-L3" 
-    file="/ProjetMode2016-L3/src/ply/bdd/other/BDDUtilities.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="26" language="java" name="ply.bdd.base.BDDUtilities" project="ProjetMode2016-L3" 
+    file="/ProjetMode2016-L3/src/ply/bdd/base/BDDUtilities.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1628" y="782"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -245,8 +236,8 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="28" language="java" name="ply.bdd.other.Table" project="ProjetMode2016-L3" 
-    file="/ProjetMode2016-L3/src/ply/bdd/other/Table.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="27" language="java" name="ply.bdd.table.Table" project="ProjetMode2016-L3" 
+    file="/ProjetMode2016-L3/src/ply/bdd/table/Table.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1874" y="1390"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -254,8 +245,8 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="29" language="java" name="ply.bdd.other.BaseDeDonnees" project="ProjetMode2016-L3" 
-    file="/ProjetMode2016-L3/src/ply/bdd/other/BaseDeDonnees.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="28" language="java" name="ply.bdd.base.BaseDeDonnees" project="ProjetMode2016-L3" 
+    file="/ProjetMode2016-L3/src/ply/bdd/base/BaseDeDonnees.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="954" y="755"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -263,8 +254,8 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="30" language="java" name="ply.bdd.other.DAO" project="ProjetMode2016-L3" 
-    file="/ProjetMode2016-L3/src/ply/bdd/other/DAO.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="29" language="java" name="ply.bdd.base.DAO" project="ProjetMode2016-L3" 
+    file="/ProjetMode2016-L3/src/ply/bdd/base/DAO.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1275" y="678"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -272,8 +263,8 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="31" language="java" name="ply.bdd.other.TableDataModel" project="ProjetMode2016-L3" 
-    file="/ProjetMode2016-L3/src/ply/bdd/other/TableDataModel.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="30" language="java" name="ply.bdd.table.TableDataModel" project="ProjetMode2016-L3" 
+    file="/ProjetMode2016-L3/src/ply/bdd/table/TableDataModel.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1407" y="1902"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -281,7 +272,7 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="32" language="java" name="ply.bdd.controlers.ButtonControler" project="ProjetMode2016-L3" 
+  <class id="31" language="java" name="ply.bdd.controlers.ButtonControler" project="ProjetMode2016-L3" 
     file="/ProjetMode2016-L3/src/ply/bdd/controlers/ButtonControler.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="916" y="1315"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -290,7 +281,7 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="33" language="java" name="math.Matrice" project="ProjetMode2016-L3" 
+  <class id="32" language="java" name="math.Matrice" project="ProjetMode2016-L3" 
     file="/ProjetMode2016-L3/src/math/Matrice.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="2310" y="3363"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -299,7 +290,7 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="34" language="java" name="math.Vecteur" project="ProjetMode2016-L3" 
+  <class id="33" language="java" name="math.Vecteur" project="ProjetMode2016-L3" 
     file="/ProjetMode2016-L3/src/math/Vecteur.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="2034" y="3006"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -308,7 +299,7 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="35" language="java" name="main.Modelisationator" project="ProjetMode2016-L3" 
+  <class id="34" language="java" name="main.Modelisationator" project="ProjetMode2016-L3" 
     file="/ProjetMode2016-L3/src/main/Modelisationator.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1491" y="238"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -317,7 +308,7 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="36" language="java" name="main.vues.ModelPanel" project="ProjetMode2016-L3" 
+  <class id="35" language="java" name="main.vues.ModelPanel" project="ProjetMode2016-L3" 
     file="/ProjetMode2016-L3/src/main/vues/ModelPanel.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="2906" y="2069"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -326,7 +317,7 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="37" language="java" name="main.vues.ButtonTabComponent" project="ProjetMode2016-L3" 
+  <class id="36" language="java" name="main.vues.ButtonTabComponent" project="ProjetMode2016-L3" 
     file="/ProjetMode2016-L3/src/main/vues/ButtonTabComponent.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="153" width="204" x="2381" y="37"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -335,7 +326,7 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="38" language="java" name="main.vues.Credits" project="ProjetMode2016-L3" 
+  <class id="37" language="java" name="main.vues.Credits" project="ProjetMode2016-L3" 
     file="/ProjetMode2016-L3/src/main/vues/Credits.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1918" y="1833"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -344,7 +335,7 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="39" language="java" name="main.vues.Controls" project="ProjetMode2016-L3" 
+  <class id="38" language="java" name="main.vues.Controls" project="ProjetMode2016-L3" 
     file="/ProjetMode2016-L3/src/main/vues/Controls.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1900" y="2045"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -353,7 +344,7 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="40" language="java" name="main.vues.LeftSidePanel" project="ProjetMode2016-L3" 
+  <class id="39" language="java" name="main.vues.LeftSidePanel" project="ProjetMode2016-L3" 
     file="/ProjetMode2016-L3/src/main/vues/LeftSidePanel.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="2852" y="1214"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -362,7 +353,7 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="41" language="java" name="main.vues.ButtonTabComponent.TabButton" project="ProjetMode2016-L3" 
+  <class id="40" language="java" name="main.vues.ButtonTabComponent.TabButton" project="ProjetMode2016-L3" 
     file="/ProjetMode2016-L3/src/main/vues/ButtonTabComponent.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="153" width="194" x="2381" y="680"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -371,7 +362,7 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="42" language="java" name="main.vues.MainFenetre" project="ProjetMode2016-L3" 
+  <class id="41" language="java" name="main.vues.MainFenetre" project="ProjetMode2016-L3" 
     file="/ProjetMode2016-L3/src/main/vues/MainFenetre.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="693" width="231" x="2392" y="1498"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -380,7 +371,7 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="43" language="java" name="main.vues.MainFenetre.MenuControler" project="ProjetMode2016-L3" 
+  <class id="42" language="java" name="main.vues.MainFenetre.MenuControler" project="ProjetMode2016-L3" 
     file="/ProjetMode2016-L3/src/main/vues/MainFenetre.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="2194" y="1950"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -389,330 +380,478 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <generalization id="44">    
-    <end type="SOURCE" refId="6"/>    
-    <end type="TARGET" refId="7"/>  
-  </generalization>  
-  <association id="45">    
-    <end type="SOURCE" refId="12" navigable="false">      
-      <attribute id="46" name="figureModel"/>      
-      <multiplicity id="47" minimum="0" maximum="1"/>    
-    </end>    
-    <end type="TARGET" refId="17" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="48">    
-    <end type="SOURCE" refId="29" navigable="false">      
-      <attribute id="49" name="INSTANCE"/>      
-      <multiplicity id="50" minimum="0" maximum="1"/>    
-    </end>    
-    <end type="TARGET" refId="29" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="51">    
-    <end type="SOURCE" refId="17" navigable="false">      
-      <attribute id="52" name="lightVector"/>      
-      <multiplicity id="53" minimum="0" maximum="1"/>    
-    </end>    
-    <end type="TARGET" refId="34" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <nesting id="54">    
-    <end type="SOURCE" refId="37"/>    
-    <end type="TARGET" refId="41"/>  
-  </nesting>  
-  <association id="55">    
-    <end type="SOURCE" refId="36" navigable="false">      
-      <attribute id="56" name="sensModel"/>      
-      <multiplicity id="57" minimum="0" maximum="1"/>    
-    </end>    
-    <end type="TARGET" refId="16" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <generalization id="58">    
+  <generalization id="43">    
     <end type="SOURCE" refId="3"/>    
-    <end type="TARGET" refId="7"/>  
+    <end type="TARGET" refId="6"/>  
   </generalization>  
-  <association id="59">    
-    <end type="SOURCE" refId="36" navigable="false">      
-      <attribute id="60" name="visPanel"/>      
-      <multiplicity id="61" minimum="0" maximum="1"/>    
+  <association id="44">    
+    <end type="SOURCE" refId="39" navigable="false">      
+      <attribute id="45" name="modelInfo">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="46" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
     </end>    
-    <end type="TARGET" refId="12" navigable="true"/>    
+    <end type="TARGET" refId="21" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="62">    
-    <end type="SOURCE" refId="24" navigable="false">      
-      <attribute id="63" name="table"/>      
-      <multiplicity id="64" minimum="0" maximum="1"/>    
-    </end>    
-    <end type="TARGET" refId="28" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="65">    
-    <end type="SOURCE" refId="14" navigable="false">      
-      <attribute id="66" name="pointList"/>      
-      <multiplicity id="67" minimum="0" maximum="2147483647"/>    
+  <association id="47">    
+    <end type="SOURCE" refId="35" navigable="false">      
+      <attribute id="48" name="sensModel">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="49" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
     </end>    
     <end type="TARGET" refId="15" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="68">    
-    <end type="SOURCE" refId="43" navigable="false">      
-      <attribute id="69" name="credits"/>      
-      <multiplicity id="70" minimum="0" maximum="1"/>    
+  <association id="50">    
+    <end type="SOURCE" refId="19" navigable="false">      
+      <attribute id="51" name="mainFenetre">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="52" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="41" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="53">    
+    <end type="SOURCE" refId="41" navigable="false">      
+      <attribute id="54" name="modelPanelList">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="55" minimum="0" maximum="2147483647">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="35" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="56">    
+    <bendpoint x="3386" y="3565"/>    
+    <end type="SOURCE" refId="16" navigable="false">      
+      <attribute id="57" name="center">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="58" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="14" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="59">    
+    <end type="SOURCE" refId="42" navigable="false">      
+      <attribute id="60" name="controls">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="61" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
     </end>    
     <end type="TARGET" refId="38" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="71">    
-    <end type="SOURCE" refId="17" navigable="false">      
-      <attribute id="72" name="lecture"/>      
-      <multiplicity id="73" minimum="0" maximum="1"/>    
-    </end>    
-    <end type="TARGET" refId="8" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="74">    
-    <end type="SOURCE" refId="18" navigable="false">      
-      <attribute id="75" name="fenetre"/>      
-      <multiplicity id="76" minimum="0" maximum="1"/>    
-    </end>    
-    <end type="TARGET" refId="36" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="77">    
-    <end type="SOURCE" refId="8" navigable="false">      
-      <attribute id="78" name="faces"/>      
-      <multiplicity id="79" minimum="0" maximum="2147483647"/>    
-    </end>    
-    <end type="TARGET" refId="14" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="80">    
-    <bendpoint x="3386" y="3565"/>    
-    <end type="SOURCE" refId="17" navigable="false">      
-      <attribute id="81" name="center"/>      
-      <multiplicity id="82" minimum="0" maximum="1"/>    
-    </end>    
-    <end type="TARGET" refId="15" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="83">    
-    <end type="SOURCE" refId="36" navigable="false">      
-      <attribute id="84" name="rotationPanel"/>      
-      <multiplicity id="85" minimum="0" maximum="1"/>    
-    </end>    
-    <end type="TARGET" refId="9" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="86">    
-    <end type="SOURCE" refId="17" navigable="false">      
-      <attribute id="87" name="points"/>      
-      <multiplicity id="88" minimum="0" maximum="2147483647"/>    
-    </end>    
-    <end type="TARGET" refId="15" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="89">    
-    <end type="SOURCE" refId="17" navigable="false">      
-      <attribute id="90" name="ombre"/>      
-      <multiplicity id="91" minimum="0" maximum="1"/>    
-    </end>    
-    <end type="TARGET" refId="33" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="92">    
-    <end type="SOURCE" refId="30" navigable="false">      
-      <attribute id="93" name="INSTANCE"/>      
-      <multiplicity id="94" minimum="0" maximum="1"/>    
-    </end>    
-    <end type="TARGET" refId="30" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="95">    
-    <end type="SOURCE" refId="11" navigable="false">      
-      <attribute id="96" name="sens"/>      
-      <multiplicity id="97" minimum="0" maximum="1"/>    
-    </end>    
-    <end type="TARGET" refId="16" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <nesting id="98">    
-    <end type="SOURCE" refId="25"/>    
-    <end type="TARGET" refId="23"/>  
-  </nesting>  
-  <association id="99">    
-    <end type="SOURCE" refId="23" navigable="false">      
-      <attribute id="100" name="mainFenetre"/>      
-      <multiplicity id="101" minimum="0" maximum="1"/>    
-    </end>    
-    <end type="TARGET" refId="42" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="102">    
-    <end type="SOURCE" refId="28" navigable="false">      
-      <attribute id="103" name="mainFenetre"/>      
-      <multiplicity id="104" minimum="0" maximum="1"/>    
-    </end>    
-    <end type="TARGET" refId="42" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="105">    
-    <end type="SOURCE" refId="42" navigable="false">      
-      <attribute id="106" name="modelPanelList"/>      
-      <multiplicity id="107" minimum="0" maximum="2147483647"/>    
-    </end>    
-    <end type="TARGET" refId="36" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="108">    
-    <end type="SOURCE" refId="8" navigable="false">      
-      <attribute id="109" name="result"/>      
-      <multiplicity id="110" minimum="0" maximum="1"/>    
-    </end>    
-    <end type="TARGET" refId="7" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="111">    
-    <end type="SOURCE" refId="40" navigable="false">      
-      <attribute id="112" name="modelInfo"/>      
-      <multiplicity id="113" minimum="0" maximum="1"/>    
-    </end>    
-    <end type="TARGET" refId="22" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="114">    
-    <end type="SOURCE" refId="36" navigable="false">      
-      <attribute id="115" name="figureModel"/>      
-      <multiplicity id="116" minimum="0" maximum="1"/>    
-    </end>    
-    <end type="TARGET" refId="17" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="117">    
-    <end type="SOURCE" refId="18" navigable="false">      
-      <attribute id="118" name="figureModel"/>      
-      <multiplicity id="119" minimum="0" maximum="1"/>    
-    </end>    
-    <end type="TARGET" refId="17" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="120">    
-    <end type="SOURCE" refId="42" navigable="false">      
-      <attribute id="121" name="leftPanel"/>      
-      <multiplicity id="122" minimum="0" maximum="1"/>    
-    </end>    
-    <end type="TARGET" refId="40" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="123">    
-    <end type="SOURCE" refId="36" navigable="false">      
-      <attribute id="124" name="translationPanel"/>      
-      <multiplicity id="125" minimum="0" maximum="1"/>    
-    </end>    
-    <end type="TARGET" refId="10" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="126">    
-    <end type="SOURCE" refId="8" navigable="false">      
-      <attribute id="127" name="points"/>      
-      <multiplicity id="128" minimum="0" maximum="2147483647"/>    
-    </end>    
-    <end type="TARGET" refId="15" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="129">    
-    <end type="SOURCE" refId="36" navigable="false">      
-      <attribute id="130" name="optionPanel"/>      
-      <multiplicity id="131" minimum="0" maximum="1"/>    
+  <association id="62">    
+    <end type="SOURCE" refId="7" navigable="false">      
+      <attribute id="63" name="faces">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="64" minimum="0" maximum="2147483647">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
     </end>    
     <end type="TARGET" refId="13" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <nesting id="132">    
-    <end type="SOURCE" refId="42"/>    
-    <end type="TARGET" refId="43"/>  
-  </nesting>  
-  <nesting id="133">    
-    <end type="SOURCE" refId="25"/>    
-    <end type="TARGET" refId="26"/>  
-  </nesting>  
-  <association id="134">    
-    <end type="SOURCE" refId="43" navigable="false">      
-      <attribute id="135" name="controls"/>      
-      <multiplicity id="136" minimum="0" maximum="1"/>    
+  <generalization id="65">    
+    <end type="SOURCE" refId="5"/>    
+    <end type="TARGET" refId="6"/>  
+  </generalization>  
+  <association id="66">    
+    <end type="SOURCE" refId="35" navigable="false">      
+      <attribute id="67" name="translationPanel">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="68" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
     </end>    
-    <end type="TARGET" refId="39" navigable="true"/>    
+    <end type="TARGET" refId="9" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="137">    
-    <end type="SOURCE" refId="32" navigable="false">      
-      <attribute id="138" name="bddPanel"/>      
-      <multiplicity id="139" minimum="0" maximum="1"/>    
+  <association id="69">    
+    <end type="SOURCE" refId="31" navigable="false">      
+      <attribute id="70" name="bddPanel">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="71" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
     </end>    
-    <end type="TARGET" refId="24" navigable="true"/>    
+    <end type="TARGET" refId="23" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="140">    
-    <end type="SOURCE" refId="21" navigable="false">      
-      <attribute id="141" name="sens"/>      
-      <multiplicity id="142" minimum="0" maximum="1"/>    
+  <association id="72">    
+    <end type="SOURCE" refId="7" navigable="false">      
+      <attribute id="73" name="result">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="74" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="6" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="75">    
+    <bendpoint x="3056" y="2614"/>    
+    <end type="SOURCE" refId="20" navigable="false">      
+      <attribute id="76" name="figureModel">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="77" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
     </end>    
     <end type="TARGET" refId="16" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <generalization id="143">    
-    <end type="SOURCE" refId="4"/>    
-    <end type="TARGET" refId="7"/>  
-  </generalization>  
-  <association id="144">    
-    <end type="SOURCE" refId="21" navigable="false">      
-      <attribute id="145" name="visPanel"/>      
-      <multiplicity id="146" minimum="0" maximum="1"/>    
+  <association id="78">    
+    <end type="SOURCE" refId="27" navigable="false">      
+      <attribute id="79" name="mainFenetre">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="80" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="41" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <nesting id="81">    
+    <end type="SOURCE" refId="36"/>    
+    <end type="TARGET" refId="40"/>  
+  </nesting>  
+  <association id="82">    
+    <end type="SOURCE" refId="35" navigable="false">      
+      <attribute id="83" name="optionPanel">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="84" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
     </end>    
     <end type="TARGET" refId="12" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="147">    
-    <bendpoint x="3056" y="2614"/>    
-    <end type="SOURCE" refId="21" navigable="false">      
-      <attribute id="148" name="figureModel"/>      
-      <multiplicity id="149" minimum="0" maximum="1"/>    
+  <association id="85">    
+    <end type="SOURCE" refId="35" navigable="false">      
+      <attribute id="86" name="figureModel">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="87" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
     </end>    
-    <end type="TARGET" refId="17" navigable="true"/>    
+    <end type="TARGET" refId="16" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="150">    
-    <end type="SOURCE" refId="20" navigable="false">      
-      <attribute id="151" name="mainFenetre"/>      
-      <multiplicity id="152" minimum="0" maximum="1"/>    
+  <association id="88">    
+    <end type="SOURCE" refId="7" navigable="false">      
+      <attribute id="89" name="points">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="90" minimum="0" maximum="2147483647">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
     </end>    
-    <end type="TARGET" refId="42" navigable="true"/>    
+    <end type="TARGET" refId="14" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="153">    
-    <end type="SOURCE" refId="40" navigable="false">      
-      <attribute id="154" name="modelBrowser"/>      
-      <multiplicity id="155" minimum="0" maximum="1"/>    
-    </end>    
-    <end type="TARGET" refId="25" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="156">    
+  <association id="91">    
     <end type="SOURCE" refId="17" navigable="false">      
-      <attribute id="157" name="ptsMat"/>      
-      <multiplicity id="158" minimum="0" maximum="1"/>    
+      <attribute id="92" name="figureModel">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="93" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="16" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="94">    
+    <end type="SOURCE" refId="20" navigable="false">      
+      <attribute id="95" name="sens">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="96" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="15" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="97">    
+    <end type="SOURCE" refId="16" navigable="false">      
+      <attribute id="98" name="ptsMat">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="99" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="32" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="100">    
+    <end type="SOURCE" refId="39" navigable="false">      
+      <attribute id="101" name="modelBrowser">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="102" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="24" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="103">    
+    <end type="SOURCE" refId="22" navigable="false">      
+      <attribute id="104" name="mainFenetre">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="105" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="41" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="106">    
+    <end type="SOURCE" refId="16" navigable="false">      
+      <attribute id="107" name="lightVector">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="108" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
     </end>    
     <end type="TARGET" refId="33" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="159">    
-    <end type="SOURCE" refId="17" navigable="false">      
-      <attribute id="160" name="faces"/>      
-      <multiplicity id="161" minimum="0" maximum="2147483647"/>    
+  <association id="109">    
+    <end type="SOURCE" refId="16" navigable="false">      
+      <attribute id="110" name="faces">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="111" minimum="0" maximum="2147483647">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="13" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="112">    
+    <end type="SOURCE" refId="16" navigable="false">      
+      <attribute id="113" name="points">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="114" minimum="0" maximum="2147483647">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
     </end>    
     <end type="TARGET" refId="14" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="115">    
+    <end type="SOURCE" refId="13" navigable="false">      
+      <attribute id="116" name="pointList">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="117" minimum="0" maximum="2147483647">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="14" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="118">    
+    <end type="SOURCE" refId="20" navigable="false">      
+      <attribute id="119" name="visPanel">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="120" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="11" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="121">    
+    <end type="SOURCE" refId="42" navigable="false">      
+      <attribute id="122" name="credits">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="123" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="37" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="124">    
+    <end type="SOURCE" refId="16" navigable="false">      
+      <attribute id="125" name="lecture">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="126" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="7" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <nesting id="127">    
+    <end type="SOURCE" refId="24"/>    
+    <end type="TARGET" refId="22"/>  
+  </nesting>  
+  <association id="128">    
+    <end type="SOURCE" refId="23" navigable="false">      
+      <attribute id="129" name="table">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="130" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="27" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="131">    
+    <end type="SOURCE" refId="41" navigable="false">      
+      <attribute id="132" name="leftPanel">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="133" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="39" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="134">    
+    <end type="SOURCE" refId="10" navigable="false">      
+      <attribute id="135" name="sens">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="136" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="15" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="137">    
+    <end type="SOURCE" refId="28" navigable="false">      
+      <attribute id="138" name="INSTANCE">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="139" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="28" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <nesting id="140">    
+    <end type="SOURCE" refId="41"/>    
+    <end type="TARGET" refId="42"/>  
+  </nesting>  
+  <association id="141">    
+    <end type="SOURCE" refId="35" navigable="false">      
+      <attribute id="142" name="visPanel">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="143" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="11" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <nesting id="144">    
+    <end type="SOURCE" refId="24"/>    
+    <end type="TARGET" refId="25"/>  
+  </nesting>  
+  <association id="145">    
+    <end type="SOURCE" refId="17" navigable="false">      
+      <attribute id="146" name="fenetre">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="147" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="35" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="148">    
+    <end type="SOURCE" refId="35" navigable="false">      
+      <attribute id="149" name="rotationPanel">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="150" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="8" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="151">    
+    <end type="SOURCE" refId="16" navigable="false">      
+      <attribute id="152" name="ombre">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="153" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="32" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="154">    
+    <end type="SOURCE" refId="29" navigable="false">      
+      <attribute id="155" name="INSTANCE">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="156" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="29" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <generalization id="157">    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="6"/>  
+  </generalization>  
+  <association id="158">    
+    <end type="SOURCE" refId="11" navigable="false">      
+      <attribute id="159" name="figureModel">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="160" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="16" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 

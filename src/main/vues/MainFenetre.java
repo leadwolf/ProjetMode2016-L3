@@ -27,8 +27,9 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import main.Modelisationator;
-import ply.bdd.other.BaseDeDonnees;
-import ply.bdd.other.DAO;
+import ply.bdd.base.DAO;
+import ply.bdd.strategy.BDDPanelStrategy;
+import ply.bdd.strategy.DataBaseStrategy;
 import ply.bdd.vues.BDDPanel;
 import ply.bdd.vues.ModelBrowser;
 import ply.bdd.vues.ModelInfo;
@@ -102,6 +103,7 @@ public class MainFenetre extends JFrame {
 	 * Hauteur des tabs. Utilisé pour calculer les tailles des panels qu'on ajoute par la suite.
 	 */
 	private int tabHeight = 23;
+	private DataBaseStrategy strategy;
 
 	private boolean canControlFigure;
 
@@ -127,7 +129,8 @@ public class MainFenetre extends JFrame {
 
 		/* BDD PANEL */
 		// par défaut on veut afficher toute la base
-		BDDPanel bddPanel = BaseDeDonnees.INSTANCE.getPanel(new String[] { "--all" }, null, new boolean[] { options[3], options[4], false });
+		BDDPanel bddPanel = strategy.treatArguments(new String[] { "--all" }, null, new boolean[] { options[3], options[4], false })
+				.getPanelResult();
 		if (bddPanel == null) {
 			System.exit(1);
 		}
@@ -176,7 +179,7 @@ public class MainFenetre extends JFrame {
 		firstSetup();
 
 		/* BDD PANEL */
-		BDDPanel bddPanel = BaseDeDonnees.INSTANCE.getPanel(command, null, new boolean[] { options[0], options[1], false });
+		BDDPanel bddPanel = strategy.treatArguments(command, null, new boolean[] { options[0], options[1], false }).getPanelResult();
 		if (bddPanel == null) {
 			System.exit(1);
 		}
@@ -213,6 +216,7 @@ public class MainFenetre extends JFrame {
 		setupMenu();
 		setJMenuBar(menuBar);
 		leftPanelDim = new Dimension((int) (frameDim.width * 0.28), frameDim.height);
+		strategy = new BDDPanelStrategy();
 
 		allFiles = new ArrayList<>();
 		File[] tempFiles = parentPath.toFile().listFiles(new FilenameFilter() {
@@ -258,7 +262,6 @@ public class MainFenetre extends JFrame {
 	}
 
 	/**
-	 * @param leftPanelDim taille d'initialisation et taille maxi
 	 * @param modelName le nom du premier modèle affiché. Sert à initialiser {@link ModelInfo}. Laisser null si on affiche la bdd en premier.
 	 */
 	private void createLeftPanel(String modelName) {

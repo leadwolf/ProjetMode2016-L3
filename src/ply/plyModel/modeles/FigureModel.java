@@ -15,7 +15,7 @@ import ply.plyModel.other.Face;
 import ply.plyModel.other.Point;
 import ply.plyModel.vues.VisualisationPanel;
 import reader.Lecture;
-import result.BasicResultEnum;
+import result.BasicResult.BasicResultEnum;
 import result.MethodResult;
 
 public class FigureModel extends Observable {
@@ -243,7 +243,6 @@ public class FigureModel extends Observable {
 	 * Centre la figure par rapport au centre de ce Panel
 	 * 
 	 * @param panel
-	 * @param refresh true if want to refresh model and notify its observers
 	 */
 	private void centrerFigure(VisualisationPanel panel) {
 		refreshFigDims(panel);
@@ -263,7 +262,6 @@ public class FigureModel extends Observable {
 	 * 
 	 * @param panel
 	 * @param maxSize
-	 * @param refresh true if want to refresh model and notify its observers
 	 */
 	private void fitFigureToWindow(VisualisationPanel panel, double maxSize) {
 		// scale by height
@@ -287,7 +285,6 @@ public class FigureModel extends Observable {
 	/**
 	 * Donne la valeur absolue du cosinus de la norme d'une face et le vecteur directeur de la lumière tel que cos(N,L)
 	 * 
-	 * @param fig
 	 * @param face
 	 * @param lightVector
 	 * @return un double entre 0.0 et 1.0
@@ -308,7 +305,6 @@ public class FigureModel extends Observable {
 	 * Applique un rotation sur la figure par l'axe X <br>
 	 * Applique la translation par le centre de la figure d'abord
 	 * 
-	 * @param fig
 	 * @param angle
 	 */
 	public void rotateXByPoint(double angle) {
@@ -323,7 +319,6 @@ public class FigureModel extends Observable {
 	 * Applique un rotation sur la figure par l'axe Y <br>
 	 * Applique la translation par le centre de la figure d'abord
 	 * 
-	 * @param fig
 	 * @param angle
 	 */
 	public void rotateYByPoint(double angle) {
@@ -355,7 +350,6 @@ public class FigureModel extends Observable {
 	 * Applique un rotation sur la figure par l'axe Z <br>
 	 * Applique la translation par le centre de la figure d'abord
 	 * 
-	 * @param fig
 	 * @param angle
 	 */
 	public void rotateZByPoint(double angle) {

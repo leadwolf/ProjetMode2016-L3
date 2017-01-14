@@ -75,7 +75,7 @@ On ne peut lancer une commande de base de données en même temps qu'une command
 ---
 ## Comment utiliser le Modelisationator
 ### Fenêtre principale
-![Main window](https://git-iut.univ-lille1.fr/cantac/ProjetMode2016-L3/raw/6dbe7fc0a524a979ed3d7de540b39be4d8cf5ace/screenshots/main_window.PNG)
+![Main window](https://raw.githubusercontent.com/Christopher-Caroni/ProjetMode2016-L3/996f5754860d655258e53a09ae64a0c02100b962/screenshots/main_window.PNG)
 
 Comme vous pouvez le voir, la fenêtre se compose de trois parties majeures : 
 
@@ -110,7 +110,7 @@ Cette partie est assez évidente, non?
 ----------
 
 #### Onglet Base
-![Onglet base](https://git-iut.univ-lille1.fr/cantac/ProjetMode2016-L3/raw/6dbe7fc0a524a979ed3d7de540b39be4d8cf5ace/screenshots/base.PNG)
+![Onglet base](https://raw.githubusercontent.com/Christopher-Caroni/ProjetMode2016-L3/996f5754860d655258e53a09ae64a0c02100b962/screenshots/base.PNG)
 La base se compose d'une table au centre avec à droite des lignes, des boutons pour opérer sur chaque ligne, et des boutons tout en bas de la table pour opérer sur la table entière.
 
 >Boutons de ligne

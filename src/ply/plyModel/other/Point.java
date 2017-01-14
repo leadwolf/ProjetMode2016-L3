@@ -1,55 +1,58 @@
 package ply.plyModel.other;
 
-
 public class Point {
-	
+
 	String nom;
-	double x,y,z;
+	double x, y, z;
 	private int iter;
-	
+
 	/**
 	 * Crée un point.
 	 */
 	public Point() {
 		iter = -1;
 	}
-	
+
 	/**
 	 * Crée un point a partir des coordonnées x et y
-	 * @param Coordx 
-	 * @param Coordy 
+	 * 
+	 * @param Coordx
+	 * @param Coordy
 	 */
-	public Point(Double Coordx,Double Coordy) {
+	public Point(Double Coordx, Double Coordy) {
 		iter = 0;
 		x = Coordx;
 		y = Coordy;
 	}
-	
+
 	/**
 	 * Crée un point a partir des coordonnées x, y et z
-	 * @param Coordx 
-	 * @param Coordy 
+	 * 
+	 * @param Coordx
+	 * @param Coordy
 	 * @param Coordz
 	 */
-	public Point(Double Coordx,Double Coordy,Double Coordz) {
+	public Point(Double Coordx, Double Coordy, Double Coordz) {
 		this(Coordx, Coordy);
 		z = Coordz;
 	}
-	
+
 	/**
 	 * Crée un point avec un nom a partir des coordonnées x, y et z.
+	 * 
 	 * @param nom
-	 * @param Coordx 
-	 * @param Coordy 
+	 * @param Coordx
+	 * @param Coordy
 	 * @param Coordz
 	 */
-	public Point(String nom,Double Coordx,Double Coordy,Double Coordz){
+	public Point(String nom, Double Coordx, Double Coordy, Double Coordz) {
 		this(Coordx, Coordy, Coordz);
-		this.nom=nom;
+		this.nom = nom;
 	}
-	
+
 	/**
 	 * Remplace les coordonnées x et y avec celles donnees en paramètre
+	 * 
 	 * @param x
 	 * @param y
 	 */
@@ -57,9 +60,10 @@ public class Point {
 		this.x = x;
 		this.y = y;
 	}
-	
+
 	/**
 	 * Remplace les coordonnées x, y et z avec celles donnees en paramètre
+	 * 
 	 * @param x
 	 * @param y
 	 * @param z
@@ -68,16 +72,17 @@ public class Point {
 		setCoords(x, y);
 		this.z = z;
 	}
-	
+
 	/**
 	 * Retourne la coordonnée x
 	 */
 	public double getX() {
 		return x;
 	}
-	
+
 	/**
 	 * Remplace la coordonnée x avec celle donnée en parametre
+	 * 
 	 * @param x
 	 */
 	public void setX(double x) {
@@ -86,6 +91,7 @@ public class Point {
 
 	/**
 	 * Remplace la coordonnée y avec celle donnée en parametre
+	 * 
 	 * @param y
 	 */
 	public void setY(double y) {
@@ -94,6 +100,7 @@ public class Point {
 
 	/**
 	 * Remplace la coordonnée z avec celle donnée en parametre
+	 * 
 	 * @param z
 	 */
 	public void setZ(double z) {
@@ -125,9 +132,10 @@ public class Point {
 	public String toString() {
 		return "Point [nom=" + nom + ", x=" + x + ", y=" + y + ", z=" + z + "]";
 	}
-	
+
 	/**
 	 * Ajoute au fur et a mesure les coordonnées de ce point
+	 * 
 	 * @param nb le coordonnée a ajouter dans ce point
 	 */
 	public void add(Double nb) {
@@ -142,17 +150,19 @@ public class Point {
 			iter++;
 		}
 	}
-	
+
 	/**
 	 * Remplace le nom du point avec celui donne en parametre
-	 * @param name 
+	 * 
+	 * @param name
 	 */
 	public void setName(String name) {
 		this.nom = name;
 	}
-	
+
 	/**
 	 * Si ce points comporte 3 coordonnées
+	 * 
 	 * @return
 	 */
 	public boolean complet() {
@@ -190,10 +200,11 @@ public class Point {
 			return false;
 		return true;
 	}
-	
+
 	/**
 	 * Donne la coordonnée correspondante.<br>
 	 * 0 = x, 1 = y, 2 = z
+	 * 
 	 * @param coord
 	 * @return
 	 */
@@ -206,7 +217,7 @@ public class Point {
 			return this.z;
 		}
 	}
-	
+
 	/**
 	 * Met les coordonnées de ce points a 0
 	 */

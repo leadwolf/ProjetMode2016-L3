@@ -1,14 +1,14 @@
 package readerTest;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.nio.file.Paths;
 
 import org.junit.Test;
 
 import reader.Lecture;
-import result.BasicResultEnum;
-import result.ReaderResultEnum;
+import result.BasicResult.BasicResultEnum;
+import result.ReaderResult.ReaderResultEnum;
 
 /**
  * Test si {@link Lecture} détecte bien les erreurs dans le fichiers .ply

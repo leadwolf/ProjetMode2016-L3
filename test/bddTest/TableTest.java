@@ -12,10 +12,10 @@ import java.util.List;
 import org.junit.After;
 import org.junit.Test;
 
-import ply.bdd.other.BDDUtilities;
-import ply.bdd.other.Table;
-import ply.bdd.other.TableDataModel;
-import result.BDDResultEnum;
+import ply.bdd.base.BDDUtilities;
+import ply.bdd.table.Table;
+import ply.bdd.table.TableDataModel;
+import result.BDDResult.BDDResultEnum;
 
 public class TableTest {
 

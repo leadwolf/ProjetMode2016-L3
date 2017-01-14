@@ -3,7 +3,6 @@ package ply.bdd.vues;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -16,12 +15,11 @@ import javax.swing.JScrollPane;
 
 import main.vues.MainFenetre;
 import ply.bdd.controlers.ButtonControler;
-import ply.bdd.other.BDDUtilities;
-import ply.bdd.other.Table;
-import ply.bdd.other.TableDataModel;
+import ply.bdd.table.Table;
+import ply.bdd.table.TableDataModel;
 
 /**
- * Cette classe donne un panel complet d'une JTable ainsi que les boutons nécessaires à l'opération de la base.
+ * Cette classe donne un panel contenant une {@link Table} ainsi que les boutons nécessaires à l'opération de la base.
  * 
  * @author L3
  *
@@ -36,7 +34,6 @@ public class BDDPanel extends JPanel {
 	/**
 	 * Width = length of columnNames
 	 * 
-	 * @param mainFenetre
 	 * @param rs le resultset contenant les données. Laisser null si on veut une seule ligne que l'utilisateur pourra ensuite utiliser pour insérer des doones.
 	 * @param columnNames
 	 * @param buttonColumns les colonnes de boutons "edit" et "delete". On doit le faire avant la création de la table car le constructeur de la table a besoin
@@ -61,7 +58,7 @@ public class BDDPanel extends JPanel {
 	}
 
 	/**
-	 * Initalise le List<String[]> que contient ce table.
+	 * Initalise le List&lt;String[]&gt; que contient ce table.
 	 * 
 	 * @param rs le resultset qui contient les données avec lesquelles remplir la table s'il existe.
 	 * @param data la liste dans laquelle on veut traduire ces données.

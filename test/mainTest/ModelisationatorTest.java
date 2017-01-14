@@ -8,9 +8,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import main.Modelisationator;
-import result.BDDResultEnum;
-import result.BasicResultEnum;
-import result.ReaderResultEnum;
+import result.BDDResult.BDDResultEnum;
+import result.BasicResult.BasicResultEnum;
+import result.ReaderResult.ReaderResultEnum;
 
 public class ModelisationatorTest {
 

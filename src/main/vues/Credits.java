@@ -11,7 +11,7 @@ import javax.swing.JPanel;
 
 public class Credits extends JFrame {
 
-	private Dimension dim = new Dimension(600, 400);
+	private Dimension dim = new Dimension(800, 400);
 
 	public Credits() {
 		JPanel mainPanel = new JPanel();

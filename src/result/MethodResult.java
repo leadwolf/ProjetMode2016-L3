@@ -1,9 +1,13 @@
 package result;
 
+import ply.bdd.strategy.ExecuteStrategy;
+import ply.bdd.table.Table;
 import reader.Lecture;
+import result.BasicResult.BasicResultEnum;
 
 /**
- * Cette classe englobe tout les types de résultats que peut retourner {@link BaseDeDonneesOld} et {@link Lecture}
+ * Cette classe englobe tout les types de résultats que peut retourner {@link ExecuteStrategy}, {@link Table} et {@link Lecture}
+ * 
  * @author L3
  *
  */

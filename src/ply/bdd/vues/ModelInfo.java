@@ -6,7 +6,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
-import ply.bdd.other.BaseDeDonnees;
+import ply.bdd.base.DAO;
 
 /**
  * Cette classe donne les informations sur le modèle en vue, comme --name &lt;modele&gt;
@@ -27,7 +27,7 @@ public class ModelInfo extends JPanel {
 	}
 	
 	public void initModelInfo(String name) {
-		String[] modelInfo = BaseDeDonnees.INSTANCE.getNameInfo(name, false);
+		String[] modelInfo = DAO.INSTANCE.getNameInfo(name, false);
 		if (modelInfo != null) {
 			if (getComponentCount() > 0) {
 				removeAll();

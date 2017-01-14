@@ -6,13 +6,14 @@ import java.util.regex.Pattern;
 
 import main.vues.MainFenetre;
 import math.Vecteur;
-import ply.bdd.other.BDDUtilities;
-import ply.bdd.other.BaseDeDonnees;
+import ply.bdd.base.BDDUtilities;
+import ply.bdd.strategy.DataBaseStrategy;
+import ply.bdd.strategy.ExecuteStrategy;
 import ply.plyModel.modeles.FigureModel;
 import result.BDDResult;
-import result.BDDResultEnum;
+import result.BDDResult.BDDResultEnum;
 import result.BasicResult;
-import result.BasicResultEnum;
+import result.BasicResult.BasicResultEnum;
 import result.MethodResult;
 
 /**
@@ -42,6 +43,7 @@ public class Modelisationator {
 
 	private Pattern singleMinus;
 	private Pattern doubleMinus;
+	private DataBaseStrategy strategy;
 
 	/**
 	 * 
@@ -168,7 +170,8 @@ public class Modelisationator {
 			// On vérifie la commande ici même si on le fait dans execute() quand MainFenetre va créer un BDDPanel car
 			// s'il y a une erreur, autant arrêter le
 			// programme le plus tôt possible.
-			MethodResult verifResult = BaseDeDonnees.INSTANCE.verifArgs(args, quiet);
+			modelisationator.strategy = new ExecuteStrategy();
+			MethodResult verifResult = modelisationator.strategy.verifArgs(args, quiet);
 			if (!verifResult.getCode().equals(BasicResultEnum.ALL_OK)) {
 				return verifResult;
 			}
@@ -220,7 +223,8 @@ public class Modelisationator {
 		} else if (modelisationator.executeDB) {
 			boolean options[] = new boolean[] { modelisationator.reset, modelisationator.fill };
 			if (modelisationator.delete) {
-				return BaseDeDonnees.INSTANCE.executeCommand(args, dbPath, new boolean[] { options[0], options[1], quiet });
+				modelisationator.strategy = new ExecuteStrategy();
+				return modelisationator.strategy.treatArguments(args, dbPath, new boolean[] { options[0], options[1], quiet }).getMethodResult();
 			} else {
 				BDDUtilities.initConnection(dbPath);
 				BDDUtilities.checkPaths();

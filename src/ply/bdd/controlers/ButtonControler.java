@@ -14,14 +14,15 @@ import ply.bdd.vues.BDDPanel;
 public class ButtonControler implements ActionListener {
 
 	/**
-	 * le {@link FenetreTable} à qui ce contrôleur est lié
+	 * le {@link BDDPanel} à qui ce contrôleur est lié
 	 */
 	private BDDPanel bddPanel;
 
 	/**
 	 * Constructeur principale
 	 * 
-	 * @param bddPanel le {@link FenetreTable} à qui ce contrôleur est lié
+	 * @param bddPanel le {@link BDDPanel} auquel ce contrôleur est lié.
+	 * 
 	 */
 	public ButtonControler(BDDPanel bddPanel) {
 		this.bddPanel = bddPanel;

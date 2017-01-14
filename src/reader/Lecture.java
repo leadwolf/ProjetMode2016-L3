@@ -13,10 +13,10 @@ import java.util.regex.Pattern;
 import ply.plyModel.other.Face;
 import ply.plyModel.other.Point;
 import result.BasicResult;
-import result.BasicResultEnum;
+import result.BasicResult.BasicResultEnum;
 import result.MethodResult;
 import result.ReaderResult;
-import result.ReaderResultEnum;
+import result.ReaderResult.ReaderResultEnum;
 
 /**
  * Cette classe donne accès à la liste des Points et de Faces de l'objet .ply dont on veut modéliser à  travers les

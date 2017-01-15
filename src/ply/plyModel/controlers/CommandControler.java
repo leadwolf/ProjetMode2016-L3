@@ -5,7 +5,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JCheckBox;
 
-import main.vues.ModelPanel;
+import ply.main.vues.ModelPanel;
 import ply.plyModel.modeles.FigureModel;
 import ply.plyModel.vues.VisualisationPanel;
 

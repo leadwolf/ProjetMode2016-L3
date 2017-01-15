@@ -16,11 +16,11 @@ import java.time.LocalDate;
 import javax.swing.JOptionPane;
 
 import ply.plyModel.modeles.FigureModel;
-import result.BDDResult;
-import result.BDDResult.BDDResultEnum;
-import result.BasicResult;
-import result.BasicResult.BasicResultEnum;
-import result.MethodResult;
+import ply.result.BDDResult;
+import ply.result.BasicResult;
+import ply.result.MethodResult;
+import ply.result.BDDResult.BDDResultEnum;
+import ply.result.BasicResult.BasicResultEnum;
 
 /**
  * Contient toutes les méthodes nécessaires à la manipulation de la base

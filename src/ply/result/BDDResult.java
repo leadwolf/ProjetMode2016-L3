@@ -1,4 +1,4 @@
-package result;
+package ply.result;
 
 import ply.bdd.base.BDDUtilities;
 import ply.bdd.strategy.ExecuteStrategy;

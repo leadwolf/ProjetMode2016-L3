@@ -1,7 +1,7 @@
-package result;
+package ply.result;
 
-import main.vues.MainFenetre;
 import ply.bdd.vues.BDDPanel;
+import ply.main.vues.MainFenetre;
 
 public class DataBaseCommandResult {
 

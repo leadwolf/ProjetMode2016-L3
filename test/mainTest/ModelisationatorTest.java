@@ -7,10 +7,10 @@ import java.nio.file.Paths;
 import org.junit.Before;
 import org.junit.Test;
 
-import main.Modelisationator;
-import result.BDDResult.BDDResultEnum;
-import result.BasicResult.BasicResultEnum;
-import result.ReaderResult.ReaderResultEnum;
+import ply.main.Modelisationator;
+import ply.result.BDDResult.BDDResultEnum;
+import ply.result.BasicResult.BasicResultEnum;
+import ply.result.ReaderResult.ReaderResultEnum;
 
 public class ModelisationatorTest {
 

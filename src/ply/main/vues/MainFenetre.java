@@ -1,4 +1,4 @@
-package main.vues;
+package ply.main.vues;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -26,13 +26,13 @@ import javax.swing.WindowConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import main.Modelisationator;
 import ply.bdd.base.DAO;
 import ply.bdd.strategy.BDDPanelStrategy;
 import ply.bdd.strategy.DataBaseStrategy;
 import ply.bdd.vues.BDDPanel;
 import ply.bdd.vues.ModelBrowser;
 import ply.bdd.vues.ModelInfo;
+import ply.main.Modelisationator;
 import ply.plyModel.controlers.KeyControler;
 import ply.plyModel.modeles.FigureModel;
 

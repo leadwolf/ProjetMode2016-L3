@@ -8,7 +8,7 @@ import java.sql.SQLException;
 
 import javax.swing.JOptionPane;
 
-import main.Modelisationator;
+import ply.main.Modelisationator;
 
 /**
  * Cette classe récupère les ResultSet utilisés par l'application.

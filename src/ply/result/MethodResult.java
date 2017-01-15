@@ -1,12 +1,12 @@
-package result;
+package ply.result;
 
 import ply.bdd.strategy.ExecuteStrategy;
 import ply.bdd.table.Table;
-import reader.Lecture;
-import result.BasicResult.BasicResultEnum;
+import ply.reader.LecteurAscii;
+import ply.result.BasicResult.BasicResultEnum;
 
 /**
- * Cette classe englobe tout les types de résultats que peut retourner {@link ExecuteStrategy}, {@link Table} et {@link Lecture}
+ * Cette classe englobe tout les types de résultats que peut retourner {@link ExecuteStrategy}, {@link Table} et {@link LecteurAscii}
  * 
  * @author L3
  *

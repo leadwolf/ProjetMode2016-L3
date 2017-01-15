@@ -25,10 +25,10 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import main.vues.LeftSidePanel;
-import main.vues.MainFenetre;
-import main.vues.ModelPanel;
 import ply.bdd.base.DAO;
+import ply.main.vues.LeftSidePanel;
+import ply.main.vues.MainFenetre;
+import ply.main.vues.ModelPanel;
 
 /**
  * Cette classe propose une JList des modèles qu'on pourra afficher dans mainFenetre avec un {@link ModelPanel}.n peut double cliquer sur un modele pour

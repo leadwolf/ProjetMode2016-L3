@@ -3,8 +3,8 @@ package ply.plyModel.controlers;
 import java.awt.KeyEventDispatcher;
 import java.awt.event.KeyEvent;
 
-import main.vues.MainFenetre;
-import main.vues.ModelPanel;
+import ply.main.vues.MainFenetre;
+import ply.main.vues.ModelPanel;
 import ply.plyModel.modeles.FigureModel;
 
 public class KeyControler implements KeyEventDispatcher {

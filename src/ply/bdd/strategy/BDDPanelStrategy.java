@@ -6,15 +6,15 @@ import java.sql.SQLException;
 
 import javax.swing.JOptionPane;
 
-import main.Modelisationator;
 import ply.bdd.base.BDDUtilities;
 import ply.bdd.base.DAO;
 import ply.bdd.table.Table;
 import ply.bdd.vues.BDDPanel;
-import result.BDDResult.BDDResultEnum;
-import result.BasicResult.BasicResultEnum;
-import result.DataBaseCommandResult;
-import result.MethodResult;
+import ply.main.Modelisationator;
+import ply.result.DataBaseCommandResult;
+import ply.result.MethodResult;
+import ply.result.BDDResult.BDDResultEnum;
+import ply.result.BasicResult.BasicResultEnum;
 
 /**
  * Implémentation de {@link DataBaseStrategy} qui traite les arguments et donne un {@link BDDPanel}.

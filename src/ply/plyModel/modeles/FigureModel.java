@@ -9,14 +9,14 @@ import java.util.Observable;
 
 import javax.swing.JOptionPane;
 
-import math.Matrice;
-import math.Vecteur;
+import ply.math.Matrice;
+import ply.math.Vecteur;
 import ply.plyModel.other.Face;
 import ply.plyModel.other.Point;
 import ply.plyModel.vues.VisualisationPanel;
-import reader.Lecture;
-import result.BasicResult.BasicResultEnum;
-import result.MethodResult;
+import ply.reader.LecteurAscii;
+import ply.result.BasicResult.BasicResultEnum;
+import ply.result.MethodResult;
 
 public class FigureModel extends Observable {
 
@@ -28,7 +28,7 @@ public class FigureModel extends Observable {
 	private List<Path2D> polygones;
 	private List<Path2D> ombrePolygones;
 	private Point center;
-	private Lecture lecture;
+	private LecteurAscii lecture;
 	private Matrice ptsMat;
 	private Matrice ombre;
 	private double heightFig, widthFig, depthFig;
@@ -37,7 +37,7 @@ public class FigureModel extends Observable {
 	private Vecteur lightVector;
 
 	/**
-	 * Cree une figure en lisant un fichier <b>file</b> avec {@link Lecture}
+	 * Cree une figure en lisant un fichier <b>file</b> avec {@link LecteurAscii}
 	 * 
 	 * @param file le <b>Path</b> de l'objet .ply
 	 * @param quiet true si on veut empêcher les System.out.println
@@ -51,10 +51,10 @@ public class FigureModel extends Observable {
 	}
 
 	/**
-	 * Initialise tous les nombres de points, faces et listes de ceux cis à ceux lus avec {@link Lecture}
+	 * Initialise tous les nombres de points, faces et listes de ceux cis à ceux lus avec {@link LecteurAscii}
 	 */
 	private void readFile() {
-		lecture = new Lecture(path, quiet);
+		lecture = new LecteurAscii(path, quiet);
 		nbPoints = lecture.getNbPoints();
 		nbFaces = lecture.getNbFaces();
 		points = lecture.getPoints();

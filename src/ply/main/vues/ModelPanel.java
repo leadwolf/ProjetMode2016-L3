@@ -1,4 +1,4 @@
-package main.vues;
+package ply.main.vues;
 
 import java.awt.BorderLayout;
 import java.awt.Color;

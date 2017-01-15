@@ -4,16 +4,16 @@ import java.nio.file.Path;
 
 import javax.swing.JOptionPane;
 
-import main.Modelisationator;
 import ply.bdd.base.BDDUtilities;
 import ply.bdd.vues.BDDPanel;
+import ply.main.Modelisationator;
+import ply.result.BDDResult;
+import ply.result.BasicResult;
+import ply.result.DataBaseCommandResult;
+import ply.result.MethodResult;
+import ply.result.BDDResult.BDDResultEnum;
+import ply.result.BasicResult.BasicResultEnum;
 import res.ButtonColumn;
-import result.BDDResult;
-import result.BDDResult.BDDResultEnum;
-import result.BasicResult;
-import result.BasicResult.BasicResultEnum;
-import result.DataBaseCommandResult;
-import result.MethodResult;
 
 /**
  * Cette classe abstraite définit comment répondre face à des arguments demandant une opération sur la base de données. Elle done un

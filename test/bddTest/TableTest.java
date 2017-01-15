@@ -15,7 +15,7 @@ import org.junit.Test;
 import ply.bdd.base.BDDUtilities;
 import ply.bdd.table.Table;
 import ply.bdd.table.TableDataModel;
-import result.BDDResult.BDDResultEnum;
+import ply.result.BDDResult.BDDResultEnum;
 
 public class TableTest {
 

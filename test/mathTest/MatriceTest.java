@@ -5,7 +5,7 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
 
-import math.Matrice;
+import ply.math.Matrice;
 
 /**
  * Test des méthodes de Matrices

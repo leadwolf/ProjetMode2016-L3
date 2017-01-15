@@ -1,8 +1,8 @@
-package result;
+package ply.result;
 
-import reader.Lecture;
+import ply.reader.LecteurAscii;
 /**
- * Type d'erreur correspondant à une erreur de {@link Lecture}
+ * Type d'erreur correspondant à une erreur de {@link LecteurAscii}
  * @author L3
  *
  */
@@ -17,7 +17,7 @@ public class ReaderResult extends MethodResult{
 	}
 	
 	/**
-	 * Codes d'erreurs de {@link Lecture}
+	 * Codes d'erreurs de {@link LecteurAscii}
 	 * 
 	 * @author L3
 	 *

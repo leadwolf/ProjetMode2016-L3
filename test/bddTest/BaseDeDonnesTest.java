@@ -13,9 +13,9 @@ import ply.bdd.base.DAO;
 import ply.bdd.strategy.BDDPanelStrategy;
 import ply.bdd.strategy.DataBaseStrategy;
 import ply.bdd.strategy.ExecuteStrategy;
-import result.BDDResult.BDDResultEnum;
-import result.BasicResult.BasicResultEnum;
-import result.DataBaseCommandResult;
+import ply.result.DataBaseCommandResult;
+import ply.result.BDDResult.BDDResultEnum;
+import ply.result.BasicResult.BasicResultEnum;
 
 /**
  * Teste les stratégies {@link ExecuteStrategy} et {@link BDDPanelStrategy}.

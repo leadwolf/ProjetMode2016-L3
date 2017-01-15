@@ -1,20 +1,20 @@
-package main;
+package ply.main;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.regex.Pattern;
 
-import main.vues.MainFenetre;
-import math.Vecteur;
 import ply.bdd.base.BDDUtilities;
 import ply.bdd.strategy.DataBaseStrategy;
 import ply.bdd.strategy.ExecuteStrategy;
+import ply.main.vues.MainFenetre;
+import ply.math.Vecteur;
 import ply.plyModel.modeles.FigureModel;
-import result.BDDResult;
-import result.BDDResult.BDDResultEnum;
-import result.BasicResult;
-import result.BasicResult.BasicResultEnum;
-import result.MethodResult;
+import ply.result.BDDResult;
+import ply.result.BasicResult;
+import ply.result.MethodResult;
+import ply.result.BDDResult.BDDResultEnum;
+import ply.result.BasicResult.BasicResultEnum;
 
 /**
  * ¨Programme principale de modélisation.

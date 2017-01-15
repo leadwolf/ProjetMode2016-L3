@@ -14,7 +14,7 @@ import java.util.Observer;
 
 import javax.swing.JPanel;
 
-import math.Vecteur;
+import ply.math.Vecteur;
 import ply.plyModel.modeles.FigureModel;
 import ply.plyModel.other.Point;
 

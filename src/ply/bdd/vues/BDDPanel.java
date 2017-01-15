@@ -13,10 +13,10 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import main.vues.MainFenetre;
 import ply.bdd.controlers.ButtonControler;
 import ply.bdd.table.Table;
 import ply.bdd.table.TableDataModel;
+import ply.main.vues.MainFenetre;
 
 /**
  * Cette classe donne un panel contenant une {@link Table} ainsi que les boutons nécessaires à l'opération de la base.

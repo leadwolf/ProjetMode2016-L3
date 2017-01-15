@@ -1,4 +1,4 @@
-package reader;
+package ply.reader;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -12,11 +12,11 @@ import java.util.regex.Pattern;
 
 import ply.plyModel.other.Face;
 import ply.plyModel.other.Point;
-import result.BasicResult;
-import result.BasicResult.BasicResultEnum;
-import result.MethodResult;
-import result.ReaderResult;
-import result.ReaderResult.ReaderResultEnum;
+import ply.result.BasicResult;
+import ply.result.MethodResult;
+import ply.result.ReaderResult;
+import ply.result.BasicResult.BasicResultEnum;
+import ply.result.ReaderResult.ReaderResultEnum;
 
 /**
  * Cette classe donne accès à la liste des Points et de Faces de l'objet .ply dont on veut modéliser à  travers les
@@ -25,7 +25,7 @@ import result.ReaderResult.ReaderResultEnum;
  * @author Groupe L3
  *
  */
-public class Lecture {
+public class LecteurAscii {
 
 	/**
 	 * Le Path vers le fichier .ply qu'on manipule.
@@ -100,7 +100,7 @@ public class Lecture {
 	 * @param quiet
 	 *            false si on veut empêcher les System.out.println
 	 */
-	public Lecture(Path file, boolean quiet) {
+	public LecteurAscii(Path file, boolean quiet) {
 		this.file = file;
 		this.quiet = quiet;
 		result = null;

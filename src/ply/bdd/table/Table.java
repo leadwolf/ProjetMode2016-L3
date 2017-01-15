@@ -12,15 +12,15 @@ import javax.swing.Action;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 
-import main.vues.MainFenetre;
 import ply.bdd.base.BDDUtilities;
 import ply.bdd.base.DAO;
+import ply.main.vues.MainFenetre;
+import ply.result.BDDResult;
+import ply.result.BasicResult;
+import ply.result.MethodResult;
+import ply.result.BDDResult.BDDResultEnum;
+import ply.result.BasicResult.BasicResultEnum;
 import res.ButtonColumn;
-import result.BDDResult;
-import result.BDDResult.BDDResultEnum;
-import result.BasicResult;
-import result.BasicResult.BasicResultEnum;
-import result.MethodResult;
 
 /**
  * Modèle de JTable, éxécute les requêtes sql.

@@ -1,4 +1,4 @@
-package result;
+package ply.result;
 
 /**
  * Type de résultat basique.

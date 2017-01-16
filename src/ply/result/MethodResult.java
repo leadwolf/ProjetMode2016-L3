@@ -2,7 +2,6 @@ package ply.result;
 
 import ply.bdd.strategy.ExecuteStrategy;
 import ply.bdd.table.Table;
-import ply.reader.LecteurAscii;
 import ply.result.BasicResult.BasicResultEnum;
 
 /**

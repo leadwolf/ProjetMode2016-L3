@@ -17,7 +17,7 @@ import javax.swing.Timer;
 import ply.plyModel.controlers.CommandControler;
 import ply.plyModel.controlers.MouseControler;
 import ply.plyModel.controlers.TimerChangeListener;
-import ply.plyModel.modeles.FigureModel;
+import ply.plyModel.modeles.FigureModelNew;
 import ply.plyModel.other.SensitivityModel;
 import ply.plyModel.vues.OptionPanel;
 import ply.plyModel.vues.RotationPanel;
@@ -35,7 +35,7 @@ public class ModelPanel extends JPanel {
 
 	private static final long serialVersionUID = 2549833609496985257L;
 
-	private FigureModel figureModel;
+	private FigureModelNew figureModel;
 
 	private JSplitPane splitPane;
 	private boolean extended;
@@ -62,7 +62,7 @@ public class ModelPanel extends JPanel {
 	 * @param drawSegments dessiner les segments au départ
 	 * @param drawFaces dessiner les faces au départ
 	 */
-	public ModelPanel(FigureModel figureModel, Dimension mainPanelDim, boolean drawPoints, boolean drawSegments, boolean drawFaces) {
+	public ModelPanel(FigureModelNew figureModel, Dimension mainPanelDim, boolean drawPoints, boolean drawSegments, boolean drawFaces) {
 		super();
 
 		this.mainPanelDim = mainPanelDim;
@@ -187,7 +187,7 @@ public class ModelPanel extends JPanel {
 		// repaint();
 	}
 
-	public FigureModel getFigure() {
+	public FigureModelNew getFigure() {
 		return this.figureModel;
 	}
 

@@ -1,13 +1,16 @@
 package ply.plyModel.elements;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 
-public class Face extends Element {
+public class Face extends Element implements Comparable<Face> {
 
 	private Map<Integer, Element> elementMap;
+	private List<Point> vertexList;
 
 	/**
 	 * @param number
@@ -16,14 +19,23 @@ public class Face extends Element {
 	public Face(int number) {
 		super(number);
 		elementMap = new HashMap<>();
+		vertexList = new ArrayList<>();
 	}
-	
+
 	public void addPoint(Point point) {
 		elementMap.put(point.getNumber(), point);
+		vertexList.add(point);
 	}
 
 	public Element getPoint(int number) {
 		return elementMap.get(number);
+	}
+
+	/**
+	 * @return the vertexList
+	 */
+	public List<Point> getVertexList() {
+		return vertexList;
 	}
 
 	/**
@@ -39,8 +51,8 @@ public class Face extends Element {
 	}
 
 	public static int[] getPointIndexes(int elementCount, String line) throws IOException {
-		line.trim();
-		Matcher matcher = SPACES_AND_NUMBERS.matcher(line);
+		line = line.trim();
+		Matcher matcher = POINT_PATTERN.matcher(line);
 		if (!matcher.matches()) {
 			throw new IOException("Cannot parse Face from line : \"" + line + "\".");
 		}
@@ -62,6 +74,31 @@ public class Face extends Element {
 			pointIndexes[i - 1] = number;
 		}
 		return pointIndexes;
+	}
+
+	/**
+	 * Compare by average Z index.
+	 */
+	@Override
+	public int compareTo(Face o) {
+		double zO1 = 0.0, zO2 = 0.0;
+		for (Point pt : getVertexList()) {
+			zO1 += pt.getZ();
+		}
+		zO1 /= this.getVertexList().size();
+
+		for (Point pt : o.getVertexList()) {
+			zO2 += pt.getZ();
+		}
+		zO2 /= o.getVertexList().size();
+		
+		if (zO1 > zO2) {
+			return 1;
+		} else if (zO1 < zO2) {
+			return -1;
+		} else {
+			return 0;
+		}
 	}
 
 }

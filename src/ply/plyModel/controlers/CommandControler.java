@@ -6,12 +6,12 @@ import java.awt.event.ActionListener;
 import javax.swing.JCheckBox;
 
 import ply.main.vues.ModelPanel;
-import ply.plyModel.modeles.FigureModel;
+import ply.plyModel.modeles.FigureModelNew;
 import ply.plyModel.vues.VisualisationPanel;
 
 /**
  * Cette classe permet d'agir à travers les clics de boutons que ce soit la rotation, translation, centrage, etc... sur
- * le modèle {@link FigureModel} grâce à ses méthodes. Celle-ci notifie alors ses observers
+ * le modèle {@link FigureModelNew} grâce à ses méthodes. Celle-ci notifie alors ses observers
  * 
  * @author Master
  *
@@ -20,7 +20,7 @@ public class CommandControler implements ActionListener {
 
 	private double translationSens = 10;
 	private ModelPanel fenetre;
-	private FigureModel figureModel;
+	private FigureModelNew figureModel;
 
 	public CommandControler(ModelPanel fenetre) {
 		super();

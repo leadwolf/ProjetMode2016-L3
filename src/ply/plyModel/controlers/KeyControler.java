@@ -5,7 +5,7 @@ import java.awt.event.KeyEvent;
 
 import ply.main.vues.MainFenetre;
 import ply.main.vues.ModelPanel;
-import ply.plyModel.modeles.FigureModel;
+import ply.plyModel.modeles.FigureModelNew;
 
 public class KeyControler implements KeyEventDispatcher {
 
@@ -26,7 +26,7 @@ public class KeyControler implements KeyEventDispatcher {
 	public boolean dispatchKeyEvent(KeyEvent e) {
 		if (mainFenetre.canControlFigure() && e.getID() == KeyEvent.KEY_PRESSED) {
 			ModelPanel modelPanel = mainFenetre.getCurrentModelPanel();
-			FigureModel figureModel = modelPanel.getFigure();
+			FigureModelNew figureModel = modelPanel.getFigure();
 			figureModel.refreshFigDims(modelPanel.getVisPanel());
 
 			switch (e.getKeyCode()) {

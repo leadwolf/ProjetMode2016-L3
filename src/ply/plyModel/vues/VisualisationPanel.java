@@ -5,7 +5,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Rectangle;
 import java.awt.Stroke;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Path2D;
@@ -14,9 +13,8 @@ import java.util.Observer;
 
 import javax.swing.JPanel;
 
-import ply.math.Vecteur;
-import ply.plyModel.modeles.FigureModel;
-import ply.plyModel.other.Point;
+import ply.plyModel.elements.Point;
+import ply.plyModel.modeles.FigureModelNew;
 
 /**
  * Cette classe sert à afficher l'objet ply.
@@ -28,7 +26,7 @@ public class VisualisationPanel extends JPanel implements Observer {
 
 	private static final long serialVersionUID = 6617022758741368018L;
 
-	private FigureModel figureModel;
+	private FigureModelNew figureModel;
 	private Dimension ptsDim = new Dimension(7, 7);
 	private boolean drawPoints = true;
 	private boolean drawSegments = true;
@@ -37,7 +35,7 @@ public class VisualisationPanel extends JPanel implements Observer {
 	private int heightWindow;
 	private int widthWindow;
 
-	public VisualisationPanel(FigureModel figureModel, boolean drawPoints, boolean drawSegments, boolean drawFaces) {
+	public VisualisationPanel(FigureModelNew figureModel, boolean drawPoints, boolean drawSegments, boolean drawFaces) {
 		super();
 
 		this.drawPoints = drawPoints;
@@ -131,7 +129,7 @@ public class VisualisationPanel extends JPanel implements Observer {
 				if (drawFaces) {
 					if (directionalLight) {
 						double greyScale =
-								FigureModel.getGreyScale(figureModel.getFaces().get(i), figureModel.getLightVector());
+								FigureModelNew.getGreyScale(figureModel.getFaceList().get(i), figureModel.getLightVector());
 						g.setColor(new Color((float) greyScale, (float) greyScale, (float) greyScale));
 					} else {
 						g.setColor(Color.GRAY);
@@ -145,7 +143,7 @@ public class VisualisationPanel extends JPanel implements Observer {
 
 		if (drawPoints) {
 			g.setColor(Color.GRAY);
-			for (Point pt : figureModel.getPoints()) {
+			for (Point pt : figureModel.getVertexList()) {
 				double x = pt.getX() - (ptsDim.getWidth() / 2);
 				double y = pt.getY() - (ptsDim.getHeight() / 2);
 				Ellipse2D.Double shape = new Ellipse2D.Double(x, y, ptsDim.getWidth(), ptsDim.getHeight());
@@ -205,7 +203,7 @@ public class VisualisationPanel extends JPanel implements Observer {
 		widthWindow = dim.width;
 	}
 
-	public FigureModel getFigure() {
+	public FigureModelNew getFigure() {
 		return figureModel;
 	}
 

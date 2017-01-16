@@ -5,8 +5,15 @@ import java.util.regex.Pattern;
 public abstract class Element {
 
 	int number;
-	protected final static Pattern SPACES_AND_NUMBERS = Pattern.compile("(\\s+)*(?:\\d*\\.)?\\d+");
+	/**
+	 * Pattern to match space, sign, number, exponent and exponent value.
+	 */
+	protected final static Pattern POINT_PATTERN = Pattern.compile("([\\s]?[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?)+");
 
+	public Element() {
+		
+	}
+	
 	/**
 	 * @param number
 	 */

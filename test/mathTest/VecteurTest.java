@@ -6,7 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import ply.math.Vecteur;
-import ply.plyModel.other.Point;
+import ply.plyModel.elements.Point;
 
 public class VecteurTest {
 
@@ -14,10 +14,10 @@ public class VecteurTest {
 	
 	@Before
 	public void initVecteur() {
-		Point pt1 = new Point(5.0, 5.0, 5.0);
-		Point pt2 = new Point(15.0, 15.0, 15.0);
-		Point pt3 = new Point(5.0, 8.0, 4.0);
-		Point pt4 = new Point(5.0, 15.0, 9.0);
+		Point pt1 = new Point(-1, 5.0, 5.0, 5.0);
+		Point pt2 = new Point(-1, 15.0, 15.0, 15.0);
+		Point pt3 = new Point(-1, 5.0, 8.0, 4.0);
+		Point pt4 = new Point(-1, 5.0, 15.0, 9.0);
 		vec1 = new Vecteur(pt1, pt2);
 		vec2 = new Vecteur(pt3, pt4);
 	}

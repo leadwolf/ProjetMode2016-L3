@@ -15,7 +15,9 @@ import java.time.LocalDate;
 
 import javax.swing.JOptionPane;
 
-import ply.plyModel.modeles.FigureModel;
+import ply.plyModel.modeles.FigureModelNew;
+import ply.reader.AsciiReader;
+import ply.reader.Reader;
 import ply.result.BDDResult;
 import ply.result.BasicResult;
 import ply.result.MethodResult;
@@ -194,7 +196,8 @@ public class BDDUtilities {
 			for (int i = 0; i < files.length; i++) {
 				String nom = files[i].toPath().getFileName().toString();
 				nom = nom.substring(0, nom.lastIndexOf("."));
-				FigureModel fig = new FigureModel(files[i].toPath().toAbsolutePath(), true);
+				Reader asciiReader = new AsciiReader(files[i].toPath().toAbsolutePath());
+				FigureModelNew fig = new FigureModelNew(asciiReader);
 
 				insertStatement = "insert into PLY values (?, ?, ?, ?, ?, ?)";
 				PreparedStatement firstStatement;
@@ -203,8 +206,8 @@ public class BDDUtilities {
 				firstStatement.setString(2, files[i].getAbsolutePath().toString());
 				firstStatement.setString(3, LocalDate.now().toString());
 				firstStatement.setString(4, "mes mots clés");
-				firstStatement.setInt(5, fig.getNbPoints());
-				firstStatement.setInt(6, fig.getNbFaces());
+				firstStatement.setInt(5, fig.getVertexCount());
+				firstStatement.setInt(6, fig.getFaceCount());
 				firstStatement.executeUpdate();
 			}
 			success = true;

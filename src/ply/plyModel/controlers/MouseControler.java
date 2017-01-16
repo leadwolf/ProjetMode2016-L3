@@ -6,7 +6,7 @@ import java.awt.event.MouseWheelEvent;
 
 import javax.swing.SwingUtilities;
 
-import ply.plyModel.modeles.FigureModel;
+import ply.plyModel.modeles.FigureModelNew;
 import ply.plyModel.other.SensitivityModel;
 import ply.plyModel.vues.VisualisationPanel;
 
@@ -22,7 +22,7 @@ public class MouseControler extends MouseAdapter {
 	 * On a besoin de sa Figure et après transformation du modèle, de rafraîchir le panel.
 	 */
 	private VisualisationPanel visPanel;
-	private FigureModel figureModel;
+	private FigureModelNew figureModel;
 
 	private SensitivityModel sens;
 

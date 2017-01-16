@@ -34,7 +34,9 @@ import ply.bdd.vues.ModelBrowser;
 import ply.bdd.vues.ModelInfo;
 import ply.main.Modelisationator;
 import ply.plyModel.controlers.KeyControler;
-import ply.plyModel.modeles.FigureModel;
+import ply.plyModel.modeles.FigureModelNew;
+import ply.reader.AsciiReader;
+import ply.reader.Reader;
 
 /**
  * Ceci est la JFrame que lance l'application. Elle comporte un JSplitPane avec à gauche un {@link ModelInfo} et {@link ModelBrowser} et à droite des onglets de
@@ -114,7 +116,7 @@ public class MainFenetre extends JFrame {
 	 * @param figureModel le modèle avec lequel créer le ModelPanel.
 	 * @param options [0] &gt; drawPoints, [1] &gt; drawSegments, [2] &gt; drawFaces, [3] &gt; resetBase, [4] &gt; fillBase,
 	 */
-	public MainFenetre(FigureModel figureModel, boolean[] options) {
+	public MainFenetre(FigureModelNew figureModel, boolean[] options) {
 		super();
 		this.parentPath = figureModel.getPath().getParent();
 		frameDim = new Dimension(1250, 800);
@@ -336,7 +338,8 @@ public class MainFenetre extends JFrame {
 
 			// GET
 			Path newModelPath = DAO.INSTANCE.getPathByName(modelName.toLowerCase());
-			FigureModel newFigureModel = new FigureModel(newModelPath, false);
+			Reader asciiReader = new AsciiReader(newModelPath);
+			FigureModelNew newFigureModel = new FigureModelNew(asciiReader);
 			Dimension modelPanelDim = new Dimension(frameDim.width - leftPanelDim.width - (dividerWidth / 2), frameDim.height - tabHeight);
 			ModelPanel newModelPanel = new ModelPanel(newFigureModel, modelPanelDim, false, false, true);
 			newModelPanel.setName(modelName);

@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,6 +34,15 @@ public abstract class Reader {
 
 	public Reader(File file) {
 		this.file = file;
+		initAtrtibutes();
+	}
+	
+	public Reader(Path path) {
+		this.file = path.toFile();
+		initAtrtibutes();
+	}
+	
+	private void initAtrtibutes() {
 		format = null;
 		headerMap = new HashMap<>();
 		headerList = new ArrayList<>();
@@ -109,6 +119,18 @@ public abstract class Reader {
 	 * Reads the data of the .ply file either in ascii or binary little/big endian.
 	 */
 	protected abstract void readBody();
+
+	public File getFile() {
+		return file;
+	}
+
+	public List<Point> getVertexList() {
+		return vertexList;
+	}
+
+	public List<Face> getFaceList() {
+		return faceList;
+	}
 
 	public int getVertexCount() {
 		return headerMap.get("vertex").getCount();

@@ -6,7 +6,7 @@ import java.nio.file.Paths;
 
 import org.junit.Test;
 
-import ply.reader.LecteurAscii;
+import ply.reader.legacy.LecteurAscii;
 import ply.result.BasicResult.BasicResultEnum;
 import ply.result.ReaderResult.ReaderResultEnum;
 
@@ -18,6 +18,8 @@ import ply.result.ReaderResult.ReaderResultEnum;
  */
 public class LectureTest {
 
+	// TODO redo with new reader
+	
 	@Test
 	public void testMissingCoord() {
 		LecteurAscii lecture = new LecteurAscii(Paths.get("test-data/missingCoord.ply"), true);

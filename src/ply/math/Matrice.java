@@ -2,8 +2,8 @@ package ply.math;
 
 import java.util.List;
 
-import ply.plyModel.modeles.FigureModel;
-import ply.plyModel.other.Point;
+import ply.plyModel.elements.Point;
+import ply.plyModel.modeles.FigureModelNew;
 
 public class Matrice {
 
@@ -151,7 +151,7 @@ public class Matrice {
 	 * 
 	 * @param angle
 	 */
-	public void rotateX(FigureModel fig, double angle) {
+	public void rotateX(FigureModelNew fig, double angle) {
 		double rad = Math.toRadians(angle);
 
 		//	@formatter:off
@@ -172,7 +172,7 @@ public class Matrice {
 	 * 
 	 * @param angle
 	 */
-	public void rotateY(FigureModel fig, double angle) {
+	public void rotateY(FigureModelNew fig, double angle) {
 		double rad = Math.toRadians(angle);
 
 		//	@formatter:off
@@ -193,7 +193,7 @@ public class Matrice {
 	 * 
 	 * @param angle
 	 */
-	public void rotateZ(FigureModel fig, double angle) {
+	public void rotateZ(FigureModelNew fig, double angle) {
 		double rad = Math.toRadians(angle);
 
 		//	@formatter:off
@@ -254,22 +254,24 @@ public class Matrice {
 		this.matrice = multiply(translate, this.matrice);
 	}
 	
+	
 	/**
 	 * Stocke des Point dans la matrice. <br>
 	 * <br><b>ATTENTION</b> a toujours appliquer {@link #setHomogeneousCoords()} après.
 	 * @param points
 	 * @param nbCoords nombre de coordonnées à stocker
 	 */
-	public void importPoints(List<Point> points, int nbCoords) {
+	public void importPoints(List<Point> vertexList, int nbCoords) {
 		int aRows = this.matrice.length;
 		int aColumns = this.matrice[0].length;
 
 		for (int i = 0; i < aColumns; i++) {
 			for (int j = 0; j < 3; j++) {
-				Point tmpPoint = points.get(i);
+				ply.plyModel.elements.Point tmpPoint = vertexList.get(i);
 				this.matrice[j][i] = tmpPoint.getCoord(j);
 			}
 		}
+		
 	}
 
 	/**

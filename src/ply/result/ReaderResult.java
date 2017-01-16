@@ -1,6 +1,5 @@
 package ply.result;
 
-import ply.reader.LecteurAscii;
 /**
  * Type d'erreur correspondant à une erreur de {@link LecteurAscii}
  * @author L3

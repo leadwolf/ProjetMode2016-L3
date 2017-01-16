@@ -7,93 +7,53 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Observable;
 
-import javax.swing.JOptionPane;
-
 import ply.math.Matrice;
 import ply.math.Vecteur;
-import ply.plyModel.other.Face;
-import ply.plyModel.other.Point;
+import ply.plyModel.elements.Face;
+import ply.plyModel.elements.Point;
 import ply.plyModel.vues.VisualisationPanel;
-import ply.reader.LecteurAscii;
-import ply.result.BasicResult.BasicResultEnum;
-import ply.result.MethodResult;
+import ply.reader.Reader;
 
-public class FigureModel extends Observable {
+public class FigureModelNew extends Observable {
 
 	private Path path;
-	private int nbPoints;
-	private int nbFaces;
-	private List<Point> points;
-	private List<Face> faces;
+	private int vertexCount;
+	private int faceCount;
+	private List<Point> vertexList;
+	private List<Face> faceList;
+
 	private List<Path2D> polygones;
 	private List<Path2D> ombrePolygones;
+
 	private Point center;
-	private LecteurAscii lecture;
 	private Matrice ptsMat;
 	private Matrice ombre;
+
+	private Vecteur lightVector;
 	private double heightFig, widthFig, depthFig;
 
-	private boolean quiet;
-	private Vecteur lightVector;
-
-	/**
-	 * Cree une figure en lisant un fichier <b>file</b> avec {@link LecteurAscii}
-	 * 
-	 * @param file le <b>Path</b> de l'objet .ply
-	 * @param quiet true si on veut empêcher les System.out.println
-	 */
-	public FigureModel(Path file, boolean quiet) {
-		this.path = file;
-		this.quiet = quiet;
-		lightVector = new Vecteur(new double[] { 0, 0, -1 });
-
-		readFile();
-	}
-
-	/**
-	 * Initialise tous les nombres de points, faces et listes de ceux cis à ceux lus avec {@link LecteurAscii}
-	 */
-	private void readFile() {
-		lecture = new LecteurAscii(path, quiet);
-		nbPoints = lecture.getNbPoints();
-		nbFaces = lecture.getNbFaces();
-		points = lecture.getPoints();
+	public FigureModelNew(Reader reader) {
+		this.path = reader.getFile().toPath();
+		vertexCount = reader.getVertexCount();
+		faceCount = reader.getFaceCount();
+		vertexList = reader.getVertexList();
 		invertPoints();
-		faces = lecture.getFaces();
+		faceList = reader.getFaceList();
 		polygones = new ArrayList<>();
 		ombrePolygones = new ArrayList<>();
 		center = new Point();
-		ptsMat = new Matrice(points.size(), 4);
+		ptsMat = new Matrice(vertexCount, 4);
 		ptsMat.setHomogeneousCoords();
-	}
-
-	public MethodResult getLectureResult() {
-		return lecture.getResult();
+		lightVector = new Vecteur(new double[] { 0, 0, -1 });
 	}
 
 	/**
-	 * @return true si un erreur a été rencontré lors de la lecture du ficher
+	 * Inverse la figure par rapport à  l'axe X car on dessine du haut en bas
 	 */
-	public boolean getErreurLecture() {
-		if (lecture != null) {
-			return !lecture.getResult().getCode().equals(BasicResultEnum.ALL_OK);
-		} else {
-			return true;
+	private void invertPoints() {
+		for (Point pt : vertexList) {
+			pt.setY(pt.getY() * -1);
 		}
-	}
-
-	/**
-	 * @return the nbPoints
-	 */
-	public int getNbPoints() {
-		return nbPoints;
-	}
-
-	/**
-	 * @return the nbFaces
-	 */
-	public int getNbFaces() {
-		return nbFaces;
 	}
 
 	/**
@@ -104,24 +64,31 @@ public class FigureModel extends Observable {
 	}
 
 	/**
-	 * @return the points
+	 * @return the vertexCount
 	 */
-	public List<Point> getPoints() {
-		return points;
+	public int getVertexCount() {
+		return vertexCount;
 	}
 
 	/**
-	 * @return the faces
+	 * @return the faceCount
 	 */
-	public List<Face> getFaces() {
-		return faces;
+	public int getFaceCount() {
+		return faceCount;
 	}
 
 	/**
-	 * @return the ombrePolygones
+	 * @return the vertexList
 	 */
-	public List<Path2D> getOmbrePolygones() {
-		return ombrePolygones;
+	public List<Point> getVertexList() {
+		return vertexList;
+	}
+
+	/**
+	 * @return the faceList
+	 */
+	public List<Face> getFaceList() {
+		return faceList;
 	}
 
 	/**
@@ -132,6 +99,13 @@ public class FigureModel extends Observable {
 	}
 
 	/**
+	 * @return the ombrePolygones
+	 */
+	public List<Path2D> getOmbrePolygones() {
+		return ombrePolygones;
+	}
+
+	/**
 	 * @return the center
 	 */
 	public Point getCenter() {
@@ -139,23 +113,17 @@ public class FigureModel extends Observable {
 	}
 
 	/**
-	 * @return the ptsMat
+	 * @return the ombre
 	 */
-	public Matrice getPtsMat() {
-		return ptsMat;
-	}
-
-	public Vecteur getLightVector() {
-		return lightVector;
+	public Matrice getOmbre() {
+		return ombre;
 	}
 
 	/**
-	 * Inverse la figure par rapport à  l'axe X car on dessine du haut en bas
+	 * @return the lightVector
 	 */
-	private void invertPoints() {
-		for (Point pt : points) {
-			pt.setY(pt.getY() * -1);
-		}
+	public Vecteur getLightVector() {
+		return lightVector;
 	}
 
 	/**
@@ -164,10 +132,10 @@ public class FigureModel extends Observable {
 	 * @param scaleFactor
 	 */
 	public void scale(double scaleFactor) {
-		ptsMat.importPoints(points, 3);
+		ptsMat.importPoints(vertexList, 3);
 		ptsMat.setHomogeneousCoords();
 		ptsMat.zoom(scaleFactor);
-		ptsMat.exportToPoints(points);
+		ptsMat.exportToPoints(vertexList);
 		refreshModel();
 	}
 
@@ -179,9 +147,9 @@ public class FigureModel extends Observable {
 	 * @param z
 	 */
 	public void translatePoints(double x, double y, double z) {
-		ptsMat.importPoints(points, 3);
+		ptsMat.importPoints(vertexList, 3);
 		ptsMat.translateMatrix(x, y, z);
-		ptsMat.exportToPoints(points);
+		ptsMat.exportToPoints(vertexList);
 		refreshModel();
 	}
 
@@ -210,7 +178,7 @@ public class FigureModel extends Observable {
 			back = panel.getWidth();
 			front = -panel.getWidth();
 		}
-		for (Point p : panel.getFigure().getPoints()) {
+		for (Point p : vertexList) {
 			if (p.getX() < left) {
 				left = p.getX();
 			}
@@ -258,7 +226,8 @@ public class FigureModel extends Observable {
 	}
 
 	/**
-	 * Applique une homothétie pour que la plus grande dimensions (largeur ou longueur) de la figure prenne <b>maxSize</b> de l'écran
+	 * Applique une homothétie pour que la plus grande dimensions (largeur ou longueur) de la figure prenne <b>maxSize</b> de
+	 * l'écran
 	 * 
 	 * @param panel
 	 * @param maxSize
@@ -290,9 +259,9 @@ public class FigureModel extends Observable {
 	 * @return un double entre 0.0 et 1.0
 	 */
 	public static double getGreyScale(Face face, Vecteur lightVector) {
-		Point firstPoint = face.getList().get(0);
-		Point secondPoint = face.getList().get(1);
-		Point thirdPoint = face.getList().get(2);
+		Point firstPoint = face.getVertexList().get(0);
+		Point secondPoint = face.getVertexList().get(1);
+		Point thirdPoint = face.getVertexList().get(2);
 		Vecteur firstVector = new Vecteur(firstPoint, secondPoint);
 		Vecteur secondVector = new Vecteur(firstPoint, thirdPoint);
 		Vecteur normale = Vecteur.prodVectoriel(firstVector, secondVector); // normale = produit de 2 vec du plan
@@ -308,10 +277,10 @@ public class FigureModel extends Observable {
 	 * @param angle
 	 */
 	public void rotateXByPoint(double angle) {
-		ptsMat.importPoints(points, 3);
+		ptsMat.importPoints(vertexList, 3);
 		ptsMat.setHomogeneousCoords();
 		ptsMat.rotateX(this, angle);
-		ptsMat.exportToPoints(points);
+		ptsMat.exportToPoints(vertexList);
 		refreshModel();
 	}
 
@@ -322,10 +291,10 @@ public class FigureModel extends Observable {
 	 * @param angle
 	 */
 	public void rotateYByPoint(double angle) {
-		ptsMat.importPoints(points, 3);
+		ptsMat.importPoints(vertexList, 3);
 		ptsMat.setHomogeneousCoords();
 		ptsMat.rotateY(this, angle);
-		ptsMat.exportToPoints(points);
+		ptsMat.exportToPoints(vertexList);
 		refreshModel();
 	}
 
@@ -342,7 +311,7 @@ public class FigureModel extends Observable {
 			fitFigureToWindow(visPanel, 0.65);
 		}
 		centrerFigure(visPanel);
-		getPtsMat().importPoints(points, 3);
+		ptsMat.importPoints(vertexList, 3);
 		refreshModel();
 	}
 
@@ -353,10 +322,10 @@ public class FigureModel extends Observable {
 	 * @param angle
 	 */
 	public void rotateZByPoint(double angle) {
-		ptsMat.importPoints(points, 3);
+		ptsMat.importPoints(vertexList, 3);
 		ptsMat.setHomogeneousCoords();
 		ptsMat.rotateZ(this, angle);
-		ptsMat.exportToPoints(points);
+		ptsMat.exportToPoints(vertexList);
 		refreshModel();
 	}
 
@@ -371,7 +340,7 @@ public class FigureModel extends Observable {
 
 		final int distance = 100;
 
-		ptsMat.importPoints(points, 3);
+		ptsMat.importPoints(vertexList, 3);
 		ptsMat.setHomogeneousCoords();
 
 		ombre = new Matrice(Matrice.multiply(projection, ptsMat.getMatrice()));
@@ -379,13 +348,13 @@ public class FigureModel extends Observable {
 		ombre.translateMatrix(200, 1, distance);
 
 		ombrePolygones.clear();
-		for (int i = 0; i < faces.size(); i++) {
+		for (int i = 0; i < faceList.size(); i++) {
 			Path2D ombrePath = new Path2D.Double();
-			List<Point> pt = faces.get(i).getList();
-			int pointNumber = Integer.parseInt(pt.get(0).getNom());
+			List<Point> pt = faceList.get(i).getVertexList();
+			int pointNumber = pt.get(0).getNumber();
 			ombrePath.moveTo(ombre.getMatrice()[0][pointNumber], ombre.getMatrice()[1][pointNumber]);
 			for (int j = 1; j < pt.size(); j++) {
-				pointNumber = Integer.parseInt(pt.get(j).getNom());
+				pointNumber = pt.get(j).getNumber();
 				ombrePath.lineTo(ombre.getMatrice()[0][pointNumber], ombre.getMatrice()[1][pointNumber]);
 			}
 
@@ -400,13 +369,13 @@ public class FigureModel extends Observable {
 	 */
 	public void refreshModel() {
 		polygones.clear();
-		Collections.sort(faces);
+		Collections.sort(faceList);
 		setProjection(lightVector);
 
 		// FIGURE
-		for (int i = 0; i < faces.size(); i++) {
+		for (int i = 0; i < faceList.size(); i++) {
 			Path2D figurePath = new Path2D.Double();
-			List<Point> pt = faces.get(i).getList();
+			List<Point> pt = faceList.get(i).getVertexList();
 			figurePath.moveTo(pt.get(0).getX(), pt.get(0).getY());
 			for (int j = 1; j < pt.size(); j++) {
 				figurePath.lineTo(pt.get(j).getX(), pt.get(j).getY());
@@ -420,16 +389,18 @@ public class FigureModel extends Observable {
 	}
 
 	/**
-	 * Appelle {@link #readFile()} pour réinitialiser les listes de points et faces d'après le fichier .ply d'origine.
+	 * Appelle {@link #readFile()} pour réinitialiser les listes de vertexList et faces d'après le fichier .ply d'origine.
 	 */
 	public void resetModel() {
-		readFile();
-		if (getErreurLecture()) {
-			String message = "Un erreur a été rencontré lors de la relecture du fichier .ply";
-			JOptionPane.showMessageDialog(null, message, "Erreur de lecture", JOptionPane.ERROR_MESSAGE);
-			System.exit(1);
-		} else {
-			refreshModel();
-		}
+		// TODO redo
+		// readFile();
+		// if (getErreurLecture()) {
+		// String message = "Un erreur a été rencontré lors de la relecture du fichier .ply";
+		// JOptionPane.showMessageDialog(null, message, "Erreur de lecture", JOptionPane.ERROR_MESSAGE);
+		// System.exit(1);
+		// } else {
+		// refreshModel();
+		// }
 	}
+
 }

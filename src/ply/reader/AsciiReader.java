@@ -2,6 +2,7 @@ package ply.reader;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 
 import ply.plyModel.elements.Face;
 import ply.plyModel.elements.Point;
@@ -10,6 +11,10 @@ public class AsciiReader extends Reader {
 
 	public AsciiReader(File file) {
 		super(file);
+	}
+
+	public AsciiReader(Path path) {
+		super(path);
 	}
 
 	@Override
@@ -28,7 +33,7 @@ public class AsciiReader extends Reader {
 				}
 				// ignore all comments
 				if (!line.startsWith("comment")) {
-					if (totalCount < getVertexCount()-1) {
+					if (totalCount < getVertexCount()) {
 						Point point = Point.parse(elementCount, numberOfCoordsToPoint, line);
 						vertexMap.put(elementCount, point);
 						vertexList.add(point);

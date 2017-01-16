@@ -24,6 +24,9 @@ public class Point extends Element {
 		iter = -1;
 	}
 
+	public Point() {
+	}
+
 	/**
 	 * @return the x
 	 */
@@ -43,6 +46,27 @@ public class Point extends Element {
 	 */
 	public double getZ() {
 		return z;
+	}
+
+	/**
+	 * @param x the x to set
+	 */
+	public void setX(double x) {
+		this.x = x;
+	}
+
+	/**
+	 * @param y the y to set
+	 */
+	public void setY(double y) {
+		this.y = y;
+	}
+
+	/**
+	 * @param z the z to set
+	 */
+	public void setZ(double z) {
+		this.z = z;
 	}
 
 	public void setCoords(double x, double y, double z) {
@@ -99,8 +123,8 @@ public class Point extends Element {
 	}
 
 	public static Point parse(int number, int nbCoordsExpected, String line) throws IOException {
-		line.trim();
-		Matcher matcher = SPACES_AND_NUMBERS.matcher(line);
+		line = line.trim();
+		Matcher matcher = POINT_PATTERN.matcher(line);
 		if (!matcher.matches()) {
 			throw new IOException("Cannot parse Point from line : \"" + line + "\".");
 		}
@@ -120,4 +144,5 @@ public class Point extends Element {
 		}
 		return new Point(number, x, y, z);
 	}
+
 }

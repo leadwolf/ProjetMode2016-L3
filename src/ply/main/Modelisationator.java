@@ -9,7 +9,9 @@ import ply.bdd.strategy.DataBaseStrategy;
 import ply.bdd.strategy.ExecuteStrategy;
 import ply.main.vues.MainFenetre;
 import ply.math.Vecteur;
-import ply.plyModel.modeles.FigureModel;
+import ply.plyModel.modeles.FigureModelNew;
+import ply.reader.AsciiReader;
+import ply.reader.Reader;
 import ply.result.BDDResult;
 import ply.result.BasicResult;
 import ply.result.MethodResult;
@@ -161,7 +163,8 @@ public class Modelisationator {
 
 		if (modelisationator.executeDB && modelisationator.foundFile) {
 			if (!quiet) {
-				System.out.println("Erreur : Vous avez tenté de lancer une commande bdd et lancer un modèle spécifique en même temps.");
+				System.out.println(
+						"Erreur : Vous avez tenté de lancer une commande bdd et lancer un modèle spécifique en même temps.");
 			}
 			return new BasicResult(BasicResultEnum.CONFLICTING_ARGUMENTS);
 		}
@@ -179,7 +182,8 @@ public class Modelisationator {
 
 		if (modelisationator.found3DOptions && !modelisationator.foundFile) {
 			if (!quiet) {
-				System.out.println("Erreur : Vous avez tenté d'éxécuter une commande 3D mais vous n'avez pas spécifié de fichier .ply");
+				System.out.println(
+						"Erreur : Vous avez tenté d'éxécuter une commande 3D mais vous n'avez pas spécifié de fichier .ply");
 			}
 			return new BasicResult(BasicResultEnum.NO_PLY_FILE_IN_ARG);
 		}
@@ -204,12 +208,15 @@ public class Modelisationator {
 	 */
 	private static MethodResult execute(String[] args, Modelisationator modelisationator, Path dbPath, boolean quiet) {
 		if (modelisationator.foundFile) {
-			FigureModel figureModel = new FigureModel(plyPath, quiet);
-			if (figureModel != null && !figureModel.getErreurLecture()) {
+			Reader asciiReader = new AsciiReader(plyPath.toFile());
+			FigureModelNew figureModel = new FigureModelNew(asciiReader);
+			// TODO errors
+			// if (figureModel != null && !figureModel.getErreurLecture()) {
+			if (figureModel != null) {
 				BDDUtilities.initConnection(dbPath);
 				BDDUtilities.checkPaths();
-				boolean[] options = new boolean[] { modelisationator.drawPoints, modelisationator.drawSegments, modelisationator.drawFaces,
-						modelisationator.reset, modelisationator.fill };
+				boolean[] options = new boolean[] { modelisationator.drawPoints, modelisationator.drawSegments,
+						modelisationator.drawFaces, modelisationator.reset, modelisationator.fill };
 				MainFenetre mainFrame = new MainFenetre(figureModel, options);
 				mainFrame.setTitle("Modelisationator");
 				figureModel.setProjection(new Vecteur(new double[] { 0, 0, -1 }));
@@ -218,13 +225,16 @@ public class Modelisationator {
 				}
 				return new BasicResult(BasicResultEnum.ALL_OK);
 			} else {
-				return figureModel.getLectureResult();
+				return new BasicResult(BasicResultEnum.UNKNOWN_ERROR);
+				// TODO errors
+				// return figureModel.getLectureResult();
 			}
 		} else if (modelisationator.executeDB) {
 			boolean options[] = new boolean[] { modelisationator.reset, modelisationator.fill };
 			if (modelisationator.delete) {
 				modelisationator.strategy = new ExecuteStrategy();
-				return modelisationator.strategy.treatArguments(args, dbPath, new boolean[] { options[0], options[1], quiet }).getMethodResult();
+				return modelisationator.strategy.treatArguments(args, dbPath, new boolean[] { options[0], options[1], quiet })
+						.getMethodResult();
 			} else {
 				BDDUtilities.initConnection(dbPath);
 				BDDUtilities.checkPaths();

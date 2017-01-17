@@ -1,11 +1,13 @@
 package ply.result;
 
-import ply.bdd.strategy.ExecuteStrategy;
 import ply.bdd.table.Table;
 import ply.result.BasicResult.BasicResultEnum;
+import ply.result.ReaderResult.FaceResultEnum;
+import ply.result.ReaderResult.PointResultEnum;
+import ply.result.ReaderResult.ReaderResultEnum;
 
 /**
- * Cette classe englobe tout les types de résultats que peut retourner {@link ExecuteStrategy}, {@link Table} et {@link LecteurAscii}
+ * Cette classe englobe tout les types de résultats que peut retourner {@link ExecuteCommand}, {@link Table} et {@link LecteurAscii}
  * 
  * @author L3
  *
@@ -26,6 +28,25 @@ public abstract class MethodResult {
 	
 	public MethodResult() {
 		result = BasicResultEnum.ALL_OK;
+	}
+
+	/**
+	 * @param result the result to set
+	 */
+	public void setResult(Enum<?> result) {
+		this.result = result;
+	}
+
+	public void setCode(ReaderResultEnum result) {
+		this.result = result;
+	}
+
+	public void setCode(PointResultEnum result) {
+		this.result = result;
+	}
+
+	public void setCode(FaceResultEnum result) {
+		this.result = result;
 	}
 	
 }

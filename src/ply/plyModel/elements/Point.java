@@ -3,6 +3,15 @@ package ply.plyModel.elements;
 import java.io.IOException;
 import java.util.regex.Matcher;
 
+import ply.result.MethodResult;
+import ply.result.ReaderResult.PointResultEnum;
+
+/**
+ * A Point is a type of {@link Element}. It has at maximum 3 coordinates.
+ * 
+ * @author Christopher Caroni
+ *
+ */
 public class Point extends Element {
 
 	private double x;
@@ -11,20 +20,17 @@ public class Point extends Element {
 	private int iter;
 
 	/**
-	 * @param number
+	 * @param indexNumber
 	 * @param x
 	 * @param y
 	 * @param z
 	 */
-	public Point(int number, double x, double y, double z) {
-		super(number);
+	public Point(int indexNumber, double x, double y, double z) {
+		super(indexNumber);
 		this.x = x;
 		this.y = y;
 		this.z = z;
 		iter = -1;
-	}
-
-	public Point() {
 	}
 
 	/**
@@ -122,15 +128,26 @@ public class Point extends Element {
 		iter = -1;
 	}
 
-	public static Point parse(int number, int nbCoordsExpected, String line) throws IOException {
+	/**
+	 * Parses line and sets this Points' coordinates to those found in the line.
+	 * 
+	 * @param indexNumber the index number with which to create the Point.
+	 * @param nbCoordsExpected how many properties this Point is expected to parse.
+	 * @param line the line to parse.
+	 * @param readResult a {@link MethodResult} object in which we store the result of parsing the line and setting the Point coordinates.
+	 * @throws IOException unexpected data or error parsing the line.
+	 */
+	public void parseLine(int nbCoordsExpected, String line, MethodResult parseResult) throws IOException {
 		line = line.trim();
 		Matcher matcher = POINT_PATTERN.matcher(line);
 		if (!matcher.matches()) {
+			parseResult.setCode(PointResultEnum.NO_MATCH_PATTERN);
 			throw new IOException("Cannot parse Point from line : \"" + line + "\".");
 		}
 		String[] pointDesc = line.split(" ");
 		if (pointDesc.length != nbCoordsExpected) {
-			throw new IOException("Line does not have only three coordinates :\"" + line + "\".");
+			parseResult.setCode(PointResultEnum.INCORRECT_NUMBER_OF_COORDS);
+			throw new IOException("Line does not have correct number of coordinates :\"" + line + "\".");
 		}
 		double x = 0;
 		double y = 0;
@@ -140,9 +157,10 @@ public class Point extends Element {
 			y = Double.parseDouble(pointDesc[1]);
 			z = Double.parseDouble(pointDesc[2]);
 		} catch (NumberFormatException e) {
+			parseResult.setCode(PointResultEnum.CANNOT_PARSE_COORD);
 			throw new IOException("Could not parse the line to coordinate : \"" + line + "\".");
 		}
-		return new Point(number, x, y, z);
+		setCoords(x, y, z);
 	}
 
 }

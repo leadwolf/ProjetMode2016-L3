@@ -1,4 +1,4 @@
-package ply.reader;
+package ply.read.reader;
 
 import java.io.IOException;
 
@@ -12,6 +12,7 @@ public enum Format {
 	 * @throws IOException invalid format header
 	 */
 	public static Format parse(String line) throws IOException {
+		line = line.trim();
 		String[] formatType = line.split(" +");
 		if (!"format".equals(formatType[0])) {
 			throw new IOException("Ply file does not declare \"format\" on second line.");
@@ -19,7 +20,7 @@ public enum Format {
 		switch (formatType[1]) {
 		case "ascii":
 			if (!"1.0".equals(formatType[2])) {
-				throw new IOException("Ascii version not equal to 1.0. Only 1.0 rev is supported.");
+				throw new IOException("ASCII version not equal to 1.0. Only 1.0 rev is supported.");
 			}
 			return ASCII;
 		default:

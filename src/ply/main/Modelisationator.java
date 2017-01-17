@@ -1,8 +1,11 @@
 package ply.main;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.regex.Pattern;
+
+import javax.swing.JOptionPane;
 
 import ply.bdd.base.BDDUtilities;
 import ply.bdd.strategy.DataBaseStrategy;
@@ -10,13 +13,13 @@ import ply.bdd.strategy.ExecuteStrategy;
 import ply.main.vues.MainFenetre;
 import ply.math.Vecteur;
 import ply.plyModel.modeles.FigureModelNew;
-import ply.reader.AsciiReader;
-import ply.reader.Reader;
+import ply.read.reader.AsciiReader;
+import ply.read.reader.Reader;
 import ply.result.BDDResult;
-import ply.result.BasicResult;
-import ply.result.MethodResult;
 import ply.result.BDDResult.BDDResultEnum;
+import ply.result.BasicResult;
 import ply.result.BasicResult.BasicResultEnum;
+import ply.result.MethodResult;
 
 /**
  * ¨Programme principale de modélisation.
@@ -163,8 +166,7 @@ public class Modelisationator {
 
 		if (modelisationator.executeDB && modelisationator.foundFile) {
 			if (!quiet) {
-				System.out.println(
-						"Erreur : Vous avez tenté de lancer une commande bdd et lancer un modèle spécifique en même temps.");
+				System.out.println("Erreur : Vous avez tenté de lancer une commande bdd et lancer un modèle spécifique en même temps.");
 			}
 			return new BasicResult(BasicResultEnum.CONFLICTING_ARGUMENTS);
 		}
@@ -182,8 +184,7 @@ public class Modelisationator {
 
 		if (modelisationator.found3DOptions && !modelisationator.foundFile) {
 			if (!quiet) {
-				System.out.println(
-						"Erreur : Vous avez tenté d'éxécuter une commande 3D mais vous n'avez pas spécifié de fichier .ply");
+				System.out.println("Erreur : Vous avez tenté d'éxécuter une commande 3D mais vous n'avez pas spécifié de fichier .ply");
 			}
 			return new BasicResult(BasicResultEnum.NO_PLY_FILE_IN_ARG);
 		}
@@ -208,15 +209,24 @@ public class Modelisationator {
 	 */
 	private static MethodResult execute(String[] args, Modelisationator modelisationator, Path dbPath, boolean quiet) {
 		if (modelisationator.foundFile) {
-			Reader asciiReader = new AsciiReader(plyPath.toFile());
+			MethodResult result = new BasicResult(null);
+			Reader asciiReader = null;
+			try {
+				asciiReader = new AsciiReader(plyPath.toFile(), result);
+			} catch (IOException e) {
+				String message = "Modelisationator encountered an error while reading the .ply file.\nError : " + e.getMessage() + "\n"
+						+ "Error code : "
+						+ result.getCode();
+				JOptionPane.showMessageDialog(null, message, "Modelisationator", JOptionPane.ERROR_MESSAGE);
+				e.printStackTrace();
+				System.exit(1);
+			}
 			FigureModelNew figureModel = new FigureModelNew(asciiReader);
-			// TODO errors
-			// if (figureModel != null && !figureModel.getErreurLecture()) {
 			if (figureModel != null) {
 				BDDUtilities.initConnection(dbPath);
 				BDDUtilities.checkPaths();
-				boolean[] options = new boolean[] { modelisationator.drawPoints, modelisationator.drawSegments,
-						modelisationator.drawFaces, modelisationator.reset, modelisationator.fill };
+				boolean[] options = new boolean[] { modelisationator.drawPoints, modelisationator.drawSegments, modelisationator.drawFaces,
+						modelisationator.reset, modelisationator.fill };
 				MainFenetre mainFrame = new MainFenetre(figureModel, options);
 				mainFrame.setTitle("Modelisationator");
 				figureModel.setProjection(new Vecteur(new double[] { 0, 0, -1 }));
@@ -233,8 +243,7 @@ public class Modelisationator {
 			boolean options[] = new boolean[] { modelisationator.reset, modelisationator.fill };
 			if (modelisationator.delete) {
 				modelisationator.strategy = new ExecuteStrategy();
-				return modelisationator.strategy.treatArguments(args, dbPath, new boolean[] { options[0], options[1], quiet })
-						.getMethodResult();
+				return modelisationator.strategy.treatArguments(args, dbPath, new boolean[] { options[0], options[1], quiet }).getMethodResult();
 			} else {
 				BDDUtilities.initConnection(dbPath);
 				BDDUtilities.checkPaths();

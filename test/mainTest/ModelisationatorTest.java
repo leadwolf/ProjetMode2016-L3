@@ -10,7 +10,6 @@ import org.junit.Test;
 import ply.main.Modelisationator;
 import ply.result.BDDResult.BDDResultEnum;
 import ply.result.BasicResult.BasicResultEnum;
-import ply.result.ReaderResult.ReaderResultEnum;
 
 public class ModelisationatorTest {
 
@@ -127,15 +126,6 @@ public class ModelisationatorTest {
 	public void test_3DArg_param_but_no_file() {
 		String[] args = new String[] { "-f", };
 		assertEquals(BasicResultEnum.NO_PLY_FILE_IN_ARG,
-				Modelisationator.parseArgs(args, modelisationator, null, true).getCode());
-	}
-
-	/* LECTURE */
-
-	@Test
-	public void test_get_lecture_error() {
-		String[] args = new String[] { "test-data/missingCoord.ply" };
-		assertEquals(ReaderResultEnum.MISSING_COORD,
 				Modelisationator.parseArgs(args, modelisationator, null, true).getCode());
 	}
 

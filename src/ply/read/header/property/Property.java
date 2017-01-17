@@ -1,6 +1,6 @@
-package ply.reader.headers.property;
+package ply.read.header.property;
 
-import ply.reader.DataType;
+import ply.read.reader.DataType;
 
 public abstract class Property {
 

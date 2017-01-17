@@ -2,6 +2,7 @@ package ply.bdd.base;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Connection;
@@ -16,13 +17,13 @@ import java.time.LocalDate;
 import javax.swing.JOptionPane;
 
 import ply.plyModel.modeles.FigureModelNew;
-import ply.reader.AsciiReader;
-import ply.reader.Reader;
+import ply.read.reader.AsciiReader;
+import ply.read.reader.Reader;
 import ply.result.BDDResult;
-import ply.result.BasicResult;
-import ply.result.MethodResult;
 import ply.result.BDDResult.BDDResultEnum;
+import ply.result.BasicResult;
 import ply.result.BasicResult.BasicResultEnum;
+import ply.result.MethodResult;
 
 /**
  * Contient toutes les méthodes nécessaires à la manipulation de la base
@@ -196,7 +197,7 @@ public class BDDUtilities {
 			for (int i = 0; i < files.length; i++) {
 				String nom = files[i].toPath().getFileName().toString();
 				nom = nom.substring(0, nom.lastIndexOf("."));
-				Reader asciiReader = new AsciiReader(files[i].toPath().toAbsolutePath());
+				Reader asciiReader = new AsciiReader(files[i].toPath().toAbsolutePath(), null);
 				FigureModelNew fig = new FigureModelNew(asciiReader);
 
 				insertStatement = "insert into PLY values (?, ?, ?, ?, ?, ?)";
@@ -212,6 +213,10 @@ public class BDDUtilities {
 			}
 			success = true;
 		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			JOptionPane.showMessageDialog(null, "Error while reading .ply file.\nCould not add model to database.", "Reader error",
+					JOptionPane.ERROR_MESSAGE);
 			e.printStackTrace();
 		} finally {
 			if (!success) {

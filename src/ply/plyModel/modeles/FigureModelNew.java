@@ -12,7 +12,7 @@ import ply.math.Vecteur;
 import ply.plyModel.elements.Face;
 import ply.plyModel.elements.Point;
 import ply.plyModel.vues.VisualisationPanel;
-import ply.reader.Reader;
+import ply.read.reader.Reader;
 
 public class FigureModelNew extends Observable {
 
@@ -34,14 +34,14 @@ public class FigureModelNew extends Observable {
 
 	public FigureModelNew(Reader reader) {
 		this.path = reader.getFile().toPath();
-		vertexCount = reader.getVertexCount();
-		faceCount = reader.getFaceCount();
+		vertexCount = reader.getElementCount("vertex");
+		faceCount = reader.getElementCount("face");
 		vertexList = reader.getVertexList();
 		invertPoints();
 		faceList = reader.getFaceList();
 		polygones = new ArrayList<>();
 		ombrePolygones = new ArrayList<>();
-		center = new Point();
+		center = new Point(-1, -1, -1, -1);
 		ptsMat = new Matrice(vertexCount, 4);
 		ptsMat.setHomogeneousCoords();
 		lightVector = new Vecteur(new double[] { 0, 0, -1 });

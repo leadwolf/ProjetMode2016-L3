@@ -8,6 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -19,6 +20,7 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
@@ -35,8 +37,10 @@ import ply.bdd.vues.ModelInfo;
 import ply.main.Modelisationator;
 import ply.plyModel.controlers.KeyControler;
 import ply.plyModel.modeles.FigureModelNew;
-import ply.reader.AsciiReader;
-import ply.reader.Reader;
+import ply.read.reader.AsciiReader;
+import ply.read.reader.Reader;
+import ply.result.BasicResult;
+import ply.result.MethodResult;
 
 /**
  * Ceci est la JFrame que lance l'application. Elle comporte un JSplitPane avec à gauche un {@link ModelInfo} et {@link ModelBrowser} et à droite des onglets de
@@ -338,7 +342,17 @@ public class MainFenetre extends JFrame {
 
 			// GET
 			Path newModelPath = DAO.INSTANCE.getPathByName(modelName.toLowerCase());
-			Reader asciiReader = new AsciiReader(newModelPath);
+			MethodResult result = new BasicResult(null);
+			Reader asciiReader = null;
+			try {
+				asciiReader = new AsciiReader(newModelPath, result);
+			} catch (IOException e) {
+				String message = "Modelisationator encountered an error while reading the .ply file.\nError : " + e.getMessage() + "\n"
+						+ "Error code : " + result.getCode();
+				JOptionPane.showMessageDialog(null, message, "Modelisationator", JOptionPane.ERROR_MESSAGE);
+				e.printStackTrace();
+				// System.exit(1);
+			}
 			FigureModelNew newFigureModel = new FigureModelNew(asciiReader);
 			Dimension modelPanelDim = new Dimension(frameDim.width - leftPanelDim.width - (dividerWidth / 2), frameDim.height - tabHeight);
 			ModelPanel newModelPanel = new ModelPanel(newFigureModel, modelPanelDim, false, false, true);

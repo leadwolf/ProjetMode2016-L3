@@ -1,5 +1,10 @@
 package ply.result;
 
+import ply.plyModel.elements.Face;
+import ply.plyModel.elements.Point;
+import ply.read.reader.AsciiReader;
+import ply.read.reader.Reader;
+
 /**
  * Type d'erreur correspondant à une erreur de {@link LecteurAscii}
  * @author L3
@@ -11,62 +16,127 @@ public class ReaderResult extends MethodResult{
 	 * Crée une {@link MethodResult} de ce type, {@link ReaderResult}.
 	 * @param readerEror
 	 */
-	public ReaderResult(ReaderResultEnum readerEror) {
-		result = readerEror;
+	public ReaderResult(ReaderResultEnum readerError) {
+		result = readerError;
 	}
 	
+	public ReaderResult(FaceResultEnum parseError) {
+		result = parseError;
+	}
+
+	public ReaderResult(PointResultEnum parseError) {
+		result = parseError;
+	}
+
 	/**
-	 * Codes d'erreurs de {@link LecteurAscii}
+	 * Error codes for {@link Face}.
+	 * 
+	 * @author Christopher Caroni
+	 *
+	 */
+	public enum FaceResultEnum {
+		/**
+		 * Line does not match de pattern for faces.
+		 */
+		NO_MATCH_PATTERN,
+		/**
+		 * Could not convert the number of points to an Integer.
+		 */
+		CANNOT_PARSE_POINT_COUNT,
+		/**
+		 * Number of {@link Point} declared for this {@link Face} does not match the number of Point indexes found.
+		 */
+		INCORRECT_NUMBER_OF_POINTS,
+		/**
+		 * Could not convert the point index to an Integer.
+		 */
+		CANNOT_PARSE_POINT_INDEX,
+		/**
+		 * Face references a {@link Point} which cannot be found.
+		 */
+		REFERENCE_POINT_NON_EXISTING,
+	}
+
+	/**
+	 * Error codes for {@link Point}.
+	 * 
+	 * @author Christopher Caroni
+	 *
+	 */
+	public enum PointResultEnum {
+		/**
+		 * Line does not match de pattern for points.
+		 */
+		NO_MATCH_PATTERN,
+		/**
+		 * The number of coords found does not match the number of properties expected.
+		 */
+		INCORRECT_NUMBER_OF_COORDS,
+		/**
+		 * Could not convert the coordinate to a Double.
+		 */
+		CANNOT_PARSE_COORD
+	}
+
+	/**
+	 * Error codes for {@link Reader} and {@link AsciiReader}.
 	 * 
 	 * @author L3
 	 *
 	 */
 	public enum ReaderResultEnum {
+
 		/**
-		 * On suppose qu'on lit un point. Il manque une coordonnée alors qu'on s'attend à en avoir 3.
-		 */
-		MISSING_COORD,
-		/**
-		 * On n'a pas pu trouvé la ligne "element face X".
-		 */
-		MISSING_ELEMENT_FACE,
-		/**
-		 * On n'a pas pu trouvé la ligne "element vertex X".
-		 */
-		MISSING_ELEMENT_VERTEX,
-		/**
-		 * On a atteint la fin du ficher alors qu'on s'attendait à lire une face d'après le nombre de faces indiquées par l'entête.
-		 */
-		MISSING_FACE,
-		/**
-		 * On a commencé à lire les faces et le nombre de points ne correspond pas au nombre indiqué par le premier chiffre de la ligne lue.
-		 */
-		MISSING_POINT_IN_FACE,
-		/**
-		 * A a lu toutes les faces mais le fichier comporte encore des lignes. Ca se peut que l'entête est erroné.
-		 */
-		TOO_MANY_LINES,
-		/**
-		 * Le fichier ne comporte pas l'extension <i>.ply</i>.
+		 * File does not have .ply extension.
 		 */
 		BAD_EXTENSION,
 		/**
-		 * Le fichier n'existe pas.
+		 * File does not have an extension.
 		 */
-		FILE_NONEXISTING,
+		NO_EXTENSION,
 		/**
-		 * On a commencé à lire les Points mais on a trouvé plus que 3 coordonnées/nombres. Ca se peut qu'il y ait un Point manquant et qu'on a alors lu une
-		 * Face ou simplement que l'entête est fausse.
+		 * File does not exist.
 		 */
-		TOO_MANY_COORDS,
+		FILE_DOES_NOT_EXIST,
 		/**
-		 * La première ligne du ficher ne correspond pas à "ply".
+		 * File does not declare "ply" on first line.
 		 */
-		PLY_NOT_FOUND,
+		MISSING_PLY_DECLARATION,
 		/**
-		 * On a commencé à lire les Faces et elle fait référence à un Point inexistant. Ca se peut qu'il y ait un Point manquant ou que la liste de Points de
-		 * cette Face est erronée.
+		 * Unexpectedly reached the end of the file while reading the header.
 		 */
-		POINT_NOT_FOUND;
+		UNEXPECTED_END_OF_FILE_IN_HEADER,
+		/**
+		 * Unexpectedly reached the end of the file while reading the body.
+		 */
+		UNEXPECTED_END_OF_FILE_IN_BODY,
+		/**
+		 * Line declares an format which has been previously declared.
+		 */
+		DUPLICATE_FORMAT,
+		/**
+		 * The line to parse does not follow the element declaration format which is "element &lt;element name&gt; &lt;count&gt; ".
+		 */
+		INCORRECT_ELEMENT_DECLARATION,
+		/**
+		 * Line declares an element which has been previously declared.
+		 */
+		DUPLICATE_ELEMENT_HEADER,
+		/**
+		 * Line declares a property but no element has been declared beforehand.
+		 */
+		PROPERTY_BEFORE_ELEMENT_DECLARATION,
+		/**
+		 * Vertex header element not found.
+		 */
+		VERTEX_NOT_DECLARED,
+		/**
+		 * Face header element not found.
+		 */
+		FACE_NOT_DECLARED,
+		/**
+		 * Read data when should have reached end of file.
+		 */
+		UNEXPECTED_DATA_AT_END
 	}
 }

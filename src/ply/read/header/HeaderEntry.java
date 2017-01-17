@@ -1,13 +1,13 @@
-package ply.reader.headers;
+package ply.read.header;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import ply.reader.DataType;
-import ply.reader.headers.property.FaceProperty;
-import ply.reader.headers.property.Property;
-import ply.reader.headers.property.VertexProperty;
+import ply.read.header.property.FaceProperty;
+import ply.read.header.property.Property;
+import ply.read.header.property.VertexProperty;
+import ply.read.reader.DataType;
 
 public class HeaderEntry {
 
@@ -33,12 +33,16 @@ public class HeaderEntry {
 	}
 
 	/**
-	 * @return the count
+	 * @return how many elements of this type there are in the file.
 	 */
 	public int getCount() {
 		return count;
 	}
 
+	/**
+	 * @param name
+	 * @return the property of this element as defined by its name in the header.
+	 */
 	public Property getProperty(String name) {
 		return propertyMap.get(name);
 	}
@@ -107,6 +111,9 @@ public class HeaderEntry {
 		}
 	}
 
+	/**
+	 * @return how many properties this element has.
+	 */
 	public int getPropertyCount() {
 		return propertyMap.size();
 	}

@@ -1,11 +1,10 @@
 package ply.result;
 
 import ply.bdd.base.BDDUtilities;
-import ply.bdd.strategy.ExecuteStrategy;
 import ply.bdd.table.Table;
 
 /**
- * Type d'erreur correspondant à une erreur de {@link ExecuteStrategy} ou {@link BDDUtilities}.
+ * Type d'erreur correspondant à une erreur de {@link ExecuteCommand} ou {@link BDDUtilities}.
  * 
  * @author L3
  *
@@ -22,7 +21,7 @@ public class BDDResult extends MethodResult{
 
 
 	/**
-	 * Codes d'erreurs que peut retourner {@link ExecuteStrategy}, {@link Table} et {@link BDDUtilities}.
+	 * Codes d'erreurs que peut retourner {@link ExecuteCommand}, {@link Table} et {@link BDDUtilities}.
 	 * 
 	 * @author L3
 	 *

@@ -80,34 +80,73 @@ public class HeaderEntry {
 	 * @throws IOException if the property line has an invalid format.
 	 */
 	public void addProperty(String line) throws IOException {
-		if (!line.startsWith("property")) {
-			throw new IOException("Cannot create HeaderProperty from \"" + line + "\". Expected \"property\" at start of line.");
-		}
 		String[] propertyDesc = line.split(" +");
-		if (propertyDesc.length != 3 && propertyDesc.length != 5) {
-			throw new IOException("Unable to create element. Expected three or five parts : " + "\nproperty <entry_type> <property_type>"
-					+ "\nproperty list <number_of_entries_type> <entry_type> <property_type>");
-		}
+		verifyPropertyDeclaration(propertyDesc);
+
 		if (propertyDesc.length == 3) {
-			if (!DataType.validateType(propertyDesc[1])) {
-				throw new IOException("Invalid property entry. Not a valid data type: \"" + propertyDesc[1] + "\".");
-			}
-			String name = propertyDesc[2];
-			DataType type = DataType.getTypeFromString(propertyDesc[2]);
-			VertexProperty vertexProperty = new VertexProperty(name, type);
-			propertyMap.put(name, vertexProperty);
+			validateProperyType(propertyDesc[1]);
+			addSimpleProperty(propertyDesc);
 		} else if (propertyDesc.length == 5) {
 			for (int i = 1; i <= 3; i++) {
-				if (!DataType.validateType(propertyDesc[i])) {
-					throw new IOException("Invalid property entry. Not a valid data type: \"" + propertyDesc[i] + "\".");
-				}
+				validateProperyType(propertyDesc[i]);
 			}
-			String name = propertyDesc[4];
-			DataType type = DataType.getTypeFromString(propertyDesc[1]);
-			DataType numberOfEntriesType = DataType.getTypeFromString(propertyDesc[2]);
-			DataType entryType = DataType.getTypeFromString(propertyDesc[3]);
-			FaceProperty faceProperty = new FaceProperty(name, type, numberOfEntriesType, entryType);
-			propertyMap.put(name, faceProperty);
+			addComplexProperty(propertyDesc);
+		}
+	}
+
+	/**
+	 * Creates a simple property from the line and adds to the list.
+	 * 
+	 * @param propertyDesc
+	 * @throws IOException
+	 */
+	private void addSimpleProperty(String[] propertyDesc) throws IOException {
+		String name = propertyDesc[2];
+		DataType type = DataType.getTypeFromString(propertyDesc[2]);
+		VertexProperty vertexProperty = new VertexProperty(name, type);
+		propertyMap.put(name, vertexProperty);
+	}
+
+	/**
+	 * Creates a complex property from the line and adds to the list.
+	 * 
+	 * @param propertyDesc
+	 * @throws IOException
+	 */
+	private void addComplexProperty(String[] propertyDesc) throws IOException {
+		String name = propertyDesc[4];
+		DataType type = DataType.getTypeFromString(propertyDesc[1]);
+		DataType numberOfEntriesType = DataType.getTypeFromString(propertyDesc[2]);
+		DataType entryType = DataType.getTypeFromString(propertyDesc[3]);
+		FaceProperty faceProperty = new FaceProperty(name, type, numberOfEntriesType, entryType);
+		propertyMap.put(name, faceProperty);
+	}
+
+	/**
+	 * @param propertyType
+	 * @return true if correct.
+	 * @throws IOException if type incorrect.
+	 */
+	private boolean validateProperyType(String propertyType) throws IOException {
+		if (!DataType.validateType(propertyType)) {
+			throw new IOException("Invalid property entry. Not a valid data type: \"" + propertyType + "\".");
+		}
+		return true;
+	}
+
+	/**
+	 * Verifies the syntax for the line split into an array.
+	 * 
+	 * @param lineArray
+	 * @throws IOException
+	 */
+	private void verifyPropertyDeclaration(String[] lineArray) throws IOException {
+		if (!lineArray[0].startsWith("property")) {
+			throw new IOException("Cannot create HeaderProperty from \"" + lineArray + "\". Expected \"property\" at start of line.");
+		}
+		if (lineArray.length != 3 && lineArray.length != 5) {
+			throw new IOException("Unable to create element. Expected three or five parts : " + "\nproperty <entry_type> <property_type>"
+					+ "\nproperty list <number_of_entries_type> <entry_type> <property_type>");
 		}
 	}
 

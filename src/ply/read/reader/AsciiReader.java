@@ -31,7 +31,7 @@ public class AsciiReader extends Reader {
 	}
 
 	@Override
-	protected void readBody() throws IOException {
+	protected void parseBody() throws IOException {
 		boolean doneReading = false;
 		String line = null;
 		int totalElementCount = 0;
@@ -47,7 +47,7 @@ public class AsciiReader extends Reader {
 			if (!line.startsWith("comment")) {
 				if (totalElementCount < getElementCount("vertex")) {
 					Point point = new Point(elementIndex, -1, -1, -1);
-					point.parseLine(getPropertyCount("vertex"), line, readResult);
+					point.parseLine(getPropertyCountForElement("vertex"), line, readResult);
 					vertexMap.put(elementIndex, point);
 					vertexList.add(point);
 				} else {

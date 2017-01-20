@@ -389,7 +389,7 @@ public class FigureModelNew extends Observable {
 	}
 
 	/**
-	 * Appelle {@link #readFile()} pour réinitialiser les listes de vertexList et faces d'après le fichier .ply d'origine.
+	 * Appelle {@link #parseFile()} pour réinitialiser les listes de vertexList et faces d'après le fichier .ply d'origine.
 	 */
 	public void resetModel() {
 		// TODO redo

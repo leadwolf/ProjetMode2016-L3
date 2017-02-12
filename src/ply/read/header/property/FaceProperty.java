@@ -18,4 +18,29 @@ public class FaceProperty extends Property {
 		this.numberOfEntriesType = numberOfEntriesType;
 		this.entryType = entryType;
 	}
+
+	/**
+	 * @return the numberOfEntriesType
+	 */
+	public DataType getNumberOfEntriesType() {
+		return numberOfEntriesType;
+	}
+
+	/**
+	 * @return the entryType of what composes the Face
+	 */
+	public DataType getEntryType() {
+		return entryType;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "FaceProperty [numberOfEntriesType=" + numberOfEntriesType + ", entryType=" + entryType + ", toString()=" + super.toString() + "]";
+	}
+
 }

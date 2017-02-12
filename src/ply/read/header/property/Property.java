@@ -15,4 +15,22 @@ public abstract class Property {
 		this.name = name;
 		this.type = type;
 	}
+
+	/**
+	 * @return the type
+	 */
+	public DataType getType() {
+		return type;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "Property [name=" + name + ", type=" + type + "]";
+	}
+
 }

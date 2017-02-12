@@ -1,7 +1,9 @@
 package ply.read.header;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import ply.read.header.property.FaceProperty;
@@ -14,6 +16,7 @@ public class HeaderEntry {
 	private String name;
 	private int count;
 	private Map<String, Property> propertyMap;
+	private List<Property> propertyList;
 
 	/**
 	 * @param name
@@ -23,6 +26,7 @@ public class HeaderEntry {
 		this.name = name;
 		this.count = count;
 		propertyMap = new HashMap<>();
+		propertyList = new ArrayList<>();
 	}
 
 	/**
@@ -95,20 +99,21 @@ public class HeaderEntry {
 	}
 
 	/**
-	 * Creates a simple property from the line and adds to the list.
+	 * Creates a simple property (i.e., : a vertex has its declaration in 3 parts) from the line and adds to the list.
 	 * 
 	 * @param propertyDesc
 	 * @throws IOException
 	 */
 	private void addSimpleProperty(String[] propertyDesc) throws IOException {
 		String name = propertyDesc[2];
-		DataType type = DataType.getTypeFromString(propertyDesc[2]);
+		DataType type = DataType.getTypeFromString(propertyDesc[1]);
 		VertexProperty vertexProperty = new VertexProperty(name, type);
 		propertyMap.put(name, vertexProperty);
+		propertyList.add(vertexProperty);
 	}
 
 	/**
-	 * Creates a complex property from the line and adds to the list.
+	 * Creates a complex property (i.e., : a Face has its declaration in 5 parts) from the line and adds to the list.
 	 * 
 	 * @param propertyDesc
 	 * @throws IOException
@@ -120,6 +125,7 @@ public class HeaderEntry {
 		DataType entryType = DataType.getTypeFromString(propertyDesc[3]);
 		FaceProperty faceProperty = new FaceProperty(name, type, numberOfEntriesType, entryType);
 		propertyMap.put(name, faceProperty);
+		propertyList.add(faceProperty);
 	}
 
 	/**
@@ -155,6 +161,23 @@ public class HeaderEntry {
 	 */
 	public int getPropertyCount() {
 		return propertyMap.size();
+	}
+
+	/**
+	 * @return the propertyList
+	 */
+	public List<Property> getPropertyList() {
+		return propertyList;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "HeaderEntry [name=" + name + ", count=" + count + ", propertyList=" + propertyList + "]";
 	}
 
 }

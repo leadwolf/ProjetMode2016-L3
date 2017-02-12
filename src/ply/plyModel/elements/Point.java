@@ -163,4 +163,14 @@ public class Point extends Element {
 		setCoords(x, y, z);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "Point [x=" + x + ", y=" + y + ", z=" + z + ", iter=" + iter + "]";
+	}
+
 }

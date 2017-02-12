@@ -275,6 +275,13 @@ public class HeaderReader {
 	}
 
 	/**
+	 * @return the headerList
+	 */
+	public List<HeaderEntry> getHeaderList() {
+		return headerList;
+	}
+
+	/**
 	 * @return the asciiReader
 	 */
 	public BufferedReader getAsciiReader() {

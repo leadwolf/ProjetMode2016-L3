@@ -37,8 +37,8 @@ import ply.bdd.vues.ModelInfo;
 import ply.main.Modelisationator;
 import ply.plyModel.controlers.KeyControler;
 import ply.plyModel.modeles.FigureModelNew;
-import ply.read.reader.AsciiReader;
-import ply.read.reader.Reader;
+import ply.read.reader.body.BodyReader;
+import ply.read.reader.header.HeaderReader;
 import ply.result.BasicResult;
 import ply.result.MethodResult;
 
@@ -342,18 +342,29 @@ public class MainFenetre extends JFrame {
 
 			// GET
 			Path newModelPath = DAO.INSTANCE.getPathByName(modelName.toLowerCase());
-			MethodResult result = new BasicResult(null);
-			Reader asciiReader = null;
+			MethodResult headerResult = new BasicResult(null);
+			HeaderReader headerReader = null;
+			MethodResult bodyResult = new BasicResult(null);
+			BodyReader bodyReader = null;
 			try {
-				asciiReader = new AsciiReader(newModelPath, result);
+				headerReader = new HeaderReader(newModelPath, headerResult);
 			} catch (IOException e) {
 				String message = "Modelisationator encountered an error while reading the .ply file.\nError : " + e.getMessage() + "\n"
-						+ "Error code : " + result.getCode();
+						+ "Error code : " + headerResult.getCode();
 				JOptionPane.showMessageDialog(null, message, "Modelisationator", JOptionPane.ERROR_MESSAGE);
 				e.printStackTrace();
 				// System.exit(1);
 			}
-			FigureModelNew newFigureModel = new FigureModelNew(asciiReader);
+			try {
+				bodyReader = BodyReader.getBodyReader(headerReader, bodyResult);
+			} catch (IOException e) {
+				String message = "Modelisationator encountered an error while reading the .ply file.\nError : " + e.getMessage() + "\n"
+						+ "Error code : " + bodyResult.getCode();
+				JOptionPane.showMessageDialog(null, message, "Modelisationator", JOptionPane.ERROR_MESSAGE);
+				e.printStackTrace();
+				// System.exit(1);
+			}
+			FigureModelNew newFigureModel = new FigureModelNew(bodyReader);
 			Dimension modelPanelDim = new Dimension(frameDim.width - leftPanelDim.width - (dividerWidth / 2), frameDim.height - tabHeight);
 			ModelPanel newModelPanel = new ModelPanel(newFigureModel, modelPanelDim, false, false, true);
 			newModelPanel.setName(modelName);

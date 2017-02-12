@@ -2,8 +2,8 @@ package ply.result;
 
 import ply.plyModel.elements.Face;
 import ply.plyModel.elements.Point;
-import ply.read.reader.AsciiReader;
-import ply.read.reader.Reader;
+import ply.read.reader.body.AsciiReader;
+import ply.read.reader.header.HeaderReader;
 
 /**
  * Type d'erreur correspondant à une erreur de {@link LecteurAscii}
@@ -79,7 +79,7 @@ public class ReaderResult extends MethodResult{
 	}
 
 	/**
-	 * Error codes for {@link Reader} and {@link AsciiReader}.
+	 * Error codes for {@link HeaderReader} and {@link AsciiReader}.
 	 * 
 	 * @author L3
 	 *

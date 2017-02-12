@@ -1,4 +1,4 @@
-package ply.read.reader;
+package ply.read.reader.header;
 
 public enum DataType {
 

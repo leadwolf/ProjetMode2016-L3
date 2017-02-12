@@ -7,7 +7,7 @@ import java.util.Map;
 import ply.read.header.property.FaceProperty;
 import ply.read.header.property.Property;
 import ply.read.header.property.VertexProperty;
-import ply.read.reader.DataType;
+import ply.read.reader.header.DataType;
 
 public class HeaderEntry {
 

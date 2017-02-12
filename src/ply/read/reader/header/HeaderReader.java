@@ -1,4 +1,4 @@
-package ply.read.reader;
+package ply.read.reader.header;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -11,13 +11,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import ply.plyModel.elements.Face;
-import ply.plyModel.elements.Point;
 import ply.read.header.HeaderEntry;
 import ply.result.MethodResult;
 import ply.result.ReaderResult.ReaderResultEnum;
 
-public abstract class Reader {
+public class HeaderReader {
 
 	/**
 	 * The .ply file we are reading.
@@ -30,10 +28,6 @@ public abstract class Reader {
 
 	protected Map<String, HeaderEntry> headerMap;
 	protected List<HeaderEntry> headerList;
-	protected Map<Integer, Point> vertexMap;
-	protected Map<Integer, Face> faceMap;
-	protected List<Point> vertexList;
-	protected List<Face> faceList;
 
 	protected Format format;
 
@@ -49,7 +43,7 @@ public abstract class Reader {
 	 * @param readResult a {@link MethodResult} object in which we store the result of reading the file.
 	 * @throws IOException bad file or error occurred while reading lines.
 	 */
-	public Reader(File file, MethodResult readResult) throws IOException {
+	public HeaderReader(File file, MethodResult readResult) throws IOException {
 		if (file == null) {
 			readResult.setCode(ReaderResultEnum.FILE_DOES_NOT_EXIST);
 			throw new NullPointerException("File must not be null.");
@@ -71,6 +65,8 @@ public abstract class Reader {
 		this.file = file;
 		this.readResult = readResult;
 		initAtrtibutes();
+
+		parseHeader();
 	}
 
 	/**
@@ -81,7 +77,7 @@ public abstract class Reader {
 	 * 
 	 * @throws IOException bad file or error occurred while reading lines.
 	 */
-	public Reader(Path path, MethodResult readResult) throws IOException {
+	public HeaderReader(Path path, MethodResult readResult) throws IOException {
 		this(path.toFile(), readResult);
 	}
 
@@ -93,22 +89,10 @@ public abstract class Reader {
 		format = null;
 		headerMap = new HashMap<>();
 		headerList = new ArrayList<>();
-		vertexMap = new HashMap<>();
-		faceMap = new HashMap<>();
-		vertexList = new ArrayList<>();
-		faceList = new ArrayList<>();
 
 		asciiReader = new BufferedReader(new FileReader(file));
 		currentHeaderEntry = null;
 		doneReading = false;
-	}
-
-	/**
-	 * @throws IOException error occurred while reading lines.
-	 */
-	public void parseFile() throws IOException {
-		parseHeader();
-		parseBody();
 	}
 
 	/**
@@ -247,13 +231,6 @@ public abstract class Reader {
 	}
 
 	/**
-	 * Reads the data of the .ply file either in ASCII or binary little/big endian.
-	 * 
-	 * @throws IOException error occurred while reading lines.
-	 */
-	protected abstract void parseBody() throws IOException;
-
-	/**
 	 * @param elementName
 	 * @return the count for the elementName.
 	 */
@@ -262,7 +239,7 @@ public abstract class Reader {
 			throw new NullPointerException("Cannot get element count for null parameter.");
 		}
 		if (headerMap.get(elementName) == null) {
-			throw new NullPointerException("Element " + elementName + " does not exist in header.");
+			throw new NullPointerException("Element \"" + elementName + "\" does not exist in header.");
 		}
 		return headerMap.get(elementName).getCount();
 	}
@@ -290,19 +267,23 @@ public abstract class Reader {
 		return result;
 	}
 
+	/**
+	 * @return the format
+	 */
+	public Format getFormat() {
+		return format;
+	}
+
+	/**
+	 * @return the asciiReader
+	 */
+	public BufferedReader getAsciiReader() {
+		return asciiReader;
+	}
+
 	@SuppressWarnings("javadoc")
 	public File getFile() {
 		return file;
-	}
-
-	@SuppressWarnings("javadoc")
-	public List<Point> getVertexList() {
-		return vertexList;
-	}
-
-	@SuppressWarnings("javadoc")
-	public List<Face> getFaceList() {
-		return faceList;
 	}
 
 	@SuppressWarnings("javadoc")

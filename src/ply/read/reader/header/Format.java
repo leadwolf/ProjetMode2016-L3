@@ -1,10 +1,10 @@
-package ply.read.reader;
+package ply.read.reader.header;
 
 import java.io.IOException;
 
 public enum Format {
 
-	ASCII;
+	ASCII, BINARY_LITTLE_ENDIAN, BINARY_BIG_ENDIAN;
 
 	/**
 	 * @param line the line containing the definition of the file format
@@ -20,7 +20,7 @@ public enum Format {
 		switch (formatType[1]) {
 		case "ascii":
 			if (!"1.0".equals(formatType[2])) {
-				throw new IOException("ASCII version not equal to 1.0. Only 1.0 rev is supported.");
+				throw new IOException("ASCII version not equal to 1.0. Only rev 1.0 is supported.");
 			}
 			return ASCII;
 		default:

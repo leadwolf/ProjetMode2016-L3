@@ -1,33 +1,24 @@
-package ply.read.reader;
+package ply.read.reader.body;
 
-import java.io.File;
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.nio.file.Path;
 
 import ply.plyModel.elements.Face;
 import ply.plyModel.elements.Point;
+import ply.read.reader.header.HeaderReader;
 import ply.result.MethodResult;
 import ply.result.ReaderResult.FaceResultEnum;
 import ply.result.ReaderResult.ReaderResultEnum;
 
-public class AsciiReader extends Reader {
+public class AsciiReader extends BodyReader {
 
-	/**
-	 * @param file
-	 * @param readResult a {@link MethodResult} object in which we store the result of reading the file.
-	 * @throws IOException bad file or error occurred while reading lines.
-	 */
-	public AsciiReader(File file, MethodResult readResult) throws IOException {
-		super(file, readResult);
-	}
+	private BufferedReader asciiReader;
 
-	/**
-	 * @param path
-	 * @param readResult a {@link MethodResult} object in which we store the result of reading the file.
-	 * @throws IOException bad file or error occurred while reading lines.
-	 */
-	public AsciiReader(Path path, MethodResult readResult) throws IOException {
-		super(path, readResult);
+	public AsciiReader(HeaderReader headerReader, MethodResult readResult) throws IOException {
+		super(headerReader, readResult);
+		this.asciiReader = headerReader.getAsciiReader();
+
+		parseBody();
 	}
 
 	@Override

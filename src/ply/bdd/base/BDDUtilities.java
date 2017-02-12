@@ -17,8 +17,8 @@ import java.time.LocalDate;
 import javax.swing.JOptionPane;
 
 import ply.plyModel.modeles.FigureModelNew;
-import ply.read.reader.AsciiReader;
-import ply.read.reader.Reader;
+import ply.read.reader.body.BodyReader;
+import ply.read.reader.header.HeaderReader;
 import ply.result.BDDResult;
 import ply.result.BDDResult.BDDResultEnum;
 import ply.result.BasicResult;
@@ -197,8 +197,9 @@ public class BDDUtilities {
 			for (int i = 0; i < files.length; i++) {
 				String nom = files[i].toPath().getFileName().toString();
 				nom = nom.substring(0, nom.lastIndexOf("."));
-				Reader asciiReader = new AsciiReader(files[i].toPath().toAbsolutePath(), null);
-				FigureModelNew fig = new FigureModelNew(asciiReader);
+				HeaderReader headerReader = new HeaderReader(files[i].toPath().toAbsolutePath(), null);
+				BodyReader bodyReader = BodyReader.getBodyReader(headerReader, new BasicResult(null));
+				FigureModelNew fig = new FigureModelNew(bodyReader);
 
 				insertStatement = "insert into PLY values (?, ?, ?, ?, ?, ?)";
 				PreparedStatement firstStatement;

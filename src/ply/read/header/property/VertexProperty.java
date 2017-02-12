@@ -1,6 +1,6 @@
 package ply.read.header.property;
 
-import ply.read.reader.DataType;
+import ply.read.reader.header.DataType;
 
 public class VertexProperty extends Property {
 

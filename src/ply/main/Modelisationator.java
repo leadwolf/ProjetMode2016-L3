@@ -13,8 +13,8 @@ import ply.bdd.strategy.ExecuteStrategy;
 import ply.main.vues.MainFenetre;
 import ply.math.Vecteur;
 import ply.plyModel.modeles.FigureModelNew;
-import ply.read.reader.AsciiReader;
-import ply.read.reader.Reader;
+import ply.read.reader.body.BodyReader;
+import ply.read.reader.header.HeaderReader;
 import ply.result.BDDResult;
 import ply.result.BDDResult.BDDResultEnum;
 import ply.result.BasicResult;
@@ -209,19 +209,30 @@ public class Modelisationator {
 	 */
 	private static MethodResult execute(String[] args, Modelisationator modelisationator, Path dbPath, boolean quiet) {
 		if (modelisationator.foundFile) {
-			MethodResult result = new BasicResult(null);
-			Reader asciiReader = null;
+			MethodResult headerResult = new BasicResult(null);
+			MethodResult bodyResult = new BasicResult(null);
+			HeaderReader headerReader = null;
+			BodyReader bodyReader = null;
 			try {
-				asciiReader = new AsciiReader(plyPath.toFile(), result);
+				headerReader = new HeaderReader(plyPath, headerResult);
 			} catch (IOException e) {
 				String message = "Modelisationator encountered an error while reading the .ply file.\nError : " + e.getMessage() + "\n"
-						+ "Error code : "
-						+ result.getCode();
+						+ "Error code : " + headerResult.getCode();
 				JOptionPane.showMessageDialog(null, message, "Modelisationator", JOptionPane.ERROR_MESSAGE);
 				e.printStackTrace();
 				System.exit(1);
 			}
-			FigureModelNew figureModel = new FigureModelNew(asciiReader);
+			try {
+				bodyReader = BodyReader.getBodyReader(headerReader, bodyResult);
+			} catch (IOException e) {
+				String message = "Modelisationator encountered an error while reading the .ply file.\nError : " + e.getMessage() + "\n"
+						+ "Error code : "
+						+ bodyResult.getCode();
+				JOptionPane.showMessageDialog(null, message, "Modelisationator", JOptionPane.ERROR_MESSAGE);
+				e.printStackTrace();
+				System.exit(1);
+			}
+			FigureModelNew figureModel = new FigureModelNew(bodyReader);
 			if (figureModel != null) {
 				BDDUtilities.initConnection(dbPath);
 				BDDUtilities.checkPaths();

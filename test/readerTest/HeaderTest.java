@@ -9,8 +9,8 @@ import java.nio.file.Paths;
 import org.junit.Before;
 import org.junit.Test;
 
-import ply.read.reader.AsciiReader;
-import ply.read.reader.Reader;
+import ply.read.reader.body.AsciiReader;
+import ply.read.reader.header.HeaderReader;
 import ply.result.BasicResult;
 import ply.result.BasicResult.BasicResultEnum;
 import ply.result.MethodResult;
@@ -18,7 +18,7 @@ import ply.result.ReaderResult.ReaderResultEnum;
 
 public class HeaderTest {
 
-	private Reader reader;
+	private HeaderReader reader;
 	private MethodResult result;
 
 	@Before

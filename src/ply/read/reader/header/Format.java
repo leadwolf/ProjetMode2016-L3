@@ -17,14 +17,24 @@ public enum Format {
 		if (!"format".equals(formatType[0])) {
 			throw new IOException("Ply file does not declare \"format\" on second line.");
 		}
-		switch (formatType[1]) {
-		case "ascii":
+		switch (formatType[1].toUpperCase()) {
+		case "ASCII":
 			if (!"1.0".equals(formatType[2])) {
 				throw new IOException("ASCII version not equal to 1.0. Only rev 1.0 is supported.");
 			}
 			return ASCII;
+		case "BINARY_LITTLE_ENDIAN":
+			if (!"1.0".equals(formatType[2])) {
+				throw new IOException("binary_little_endian version not equal to 1.0. Only rev 1.0 is supported.");
+			}
+			return BINARY_LITTLE_ENDIAN;
+		case "BINARY_BIG_ENDIAN":
+			if (!"1.0".equals(formatType[2])) {
+				throw new IOException("binary_big_endian version not equal to 1.0. Only rev 1.0 is supported.");
+			}
+			return BINARY_BIG_ENDIAN;
 		default:
-			throw new IOException("Format type \"" + formatType[2] + " is unsupported.");
+			throw new IOException("Format type \"" + formatType[1] + "\" is unsupported.");
 		}
 	}
 

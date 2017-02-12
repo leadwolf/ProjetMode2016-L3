@@ -49,8 +49,9 @@ public abstract class BodyReader {
 	 * Reads the data of the .ply file either in ASCII or binary little/big endian.
 	 * 
 	 * @throws IOException error occurred while reading lines.
+	 * @throws InterruptedException
 	 */
-	protected abstract void parseBody() throws IOException;
+	protected abstract void parseBody() throws IOException, InterruptedException;
 
 	@SuppressWarnings("javadoc")
 	public List<Point> getVertexList() {

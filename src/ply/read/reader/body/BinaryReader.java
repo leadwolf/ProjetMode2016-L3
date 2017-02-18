@@ -1,7 +1,6 @@
 package ply.read.reader.body;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -23,7 +22,6 @@ public class BinaryReader extends BodyReader {
 	private BufferedReader bufferedReader;
 	private ByteArrayOutputStream byteBufferOutput;
 	private ByteBuffer buffer;
-	private ByteArrayInputStream byteBufferInput;
 
 	public BinaryReader(HeaderReader headerReader, MethodResult readResult) throws IOException {
 		super(headerReader, readResult);
@@ -46,7 +44,7 @@ public class BinaryReader extends BodyReader {
 		int nChars = 0;
 		boolean end = false;
 		while ((line = bufferedReader.readLine()) != null) {
-			nChars += line.length();
+			nChars += (line.length() + 1);
 			if ("end_header".equals(line.toLowerCase())) {
 				break;
 			}
@@ -54,11 +52,13 @@ public class BinaryReader extends BodyReader {
 
 		int nBytesRead = 0;
 		byte[] readBuffer = new byte[1024];
-		fileInputStream.skip(nChars);
+		// dont need to skip since bufferReader also skips in fileInputStream
+		// fileInputStream.skip(nChars);
+		System.out.println("skipping " + nChars + " chars");
 		while ((nBytesRead = fileInputStream.read(readBuffer)) != -1) {
+			System.out.println(new String(readBuffer, 0, nBytesRead));
 			byteBufferOutput.write(readBuffer);
 		}
-		byteBufferInput = new ByteArrayInputStream(byteBufferOutput.toByteArray());
 		buffer = ByteBuffer.wrap(byteBufferOutput.toByteArray());
 	}
 
@@ -70,6 +70,7 @@ public class BinaryReader extends BodyReader {
 					for (int j = 0; j < coords.length; j++) {
 						Property prop = entry.getPropertyList().get(j);
 						coords[j] = readByte(prop.getType());
+						// System.out.println("Read coord type " + prop.getType() + " : " + coords[j]);
 					}
 					Point point = new Point(vertexCount, coords[0], coords[1], coords[2]);
 					vertexList.add(point);
@@ -82,6 +83,7 @@ public class BinaryReader extends BodyReader {
 					Face face = new Face(faceCount);
 					for (int i = 0; i < nPointsInFace; i++) {
 						double pointIndex = readByte(faceProp.getEntryType());
+						System.out.println("Getting point at index = " + pointIndex);
 						face.addPoint(vertexMap.get(pointIndex));
 					}
 					faceMap.put(faceCount, face);
@@ -94,38 +96,24 @@ public class BinaryReader extends BodyReader {
 	private double readByte(DataType dataType) throws IOException {
 		switch (dataType) {
 		case CHAR:
-			ensureAvailable(1);
 			return buffer.get();
 		case UCHAR:
-			ensureAvailable(1);
 			return ((int) buffer.get()) & 0x000000FF;
 		case SHORT:
-			ensureAvailable(2);
 			return buffer.getShort();
 		case USHORT:
-			ensureAvailable(2);
 			return ((int) buffer.getShort()) & 0x0000FFFF;
 		case INT:
-			ensureAvailable(4);
 			return buffer.getInt();
 		case UINT:
-			ensureAvailable(4);
 			return ((long) buffer.getShort()) & 0x00000000FFFFFFFF;
 		case FLOAT:
-			ensureAvailable(4);
 			return buffer.getFloat();
 		case DOUBLE:
-			ensureAvailable(8);
 			return buffer.getDouble();
 		default:
 			throw new IOException("Cannot read bytes for unexpected data type");
 		}
 	}
 
-	private boolean ensureAvailable(int nBytes) throws IOException {
-		if (byteBufferInput.available() >= nBytes) {
-			return true;
-		}
-		throw new IOException("Not enough bytes to be read");
-	}
 }
